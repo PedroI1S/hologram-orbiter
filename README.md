@@ -18,7 +18,6 @@ endereçáveis giram a 1800 RPM e formam uma imagem cilíndrica suspensa de
 | Especificação CAD | ✅ escrita, corrigida e verificada |
 | Modelo CAD | ⚠️ **painéis bloqueados** — dois P0 de malha; demais peças liberadas |
 | Compras | 🛒 não iniciadas |
-| Contenção | ✅ especificada — tubo PC Ø275 × 4 mm × 300 mm, a encomendar |
 | Isolamento de vibração | ⚠️ decisão pendente — montagem inicial rígida |
 
 Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para girar.**
@@ -33,7 +32,7 @@ Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para gira
 > `02_painel_*`. Confirmei os dois por ray cast próprio. Causa em
 > `generate.py`: `subtract_all()` concatena os cortadores em vez de uni-los.
 > Aranha, tampas, base, poste, cupons e chapa podem ir para a impressora.
-> Detalhe em [`06-REVISAO-INDEPENDENTE-v3.0.md`](06-REVISAO-INDEPENDENTE-v3.0.md).
+> Detalhe em [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md).
 
 | Se você vai… | Leia |
 |---|---|
@@ -43,7 +42,7 @@ Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para gira
 | Ensaiar | [`04-PLANO-DE-ENSAIOS-v3.0.md`](04-PLANO-DE-ENSAIOS-v3.0.md) |
 | Montar a eletrônica | [`05-ESQUEMA-ELETRICO-v3.0.md`](05-ESQUEMA-ELETRICO-v3.0.md) |
 | Saber de onde veio um número | [`00-AUDITORIA-E-INTEGRACAO-v2.1.md`](00-AUDITORIA-E-INTEGRACAO-v2.1.md) |
-| Ver o que ainda está errado | [`06-REVISAO-INDEPENDENTE-v3.0.md`](06-REVISAO-INDEPENDENTE-v3.0.md) |
+| Ver o que ainda falta | [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md) |
 
 **Hierarquia de autoridade.** Em caso de conflito: o arquivo de parâmetros do CAD
 manda em cota; a especificação manda em requisito; o plano de ensaios manda em
@@ -107,7 +106,7 @@ README.md                          este arquivo
 03-LISTA-DE-COMPONENTES-v3.0.md    BOM, compras, instrumentação
 04-PLANO-DE-ENSAIOS-v3.0.md        cinco bloqueadores e critérios
 05-ESQUEMA-ELETRICO-v3.0.md        eletrônica embarcada do rotor
-06-REVISAO-INDEPENDENTE-v3.0.md    revisão externa do pacote v3.0
+06-PENDENCIAS-ABERTAS-v3.0.md      o que ainda falta
 Hologram_Orbiter_v3_0/             CAD, STLs, montagem, relatórios
 legado/                            versões anteriores, arquivadas
 ```

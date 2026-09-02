@@ -215,8 +215,8 @@ adicionar eletrônica de bordo antes deles só aumenta o que se perde numa falha
 Não são formalidade. O rotor guarda **26 J** e um painel solto sai a
 **18,9 m/s** com 7,4 J.
 
-- **Nunca girar sem o cilindro de policarbonato montado.** Se ele ainda não tiver
-  chegado, use contenção externa provisória: caixa fechada, chapa ou tela de aço.
+- **Nunca girar sem contenção integral.** Caixa fechada, chapa ou tela de aço em
+  torno do rotor. Não há exceção para "só um teste rápido".
 - **Operação remota.** Ninguém no plano do rotor durante a subida de rotação.
 - **Parada de emergência** ao alcance, cortando a fonte.
 - **Subir em patamares** com inspeção entre eles. Nunca ir direto a 1800.

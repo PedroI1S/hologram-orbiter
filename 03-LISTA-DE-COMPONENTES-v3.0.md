@@ -36,14 +36,14 @@ painéis de 208 mm por causa de folga na junta ou no canal.
 | Motor BLDC | **A2212 920KV**, 2–4S, 52 g, eixo M6, base 4×M3 em 16 × 19 mm | ✅ | — |
 | ESC | 15 A com **rampa configurável** (mínimo 8 s) | ✅ | — |
 | Fonte de bancada | ajustável; operar em **6–7 V**, ≥ 5 A | ✅ | — |
-| Adaptador de hélice | alumínio, flange Ø25–30, furo Ø8 | ⚠️ | 15 |
-| Porca M6 autotravante **baixa** | ~6 mm de altura — **não** a cônica de 14 mm que veio com o motor | 🛒 | 2 |
-| Arruela M6 aço | assento no rebaixo Ø13 × 2 do cubo | 🛒 | 1 |
+| **Arruela larga Ø20 × M6** | aço, assento do aperto no cubo | 🛒 | 2 |
+| Porca M6 autotravante **baixa** | ~6 mm de altura — **não** a cônica de 14 mm que veio com o motor. Apertar a **0,6 N·m** | 🛒 | 2 |
 
-> **⚠️ O adaptador de hélice depende de uma medição.** Se a face superior da
-> campânula for vazada (o desenho sugere que sim, com raios), o cubo assentaria
-> num ressalto pequeno demais para um rotor de Ø208. Medir o diâmetro útil de
-> assento: **abaixo de ~Ø20, o adaptador deixa de ser opcional.**
+
+> **Aperte a 0,6 N·m, com arruela Ø20.** O atrito precisa transmitir 46 mN·m, o
+> que exige só ~22 N. A 0,6 N·m a força é de 500 N — 23× de margem — e a tensão
+> no ABS fica em 1,9 MPa. Com arruela M6 padrão e 3 N·m daria 40 MPa, a tensão de
+> escoamento, e a junta relaxaria em horas.
 
 ---
 
@@ -139,28 +139,6 @@ pior em eficiência e corrente.
 
 ---
 
-## 5. Contenção
-
-| Item | Espec | Sit. | ~R$ |
-|---|---|:--:|---:|
-| Cilindro de proteção | **tubo policarbonato Ø274 ext. × 4 mm de parede × 305 mm**, sem fundo | 🛒 | 120–200 |
-| Tampa superior | disco ou anel removível — **⚠️ decidir: peça impressa ou comprada** | ⚠️ | 20 |
-| Retenção do cilindro | silicone na canaleta ou 3 clipes — **⚠️ sem definição** | ⚠️ | 10 |
-| Isolador de vibração | ⚠️ decisão pendente — ver §5.7 da espec | ⚠️ | — |
-
-Ø interno 266 mm, escolhido para centrar a parede em r = 135, no meio da pista
-Ø260–280 da base. Assentado numa canaleta de 3 mm (Z = 5), o topo fica em
-**Z = 310: 17 mm de folga acima do rotor e 26,7 mm de folga radial.**
-
-Encomendar pelo Ø externo e pela parede, que é como o fornecedor cota.
-
-**Policarbonato, não acrílico.** Um painel solto carrega 7,4 J a 18,9 m/s. PMMA é
-frágil e estilhaça; PC deforma e retém.
-
-**Não compre isolador ainda.** A peça da versão anterior (coxim Ø16 × 8 em
-TPU 95A) tem frequência natural de 400–620 Hz contra os ≤ 21 Hz necessários para
-isolar 30 Hz — é espaçador, não isolador. A montagem inicial é rígida.
-
 ## 6. Instrumentação para os ensaios
 
 | Item | Espec | Por quê | Sit. | ~R$ |
@@ -193,13 +171,13 @@ isolar 30 Hz — é espaçador, não isolador. A montagem inicial é rígida.
 
 | Bloco | ~R$ |
 |---|---:|
-| Contenção | 120–200 |
+
 | Acionamento (adaptador, porcas) | 18 |
 | Eletrônica de bordo | 165–220 |
 | Estrutura e fixação | 83 |
 | Instrumentação | 115–195 |
 | Consumíveis | 140–180 |
-| **Total estimado** | **640–890** |
+| **Total estimado** | **520–690** |
 
 Carregador LiPo (R$ 60), paquímetro (R$ 50) e tacômetro (R$ 40) entram se ainda
 não houver no laboratório.
@@ -209,4 +187,4 @@ não houver no laboratório.
 1. **Agora** — bateria, ESP32-C3, regulador, sensor hall, ímã, fio, filamento.
    São o caminho crítico: sem eles não há como montar nem pesar de verdade.
 2. **Antes da Fase 3** — balança de 0,01 g, termopar, acelerômetro.
-3. **Depois de medir** — adaptador de hélice, isolador, contenção definitiva.
+3. **Depois de medir** — isolador de vibração, se o ensaio de vibração pedir.

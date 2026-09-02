@@ -15,7 +15,7 @@ eixo vertical. A 30 rotações por segundo, cada ponto do espaço é varrido por
 painel três vezes por volta: o olho integra e vê uma imagem cilíndrica suspensa.
 
 ```
-                   ┌─ cilindro de proteção
+                   ┌─ invólucro (fora de escopo)
         ▐  ╭────────────────────╮  ▌
         ▐  │   painel  ●        │  ▌      3 painéis a 120°
         ▐  │      ╲   ╱         │  ▌      girando a 1800 RPM
@@ -62,9 +62,9 @@ a impeça.
 | Consequência | Valor | Onde aparece na geometria |
 |---|---:|---|
 | Força centrífuga por painel | 158,1 N | junta espiga/socket, longarina, parafusos |
-| Deflexão da ponta do painel | 2,48 mm | folga radial até a contenção |
+| Deflexão da ponta do painel | 2,48 mm | raio dinâmico do rotor: 106,5 mm |
 | Tensão de flexão no painel | 13,9 MPa (SF ≈ 2,5) | seção da lâmina, parede de 2 mm |
-| Energia cinética do rotor | 27,6 J | dimensionamento da contenção |
+| Energia cinética do rotor | 27,6 J | energia armazenada em operação |
 | Energia de um painel solto | 7,9 J a 19,6 m/s | idem |
 | Inércia do rotor | 1,55 g·m² | rampa de partida ≥ 8 s |
 | Desbalanceamento admissível | **8,4 g·mm** | contrapesos, berço da bateria, Δm |
@@ -114,9 +114,9 @@ Z = 293    topo do painel                    (189 + 104)
 ```
 
 > Os 30 mm entre a chapa e o Datum B saem do datasheet: corpo do motor de 24 mm
-> acima da face de fixação, mais 6 mm de cubo. **Confirmar com paquímetro** — se
-> a campânula tiver ressalto, muda. Se o isolador (§5.7) entrar neste caminho de
-> carga, some a altura dele aqui.
+> Os 30 mm entre a chapa e o Datum B saem do datasheet: corpo do motor de 24 mm
+> mais 6 mm de cubo. Confirmar com paquímetro na montagem. Se o isolador (§5.7)
+> entrar neste caminho de carga, some a altura dele aqui.
 
 ---
 
@@ -259,10 +259,18 @@ o Ø da baia e a borda do cubo.
 **Alívios de massa** no lado inferior do disco, deixando 2 mm de pele superior.
 Não coincidir com a raiz dos braços nem com os rasgos de ventilação.
 
-**Nota sobre o aperto do eixo.** O torque vai da campânula ao cubo **só por
-atrito**. Sobra folga (≈4,5 N·m de atrito contra 0,16 N·m necessários), mas ABS
-flui sob aperto sustentado: prever assento para **arruela ou bucha metálica** sob
-a porca.
+**Aperto do eixo — decidido, sem medição pendente.** O torque vai da campânula
+ao cubo por atrito. Ele precisa de **46 mN·m**, e isso exige apenas ~22 N de
+aperto. O risco de fluência do ABS aparece só se alguém apertar demais:
+
+| Torque | Força | Arruela M6 padrão (Ø12) | **Arruela larga (Ø20)** |
+|---:|---:|---:|---:|
+| 0,6 N·m | 500 N | 8,0 MPa | **1,9 MPa** |
+| 3,0 N·m | 2500 N | 39,8 MPa — escoa | 9,5 MPa |
+
+**Especificado: arruela Ø20 e torque de 0,6 N·m.** Dá 23× de margem na
+transmissão de torque e 1,9 MPa no ABS, longe de qualquer fluência. Prever
+assento plano de Ø20 no rebaixo do cubo.
 
 **Não use a porca cônica que acompanha o motor.** Ela tem 14 mm de altura e
 ocuparia 14 dos 20 mm internos da baia, sobrando 6 mm para uma bateria de 13 mm.
@@ -272,21 +280,6 @@ do cubo e sobram 16 mm para a bateria.
 Engate da rosca: o eixo tem ~5 mm de Ø8 liso e ~7 mm de rosca acima da campânula.
 O cubo de 6 mm cobre os 5 lisos mais 1 de rosca, deixando **6 mm de rosca livre** —
 menos os 2 do rebaixo, sobram 6 mm de engate útil (1 × D). Suficiente.
-
-**⚠️ Assento contra a campânula — verificar antes de modelar.** O desenho do
-motor mostra a face superior da campânula **vazada, com raios**, não um disco
-plano. Se for esse o caso, o cubo assentaria só num ressalto central pequeno, o
-que dá pouca rigidez a tombamento para um rotor de Ø208.
-
-**Não é decisão de CAD.** O cubo já traz os dois caminhos: furo Ø8 com rebaixo
-Ø13 × 2 para o eixo M6, **e** 4 furos Ø3,2 em PCD 19 para parafusar num adaptador
-de hélice. A aranha pode ser impressa antes de a campânula ser medida.
-
-O que a medição decide é o **fixador**, na montagem: se o assento útil for menor
-que ~Ø20, use adaptador de hélice em alumínio (peça comercial, flange Ø25–30)
-parafusado pelos furos em PCD 19 — assento largo, concêntrico, torque positivo e
-sem aperto sobre ABS. Isso também elimina o risco de fluência do aperto M6
-(~40 MPa sob a arruela). Compre os dois jogos de fixação; são alguns reais.
 
 **Massa alvo:** ≤ 55 g.
 
@@ -346,14 +339,16 @@ que a base é apoiada numa mesa. Alvo de área livre: ≥ 600 mm².
 > **Não confunda o propósito.** Esta ventilação serve à baia — eletrônica de
 > base, cabos, calor por condução pela torre. **Ela não refrigera o motor**, que
 > fica em Z = 156, acima e fora da baia: o único caminho baia → motor é o furo da
-> torre e o Ø12 da chapa, cerca de 113 mm². A refrigeração do motor depende do ar
-> dentro do cilindro de contenção, cuja única troca com a sala é a tampa
-> superior. Ver §5.8.
+> torre e o Ø12 da chapa, cerca de 113 mm². A temperatura do motor é definida
+> pelo ar ao redor dele e se resolve por medição, no Bloqueador B.
 
 > **O diâmetro de Ø280 é definitivo, e quem manda nele é a impressora.** A mesa
 > tem 300 × 300 mm e o §7 pede brim de 8–12 mm, então 280 + 2 × 8 = 296 mm é o
-> limite. O cilindro de contenção é encomendado para assentar nesta base, e não
-> o contrário — ver §5.8.
+> limite.
+>
+> A pista externa traz uma canaleta de 4,4 × 3 mm centrada em r = 135, prevista
+> para um invólucro futuro. **Não é item deste escopo** — está lá porque custa
+> nada e não pode ser acrescentada depois de imprimir.
 
 **Massa alvo:** ≤ 330 g. A base não gira — massa extra ali só ajuda na
 estabilidade. O custo real é tempo de impressão. Se precisar cortar, corte na
@@ -410,44 +405,6 @@ Duas saídas, e a decisão é de engenharia, não de modelagem:
 Até a decisão sair, modele a montagem **rígida** e deixe a interface preparada:
 os 4 furos Ø4 em PCD 40 já servem aos dois caminhos.
 
-### 5.8 Contenção — item de compra, fabricado sob medida
-
-**O cilindro não é medição pendente. Ele é fabricado para assentar nesta base.**
-A dependência corre nesse sentido, e não no inverso: a canaleta de assento sai da
-**pista da base**, que é Ø260–280 e está congelada; o tubo é encomendado para
-encaixar nela. Imprimir a base não depende do cilindro.
-
-| Parâmetro | Valor | Origem |
-|---|---:|---|
-| Material | **policarbonato, parede 4 mm** | acrílico estilhaça; PC deforma e retém |
-| Ø interno | **266 mm** | centra a parede em r = 135, meio da pista |
-| Ø externo | **274 mm** | é assim que o fornecedor cota |
-| Altura | **305 mm** | topo em Z = 310 com canaleta de 3 mm |
-| Fundo | **não** | a base já é o fundo |
-| Tampa superior | **sim, removível** | margem barata contra ricochete |
-
-**Canaleta de assento na pista:** 4,4 mm de largura (0,2 de folga por lado)
-centrada em r = 135, de r = 132,8 a 137,2, **3 mm de profundidade** — sobram
-5 mm de pista abaixo.
-
-**Verificação do envelope:**
-
-```
-rotor:            Z = 85 … 293 mm · raio dinâmico 106,3 mm
-tubo assenta em:  Z = 5  (canaleta de 3 mm na pista de topo Z = 8)
-topo do tubo:     Z = 310  →  17 mm de folga acima do rotor
-folga radial:     133 − 106,3 = 26,7 mm
-energia a conter: 7,4 J de um painel solto a 18,9 m/s
-```
-
-Requisito, se a profundidade da canaleta mudar: **topo do tubo ≥ Z = 308 mm**.
-
-**Sobre a flag de verificação.** Estas cotas não foram medidas — foram
-**especificadas**. Use `"source": "cota_de_encomenda"` com `verified: true`. O
-critério de aceitação correspondente não é "cilindro medido", e sim **"cilindro
-recebido conforme a encomenda"**, conferido na montagem. Um critério que só fecha
-quando a peça chega não pode travar 15–20 h de impressão da base.
-
 ## 6. Interfaces de hardware — medidas, não estimadas
 
 ### 6.1 Motor: A2212 920KV
@@ -464,9 +421,10 @@ quando a peça chega não pode travar 15–20 h de impressão da base.
 | Resistência efetiva | 0,221 Ω |
 
 > **Dois pontos onde é fácil errar.** A furação da base é um **retângulo de
-> 16 × 19 mm**, não um círculo de furos. E o rotor **não** se prende por
-> parafusos na campânula: ele se prende pelo **eixo M6**, com o cubo assentando
-> contra a face da campânula e a porca cônica dando o aperto.
+> 16 × 19 mm**, não um círculo de furos. E o rotor se prende pelo **eixo M6** —
+> cubo assentado contra a face do motor, porca baixa e arruela Ø20 a 0,6 N·m
+> (§5.2). A porca cônica que acompanha o motor tem 14 mm e não serve: ocuparia
+> a baia de eletrônica.
 
 ### 6.2 Fita LED: HD107S 144 LED/m, RGB
 

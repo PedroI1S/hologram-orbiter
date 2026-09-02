@@ -5,22 +5,9 @@ tampa, poste ou a base; os itens P0 impedem operar o rotor.
 
 ## P0 — antes de girar
 
-1. **Contenção (spec §5.8) — geometria fechada, material em aberto.** Cotas
-   de encomenda de 02/09/2026: Ø interno 266, parede 4, altura 305, sem fundo,
-   com tampa superior. Canaleta de assento modelada
-   (`base_tower.containment_seat`: 4,4 × 3 mm centrada em r = 135, piso em
-   Z = 5, folga 0,2 mm por lado). Cilindro assentado termina em Z = 310, 17 mm
-   acima do topo do rotor (293), menos a espessura da tampa; folga radial
-   26,5 mm após a deflexão. Restam: ensaio de dobra numa sobra (PMMA versus
-   PC) e conferir Ø interno e planeza da borda na peça recebida.
 2. **Altura do conjunto motor (30 mm)** derivada do datasheet, não medida.
 
 ## P1 — antes de liberar o projeto
-
-3b. **Assento do cubo na campânula (spec §5.2).** Rebaixado de P0 para cá: o
-   cubo já traz os dois caminhos de fixação (furo Ø8 + rebaixo Ø13 × 2, e 4
-   furos Ø3,2 em PCD 19), então a aranha pode ser impressa antes. A medição
-   decide o fixador na montagem, não a geometria.
 
 4. **Isolador de vibração (spec §5.7).** Modelado como montagem rígida; os 4
    furos Ø4 em PCD 40 servem aos dois caminhos.

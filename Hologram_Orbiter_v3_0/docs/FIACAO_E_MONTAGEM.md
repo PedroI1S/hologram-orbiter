@@ -59,7 +59,7 @@ entreferro além do campo do ímã.
 3. Topo da porca em Z = +5,6 sobre a face superior do cubo; os trilhos do berço
    ficam em Z = +6, a bateria em Z = 6…19 dentro dos 20 mm da baia.
 4. Furos de provisão 4 × Ø3,2 em PCD 19 (a confirmar) para parafusar a aranha
-   num adaptador de hélice de alumínio, caso o assento da campânula seja
+   com arruela Ø20 e torque de 0,6 N·m; os furos em PCD 19 ficam de reserva se
    vazado.
 
 ## 4. Sequência de montagem do rotor
