@@ -416,7 +416,10 @@ def cavity_profile_with_local_wall() -> list[tuple[float, float]]:
     """
     q = P["panel"]
     cx = panel_channel_x()
-    half = q["led_channel"]["led_slot_width"] / 2.0
+    # A faixa engrossada transborda o rasgo em local_wall_band_margin de cada
+    # lado: é o que liga o piso de 0,8 mm aos ombros do PCB por uma área, e
+    # não por uma linha.
+    half = q["led_channel"]["led_slot_width"] / 2.0 + q["led_channel"]["local_wall_band_margin"]
     x_in = cx["x_shell_inner"]
     x_local = cx["x_local_wall_inner"]
     points = [tuple(p) for p in q["profile_cavity_xy"]]
@@ -604,6 +607,15 @@ def build_arm(index: int) -> bpy.types.Object:
     return rotate_about_z(arm, index * 120.0)
 
 
+def lid_post_positions() -> list[tuple[float, float]]:
+    """Centros dos dois postes da tampa, encostados na parede da baia."""
+    q = P["spider"]
+    half = q["lid_post_spacing"] / 2
+    if q.get("lid_post_axis", "x") == "y":
+        return [(0.0, -half), (0.0, half)]
+    return [(-half, 0.0), (half, 0.0)]
+
+
 def build_spider() -> bpy.types.Object:
     q = P["spider"]
     a = q["arm"]
@@ -612,10 +624,10 @@ def build_spider() -> bpy.types.Object:
     hub = cylinder("hub_disk", q["hub_diameter"] / 2, hub_t, (0.0, 0.0, -hub_t / 2))
 
     bay = ring("electronics_bay_wall", q["electronics_bay_od"] / 2, q["electronics_bay_id"] / 2, -0.1, q["electronics_bay_height"])
-    post_x = q["lid_post_spacing"] / 2
+    post_positions = lid_post_positions()
     lid_posts = [
-        cylinder(f"lid_post_{i}", q["lid_post_diameter"] / 2 + q["lid_post_ring_overlap"], q["electronics_bay_height"] + 0.1, (x, 0.0, q["electronics_bay_height"] / 2 - 0.05))
-        for i, x in enumerate((-post_x, post_x))
+        cylinder(f"lid_post_{i}", q["lid_post_diameter"] / 2 + q["lid_post_ring_overlap"], q["electronics_bay_height"] + 0.1, (x, y, q["electronics_bay_height"] / 2 - 0.05))
+        for i, (x, y) in enumerate(post_positions)
     ]
 
     # Berço da bateria (pack deitado ao longo de y).
@@ -749,14 +761,14 @@ def build_spider() -> bpy.types.Object:
         cutters.append(rotate_about_z(root_pocket, angle))
         cutters.append(rotate_about_z(groove, angle))
 
-    for i, x in enumerate((-post_x, post_x)):
+    for i, (x, y) in enumerate(post_positions):
         depth = q["lid_post_hole_depth"]
         cutters.append(
             cylinder(
                 f"lid_post_hole_{i}",
                 q["lid_post_hole_diameter"] / 2,
                 depth + 0.2,
-                (x, 0.0, q["electronics_bay_height"] - depth / 2 + 0.1),
+                (x, y, q["electronics_bay_height"] - depth / 2 + 0.1),
             )
         )
 
@@ -771,7 +783,6 @@ def build_spider() -> bpy.types.Object:
 
 def build_lid() -> bpy.types.Object:
     q = P["lid"]
-    spider = P["spider"]
     skin = cylinder("lid_skin", q["diameter"] / 2, q["skin_thickness"], (0.0, 0.0, q["skin_thickness"] / 2))
     rim = ring("lid_rim", q["diameter"] / 2, q["diameter"] / 2 - q["rim_wall"], q["skin_thickness"] - 0.1, q["height"])
     parts = [skin, rim]
@@ -783,8 +794,8 @@ def build_lid() -> bpy.types.Object:
     lid = union_all(parts, "tampa")
 
     cutters = [
-        cylinder(f"lid_screw_hole_{i}", q["screw_hole_diameter"] / 2, q["height"] + 0.4, (x, 0.0, q["height"] / 2))
-        for i, x in enumerate((-spider["lid_post_spacing"] / 2, spider["lid_post_spacing"] / 2))
+        cylinder(f"lid_screw_hole_{i}", q["screw_hole_diameter"] / 2, q["height"] + 0.4, (x, y, q["height"] / 2))
+        for i, (x, y) in enumerate(lid_post_positions())
     ]
     if P["unverified_interfaces"]["lid_access_window"]["enabled"]:
         w = q["access_window"]
@@ -1549,9 +1560,9 @@ def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, rend
     mid = rotor_z + asm["panel_mid_plane_above_datum_b"]
     shaft_top = bell_top + shaft["protrusion_above_bell"]
     nut_top = washer_z0 + nut["washer_thickness"] + nut["height"]
-    shaft_top_alt = bell_top + shaft.get("protrusion_glossary_alt_mm", shaft["protrusion_above_bell"])
+    shaft_top_alt = bell_top + shaft.get("protrusion_alt_mm", shaft["protrusion_above_bell"])
     return {
-        "shaft_above_nut_if_protrusion_12_mm": round(shaft_top_alt - nut_top, 2),
+        "shaft_above_nut_alt_protrusion_mm": round(shaft_top_alt - nut_top, 2),
         "datum_b_z_mm": rotor_z,
         "datum_a_z_mm": datum_a,
         "bell_face_z_mm": bell_top,
@@ -1792,7 +1803,15 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     add("Rebaixo da arruela", rs["counterbore_depth_measured_mm"], "%.1f ±0,1 mm" % sp["counterbore_depth"], num_ok(rs["counterbore_depth_measured_mm"], sp["counterbore_depth"] - 0.1, sp["counterbore_depth"] + 0.1), "medido; sobram %s mm de cubo sob a arruela" % rs["hub_under_washer_measured_mm"])
     add("Pele sobre os alívios do cubo", rs["pocket_skin_measured_mm"], "≥ 2,0 mm", num_ok(rs["pocket_skin_measured_mm"], 1.95), "medido")
     asm = report["assembly"]
-    add("Rosca sobrando acima da porca", asm["shaft_above_nut_mm"], "≥ 1 mm", asm["shaft_above_nut_mm"] >= 1.0, "eixo de %.0f mm acima da campânula; porca termina em Z = %.1f" % (P["unverified_interfaces"]["shaft"]["protrusion_above_bell"], asm["nut_top_z_mm"]))
+    sh = P["unverified_interfaces"]["shaft"]
+    add(
+        "Rosca sobrando acima da porca (anel de nylon engatado)",
+        asm["shaft_above_nut_mm"],
+        "≥ 1 mm",
+        asm["shaft_above_nut_mm"] >= 1.0,
+        "eixo de %.0f mm acima da campânula (glossário, não medido); com %.0f mm sobrariam %.1f. Porca de %.0f mm sobre arruela de %.1f no rebaixo de %.0f. Se reprovar: medir o eixo; porca fina DIN 439 (3 mm) + trava química resolve com 12 mm"
+        % (sh["protrusion_above_bell"], sh.get("protrusion_alt_mm", sh["protrusion_above_bell"]), asm["shaft_above_nut_alt_protrusion_mm"], P["unverified_interfaces"]["m6_nut"]["height"], P["unverified_interfaces"]["m6_nut"]["washer_thickness"], sp["counterbore_depth"]),
+    )
     add("Trilhos do berço acima da porca", rs["battery_floor_z_mm"], "≥ %.1f mm (topo da porca)" % rs["nut_top_above_hub_mm"], rs["battery_floor_z_mm"] >= rs["nut_top_above_hub_mm"], "")
     bay_ok = rs["battery_top_z_mm"] <= rs["bay_internal_height_mm"]
     add("Bateria cabe na baia sobre a porca", rs["battery_top_z_mm"], "≤ %.0f mm" % rs["bay_internal_height_mm"], bay_ok, "pack de %.0f mm sobre trilhos em Z=%.0f" % (P["unverified_interfaces"]["battery"]["height"], rs["battery_floor_z_mm"]))

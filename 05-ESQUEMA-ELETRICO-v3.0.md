@@ -1,8 +1,12 @@
-# Esquema elétrico do rotor — Hologram Orbiter v3.0
+# Esquema elétrico — Hologram Orbiter v3.0
 
-Tudo neste documento gira a 1800 RPM. **Não há anel coletor:** bateria,
-controlador, sensor de índice e as três fitas viajam juntos. A parte fixa tem
-apenas o motor, o ESC, a fonte de bancada e um ímã.
+Duas cadeias elétricas independentes, que **não se tocam**. Não há anel coletor.
+
+**No rotor** (§1 a §7): bateria, controlador, sensor de índice e as três fitas,
+tudo girando a 1800 RPM.
+
+**Na parte fixa** (§8): fonte de bancada, ESC, motor e o gerador do sinal de
+acelerador. Mais o ímã, que é o único elemento fixo que o rotor "vê".
 
 Diagrama visual: **https://claude.ai/code/artifact/e2f8094c-8807-4ece-806d-f606767c67ab**
 
@@ -170,3 +174,74 @@ capacitor num segmento. O capacitor sozinho, a r ≈ 25 mm, vale 62 g·mm contra
 diferentes: **faça o esboço de layout com as massas reais e planeje o contrapeso**,
 em vez de corrigir depois. Tudo que entrar aqui precisa ficar centrado: **1 mm de
 excentricidade em 48 g já são 48 g·mm**, seis vezes o admissível.
+
+---
+
+## 8. A parte fixa
+
+```
+Fonte de bancada ──── ESC LittleBee Spring 20A ──── motor A2212 920KV
+   6–7 V, ≥ 5 A        BLHeli_S, sinal servo            3 fases
+        │                      ▲
+        │                      │ PWM 1–2 ms, 50 Hz
+        └──── GND ─────── Arduino (gerador de rampa)
+                               │
+                        botão de parada
+```
+
+### 8.1 Por que Arduino e não gerador de bancada
+
+Você tem os dois. O gerador de bancada produz o pulso de 1–2 ms sem dificuldade,
+mas **a rampa é a função que importa** — variar a largura de pulso de 1000 para o
+alvo ao longo de 8 segundos — e isso ele não faz bem.
+
+E o ESC **não tem tempo de rampa**: o manual do BLHeli_S expõe *startup power*,
+não duração. A rampa é responsabilidade deste gerador, inteira.
+
+### 8.2 O que o firmware do gerador precisa fazer
+
+```
+ARMAÇÃO   ao ligar, manter 1000 µs por ~2 s antes de qualquer coisa.
+          O BLHeli_S só arma vendo mínimo estável; sinal ausente ou
+          alto na energização = ESC não arma, por segurança.
+
+RAMPA     de 1000 µs até o alvo em >= 8 s, linear.
+          8 s exigem 3,5 A só para acelerar; 12 s baixam para 2,3 A.
+
+PARADA    botão físico -> 1000 µs imediato. NÃO corte a alimentação
+          com o rotor girando: sem sinal o ESC entra em modo de falha
+          e o comportamento não é definido.
+
+PATAMARES para o Bloqueador A: 600, 1000, 1400 e 1800 RPM, 2 min cada.
+```
+
+### 8.3 Três coisas que costumam queimar tempo
+
+**GND comum.** Arduino, ESC e fonte de bancada precisam compartilhar o terra. Sem
+isso o ESC lê ruído em vez de sinal. É o erro mais comum e o mais difícil de
+diagnosticar.
+
+**Nível lógico.** O ESC aceita 3,3 V ou 5 V no fio de sinal; qualquer Arduino
+serve. O BEC do ESC, se houver, **não** deve alimentar o Arduino se a fonte de
+bancada já estiver ligada — escolha uma fonte só.
+
+**Configuração do ESC**, antes de qualquer ensaio de rotação:
+
+| Parâmetro | Valor | Motivo |
+|---|---|---|
+| Direction | conforme o sentido anti-horário visto de cima | bordo de ataque em +y |
+| **Brake on stop** | **desabilitado** | frear 27,6 J contra fonte de bancada empurra o barramento |
+| **Low RPM power protect** | **desabilitado** | a 1800 RPM estamos a 26 % da rotação a vazio, o regime que ela limita |
+| Startup power | começar baixo e subir | é o ajuste da partida com inércia 100× a de uma hélice |
+
+### 8.4 Opcional, mas provavelmente vale
+
+O LittleBee Spring usa um EFM8BB21, que o **Bluejay** suporta. Reflashar é
+gratuito e adiciona **telemetria de rotação por DShot bidirecional** — o Arduino
+passa a ler a rotação real, o que dispensa o tacômetro da lista de instrumentação
+e serve direto aos Bloqueadores A e D.
+
+Não adiciona governor. Se o Bloqueador E mostrar imagem instável, a malha se
+fecharia aqui, no Arduino — mas a conta de estabilidade indica que não será
+preciso: a inércia do rotor mantém a variação entre voltas em 0,03 a 0,11 %,
+contra 0,14 % de orçamento.

@@ -173,7 +173,9 @@ def main() -> None:
     lo, hi = bounds(coupon)
     c = (lo + hi) / 2
     render("cupom_canal_led", (c.x + 40, c.y - 45, hi.z + 45), (c.x, c.y, c.z), lens=70)
-    render("cupom_canal_led_secao", (lo.x - 45, c.y, c.z + 6), (lo.x, c.y, c.z), lens=70)
+    # Olhando para dentro da face cortada (z = -74 do painel), de cima e de viés:
+    # mostra a seção em degrau, o piso de 0,8 e a cavidade atrás.
+    render("cupom_canal_led_secao", (hi.x + 38, c.y - 22, hi.z + 26), (hi.x, c.y, c.z + 1), lens=70)
 
     if cap is not None:
         show_only(cap)

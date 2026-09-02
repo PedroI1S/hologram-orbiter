@@ -36,6 +36,7 @@ painéis de 208 mm por causa de folga na junta ou no canal.
 | Motor BLDC | **A2212 920KV**, 2–4S, 52 g, eixo M6, base 4×M3 em 16 × 19 mm | ✅ | — |
 | ESC | **LittleBee Spring 20A**, BLHeli_S, 25 × 13 mm | ✅ | — |
 | Fonte de bancada | ajustável; operar em **6–7 V**, ≥ 5 A | ✅ | — |
+| Gerador do sinal do ESC | **Arduino** com rampa e botão de parada — ver §8 do esquema | ✅ | — |
 | **Arruela larga Ø20 × M6** | aço, assento do aperto no cubo | 🛒 | 2 |
 | Porca M6 autotravante **baixa** | ~6 mm de altura — **não** a cônica de 14 mm que veio com o motor. Apertar a **0,6 N·m** | 🛒 | 2 |
 
@@ -153,7 +154,7 @@ pior em eficiência e corrente.
 | Termopar tipo K + leitor | sonda de 1,5 mm | bloqueador térmico | 🛒 | 40 |
 | Acelerômetro | MPU6050 | vibração e balanceamento | 🛒 | 15 |
 | Paquímetro digital | 0,01 mm | verificação dimensional | ⚠️ | 30–50 |
-| Tacômetro | óptico, ou usar o próprio hall | confirmar 1800 RPM | ⚠️ | 40 |
+| Tacômetro | dispensável se reflashar o ESC com Bluejay (telemetria DShot) | ⚠️ | 0–40 |
 | Câmera | celular a 240 fps serve | validação visual de jitter | ✅ | — |
 
 > **A resolução da balança é requisito, não conforto.** As versões anteriores

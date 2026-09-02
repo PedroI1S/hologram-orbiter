@@ -156,7 +156,8 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | Módulo do ABS | 2 GPa | catálogo genérico | ❌ |
 | Massa do painel montado | ~42,8 g | CAD + fita + ferragens | ⚠️ pesar |
 | Massa do rotor | ~273 g | soma do CAD e não-impressos | ⚠️ pesar |
-| Sensor Hall HW-477 | placa de 18 × 15 mm, A3144 + pull-up | em mãos | ⚠️ **usar o sensor nu, ver §5** |
+| Sensor de índice | **A3144 nu**, TO-92, 0,2 g | dessoldado do módulo | ✅ |
+| Gerador de sinal do ESC | Arduino ou gerador de bancada | em mãos | ✅ |
 
 **Os três itens em negrito são o caso térmico inteiro.** Se o Rth real for 6 °C/W
 em vez de 3,5, ou se o Cd vier em 0,50, os 43 °C viram 68 a 99. É por isso que o
@@ -167,23 +168,20 @@ recomendação.
 
 ## 3. Duas coisas dos componentes que não podem passar batido
 
-### O módulo hall não pode subir no rotor como está
+### Por que o sensor vai nu, e não na placa
 
-O HW-477 é uma placa de 18 × 15 mm. Dois problemas, ambos resolvidos pela mesma
-ação:
+Módulos de hall trazem pull-up próprio e conector. Dois motivos para não subirem
+no rotor:
 
-| | Massa | A r = 29 mm | Contra 9,1 g·mm admissíveis |
-|---|---:|---:|---:|
-| A3144 nu, TO-92 | 0,2 g | 5,8 g·mm | 0,6× — cabe |
-| Módulo leve | 1,5 g | 43,5 g·mm | **4,8×** |
-| Módulo com LED e pinos | 2,5 g | 72,5 g·mm | **7,9×** |
+**Elétrico.** O pull-up do módulo vai para o VCC dele. Alimentado em 5 V, a saída
+vai a 5 V — e o ESP32-C3 **não tolera 5 V** na entrada.
 
-E o elétrico é pior: **o módulo tem pull-up próprio para o seu VCC.** Alimentado
-em 5 V, a saída vai a 5 V — e o ESP32-C3 **não tolera 5 V** na entrada.
+**Balanceamento.** Uma placa de 18 × 15 mm pesa 1,5 a 2,5 g. A r = 29 mm isso
+vale 43 a 72 g·mm, contra os 9,1 admissíveis: **5 a 8 vezes fora**. O A3144 nu,
+em TO-92, pesa 0,2 g e vale 5,8 g·mm.
 
-**Dessolde o A3144 da placa e monte-o nu**, no bolso de 4,8 × 3,6 × 1,7 mm que já
-existe no CAD, com o pull-up de 10 kΩ para **3,3 V** do esquema. Resolve massa,
-tensão e encaixe de uma vez. A placa vira bancada de teste.
+O bolso do CAD tem 4,8 × 3,6 × 1,7 mm, dimensionado para o TO-92. Dessolde o
+sensor e monte-o nu, com o pull-up de 10 kΩ para **3,3 V** do esquema.
 
 ### A rampa e o governor não vêm do ESC
 

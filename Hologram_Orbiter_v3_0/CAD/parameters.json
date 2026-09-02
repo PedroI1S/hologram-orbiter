@@ -109,10 +109,10 @@
       "diameter_through_hub": 8.0,
       "smooth_length_above_bell": 5.0,
       "thread": "M6",
-      "protrusion_above_bell": 14.0,
-      "protrusion_glossary_alt_mm": 12.0,
+      "protrusion_above_bell": 12.0,
+      "protrusion_alt_mm": 14.0,
       "verified": false,
-      "note": "Datasheet (spec 6.1): saliencia de 14 mm com ~5 mm de Ø8 liso + ~7 de rosca M6; o glossario (02/09) registra 12 mm na linha do eixo e 14 na do conjunto motor. NAO MEDIDO: medir inicio e fim da rosca a partir da face da campanula e conferir se o trecho liso Ø8 existe (pode ser o corpo do adaptador de helice, que e peca separada). Com 12 mm a porca baixa termina rente ao fim do eixo e o anel de nylon nao pega rosca: usar porca fina DIN 439 (3 mm) com trava quimica ou aprofundar o rebaixo. O furo do cubo segue o trecho liso (spider.bore_diameter)."
+      "note": "Glossario (02/09, datasheet): saliencia de 12 mm; a spec 6.1 e a auditoria diziam 14 (~5 de Ø8 liso + ~7 de rosca M6, que somam 12). NAO MEDIDO: medir inicio e fim da rosca a partir da face da campanula e conferir se o trecho liso Ø8 existe (pode ser o corpo do adaptador de helice, peca separada). Com 12 mm a porca baixa de 6 mm termina 0,4 mm antes do fim do eixo: o anel de nylon nao pega rosca e a porca nao trava — o criterio 'rosca sobrando acima da porca' reprova de proposito. Saidas: porca fina M6 DIN 439 (3 mm) + trava quimica, ou eixo de 14 confirmado no paquimetro. O furo do cubo segue o trecho liso (spider.bore_diameter)."
     },
     "bell_seat": {
       "useful_seat_diameter": 25.0,
@@ -167,8 +167,8 @@
       "body_height": 3.0,
       "body_thickness": 1.5,
       "module_verified": true,
-      "mounting_decided": false,
-      "note": "O CAD preve o TO-92 nu no bolso da face inferior do cubo (dessoldado do modulo). O pull-up do modulo vai para VCC: com VCC = 5 V a saida sobe a 5 V e nao pode ir direto ao ESP32-C3 (05-ESQUEMA secao 2.1). Decisao pendente: TO-92 nu no bolso (recomendado) ou modulo inteiro na baia com o sensor apontando para baixo por um furo."
+      "mounting_decided": true,
+      "note": "Decisao 06-PENDENCIAS C3: dessoldar o A3144 do modulo e montar o TO-92 nu no bolso da face inferior do cubo, com pull-up de 10 k para 3,3 V. O modulo inteiro nao sobe no rotor: o pull-up dele vai para VCC (5 V na saida queima o ESP32-C3) e 1,5-2,5 g em r = 29 valem 43-72 g.mm."
     },
     "magnet": {
       "diameter": 4.0,
@@ -226,11 +226,12 @@
       "led_slot_width": 5.4,
       "led_slot_depth": 1.4,
       "local_wall": 2.8,
+      "local_wall_band_margin": 1.0,
       "bottom_skin": 2.0,
       "wire_pocket_height": 3.5,
       "wire_pocket_width": 8.0,
       "wire_pocket_overlap": 0.2,
-      "note": "Canal em degrau (spec secao 5.1): canal raso 12,4 x 0,6 para o PCB apoiar nos ombros, rasgo 5,4 x 1,4 so para os LEDs (profundidade total 2,0) e parede local de 2,8 apenas sob o rasgo, o que deixa piso de 0,8 mm em ponte de 5,4 mm. Bolso passante 8 x 3,5 abaixo da ponta da fita invade o canal em wire_pocket_overlap para nao deixar faces coincidentes (06-PENDENCIAS A2)."
+      "note": "Canal em degrau (spec secao 5.1): canal raso 12,4 x 0,6 para o PCB apoiar nos ombros, rasgo 5,4 x 1,4 so para os LEDs (profundidade total 2,0) e parede local de 2,8 sob o rasgo, o que deixa piso de 0,8 mm em ponte de 5,4 mm. A faixa engrossada e 1,0 mm mais larga que o rasgo de cada lado (7,4 no total): com a faixa igual ao rasgo, como a spec escreve, o piso (x 1,2-2,0) so tocaria os ombros (x 2,0-3,4) numa linha de largura zero em y = +-2,7 — aresta nao-manifold e piso solto. Bolso passante 8 x 3,5 abaixo da ponta da fita invade o canal em wire_pocket_overlap para nao deixar faces coincidentes (06-PENDENCIAS A2)."
     },
     "boss": {
       "contact_face_x": -26.0,
@@ -288,7 +289,8 @@
     "electronics_bay_id": 78.0,
     "electronics_bay_height": 26.0,
     "lid_post_spacing": 70.0,
-    "lid_post_spacing_note": "Postes encostados na parede interna da baia (r 30,7 a 39,3 com o transpasse). A spec ainda diz 58 mm, que era o valor da baia Ø66; com 58 os postes ficariam soltos no meio da baia, 6 mm longe da parede.",
+    "lid_post_axis": "y",
+    "lid_post_spacing_note": "Postes encostados na parede interna da baia (r 30,7 a 39,3 com o transpasse), no eixo y (azimutes 90 e 270 graus), entre os bracos. A spec ainda diz 58 mm, que era o valor da baia Ø66; com 58 os postes ficariam soltos no meio da baia, 6 mm longe da parede. No eixo x o poste de +x caia sobre a raiz do braco 1 (r 38-39,3) e a tangencia gerava aresta nao-manifold.",
     "lid_post_diameter": 8.0,
     "lid_post_hole_diameter": 2.8,
     "lid_post_hole_depth": 12.0,
@@ -383,14 +385,14 @@
     "balance_cups": {
       "count": 6,
       "radius": 34.0,
-      "first_center_deg": 30.0,
+      "first_center_deg": 0.0,
       "outer_diameter": 8.0,
       "inner_diameter": 6.4,
       "height": 3.0,
-      "note": "Copos para massa adesiva no topo da tampa: plano 2 de balanceamento (binario). Capacidade ~0,14 g cada; em r=34 cada copo cheio vale ~4,8 g.mm."
+      "note": "Copos para massa adesiva no topo da tampa: plano 2 de balanceamento (binario), a 0, 60, ... 300 graus (fora dos furos dos postes em 90/270). Capacidade ~0,14 g cada; em r=34 cada copo cheio vale ~4,8 g.mm."
     },
     "access_window": {
-      "x_range": [19.0, 31.0],
+      "x_range": [19.0, 29.0],
       "y_range": [-12.0, 12.0]
     },
     "mass_limit_g": 12.0,
@@ -484,7 +486,7 @@
 
   "magnet_bracket": {
     "tab_thickness": 2.5,
-    "arc_inner_radius": 18.0,
+    "arc_inner_radius": 18.5,
     "arc_outer_radius": 24.5,
     "arc_half_angle_deg": 58.0,
     "bolt_hole_diameter": 4.3,
@@ -497,7 +499,7 @@
     "air_gap": 2.5,
     "magnet_pocket_diameter": 4.3,
     "magnet_pocket_depth": 2.2,
-    "note": "Suporte do ima (peca 06) preso sob DOIS parafusos M4 da flange (r=20, -45 e +45 graus): arco de r 18 a 24,5 com os furos abertos para dentro (garfo), mais um braco radial ate o poste em r=29, 30 graus. Dois pontos de fixacao impedem a rotacao da aba, que era presa por um unico parafuso e definia sozinha a fase da imagem (06-PENDENCIAS B4). O arco passa a 3 mm da campanula (Ø30). Os dois M4 sob a aba precisam de 20 mm em vez de 16 (chapa 2 + aba 2,5 + flange 8 + porca)."
+    "note": "Suporte do ima (peca 06) preso sob DOIS parafusos M4 da flange (r=20, -45 e +45 graus): arco de r 18,5 a 24,5 com os furos abertos para dentro (garfo com boca de ~3 mm), mais um braco radial ate o poste em r=29, 30 graus. Dois pontos de fixacao impedem a rotacao da aba, que era presa por um unico parafuso e definia sozinha a fase da imagem (06-PENDENCIAS B4). O arco passa a 4,6 mm da campanula (Ø27,8). Os dois M4 sob a aba precisam de 20 mm em vez de 16 (chapa 2 + aba 2,5 + flange 8 + porca). Os fios de fase do motor devem sair pelo lado oposto ao arco (-x)."
   },
 
   "coupons": {

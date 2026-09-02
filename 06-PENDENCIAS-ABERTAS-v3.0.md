@@ -64,23 +64,14 @@ canal em 0,2 mm em vez de tangenciá-lo.
 
 ## C. Falta no esquema elétrico e na lista
 
-### C1 · Não existe fonte do sinal de acelerador
+### C1 · ~~Fonte do sinal de acelerador~~ — **resolvido**
 
-O ESC precisa de sinal servo (PWM 1–2 ms) e **nada no projeto o gera**. A parte
-fixa tem motor, ESC e fonte de bancada — nenhum microcontrolador, servo-tester
-ou rádio.
+Há Arduino e gerador de bancada disponíveis. **Use o Arduino**: o gerador de
+bancada produz o pulso, mas a **rampa de 8 s** — variar a largura de pulso ao
+longo do tempo — não é função que ele faça bem, e é a parte que importa.
 
-O datasheet do BLHeli_S fecha a questão: o ESC expõe *startup power*, mas
-**nenhum tempo de rampa**. A rampa de ≥ 8 s, a redução de potência de partida e a
-parada por software são todas funções do gerador de sinal.
-
-Acrescentar Arduino ou servo-tester com rampa ao esquema e à lista, com parada de
-emergência física na fonte.
-
-Dois ajustes de ESC que entram junto, ambos do manual Rev16.x:
-**Low RPM power protect = desabilitado** (a 1800 RPM estamos a 26 % da rotação a
-vazio, o regime que ela limita) e **Brake on stop = desabilitado** (frenagem
-regenerativa contra fonte de bancada empurra o barramento).
+O ESC não tem tempo de rampa (§C2), então ela vem daqui. Requisitos e sequência
+de armação em **§8 do esquema elétrico**.
 
 ### C2 · ~~LVC do ESC~~ — **encerrado**
 
