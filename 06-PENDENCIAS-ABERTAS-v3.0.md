@@ -56,6 +56,7 @@ canal em 0,2 mm em vez de tangenciá-lo.
 | B6 | `mass_limit_g` da base | 300, e o modelo dá 310 — único critério vermelho | 330 (a base não gira; massa ali só ajuda) |
 | B7 | Tampa de invólucro | `07_tampa_contencao_ABS.stl` existe no pacote | **remover** — fora de escopo |
 | B8 | `validate_stl.py` | checa aresta, degeneração e sinal do volume total | acrescentar **teste de enrolamento por raios** e **faces coincidentes** |
+| B9 | Canal do LED | 12,4 × **1,2** mm, para fita de 1,0 | **12,4 × 2,2 mm**, com a cavidade recuada de x = 2,0 para x = 1,0 na faixa do canal (parede local 3,0, piso 0,8) — a fita medida tem **2,0 mm** |
 
 ---
 
@@ -93,23 +94,13 @@ relação ao sensor e pode mantê-lo permanentemente ligado ou desligado.
 
 ## D. Depende de medição, não de projeto
 
-### D1 · Espessura real da fita — pode mover a térmica em 28 %
+### D1 · ~~Espessura da fita~~ — **medida em 02/09: 2,0 mm**
 
-A especificação registra a HD107S com **1,0 mm**. Um encapsulamento 5050 tem
-1,6 mm só de LED: 1,0 mm só fecha se o que foi medido foi o PCB sem o
-componente.
+A fita tem **12,0 × 2,0 mm**, não 12,0 × 1,0. O canal foi dimensionado para 1,0 e
+precisa ir a 2,2 mm de profundidade — ver **B9**, que é onde este item passou a
+viver. Deixar a fita saliente custaria +9 °C no motor.
 
-Se os LEDs sobressaírem ~1,4 mm, viram 29 cubos de 5 mm de frente por painel —
-A·Cd ≈ 200 mm² a r = 104:
-
-| | Estimativa atual | Com LEDs sobressaindo |
-|---|---:|---:|
-| Torque | 46,1 mN·m | ~60 mN·m |
-| Corrente de fase | 4,44 A | ~5,6 A |
-| Temperatura do motor | 43 °C | ~52 °C |
-
-**O cupom C02 com a fita real resolve isso em 10 minutos**, antes de qualquer
-conta de arrasto.
+Com o canal corrigido, a estimativa térmica de 43 °C permanece válida.
 
 ### D2 · Layout da baia com massas reais
 

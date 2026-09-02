@@ -177,15 +177,27 @@ parede. Elas impedem o colapso da seção, não contribuem para rigidez de flex�
 | | valor | por quê |
 |---|---:|---|
 | Largura | **12,4 mm** | fita medida com 12,0 mm + 0,2 de folga por lado |
-| Profundidade | **1,2 mm** | fita medida com 1,0 mm |
+| Profundidade | **2,2 mm** | fita medida com **2,0 mm** (medição de 02/09) |
+| Parede local sob o canal | **3,0 mm** | cavidade recua de x = 2,0 para x = 1,0 na faixa do canal |
 | Batente inferior | 2,0 mm | apoio da ponta da fita |
 | Comprimento útil | 206 mm | 29 LEDs a 6,944 mm de passo |
-| **Piso remanescente** | **0,80 mm** | parede de 2,0 menos canal de 1,2 |
+| **Piso remanescente** | **0,80 mm** | parede local de 3,0 menos canal de 2,2 |
 
 > O piso de 0,80 mm é o número crítico desta peça. São 4 camadas, em ponte de
 > 12,4 mm, e é a superfície onde a fita se apoia. **Nunca deixe cair abaixo de
-> 0,6 mm.** Se a profundidade do canal precisar aumentar, engrosse a lâmina —
-> não coma o piso.
+> 0,6 mm.**
+>
+> **Engrosse a parede localmente, não a lâmina.** A fita tem 2,0 mm e o canal
+> precisa de 2,2; numa parede de 2,0 isso romperia a cavidade. A solução é recuar
+> a cavidade de x = 2,0 para x = 1,0 apenas na faixa de 12,4 mm do canal —
+> parede local de 3,0 mm, piso de 0,8, e o perfil aerodinâmico intacto. Custa
+> 2,7 g por painel.
+>
+> Engrossar a lâmina inteira de 8 para 10 mm também resolveria, mas com **+25 %
+> de área frontal** e o mesmo aumento no arrasto. Não faça isso.
+>
+> Deixar a fita saliente 0,8 mm custa **+12 mN·m de torque, +1,1 A e +9 °C** no
+> motor. Não é opção.
 
 **Boss e junta.** O boss se projeta radialmente para dentro, de r = 98 até
 r = 74 (24 mm). A face de contato fica no **Datum C, r = 74**, encostando na
@@ -421,7 +433,12 @@ os 4 furos Ø4 em PCD 40 já servem aos dois caminhos.
 | Resistência efetiva | 0,221 Ω |
 
 > **Dois pontos onde é fácil errar.** A furação da base é um **retângulo de
-> 16 × 19 mm**, não um círculo de furos. E o rotor se prende pelo **eixo M6** —
+> 16 × 19 mm**, não um círculo de furos — e ela fica na **base** do motor, onde
+> saem os fios. A **campânula é vazada, com 5 raios, e não tem furos roscados**:
+> o eixo M6 é o único caminho nativo de fixação. Os 4 furos em PCD 19 do cubo só
+> servem com adaptador de hélice comprado à parte.
+>
+> O rotor se prende pelo **eixo M6** —
 > cubo assentado contra a face do motor, porca baixa e arruela Ø20 a 0,6 N·m
 > (§5.2). A porca cônica que acompanha o motor tem 14 mm e não serve: ocuparia
 > a baia de eletrônica.
@@ -430,7 +447,7 @@ os 4 furos Ø4 em PCD 40 já servem aos dois caminhos.
 
 | | valor |
 |---|---|
-| Seção medida | **12,0 × 1,0 mm** |
+| Seção medida | **12,0 × 2,0 mm** |
 | Passo | 6,944 mm |
 | LEDs por painel | 29 (altura útil 201 mm) |
 | Total | 87 LEDs, de 144 disponíveis no rolo de 1 m |
