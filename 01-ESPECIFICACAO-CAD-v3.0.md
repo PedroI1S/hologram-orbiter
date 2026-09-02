@@ -649,15 +649,15 @@ Arrasto (Cd lâmina 0,35 · boss carenado):
    T = 46,1 mN·m   →   I = T/Kt = 4,44 A
    P_cobre = I²R = 4,4 W   →   T_motor = 25 + 3,5·(4,4+0,7) = 43 °C
 
-Massa do painel nu = 26,9 (lâmina base)
-                   + 1,8 (canal menor remove menos material)
-                   + 2,1 (torres Ø8 → Ø10)
-                   + 3,3 (carenagem, casca de 0,9 mm)  = 34,2 g
-Massa do painel montado = 34,2 + 6,2 (fita) + 4,0 (ferragens) = 44,5 g
+Massa do painel nu, medida no STL v3.0 = 31,67 g
+                   + 0,9 (parede local do canal em degrau, a regenerar)  = 32,6 g
+Massa do painel montado = 32,6 + 6,2 (fita) + 4,0 (ferragens) ≈ 42,8 g
+
+CARGA DE PROJETO usa o teto do limite, 44,5 g — ver §2.1:
 Força centrífuga  F = m·ω²·r = 0,0445 · 188,50² · 0,100 = 158,1 N
 Deflexão 2,48 mm · Tensão 13,9 MPa · SF ≈ 2,5 (ABS ~35 MPa)
-Inércia 1,55 g·m² · Energia 27,6 J · um painel solto 7,9 J a 19,6 m/s
-Rotor completo, como construído = 252 g
+Inércia 1,55 g·m² · Energia 27,6 J · um painel solto 7,4 J a 18,9 m/s
+Rotor completo: 252 g hoje; ~273 g com a baia ampliada (a pesar)
 Balanceamento: e = 6,3/188,50 = 33,4 µm → U = 0,252 · 33,4 = 8,4 g·mm
   (cargas pelo teto de 44,5 g; balanceamento pela massa real — ver §2.1)
 Partida: rampa de 8 s → 8,0 A de pico (inércia é 100× a de uma hélice)
