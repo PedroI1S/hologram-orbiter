@@ -64,7 +64,7 @@ alimentar a placa pelo mesmo trilho.
 | SPI CLK | GPIO 4 | 74AHCT125 entrada A | 20 MHz, DMA |
 | SPI MOSI | GPIO 6 | 74AHCT125 entrada B | dados da cadeia |
 | ÍNDICE | GPIO 3 | saída do A3144 | interrupção na borda de descida |
-| V_BAT | GPIO 0 (ADC) | divisor 100k / 56k | 3,02 V a 8,4 V · corte em 2,37 V |
+| V_BAT | GPIO 0 (ADC) | divisor **150k / 47k** | 2,00 V a 8,4 V · corte em 1,58 V |
 | 5V | 5V | trilho do buck | — |
 | 3V3 | 3V3 | pull-up do hall | regulador da placa |
 | GND | GND | trilho comum | estrela no cubo |
@@ -133,8 +133,11 @@ MAPEAMENTO um quadro = 87 LEDs, na ordem física da cadeia
 SPI        20 MHz, modo 0, DMA, buffer duplo
            quadro APA102: 32 bits de início + 87 × 32 + 44 de fim
 
-BATERIA    ADC a cada 2 s; abaixo de 2,37 V (= 6,6 V, 3,3 V/célula)
+BATERIA    ADC a cada 2 s; abaixo de 1,58 V (= 6,6 V, 3,3 V/célula)
            apaga a imagem e pisca um LED de aviso
+           divisor 150k/47k: 8,4 V lê 2,00 V. NÃO use 100k/56k — daria
+           3,02 V, e o ADC do ESP32-C3 a 12 dB só é linear até ~2,5 V,
+           então bateria cheia cairia na região não linear.
 ```
 
 ### 5.1 Se só houver célula 1S
@@ -146,7 +149,7 @@ célula quase vazia; um módulo desse porte não cabe na baia. Limitando a saíd
 ~10 W, a entrada cai para 3,2–3,9 A.
 
 O divisor do ADC muda para **1:2 (100k/100k)**: 2,1 V a 4,2 V, corte em 1,5 V
-(3,0 V por célula).
+(3,0 V por célula) — dentro da faixa linear do ADC.
 
 Duas células 1S **não** formam um 2S aqui: lado a lado estouram o Ø66, empilhadas
 estouram os 20 mm.

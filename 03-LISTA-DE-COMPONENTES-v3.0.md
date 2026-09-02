@@ -117,16 +117,25 @@ pior em eficiência e corrente.
 | Item | Espec | Qtd | Sit. | ~R$ |
 |---|---|---:|:--:|---:|
 | Chapa de alumínio | 2 mm, 60 × 60 mm, cortada e furada | 1 | 🛒 | 10 |
-| Parafuso M3 × 20 + porca nylon | fixação painel → longarina | 6 + 6 | 🛒 | 8 |
-| Parafuso M3 × 8 | motor → chapa (padrão 16 × 19 mm) | 4 | 🛒 | 3 |
+| Parafuso **M3 × 40** + porca **plana** M3 | fixação painel → longarina | 6 + 6 | 🛒 | 10 |
+| Trava química média (Loctite 243) | substitui o nyloc nas juntas do painel | 1 | 🛒 | 25 |
+| Parafuso **M3 × 6** | motor → chapa (padrão 16 × 19 mm) | 4 | 🛒 | 3 |
 | Parafuso M4 × 16 + porca nylon | chapa → flange da torre | 4 + 4 | 🛒 | 5 |
 | Parafuso M3 × 10 | tampa da baia | 2 | 🛒 | 2 |
 | Massa de balanceamento | fita adesiva de chumbo ou tungstênio | — | 🛒 | 20 |
 | Grampos tipo C | fixação da base à bancada nos ensaios | 2 | 🛒 | 20 |
 | Abraçadeiras e fita kapton | fios no rotor, termopar | — | 🛒 | 15 |
 
-> **Use porca de nylon (nyloc) em tudo que gira.** Porca comum solta sob vibração
-> a 30 Hz. É barato e não negociável.
+> **Correção de 02/09 — o nyloc não cabe onde eu tinha mandado usar.** O bolso
+> hexagonal do painel tem **2,8 mm** e uma porca nyloc M3 tem **4,0 mm**; só entra
+> porca plana (2,4 mm). Nas juntas do painel, use **porca plana + trava química**.
+> Nyloc segue valendo onde há espaço: chapa → flange da torre.
+>
+> **E o comprimento estava errado.** A torre do boss tem 36 mm e a porca fica no
+> fundo dela: o parafuso precisa de **M3 × 40**, não × 20.
+>
+> **Motor → chapa: M3 × 6, não × 8.** Através de 2 mm de chapa, um M3 × 8 penetra
+> 6 mm na base do A2212, que aceita ~4–5 mm antes de tocar o enrolamento.
 
 ---
 

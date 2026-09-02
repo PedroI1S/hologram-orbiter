@@ -314,8 +314,14 @@ Impressa integrada, sem separar no fatiador.
 
 **Ventilação — requisito, não detalhe.** As aberturas de ar da baia central
 **têm que sair pela parede lateral**. Furos no piso da baia ficam vedados assim
-que a base é apoiada numa mesa. Alvo de área livre: ≥ 600 mm², distribuída para
-gerar fluxo passando pelo motor.
+que a base é apoiada numa mesa. Alvo de área livre: ≥ 600 mm².
+
+> **Não confunda o propósito.** Esta ventilação serve à baia — eletrônica de
+> base, cabos, calor por condução pela torre. **Ela não refrigera o motor**, que
+> fica em Z = 156, acima e fora da baia: o único caminho baia → motor é o furo da
+> torre e o Ø12 da chapa, cerca de 113 mm². A refrigeração do motor depende do ar
+> dentro do cilindro de contenção, cuja única troca com a sala é a tampa
+> superior. Ver §5.8.
 
 > **O diâmetro de Ø280 é definitivo, e quem manda nele é a impressora.** A mesa
 > tem 300 × 300 mm e o §7 pede brim de 8–12 mm, então 280 + 2 × 8 = 296 mm é o
@@ -596,7 +602,7 @@ Autoverificáveis a partir do modelo, sem medir peça física.
 | Parede ao redor do bolso de porca | ≥ 1,5 mm |
 | Menor parede estrutural do modelo | ≥ 0,8 mm |
 | Área livre de ventilação do cubo | ≥ 300 mm², sem abrir a baia |
-| Área livre de ventilação da base | ≥ 600 mm², **na lateral** |
+| Área livre de ventilação da base | ≥ 600 mm², **na lateral** (serve à baia, não ao motor) |
 | A × Cd do boss carenado | ≤ 350 mm² |
 | Massa por painel montado | ≤ 45 g |
 | Massa do rotor completo | ≤ 280 g |

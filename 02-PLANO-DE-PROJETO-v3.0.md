@@ -23,7 +23,7 @@ Entregáveis finais:
 | Cadeia de acionamento | ✅ definida — A2212 920KV, ESC 15 A, fonte de bancada |
 | Cadeia óptica | ✅ definida — HD107S 144/m, ESP32-C3, hall no rotor |
 | Especificação CAD | ✅ escrita e corrigida |
-| Modelo CAD | ✅ v3.0 entregue e verificado independentemente |
+| Modelo CAD | ⚠️ painéis bloqueados por 2 P0 de malha; demais peças liberadas |
 | Compras | 🛒 não iniciadas |
 | Contenção | ✅ especificada — tubo PC Ø275 × 4 × 300 mm, a encomendar |
 | Isolamento de vibração | ⚠️ decisão pendente; montagem inicial rígida |
@@ -156,16 +156,28 @@ da eletrônica de bordo.
 | Assento da campânula pequeno demais | média | alto | medição na Fase 0 | adaptador de hélice em alumínio |
 | Baia não comporta a eletrônica | média | médio | layout na Fase 0 | ESP32-C3; regulador menor; baia mais alta |
 | Vibração acima do limite | baixa | médio | FFT em G3 | balanceamento em dois planos |
-| Falha estrutural do painel | baixa | **crítico** | trinca na inspeção | SF 2,5 sem fadiga — inspecionar entre patamares |
+| Fluência do painel em operação | **média** | alto | ponta afastando entre medições | limitar tempo contínuo; medir deflexão a quente |
+| Falha estrutural do painel | baixa | **crítico** | trinca na inspeção | SF 2,5 — inspecionar entre patamares |
+| Ressonância da parte fixa | média | alto | pico fora de 1× na varredura | ensaio de impacto antes de montar o motor; grampear a base |
 
 **O risco que mais mudou de posição:** a partida. Com inércia 100× a de uma
 hélice e ESC sensorless, é agora um bloqueador próprio, não um detalhe de
 configuração.
 
-**O risco menos confortável:** o fator de segurança de 2,5 na flexão do painel,
-sem análise de fadiga. A 30 rps são 108 mil ciclos por hora. Não há FEA nem
-ensaio de fadiga no escopo — a mitigação é inspeção visual entre patamares de
-rotação e substituição preventiva se aparecer trinca.
+**O risco menos confortável — e mal nomeado até aqui.** Versões anteriores deste
+plano falavam em "fadiga, 108 mil ciclos por hora". Está errado: **a carga
+centrífuga é estática**. Num rotor de eixo vertical, nem a força centrífuga nem o
+peso mudam de direção em relação ao painel — nenhum dos dois cicla a 30 Hz. Os
+ciclos de fadiga reais são as **partidas e paradas**, que serão dezenas.
+
+O risco de verdade é **fluência**: ABS a 12–14 MPa e 40–50 °C perde cerca de
+metade do módulo em ~100 h de carga sustentada. A deflexão da ponta cresce de
+2,5 para 4–5 mm e a junta relaxa. Não há FEA no escopo — a mitigação é medir a
+posição da ponta antes e depois de uma hora a temperatura (Bloqueador B) e
+limitar o tempo de operação contínua.
+
+O que **de fato** cicla a 30 Hz é a vibração de desbalanceamento, e é por isso
+que o Bloqueador C importa.
 
 ---
 
@@ -196,4 +208,5 @@ já está escrito no plano de ensaios.
 | [`03-LISTA-DE-COMPONENTES-v3.0.md`](03-LISTA-DE-COMPONENTES-v3.0.md) | o que comprar e por quê |
 | [`04-PLANO-DE-ENSAIOS-v3.0.md`](04-PLANO-DE-ENSAIOS-v3.0.md) | bloqueadores e critérios |
 | [`05-ESQUEMA-ELETRICO-v3.0.md`](05-ESQUEMA-ELETRICO-v3.0.md) | eletrônica embarcada do rotor |
+| [`06-REVISAO-INDEPENDENTE-v3.0.md`](06-REVISAO-INDEPENDENTE-v3.0.md) | revisão externa do pacote v3.0 |
 | [`00-AUDITORIA-E-INTEGRACAO-v2.1.md`](00-AUDITORIA-E-INTEGRACAO-v2.1.md) | memória de cálculo e histórico |

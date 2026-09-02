@@ -57,8 +57,15 @@ T × tempo a cada 30 s. Medir também a temperatura da baia da base e da chapa.
 | Corpo do motor | **< 55 °C** e curva estabilizando, sem subida contínua |
 | Estrutura ABS próxima ao motor | < 60 °C |
 | Bateria no rotor | < 45 °C |
+| **Deflexão da ponta do painel** | **crescimento < 0,5 mm após 1 h a temperatura** |
 
 **Limiar de aborto:** 60 °C no motor a qualquer momento.
+
+**Meça a ponta do painel, não só a temperatura.** O ABS flui sob carga
+sustentada a quente: com 12–14 MPa e 40–50 °C, o módulo cai a cerca de metade em
+~100 h. Marque a posição radial da ponta de um painel com o rotor parado, opere
+1 h em regime, pare e meça de novo. Crescimento acima de 0,5 mm indica que a
+fluência vai comer a folga radial antes do fim do semestre.
 
 **A curva importa tanto quanto o pico.** Se a temperatura ainda estiver subindo
 aos 10 min, o ensaio não passou — repita com 20 min ou aceite que o regime
@@ -77,9 +84,24 @@ e se há caminho de ar passando pelo motor. Só depois reduzir RPM.
 montagem inicial é rígida, o que importa agora é a **vibração residual da
 estrutura**, que é consequência direta do balanceamento.
 
-**Método.** MPU6050 fixo na base, junto à torre. Amostrar a 500 Hz por 30 s a
-1800 RPM. FFT e leitura da amplitude no pico de **30 Hz** (1× rotação) e em
-60 Hz (2×).
+**Método, em duas partes.**
+
+**C0 — ensaio de impacto, antes de montar o motor.** Com a base impressa na
+bancada, MPU6050 colado junto à torre, dar um toque seco no topo da torre e
+registrar o decaimento. FFT dá a primeira frequência natural da parte fixa.
+
+O tubo Ø30 × 4 × 150 sozinho, com 322 g no topo, dá **k ≈ 50 N/mm e fn ≈ 63 Hz**
+— confortável contra os 30 Hz de excitação. O que essa conta não cobre é o
+**balanço da base sobre a mesa**: ela apoia, não é presa, e sem os furos
+periféricos não há onde grampear a pista. Se a medição der **fn < 45 Hz**,
+reforce antes de montar o motor: piso 100 % sólido num raio de 40 mm em torno da
+torre e 4 a 8 gussets da torre para a parede da baia, que hoje não trabalha.
+
+**C1 — varredura em rotação.** MPU6050 na base, junto à torre. Amostrar a 500 Hz
+e **varrer de 600 a 1800 RPM em degraus de 200**, registrando amplitude × rotação.
+Medir só a 1800 não distingue ressonância de desbalanceamento: desbalanceamento
+cresce com ω², ressonância aparece como pico numa rotação específica. FFT em cada
+patamar, lendo **30 Hz** (1× rotação) e 60 Hz (2×).
 
 **Critérios de aceite:**
 
