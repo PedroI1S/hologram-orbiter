@@ -148,6 +148,13 @@ partidas consecutivas do repouso até 1800 RPM.
 2. Reduzir a potência de partida nas configurações do ESC.
 3. Ajustar a fonte para 6–7 V, o que faz o ESC operar em duty mais alto e melhora
    a resolução de comutação em baixa rotação.
+4. **Desabilitar o "Low RPM power protect"** do BLHeli_S. A 1800 RPM estamos a
+   26 % da rotação a vazio, exatamente o regime que essa proteção limita; o
+   manual indica desabilitá-la para motores de baixo kv em tensão baixa. Em
+   troca, aumenta o risco de perda de sincronismo — ajuste de bancada.
+5. **Desabilitar o "Brake on stop".** O BLHeli_S freia com regeneração, e uma
+   fonte de bancada não afunda corrente: frear 27,6 J empurra o barramento para
+   cima.
 4. Se nada resolver, o caminho é um ESC sensored ou um controlador FOC.
 
 ---
@@ -170,7 +177,7 @@ parado e com movimento rápido dos olhos (sacada). Registrar com celular a 240 f
 | Imagem tripla ou fantasma | Δh ou raio diferentes entre painéis | remedir Datum D e o raio; reimprimir o painel fora |
 | Deslocamento angular entre varreduras | folga na junta espiga/socket | apertar; verificar as porcas nyloc |
 | Borda vertical serrilhada | jitter de fase do sensor de índice | verificar entreferro e histerese do hall |
-| Imagem "respirando" ou cisalhada | rotação instável entre voltas | ativar o **modo governor** do ESC — ver abaixo |
+| Imagem "respirando" ou cisalhada | rotação instável entre voltas | **o BLHeli_S não tem governor** — ver abaixo |
 | Cintilação periférica | 90 Hz insuficiente para o brilho usado | reduzir brilho, ou subir para 2000 RPM se A e B passarem |
 
 ---
@@ -179,8 +186,11 @@ parado e com movimento rápido dos olhos (sacada). Registrar com celular a 240 f
 o erro não acumula — mas dentro de cada volta ele cresce proporcionalmente à
 variação de rotação desde a volta anterior. Para manter o desvio abaixo de 1/4 de
 coluna, a rotação precisa ser estável dentro de **~0,14 %** de uma volta para a
-outra. Se falhar aqui, a correção é controle de rotação em malha fechada no ESC,
-não ajuste mecânico.
+outra. A inércia de 1,55 g·m² ajuda muito nisso.
+
+Se falhar aqui, **não procure ajuste mecânico e não procure o modo governor**: o
+BLHeli_S não tem malha fechada de rotação. Ou se aceita a variação, ou se troca
+o firmware por um com telemetria de RPM.
 
 ---
 

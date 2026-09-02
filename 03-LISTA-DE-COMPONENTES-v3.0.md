@@ -34,7 +34,7 @@ painéis de 208 mm por causa de folga na junta ou no canal.
 | Item | Espec | Sit. | ~R$ |
 |---|---|:--:|---:|
 | Motor BLDC | **A2212 920KV**, 2–4S, 52 g, eixo M6, base 4×M3 em 16 × 19 mm | ✅ | — |
-| ESC | 15 A com **rampa configurável** (mínimo 8 s) | ✅ | — |
+| ESC | **LittleBee Spring 20A**, BLHeli_S, 25 × 13 mm | ✅ | — |
 | Fonte de bancada | ajustável; operar em **6–7 V**, ≥ 5 A | ✅ | — |
 | **Arruela larga Ø20 × M6** | aço, assento do aperto no cubo | 🛒 | 2 |
 | Porca M6 autotravante **baixa** | ~6 mm de altura — **não** a cônica de 14 mm que veio com o motor. Apertar a **0,6 N·m** | 🛒 | 2 |
@@ -56,10 +56,10 @@ Tudo isto gira junto com o rotor.
 | Fita LED | **HD107S 144 LED/m**, RGB, 1 m — medida em **12,0 × 2,0 mm** | ✅ | — |
 | Microcontrolador | **ESP32-C3 Super Mini** (~22 × 18 mm) | ✅ | — |
 | Regulador 5 V | buck **5 V / ≥ 5 A** (mini560 ou XL4015) | 🛒 | 15 |
-| Bateria | **LiPo 2S**, envelope livre até **67 × 30 × 20 mm**, ≥ 15C, com balanceador JST-XH | 🛒 | 140–300 |
+| Bateria | **LiFePO4 2S 800 mAh 20C**, 58 × 30 × 17 mm, 50 g, 6,6 V | ✅ | — |
 | Conector | XT30 ou JST-XH para carga e balanceamento | 🛒 | 8 |
 | Chave liga/desliga | slide ou toggle miniatura, acesso pela tampa | 🛒 | 5 |
-| Sensor de índice | **A3144** (digital, TO-92, coletor aberto) — **no rotor** | 🛒 | 3 |
+| Sensor de índice | **A3144 nu**, dessoldado do módulo HW-477 — **no rotor** | ✅ | — |
 | Resistor de pull-up | 10 kΩ, do sinal do hall para **3,3 V** | 🛒 | 1 |
 | Deslocador de nível | **74AHCT125** para CLK e DATA — ou buck em 4,5 V | 🛒 | 5 |
 | Capacitor de bulk | 1000 µF / 10 V na entrada da fita | 🛒 | 3 |
@@ -67,7 +67,7 @@ Tudo isto gira junto com o rotor.
 | Fio de potência | **AWG 24**, 2 cores, ~3 m | 🛒 | 12 |
 | Fio de sinal | AWG 28, 2 cores, ~3 m | 🛒 | 8 |
 | Fita de poliéster transparente | 0,05–0,1 mm, retenção mecânica da fita LED | 🛒 | 15 |
-| Carregador LiPo 2S | balanceador | ⚠️ | 60 |
+| Carregador **modo LiFe** | 3,6 V/célula — modo LiPo (4,2 V) destrói o pack | ⚠️ | 60 |
 
 > **Empacotamento — a baia foi ampliada por causa disto.** Bateria, MCU,
 > regulador, deslocador de nível, capacitor, chave e conector numa baia que era

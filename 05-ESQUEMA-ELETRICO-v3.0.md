@@ -45,6 +45,11 @@ protegida.
 
 > Pull-up para 5 V queima a porta. Sem pull-up nenhum, não há sinal.
 
+> **Use o A3144 nu, não a placa HW-477.** O módulo tem pull-up próprio para o seu
+> VCC: alimentado em 5 V, a saída vai a 5 V e queima a entrada do ESP32-C3. E a
+> placa de 18 × 15 mm pesa 1,5–2,5 g, que a r = 29 mm valem 43 a 72 g·mm contra
+> os 9,1 admissíveis. Dessoldado, o TO-92 pesa 0,2 g e cabe no bolso do CAD.
+
 ### 2.2 3,3 V não aciona a fita com segurança
 
 A HD107S em 5 V pede `V_IH ≥ 0,7 × VDD = 3,5 V`; o ESP32-C3 entrega 3,3 V. A
@@ -133,7 +138,9 @@ MAPEAMENTO um quadro = 87 LEDs, na ordem física da cadeia
 SPI        20 MHz, modo 0, DMA, buffer duplo
            quadro APA102: 32 bits de início + 87 × 32 + 44 de fim
 
-BATERIA    ADC a cada 2 s; abaixo de 1,58 V (= 6,6 V, 3,3 V/célula)
+BATERIA    LiFePO4 2S: 7,2 V cheia · 6,6 no platô · 5,0 vazia
+           ADC a cada 2 s; corte em 1,38 V (= 5,8 V), que é o limite
+           de entrada do buck, não o da química
            apaga a imagem e pisca um LED de aviso
            divisor 150k/47k: 8,4 V lê 2,00 V. NÃO use 100k/56k — daria
            3,02 V, e o ADC do ESP32-C3 a 12 dB só é linear até ~2,5 V,
@@ -144,13 +151,13 @@ BATERIA    ADC a cada 2 s; abaixo de 1,58 V (= 6,6 V, 3,3 V/célula)
 
 | Item | Envelope | Onde |
 |---|---:|---|
-| Bateria 2S | até 67 × 30 × 20 | berço em caixa, sobre a porca M6 rebaixada |
+| Bateria LiFePO4 2S | 58 × 30 × 17 | berço em caixa, sobre a porca M6 rebaixada |
 | Buck 5 V | ~25 × 20 × 10 | parede da baia, longe da bateria |
 | ESP32-C3 Super Mini | 22 × 18 × 5 | parede oposta |
 | 74AHCT125 + pull-up + divisor | ~20 × 15 | placa perfurada junto ao MCU |
 | C bulk 1000 µF | Ø10 × 20 | junto à saída do buck |
 | Chave e conector de carga | — | janela da tampa |
-| A3144 | TO-92 | bolso na face inferior do cubo, r = 29 mm |
+| A3144 **nu** | TO-92 | bolso na face inferior do cubo, r = 29 mm — **não use a placa HW-477** |
 
 A baia foi **ampliada para Ø78 × 26 mm** (cubo Ø92), dos quais 5,6 vão para a
 porca: sobram **20,4 mm de altura** e 39 mm de raio útil. Isso aceita pack de até

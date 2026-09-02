@@ -1,40 +1,39 @@
 #!/usr/bin/env python3
 """Validação independente dos STL binários exportados.
 
-Verifica envelope, degeneração, fechamento topológico e volume orientado sem
-depender do Blender. Requer somente Python + NumPy.
+Verifica envelope, degeneração, fechamento topológico, volume orientado e —
+desde 03/09/2026 — **enrolamento por traçado de raios** e **faces
+coincidentes** (06-PENDENCIAS B8). Não depende do Blender: só Python + NumPy.
+
+Por que o teste de raios existe: uma casca invertida (enrolamento −1) tem
+todas as arestas com duas faces, volume total positivo e passa em qualquer
+checagem topológica; mas o fatiador a imprime como sólido. Foi o caso dos
+furos M3 do painel v3.0.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import struct
+import sys
 from collections import Counter, defaultdict, deque
 from pathlib import Path
 
 import numpy as np
 
-
-def read_binary_stl(path: Path) -> np.ndarray:
-    raw = path.read_bytes()
-    if len(raw) < 84:
-        raise ValueError("arquivo curto demais para STL binário")
-    triangle_count = struct.unpack_from("<I", raw, 80)[0]
-    expected = 84 + triangle_count * 50
-    if len(raw) != expected:
-        raise ValueError(
-            f"STL não binário ou truncado: {len(raw)} bytes; esperado {expected}"
-        )
-    records = np.frombuffer(raw, dtype=np.uint8, offset=84).reshape(triangle_count, 50)
-    triangles = np.empty((triangle_count, 3, 3), dtype=np.float64)
-    for i in range(triangle_count):
-        triangles[i] = np.frombuffer(records[i, 12:48].tobytes(), dtype="<f4").reshape(3, 3)
-    return triangles
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent / "CAD"))
+from probe import MeshProbe, coincident_opposite_faces, read_binary_stl  # noqa: E402
 
 
 def key(vertex: np.ndarray, tolerance: float = 1e-5) -> tuple[int, int, int]:
     return tuple(np.rint(vertex / tolerance).astype(np.int64).tolist())
+
+
+def scan_pitch(dimensions: np.ndarray) -> float:
+    """Passo da grade: ~120 raios na maior dimensão, nunca abaixo de 0,5 mm."""
+    longest = float(dimensions.max())
+    return max(0.5, round(longest / 120.0, 2))
 
 
 def analyse(path: Path) -> dict:
@@ -86,10 +85,15 @@ def analyse(path: Path) -> dict:
                     unseen.remove(neighbour)
                     queue.append(neighbour)
 
+    dims = high - low
+    pitch = scan_pitch(dims)
+    winding = MeshProbe(triangles).full_scan(pitch)
+    coincident = coincident_opposite_faces(triangles)
+
     return {
         "file": path.name,
         "triangle_count": int(len(triangles)),
-        "dimensions_mm": [round(float(v), 4) for v in high - low],
+        "dimensions_mm": [round(float(v), 4) for v in dims],
         "bounds_min_mm": [round(float(v), 4) for v in low],
         "bounds_max_mm": [round(float(v), 4) for v in high],
         "signed_volume_cm3": round(signed_volume / 1000.0, 4),
@@ -98,7 +102,20 @@ def analyse(path: Path) -> dict:
         "connected_components": components,
         "watertight": bad_edges == 0 and degenerate == 0,
         "outward_orientation": signed_volume > 0,
+        "ray_winding": {
+            "pitch_mm": winding["pitch_mm"],
+            "rays": winding["rays"],
+            "bad_winding_segments": winding["bad_winding_segments"],
+            "thin_solid_segments": winding["thin_solid_segments"],
+            "examples": winding["examples"],
+        },
+        "coincident_opposite_face_pairs": int(coincident),
+        "winding_clean": winding["bad_winding_segments"] == 0 and winding["thin_solid_segments"] == 0 and coincident == 0,
     }
+
+
+def passes(result: dict) -> bool:
+    return bool(result.get("watertight")) and bool(result.get("outward_orientation", False)) and bool(result.get("winding_clean", False))
 
 
 def main() -> int:
@@ -115,10 +132,19 @@ def main() -> int:
         except Exception as exc:
             result = {"file": path.name, "error": str(exc), "watertight": False}
         results.append(result)
-        if not result.get("watertight") or not result.get("outward_orientation", False):
+        ok = passes(result)
+        if not ok:
             failed = True
-        state = "OK" if result.get("watertight") and result.get("outward_orientation") else "FALHA"
-        print(f"{state:5} {path.name}: {result}")
+        state = "OK" if ok else "FALHA"
+        rw = result.get("ray_winding", {})
+        print(
+            f"{state:5} {path.name}: tri {result.get('triangle_count')}, vol {result.get('signed_volume_cm3')} cm³, "
+            f"comp {result.get('connected_components')}, arestas ruins {result.get('non_two_manifold_edges')}, "
+            f"enrolamento ruim {rw.get('bad_winding_segments')}, lâminas {rw.get('thin_solid_segments')}, "
+            f"faces coincidentes {result.get('coincident_opposite_face_pairs')} ({rw.get('rays')} raios @ {rw.get('pitch_mm')} mm)"
+        )
+        for example in rw.get("examples", [])[:4]:
+            print("      ", example)
 
     payload = {"all_pass": not failed, "files": results}
     if args.output:

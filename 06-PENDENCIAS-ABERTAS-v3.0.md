@@ -70,23 +70,43 @@ O ESC precisa de sinal servo (PWM 1–2 ms) e **nada no projeto o gera**. A part
 fixa tem motor, ESC e fonte de bancada — nenhum microcontrolador, servo-tester
 ou rádio.
 
-Rampa ≥ 8 s, redução de potência de partida, parada por software e modo governor
-são funções desse gerador, **não do ESC**. Acrescentar Arduino ou servo-tester
-com rampa ao esquema e à lista, com parada de emergência física na fonte.
+O datasheet do BLHeli_S fecha a questão: o ESC expõe *startup power*, mas
+**nenhum tempo de rampa**. A rampa de ≥ 8 s, a redução de potência de partida e a
+parada por software são todas funções do gerador de sinal.
 
-### C2 · LVC do ESC pode cortar na tensão de trabalho
+Acrescentar Arduino ou servo-tester com rampa ao esquema e à lista, com parada de
+emergência física na fonte.
 
-O esquema manda operar a fonte em 6–7 V para o ESC trabalhar em duty alto. Um
-ESC com detecção automática de células pode identificar 2S e cortar em 6,0–6,6 V.
-**Desabilitar o LVC ou operar em 7,4 V.** Confirmar antes da Fase 3.
+Dois ajustes de ESC que entram junto, ambos do manual Rev16.x:
+**Low RPM power protect = desabilitado** (a 1800 RPM estamos a 26 % da rotação a
+vazio, o regime que ela limita) e **Brake on stop = desabilitado** (frenagem
+regenerativa contra fonte de bancada empurra o barramento).
 
-### C3 · Polaridade do ímã não está documentada
+### C2 · ~~LVC do ESC~~ — **encerrado**
+
+O manual do BLHeli_S Rev16.x lista todos os parâmetros programáveis e **não há
+corte por baixa tensão**. A preocupação de o ESC desligar operando em 6–7 V não
+se aplica a este hardware.
+
+Em compensação, **também não há governor nem tempo de rampa** — ver C1 e o
+diagnóstico de imagem "respirando" no Bloqueador E.
+
+### C3 · Módulo hall não pode subir no rotor
+
+O HW-477 é placa de 18 × 15 mm com pull-up próprio. Alimentado em 5 V, a saída
+vai a 5 V e **queima a entrada do ESP32-C3**, que não tolera. E 1,5–2,5 g a
+r = 29 mm valem 43 a 72 g·mm contra os 9,1 admissíveis.
+
+**Dessoldar o A3144 e montar nu** no bolso de 4,8 × 3,6 × 1,7 que já existe no
+CAD, com pull-up de 10 kΩ para 3,3 V. Resolve massa, tensão e encaixe.
+
+### C4 · Polaridade do ímã não está documentada
 
 O A3144 é **unipolar**: comuta com um polo só. Se o ímã for colado invertido, não
 há pulso de índice — e o sintoma parece falha de firmware. Definir e cotar qual
 face do ímã aponta para o sensor.
 
-### C4 · Campo do motor sobre o sensor
+### C5 · Campo do motor sobre o sensor
 
 O sensor gira a ~15 mm do rotor de ímãs do motor. Esse campo é estático em
 relação ao sensor e pode mantê-lo permanentemente ligado ou desligado.

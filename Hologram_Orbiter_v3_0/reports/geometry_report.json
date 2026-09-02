@@ -2,6 +2,7 @@
   "project": {
     "name": "Hologram Orbiter",
     "version": "3.0",
+    "revision": "3.0.1 — regeneracao de 03/09/2026 (06-PENDENCIAS A1-A2, B1-B11, medicoes do glossario)",
     "units": "mm",
     "source_spec": "../../01-ESPECIFICACAO-CAD-v3.0.md",
     "generated_with": "Blender 5.2 LTS, gerador CAD/generate.py",
@@ -27,7 +28,7 @@
       "dimensions_mm": [
         148.763,
         171.777,
-        26.0
+        32.0
       ],
       "bounds_min_mm": [
         -52.763,
@@ -37,17 +38,17 @@
       "bounds_max_mm": [
         96.0,
         85.888,
-        20.0
+        26.0
       ],
-      "volume_cm3": 50.594,
-      "estimated_mass_g": 52.62,
+      "volume_cm3": 63.573,
+      "estimated_mass_g": 66.12,
       "centroid_mm": [
-        -0.029,
-        -0.017,
-        4.913
+        -0.038,
+        -0.013,
+        2.714
       ],
-      "triangles": 9250,
-      "non_manifold_edges": 0
+      "triangles": 9550,
+      "non_manifold_edges": 1
     },
     "panel_each": {
       "dimensions_mm": [
@@ -65,40 +66,40 @@
         15.0,
         104.0
       ],
-      "volume_cm3": 30.452,
-      "estimated_mass_g": 31.67,
+      "volume_cm3": 31.432,
+      "estimated_mass_g": 32.69,
       "centroid_mm": [
-        -4.227,
-        -0.335,
-        -0.016
+        -4.103,
+        -0.324,
+        0.009
       ],
-      "triangles": 3134,
+      "triangles": 4160,
       "non_manifold_edges": 0
     },
     "lid": {
       "dimensions_mm": [
-        70.0,
-        70.0,
+        82.0,
+        82.0,
         5.0
       ],
       "bounds_min_mm": [
-        -35.0,
-        -35.0,
+        -41.0,
+        -41.0,
         0.0
       ],
       "bounds_max_mm": [
-        35.0,
-        35.0,
+        41.0,
+        41.0,
         5.0
       ],
-      "volume_cm3": 7.356,
-      "estimated_mass_g": 7.65,
+      "volume_cm3": 9.659,
+      "estimated_mass_g": 10.05,
       "centroid_mm": [
-        -0.777,
-        -0.0,
-        0.493
+        -1.193,
+        0.0,
+        1.233
       ],
-      "triangles": 6312,
+      "triangles": 6550,
       "non_manifold_edges": 0
     },
     "base_tower": {
@@ -117,66 +118,40 @@
         140.0,
         154.0
       ],
-      "volume_cm3": 298.236,
-      "estimated_mass_g": 310.16,
+      "volume_cm3": 308.682,
+      "estimated_mass_g": 321.03,
       "centroid_mm": [
-        -0.025,
+        -0.024,
         0.0,
-        -4.259
+        34.672
       ],
-      "triangles": 9572,
+      "triangles": 8070,
       "non_manifold_edges": 0
     },
-    "magnet_post": {
+    "magnet_bracket": {
       "dimensions_mm": [
-        23.292,
-        10.744,
+        21.973,
+        41.857,
         21.5
       ],
       "bounds_min_mm": [
-        7.982,
-        8.949,
+        9.539,
+        -20.777,
         0.0
       ],
       "bounds_max_mm": [
-        31.275,
-        19.693,
+        31.512,
+        21.08,
         21.5
       ],
-      "volume_cm3": 1.461,
-      "estimated_mass_g": 1.52,
+      "volume_cm3": 1.779,
+      "estimated_mass_g": 1.85,
       "centroid_mm": [
-        23.23,
-        14.439,
-        7.855
+        22.728,
+        9.383,
+        6.674
       ],
-      "triangles": 1168,
-      "non_manifold_edges": 0
-    },
-    "containment_cap": {
-      "dimensions_mm": [
-        280.0,
-        280.0,
-        6.05
-      ],
-      "bounds_min_mm": [
-        -140.0,
-        -140.0,
-        -0.05
-      ],
-      "bounds_max_mm": [
-        140.0,
-        140.0,
-        6.0
-      ],
-      "volume_cm3": 183.55,
-      "estimated_mass_g": 190.89,
-      "centroid_mm": [
-        -0.0,
-        -0.0,
-        -0.239
-      ],
-      "triangles": 6984,
+      "triangles": 1828,
       "non_manifold_edges": 0
     },
     "joint_coupon": {
@@ -200,7 +175,7 @@
       "centroid_mm": [
         3.577,
         0.0,
-        -0.452
+        5.548
       ],
       "triangles": 60,
       "non_manifold_edges": 0
@@ -214,22 +189,22 @@
       "bounds_min_mm": [
         -4.0,
         -15.0,
-        0.0
+        -104.0
       ],
       "bounds_max_mm": [
         4.0,
         15.0,
-        30.0
+        -74.0
       ],
-      "volume_cm3": 6.774,
-      "estimated_mass_g": 7.04,
+      "volume_cm3": 3.465,
+      "estimated_mass_g": 3.6,
       "centroid_mm": [
-        -0.209,
-        0.0,
-        -0.046
+        -0.33,
+        0.649,
+        -89.696
       ],
-      "triangles": 44,
-      "non_manifold_edges": 0
+      "triangles": 180,
+      "non_manifold_edges": 2
     },
     "motor_plate_reference_aluminium": {
       "dimensions_mm": [
@@ -250,30 +225,57 @@
       "volume_cm3": 6.809,
       "estimated_mass_g": 18.38,
       "centroid_mm": [
-        -0.0,
-        -0.0,
-        0.0
+        0.0,
+        0.0,
+        1.0
       ],
-      "triangles": 3504,
+      "triangles": 3536,
       "non_manifold_edges": 0
     }
   },
   "derived": {
     "panel": {
-      "bare_mass_g": 31.67,
-      "assembled_mass_g": 41.87,
+      "bare_mass_g": 32.69,
+      "assembled_mass_g": 42.89,
       "assembled_mass_limit_g": 45.0,
       "datum_d_mm": 104.0,
-      "abs_centroid_z_mm": -0.016,
-      "assembled_centroid_z_estimate_mm": -1.08,
+      "abs_centroid_z_mm": 0.009,
+      "assembled_centroid_z_estimate_mm": -1.04,
       "assembled_centroid_note": "Estimativa com fita (6,2 g) e ~1,2 g de fios descendo pela cavidade até a ponta inferior. Momento parasita na junta = F × deslocamento.",
-      "parasitic_moment_n_mm": 161.3,
-      "centrifugal_force_n_with_cad_mass": 148.8,
-      "led_floor_mm": 0.8,
+      "parasitic_moment_n_mm": 158.0,
+      "centrifugal_force_n_with_cad_mass": 152.4,
+      "led_floor_nominal_mm": 0.8,
+      "led_floor_measured_mm": 0.8,
+      "led_floor_at_joint_measured_mm": 0.8,
+      "pcb_shoulder_wall_measured_mm": 1.4,
+      "socket_depth_measured_mm": 22.5,
+      "socket_to_cavity_wall_measured_mm": 1.5,
+      "screw_holes_free": [
+        true,
+        true
+      ],
+      "nut_pockets_measured": [
+        {
+          "depth_mm": 2.8,
+          "tower_solid_to_z_mm": -3.1
+        },
+        {
+          "depth_mm": 2.8,
+          "tower_solid_to_z_mm": -3.1
+        }
+      ],
+      "fairing_wall_measured_mm": 0.8,
       "nut_pocket_wall_mm": 1.65,
       "led_channel_start_z_mm": -98.5,
       "led_strip_top_z_mm": 102.9,
-      "panel_top_z_mm": 104.0
+      "panel_top_z_mm": 104.0,
+      "winding_scan": {
+        "pitch_mm": 1.0,
+        "rays": 18719,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      }
     },
     "boss_drag": {
       "frontal_width_mm": 22.0,
@@ -292,30 +294,102 @@
       "method": "Estimativa por tabela de razao de finura (Hoerner), nao CFD. Area frontal = largura radial do boss x altura das torres."
     },
     "spider": {
-      "mass_g": 52.62,
-      "mass_limit_g": 55.0,
-      "cooling_free_area_mm2": 409.6,
+      "mass_g": 66.12,
+      "mass_limit_g": 75.0,
+      "shoulder_radius_measured_mm": [
+        74.0,
+        74.0,
+        74.0
+      ],
+      "tenon_tip_radius_measured_mm": [
+        96.0,
+        96.0,
+        96.0
+      ],
+      "panel_mid_plane_radius_from_mesh_mm": 100.0,
+      "bore_free": true,
+      "counterbore_depth_measured_mm": 2.0,
+      "hub_under_washer_measured_mm": 4.0,
+      "pocket_skin_measured_mm": 2.0,
+      "cooling_free_area_mm2": 475.6,
       "hub_rim_outside_slots_mm": 1.0,
       "bay_wall_to_slot_mm": 0.5,
       "nut_top_above_hub_mm": 5.6,
       "battery_floor_z_mm": 6.0,
-      "battery_top_z_mm": 19.0,
-      "bay_internal_height_mm": 20.0
+      "battery_top_z_mm": 23.0,
+      "bay_internal_height_mm": 26.0,
+      "battery_half_diagonal_mm": 32.26,
+      "bay_inner_radius_mm": 39.0,
+      "winding_scan": {
+        "pitch_mm": 1.5,
+        "rays": 16230,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 1,
+        "examples": [
+          {
+            "fault": "lâmina de 0.0174 mm",
+            "from": [
+              -18.963,
+              -43.815,
+              -4.073
+            ],
+            "to": [
+              -18.946,
+              -43.815,
+              -4.073
+            ]
+          }
+        ]
+      }
     },
     "lid": {
-      "mass_g": 7.65,
-      "mass_limit_g": 8.0
+      "mass_g": 10.05,
+      "mass_limit_g": 12.0,
+      "winding_scan": {
+        "pitch_mm": 1.0,
+        "rays": 7885,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      }
     },
     "base_tower": {
-      "mass_g": 310.16,
-      "mass_limit_g": null,
-      "mass_note": "peça estática: sem critério de massa (decisão de 02/09/2026); só o rotor tem orçamento",
+      "mass_g": 321.03,
+      "mass_limit_g": 330.0,
       "lateral_vent_area_mm2": 1152.0,
       "footprint_diameter_mm": 280.0,
-      "footprint_with_brim_mm": 296.0
+      "footprint_extent_measured_mm": 280.0,
+      "footprint_with_brim_mm": 296.0,
+      "floor_under_flange_bolt_solid_mm": [
+        0.0,
+        3.95
+      ],
+      "upper_flange_hole_free": true,
+      "clamp_tab_hole_free": true,
+      "winding_scan": {
+        "pitch_mm": 3.0,
+        "rays": 18612,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      }
+    },
+    "magnet_bracket": {
+      "mass_g": 1.85,
+      "post_height_mm": 21.5,
+      "bolts": 2,
+      "arc_to_bell_clearance_mm": 4.1,
+      "winding_scan": {
+        "pitch_mm": 0.5,
+        "rays": 9896,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      }
     },
     "containment": {
       "enabled": true,
+      "in_scope": false,
       "cylinder_inner_diameter_mm": 266.0,
       "cylinder_outer_diameter_mm": 274.0,
       "cylinder_wall_mm": 4.0,
@@ -340,10 +414,10 @@
       "measured": true,
       "rotor_dynamic_radius_mm": 106.48,
       "radial_clearance_mm": 26.52,
-      "peripheral_holes": "removidos (spec 5.4 pedia 4 x Ø4; sem faixa livre na pista ao lado da canaleta)"
+      "peripheral_holes": "removidos (abas de grampo no lugar)"
     },
     "containment_cap": {
-      "enabled": true,
+      "enabled": false,
       "outer_diameter_mm": 280.0,
       "plate_thickness_mm": 3.0,
       "seat_depth_mm": 3.0,
@@ -422,33 +496,38 @@
       "plate_underside_z_mm": 310.0,
       "cap_top_z_mm": 313.0,
       "footprint_with_brim_mm": 296.0,
-      "mass_g": 190.89,
-      "rotor_top_z_mm": 107.0
+      "mass_g": null
     },
     "rotor": {
-      "cad_mass_g": 155.28,
-      "total_mass_estimate_g": 251.88,
+      "cad_mass_g": 174.24,
+      "total_mass_estimate_g": 273.84,
       "limit_g": 280.0,
       "components": {
-        "spider": 52.62,
-        "panels_bare_x3": 95.01,
-        "lid": 7.65,
+        "spider": 66.12,
+        "panels_bare_x3": 98.07,
+        "lid": 10.05,
         "strips_x3": 18.6,
         "hardware_x3": 12.0,
-        "battery": 48.0,
-        "nut_washer": 3.0,
+        "battery": 50.0,
+        "nut_washer": 4.0,
         "electronics_allowance": 15.0
       }
     },
     "assembly": {
+      "shaft_above_nut_if_protrusion_12_mm": 0.4,
       "datum_b_z_mm": 186.0,
       "datum_a_z_mm": 180.0,
+      "bell_face_z_mm": 180.0,
       "panel_mid_plane_z_mm": 189.0,
+      "panel_radius_used_mm": 100.0,
       "rotor_z_min_mm": 85.0,
       "rotor_z_max_mm": 293.0,
       "plate_top_z_mm": 156.0,
       "magnet_post_top_z_mm": 177.5,
       "hall_air_gap_mm": 2.5,
+      "shaft_top_z_mm": 194.0,
+      "nut_top_z_mm": 191.6,
+      "shaft_above_nut_mm": 2.4,
       "index_pulse_note": "Sensor em r=29, azimute 30° do rotor; ímã em r=29, azimute 30° da base: o pulso ocorre quando o braço 1 está alinhado com +x da base.",
       "containment_reference_top_z_mm": 310.0,
       "containment_vertical_margin_mm": 17.0
@@ -460,14 +539,14 @@
       "valor": 100.0,
       "requisito": "100 ±0,1 mm",
       "passa": true,
-      "nota": "por construção na montagem; face interna em r=96 e externa em r=104"
+      "nota": "medido: ombro da longarina na malha da aranha ([74.0, 74.0, 74.0]) + 26 da face de contato"
     },
     {
       "criterio": "Datum D",
       "valor": 104.0,
       "requisito": "104 ±0,2 mm",
       "passa": true,
-      "nota": ""
+      "nota": "da malha do painel"
     },
     {
       "criterio": "Δh entre painéis",
@@ -477,18 +556,77 @@
       "nota": "os três painéis são o mesmo STL"
     },
     {
-      "criterio": "Piso sob o canal do LED",
-      "valor": 0.8,
-      "requisito": "≥ 0,6 mm",
+      "criterio": "Ponta da espiga",
+      "valor": [
+        96.0,
+        96.0,
+        96.0
+      ],
+      "requisito": "96 ±0,1 mm",
       "passa": true,
-      "nota": ""
+      "nota": "medido na malha"
+    },
+    {
+      "criterio": "Profundidade do socket",
+      "valor": 22.5,
+      "requisito": "22.5 ±0,1 mm",
+      "passa": true,
+      "nota": "medido: primeiro material no eixo do socket"
+    },
+    {
+      "criterio": "Parede entre o fundo do socket e a cavidade",
+      "valor": 1.5,
+      "requisito": "≥ 1,2 mm",
+      "passa": true,
+      "nota": "medido"
+    },
+    {
+      "criterio": "Piso sob o rasgo dos LEDs",
+      "valor": 0.8,
+      "requisito": "≥ 0,6 mm (nominal 0.80)",
+      "passa": true,
+      "nota": "medido a meia altura; na junta: 0.8"
+    },
+    {
+      "criterio": "Ombro do PCB (parede sob o canal raso)",
+      "valor": 1.4,
+      "requisito": "≥ 1,2 mm",
+      "passa": true,
+      "nota": "medido"
+    },
+    {
+      "criterio": "Furos M3 livres em toda a torre",
+      "valor": [
+        true,
+        true
+      ],
+      "requisito": "livres (sem pino de casca invertida)",
+      "passa": true,
+      "nota": "raio ao longo do eixo de cada parafuso: enrolamento 0 em toda a extensão (06-PENDENCIAS A1)"
+    },
+    {
+      "criterio": "Bolso da porca M3",
+      "valor": [
+        2.8,
+        2.8
+      ],
+      "requisito": "2.8 ±0,1 mm, torre sólida até z = +18",
+      "passa": false,
+      "nota": "medido"
     },
     {
       "criterio": "Parede ao redor do bolso de porca",
       "valor": 1.65,
       "requisito": "≥ 1,5 mm",
       "passa": true,
-      "nota": ""
+      "nota": "geometria: torre Ø10, hexágono de circunraio 3,35"
+    },
+    {
+      "criterio": "Casca da carenagem",
+      "valor": 0.8,
+      "requisito": "0.8 ±0,05 mm",
+      "passa": true,
+      "nota": "medido no flanco plano"
     },
     {
       "criterio": "Menor parede estrutural do modelo",
@@ -498,11 +636,110 @@
       "nota": "mínimo entre piso do canal, casca da carenagem, borda do disco fora dos rasgos, pele da tampa e nervuras (1,0 mm, conforme spec §5.1)"
     },
     {
+      "criterio": "Enrolamento por raios — painel",
+      "valor": [
+        0,
+        0
+      ],
+      "requisito": "0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm",
+      "passa": true,
+      "nota": "18719 raios, passo 1.0 mm"
+    },
+    {
+      "criterio": "Enrolamento por raios — aranha",
+      "valor": [
+        0,
+        1
+      ],
+      "requisito": "0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm",
+      "passa": false,
+      "nota": "16230 raios, passo 1.5 mm"
+    },
+    {
+      "criterio": "Enrolamento por raios — tampa",
+      "valor": [
+        0,
+        0
+      ],
+      "requisito": "0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm",
+      "passa": true,
+      "nota": "7885 raios, passo 1.0 mm"
+    },
+    {
+      "criterio": "Enrolamento por raios — base",
+      "valor": [
+        0,
+        0
+      ],
+      "requisito": "0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm",
+      "passa": true,
+      "nota": "18612 raios, passo 3.0 mm"
+    },
+    {
+      "criterio": "Enrolamento por raios — suporte do ímã",
+      "valor": [
+        0,
+        0
+      ],
+      "requisito": "0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm",
+      "passa": true,
+      "nota": "9896 raios, passo 0.5 mm"
+    },
+    {
+      "criterio": "Furo do cubo livre",
+      "valor": true,
+      "requisito": "livre",
+      "passa": true,
+      "nota": "Ø8.0 para eixo medido em Ø8.0"
+    },
+    {
+      "criterio": "Rebaixo da arruela",
+      "valor": 2.0,
+      "requisito": "2.0 ±0,1 mm",
+      "passa": true,
+      "nota": "medido; sobram 4.0 mm de cubo sob a arruela"
+    },
+    {
+      "criterio": "Pele sobre os alívios do cubo",
+      "valor": 2.0,
+      "requisito": "≥ 2,0 mm",
+      "passa": true,
+      "nota": "medido"
+    },
+    {
+      "criterio": "Rosca sobrando acima da porca",
+      "valor": 2.4,
+      "requisito": "≥ 1 mm",
+      "passa": true,
+      "nota": "eixo de 14 mm acima da campânula; porca termina em Z = 191.6"
+    },
+    {
+      "criterio": "Trilhos do berço acima da porca",
+      "valor": 6.0,
+      "requisito": "≥ 5.6 mm (topo da porca)",
+      "passa": true,
+      "nota": ""
+    },
+    {
+      "criterio": "Bateria cabe na baia sobre a porca",
+      "valor": 23.0,
+      "requisito": "≤ 26 mm",
+      "passa": true,
+      "nota": "pack de 17 mm sobre trilhos em Z=6"
+    },
+    {
+      "criterio": "Berço da bateria dentro da baia (meia-diagonal)",
+      "valor": 32.26,
+      "requisito": "≤ 39 mm",
+      "passa": true,
+      "nota": "abas de topo inclusas"
+    },
+    {
       "criterio": "Área livre de ventilação do cubo",
-      "valor": 409.6,
+      "valor": 475.6,
       "requisito": "≥ 300 mm², sem abrir a baia",
       "passa": true,
-      "nota": "3 rasgos de 60° fora da baia (r 35,5–39)"
+      "nota": "3 rasgos de 60° fora da baia (r 41.5–45.0)"
     },
     {
       "criterio": "Área livre de ventilação da base",
@@ -523,31 +760,38 @@
     },
     {
       "criterio": "Massa por painel montado",
-      "valor": 41.87,
+      "valor": 42.89,
       "requisito": "≤ 45 g",
       "passa": true,
       "nota": ""
     },
     {
       "criterio": "Massa do rotor completo",
-      "valor": 251.88,
+      "valor": 273.84,
       "requisito": "≤ 280 g",
       "passa": true,
-      "nota": "inclui bateria, fitas, ferragens e folga de eletrônica"
+      "nota": "inclui bateria (50 g medidos), fitas, ferragens e folga de eletrônica"
     },
     {
       "criterio": "Massa da aranha",
-      "valor": 52.62,
-      "requisito": "≤ 55 g (alvo)",
+      "valor": 66.12,
+      "requisito": "≤ 75 g (alvo)",
       "passa": true,
-      "nota": ""
+      "nota": "alvo revisto: os 55 g da spec são anteriores ao cubo Ø92 e à baia de 26"
     },
     {
       "criterio": "Massa da tampa",
-      "valor": 7.65,
-      "requisito": "≤ 8 g (alvo)",
+      "valor": 10.05,
+      "requisito": "≤ 12 g (alvo)",
       "passa": true,
-      "nota": ""
+      "nota": "alvo revisto para Ø82"
+    },
+    {
+      "criterio": "Massa da base + torre",
+      "valor": 321.03,
+      "requisito": "≤ 330 g (alvo)",
+      "passa": true,
+      "nota": "peça estática; o custo é tempo de impressão"
     },
     {
       "criterio": "Perpendicularidade torre/base",
@@ -557,17 +801,17 @@
       "nota": "no CAD é zero; verificar na peça impressa"
     },
     {
-      "criterio": "Planeza da base",
+      "criterio": "Contato da base",
       "valor": 0.0,
-      "requisito": "±2 mm",
+      "requisito": "sem balanço; ≤ 0,2 mm em 3 pontos a 120°",
       "passa": true,
-      "nota": "no CAD é zero; verificar na peça impressa"
+      "nota": "no CAD é plano; verificar na peça impressa"
     },
     {
       "criterio": "Malhas (arestas não-manifold no gerador)",
-      "valor": 0,
+      "valor": 3,
       "requisito": "0",
-      "passa": true,
+      "passa": false,
       "nota": "validação independente em reports/stl_validation.json"
     },
     {
@@ -575,14 +819,24 @@
       "valor": 296.0,
       "requisito": "≤ 300 mm",
       "passa": true,
-      "nota": ""
+      "nota": "extensão medida na malha (com abas) 280.0 + 2 × 8 de brim"
     },
     {
-      "criterio": "Bateria cabe na baia sobre a porca",
-      "valor": 19.0,
-      "requisito": "≤ 20.0 mm",
+      "criterio": "Piso da baia íntegro sob os furos da flange",
+      "valor": [
+        0.0,
+        3.95
+      ],
+      "requisito": "sólido de Z = 0 até a flange inferior (12)",
+      "passa": false,
+      "nota": "06-PENDENCIAS B3; furos só na flange superior: True"
+    },
+    {
+      "criterio": "Abas de grampo com furo livre",
+      "valor": true,
+      "requisito": "livre",
       "passa": true,
-      "nota": "porca baixa no rebaixo, topo em Z=5.6"
+      "nota": "4 abas a 90°, furo Ø5 em r = 149"
     },
     {
       "criterio": "Fita de 201,4 mm cabe no canal",
@@ -592,6 +846,20 @@
       "nota": "batente em Z=-98.5 por causa do bolso de fios"
     },
     {
+      "criterio": "Suporte do ímã com dois pontos de fixação",
+      "valor": 2,
+      "requisito": "≥ 2 parafusos",
+      "passa": true,
+      "nota": "06-PENDENCIAS B4; arco a 4.1 mm da campânula"
+    },
+    {
+      "criterio": "Folga do suporte do ímã à campânula",
+      "valor": 4.1,
+      "requisito": "≥ 2 mm",
+      "passa": true,
+      "nota": "campânula medida em Ø28"
+    },
+    {
       "criterio": "Canaleta de assento dentro da pista",
       "valor": [
         2.8,
@@ -599,10 +867,10 @@
       ],
       "requisito": "lábios ≥ 1,2 mm",
       "passa": true,
-      "nota": "canaleta r 132.8–137.2, largura 4.4, profundidade 3"
+      "nota": "provisão (invólucro fora de escopo): canaleta r 132.8–137.2"
     },
     {
-      "criterio": "Cilindro cabe na canaleta",
+      "criterio": "Cilindro encomendado cabe na canaleta",
       "valor": [
         0.2,
         0.2
@@ -612,53 +880,18 @@
       "nota": "Ø int 266, parede 4, contra canaleta de 4.4"
     },
     {
-      "criterio": "Cotas do cilindro confirmadas",
-      "valor": "cota_de_encomenda",
-      "requisito": "verified = true",
-      "passa": true,
-      "nota": "conferir Ø interno e borda na peça recebida"
-    },
-    {
-      "criterio": "Folga radial rotor → cilindro",
+      "criterio": "Folga radial rotor → cilindro encomendado",
       "valor": 26.52,
       "requisito": "≥ 10 mm após deflexão",
       "passa": true,
-      "nota": "raio dinâmico 106.5 contra Ø int 266"
+      "nota": "informativo: raio dinâmico 106.5 contra Ø int 266"
     },
     {
-      "criterio": "Folga vertical topo do rotor → topo do cilindro",
+      "criterio": "Folga vertical topo do rotor → borda do cilindro encomendado",
       "valor": 17.0,
       "requisito": "≥ 10 mm",
       "passa": true,
-      "nota": "cilindro de 305 mm apoiado em Z=5 (piso da canaleta); a placa da tampa fica acima da borda e não desconta"
-    },
-    {
-      "criterio": "Tampa: aberturas menores que a seção do painel",
-      "valor": 28.0,
-      "requisito": "≤ 30 mm (círculo mínimo da seção 30 × 8 = Ø31,05)",
-      "passa": true,
-      "nota": "13 furos"
-    },
-    {
-      "criterio": "Tampa: área livre de ventilação",
-      "valor": 5177.3,
-      "requisito": "≥ 600 mm² (único caminho de ar com a base na mesa)",
-      "passa": true,
-      "nota": ""
-    },
-    {
-      "criterio": "Tampa + brim cabe na mesa",
-      "valor": 296.0,
-      "requisito": "≤ 300 mm",
-      "passa": true,
-      "nota": ""
-    },
-    {
-      "criterio": "Tampa: furos de ventilação fora da trajetória dos painéis",
-      "valor": 61.0,
-      "requisito": "< 96 mm (face interna do painel)",
-      "passa": true,
-      "nota": "painel solto voa para fora, nunca para dentro"
+      "nota": "informativo: cilindro de 305 mm apoiado em Z=5"
     }
   ],
   "unverified_interfaces": {
@@ -666,6 +899,8 @@
       "model": "A2212 920KV",
       "body_diameter": 27.8,
       "body_height": 24.0,
+      "body_verified": true,
+      "body_source": "paquimetro, 02/09/2026 (glossario secao 2): 38 mm no total = 24 do corpo + 14 do eixo, Ø27,8 — coincide com o datasheet",
       "mass_g": 52.0,
       "base_bolt_rectangle_x": 16.0,
       "base_bolt_rectangle_y": 19.0,
@@ -674,23 +909,25 @@
       "base_pattern_source": "datasheet (4-M3 em retangulo 16 x 19)"
     },
     "motor_stack": {
+      "plate_top_to_bell_face": 24.0,
       "plate_top_to_datum_b": 30.0,
-      "verified": false,
-      "note": "Derivado do datasheet: corpo 24 mm + cubo 6 mm. Confirmar com paquimetro. Se a campanula tiver ressalto ou houver adaptador de helice com flange, somar aqui."
+      "verified": true,
+      "seat_assumption_verified": false,
+      "note": "24 mm medidos da face da chapa ao topo da campanula (glossario, 02/09/2026) + cubo de 6 = Datum B em 30 sobre a chapa (Z = 186). Assume que o cubo assenta direto na face superior da campanula: conferir se ela e plana (raios + centro no mesmo nivel) ou se tem um ressalto central ou o corpo do adaptador de helice no caminho; qualquer um deles exige rebaixo na face inferior do cubo ou entra nesta cota."
     },
     "shaft": {
-      "smooth_diameter": 8.0,
+      "diameter_through_hub": 8.0,
       "smooth_length_above_bell": 5.0,
       "thread": "M6",
-      "thread_length": 7.0,
-      "total_protrusion_declared": 14.0,
+      "protrusion_above_bell": 14.0,
+      "protrusion_glossary_alt_mm": 12.0,
       "verified": false,
-      "note": "Spec diz 14 mm de saliencia com ~5 lisos + ~7 de rosca (=12). Medir: inicio e fim da rosca a partir da face da campanula. Define o engate da porca."
+      "note": "Datasheet (spec 6.1): saliencia de 14 mm com ~5 mm de Ø8 liso + ~7 de rosca M6; o glossario (02/09) registra 12 mm na linha do eixo e 14 na do conjunto motor. NAO MEDIDO: medir inicio e fim da rosca a partir da face da campanula e conferir se o trecho liso Ø8 existe (pode ser o corpo do adaptador de helice, que e peca separada). Com 12 mm a porca baixa termina rente ao fim do eixo e o anel de nylon nao pega rosca: usar porca fina DIN 439 (3 mm) com trava quimica ou aprofundar o rebaixo. O furo do cubo segue o trecho liso (spider.bore_diameter)."
     },
     "bell_seat": {
       "useful_seat_diameter": 25.0,
       "verified": false,
-      "note": "Desenho do motor sugere campanula vazada com raios. Se o assento util for < ~20 mm, usar adaptador de helice em aluminio (flange 25-30) e parafusar a aranha nele pelos furos adapter_bolt_pattern."
+      "note": "Campanula vazada com 5 raios (datasheet). Medir: a face de apoio e plana? Ha ressalto central em torno do eixo (Ø e altura)? Define se o cubo precisa de rebaixo inferior."
     },
     "adapter_bolt_pattern": {
       "enabled": true,
@@ -699,39 +936,55 @@
       "hole_diameter": 3.2,
       "angle_offset_deg": 45.0,
       "verified": false,
-      "note": "Furos de provisao no cubo para parafusar a aranha num adaptador de helice. PCD 19 e o padrao comum dos adaptadores 2212; medir o adaptador real."
+      "note": "Furos de provisao no cubo para parafusar a aranha num adaptador de helice, se um dia for preciso. Ficam dentro do rebaixo da arruela larga (Ø21), o que nao os inutiliza: os parafusos entram por cima com a arruela removida."
     },
     "m6_nut": {
       "type": "M6 autotravante baixa (DIN 985), NAO a porca conica de 14 mm",
       "height": 6.0,
       "across_flats": 10.0,
-      "washer_od": 12.0,
+      "washer_od": 20.0,
       "washer_thickness": 1.6,
-      "verified": false
+      "verified": false,
+      "note": "Arruela larga Ø20 e a decisao da spec secao 5.2 (1,9 MPa no ABS a 0,6 N.m). O rebaixo do cubo e washer_od + 1 para ela assentar 2 mm abaixo do topo. Se a saliencia do eixo for 12 mm e nao 14, trocar por porca fina DIN 439 (3 mm) + trava quimica."
     },
     "led_strip": {
       "width": 12.0,
-      "thickness": 1.0,
+      "thickness": 2.0,
+      "pcb_thickness": 0.4,
+      "led_package_xy": [
+        5.0,
+        5.0
+      ],
+      "led_package_height": 1.6,
       "pitch": 6.944,
       "leds_per_panel": 29,
       "strip_length": 201.4,
       "verified": true,
-      "source": "medida (spec v3.0 secao 6.2)"
+      "source": "medida em 02/09/2026: 12,0 x 2,0 (PCB ~0,4 + encapsulamento 5050 de 1,6). Canal em degrau em panel.led_channel."
     },
     "battery": {
-      "length": 57.0,
+      "length": 58.0,
       "width": 30.0,
-      "height": 13.0,
-      "mass_g": 48.0,
-      "verified": false,
-      "note": "LiPo 2S 850-1000 mAh a comprar. Berco parametrizado em spider.battery_cradle."
+      "height": 17.0,
+      "mass_g": 50.0,
+      "chemistry": "LiFe (LiFePO4) 2S, 800 mAh, 6,6 V nominal, 20C",
+      "verified": true,
+      "source": "comprada e medida, 02/09/2026 (glossario secao 2): 58 x 30 x 17 mm, 50 g",
+      "note": "Deitada ao longo de y no berco (spider.battery_cradle). Quimica LiFe: 3,3 V/celula nominal, 3,6 de carga, 2,5-2,8 de corte — o esquema eletrico (05) ainda descreve LiPo; ver 06-PENDENCIAS C5."
     },
     "hall_sensor": {
-      "package": "TO-92 (A3144 / SS49E)",
+      "package": "HW-477: modulo de 18 x 15 mm com sensor 3144 em TO-92 vertical, LED e pull-up para VCC",
+      "module_board_xy": [
+        18.0,
+        15.0
+      ],
+      "module_board_thickness": 1.6,
       "body_width": 4.0,
       "body_height": 3.0,
       "body_thickness": 1.5,
-      "verified": false
+      "module_verified": true,
+      "mounting_decided": false,
+      "note": "O CAD preve o TO-92 nu no bolso da face inferior do cubo (dessoldado do modulo). O pull-up do modulo vai para VCC: com VCC = 5 V a saida sobe a 5 V e nao pode ir direto ao ESP32-C3 (05-ESQUEMA secao 2.1). Decisao pendente: TO-92 nu no bolso (recomendado) ou modulo inteiro na baia com o sensor apontando para baixo por um furo."
     },
     "magnet": {
       "diameter": 4.0,
@@ -756,13 +1009,14 @@
       "has_top_cap": true,
       "source": "cota_de_encomenda",
       "verified": true,
-      "material": "PMMA ou PC - ensaio de dobra numa sobra ainda pendente (spec 5.8)",
-      "note": "Cotas de encomenda informadas em 02/09/2026. O cilindro assenta na canaleta da pista externa (base_tower.containment_seat) e termina em Z = 5 + 305 = 310, 17 mm acima do topo do rotor (293). Conferir Ø interno e planeza da borda na peca recebida."
+      "in_scope": false,
+      "material": "PMMA ou PC - ensaio de dobra numa sobra ainda pendente",
+      "note": "Involucro FORA DO ESCOPO desde 02/09/2026 (06-PENDENCIAS, secao 'Fora de escopo'). A canaleta 4,4 x 3 em r = 135 fica na base como provisao porque nao pode ser acrescentada depois de imprimir. A tampa impressa 07 foi removida (B7); containment_cap.enabled = true a devolve."
     },
     "lid_access_window": {
       "enabled": true,
       "verified": false,
-      "note": "Janela na tampa para chave liga/desliga e conector de carga. Posicao/tamanho dependem da eletronica real; hoje e um placeholder sobre a faixa livre ao lado da bateria."
+      "note": "Janela na tampa para chave liga/desliga e conector de carga. Posicao/tamanho dependem do layout real da baia (D2); placeholder sobre a faixa livre ao lado da bateria (x = 17,3 a 39)."
     }
   }
 }

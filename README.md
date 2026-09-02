@@ -13,11 +13,11 @@ endereçáveis giram a 1800 RPM e formam uma imagem cilíndrica suspensa de
 | Bloco | Situação |
 |---|---|
 | Ponto de operação | ✅ congelado — r = 100 mm · 1800 RPM · 90 Hz |
-| Acionamento | ✅ A2212 920KV · ESC 15 A · fonte de bancada em 6–7 V |
-| Óptica | ✅ HD107S 144 LED/m · ESP32-C3 · hall no rotor |
+| Acionamento | ✅ A2212 920KV · ESC LittleBee Spring 20A (BLHeli_S) · fonte de bancada |
+| Óptica | ✅ HD107S 144 LED/m · ESP32-C3 · A3144 no rotor |
 | Especificação CAD | ✅ escrita, corrigida e verificada |
 | Modelo CAD | ⚠️ **regeneração pendente** — 12 itens, 2 deles P0 nos painéis |
-| Compras | 🛒 não iniciadas |
+| Compras | 🔄 motor, ESC, fita, ESP32-C3, bateria LiFe e hall em mãos |
 | Isolamento de vibração | ⚠️ decisão pendente — montagem inicial rígida |
 
 Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para girar.**

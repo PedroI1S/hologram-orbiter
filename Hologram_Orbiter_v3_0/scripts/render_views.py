@@ -4,8 +4,8 @@
     blender -b --python scripts/render_views.py -- --output-dir exports/preview
 
 Importa os STL exportados e renderiza vistas de detalhe para conferência
-visual: boss/carenagem do painel, aranha por cima e por baixo, base, tampa e
-poste do ímã. Não altera nenhum STL.
+visual: boss/carenagem do painel, aranha por cima e por baixo, base, tampa,
+suporte do ímã e cupom do canal. Não altera nenhum STL.
 """
 
 from __future__ import annotations
@@ -116,13 +116,19 @@ def main() -> None:
     spider = import_stl(stl / "01_aranha_ABS.stl")
     base = import_stl(stl / "04_05_base_torre_ABS_integradas.stl")
     lid = import_stl(stl / "03_tampa_baia_ABS.stl")
-    post = import_stl(stl / "06_poste_ima_ABS.stl")
+    bracket = import_stl(stl / "06_suporte_ima_ABS.stl")
     coupon = import_stl(stl / "C02_cupom_canal_LED.stl")
     cap_path = stl / "07_tampa_contencao_ABS.stl"
     cap = import_stl(cap_path) if cap_path.exists() else None
 
+    # Remove renders de peças que não existem mais nesta revisão.
+    for stale in ("poste_ima.png", "tampa_contencao_canaleta.png", "tampa_contencao_como_impressa.png", "tampa_topo.png"):
+        p = ARGS.output_dir / stale
+        if p.exists() and (stale != "tampa_topo.png") and cap is None:
+            p.unlink()
+
     # Painel como impresso: boss para cima (+Z), 208 mm em X, canal contra a mesa.
-    # Em coordenadas do STL: x = altura do painel, y = corda (+y = bordo de ataque), z = -x_radial + 30.
+    # Em coordenadas do STL: x = altura do painel, y = corda (+y = bordo de ataque), z = 4 - x_radial.
     show_only(panel)
     lo, hi = bounds(panel)
     c = (lo + hi) / 2
@@ -133,30 +139,41 @@ def main() -> None:
     render("painel_boss_lado", (c.x + 140, boss.y + 5, hi.z - 5), (c.x, boss.y + 5, hi.z - 12), ortho_scale=64)
     render("painel_completo", (c.x, c.y - 330, hi.z + 240), (c.x, c.y, c.z), lens=45)
     render("painel_ponta_inferior_canal", (lo.x + 30, c.y - 40, lo.z - 40), (lo.x + 6, c.y, lo.z + 2), lens=70)
+    # Seção do canal em degrau vista pela ponta (a fatia do cupom mostra o mesmo).
 
     show_only(spider)
-    render("aranha_topo", (0, 0, 400), (0, 0, 0), ortho_scale=205)
-    render("aranha_perspectiva", (140, -190, 150), (0, 0, 8), lens=45)
-    render("aranha_raiz_fiacao", (75, -70, 55), (48, -4, 8), lens=85)
-    render("aranha_berco", (40, -80, 70), (0, 0, 10), lens=60)
+    render("aranha_topo", (0, 0, 400), (0, 0, 0), ortho_scale=215)
+    render("aranha_perspectiva", (150, -200, 160), (0, 0, 10), lens=45)
+    render("aranha_raiz_fiacao", (80, -75, 60), (52, -4, 10), lens=85)
+    render("aranha_berco", (45, -90, 80), (0, 0, 12), lens=60)
+    render("aranha_raiz_gusset", (115, -70, 24), (52, 0, 5), lens=70)
     spider.rotation_euler[0] = math.pi
-    render("aranha_baixo", (0, 0, 400), (0, 0, 0), ortho_scale=205)
-    render("aranha_baixo_perspectiva", (120, -160, 150), (0, 0, -10), lens=45)
+    render("aranha_baixo", (0, 0, 400), (0, 0, 0), ortho_scale=215)
+    render("aranha_baixo_perspectiva", (130, -170, 160), (0, 0, -10), lens=45)
     spider.rotation_euler[0] = 0.0
 
     show_only(base)
-    render("base_perspectiva", (300, -380, 260), (0, 0, 60), lens=40)
-    render("base_topo", (0, 0, 900), (0, 0, 0), ortho_scale=300)
+    render("base_perspectiva", (310, -390, 270), (0, 0, 60), lens=40)
+    render("base_topo", (0, 0, 900), (0, 0, 0), ortho_scale=330)
     render("base_baia_torre", (140, -170, 150), (0, 0, 70), lens=50)
+    tab = Vector((149 * math.cos(math.radians(-45)), 149 * math.sin(math.radians(-45)), 4.0))
+    render("base_aba_grampo", (tab.x + 70, tab.y - 70, 60), tab, lens=80)
+    render("base_flange_superior", (90, -110, 200), (0, 0, 150), lens=70)
 
     show_only(lid)
-    render("tampa_topo", (30, -50, 80), (0, 0, 2), lens=60)
+    render("tampa_topo", (35, -60, 90), (0, 0, 2), lens=60)
 
-    show_only(post)
-    render("poste_ima", (60, -25, 40), (22, 14, 10), lens=70)
+    show_only(bracket)
+    lo, hi = bounds(bracket)
+    c = (lo + hi) / 2
+    render("suporte_ima", (c.x + 45, c.y - 55, hi.z + 35), (c.x, c.y, hi.z / 2), lens=60)
+    render("suporte_ima_topo", (c.x, c.y, 200), (c.x, c.y, 0), ortho_scale=60)
 
     show_only(coupon)
-    render("cupom_canal_led", (25, -30, 40), (0, 0, 15), lens=70)
+    lo, hi = bounds(coupon)
+    c = (lo + hi) / 2
+    render("cupom_canal_led", (c.x + 40, c.y - 45, hi.z + 45), (c.x, c.y, c.z), lens=70)
+    render("cupom_canal_led_secao", (lo.x - 45, c.y, c.z + 6), (lo.x, c.y, c.z), lens=70)
 
     if cap is not None:
         show_only(cap)

@@ -138,19 +138,25 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | Resistência efetiva | 0,221 Ω | ponto de catálogo com hélice | ⚠️ **envelope, não Rm** |
 | Furação da base do motor | retângulo 16 × 19, 4 × M3 | datasheet | ✅ |
 | Campânula | vazada, 5 raios, sem furos roscados | datasheet | ✅ |
-| Eixo | M6, 14 mm de saliência | datasheet | ⚠️ conferir com paquímetro |
-| Altura do conjunto motor | 30 mm (24 do corpo + 6 do cubo) | derivado do datasheet | ⚠️ |
+| Eixo | M6, 12 mm de saliência | datasheet | ✅ |
+| Altura total do motor | 36 mm (24 do corpo + 12 do eixo) × Ø27,8 | medido | ✅ |
+| **Chapa → Datum B** | **30 mm** (24 do corpo + 6 do cubo) | derivado | ⚠️ o cubo desliza no eixo, não apoia nele |
 | Fita HD107S | 12,0 × 2,0 mm, 144 LED/m | **medido** | ✅ |
 | ESP32-C3 Super Mini | ~22 × 18 × 5 mm | em mãos | ✅ |
-| ESC | 15 A, rampa configurável | declarado pelo fornecedor | ⚠️ governor e LVC a confirmar |
+| ESC LittleBee Spring | **20 A contínuo, 25 A pico**, 25 × 13 mm, BLHeli_S em EFM8BB21 | datasheet | ✅ |
+| ESC: governor | **não existe** em BLHeli_S | manual Rev16.x | ✅ |
+| ESC: corte por baixa tensão | **não existe** em BLHeli_S | manual Rev16.x | ✅ |
+| ESC: tempo de rampa | **não existe** — só *startup power* (0,031–1,5) | manual Rev16.x | ✅ |
 | Fonte de bancada | ajustável | em mãos | ✅ |
-| Bateria | até 67 × 30 × 20 mm | envelope da baia | ❌ **a comprar** |
+| Bateria LiFePO4 800 mAh | 58 × 30 × 17 mm, 50 g, **6,6 V nominal**, 2S, 20C | comprada | ✅ |
+| Faixa útil da bateria | 7,2 V cheia · 6,6 no platô · **corte em 5,8** (dropout do buck) | derivado | ⚠️ |
 | **Rth do motor** | **3,5 °C/W** | assumido | ❌ **o termopar decide** |
 | **Cd da lâmina** | **0,35** | tabela de razão de finura | ❌ **o ensaio decide** |
 | **A·Cd do boss** | **≤ 350 mm²** | estimativa por finura | ❌ |
 | Módulo do ABS | 2 GPa | catálogo genérico | ❌ |
 | Massa do painel montado | ~42,8 g | CAD + fita + ferragens | ⚠️ pesar |
 | Massa do rotor | ~273 g | soma do CAD e não-impressos | ⚠️ pesar |
+| Sensor Hall HW-477 | placa de 18 × 15 mm, A3144 + pull-up | em mãos | ⚠️ **usar o sensor nu, ver §5** |
 
 **Os três itens em negrito são o caso térmico inteiro.** Se o Rth real for 6 °C/W
 em vez de 3,5, ou se o Cd vier em 0,50, os 43 °C viram 68 a 99. É por isso que o
@@ -159,7 +165,58 @@ recomendação.
 
 ---
 
-## 3. Dúvidas que ficaram, e por que não travam
+## 3. Duas coisas dos componentes que não podem passar batido
+
+### O módulo hall não pode subir no rotor como está
+
+O HW-477 é uma placa de 18 × 15 mm. Dois problemas, ambos resolvidos pela mesma
+ação:
+
+| | Massa | A r = 29 mm | Contra 9,1 g·mm admissíveis |
+|---|---:|---:|---:|
+| A3144 nu, TO-92 | 0,2 g | 5,8 g·mm | 0,6× — cabe |
+| Módulo leve | 1,5 g | 43,5 g·mm | **4,8×** |
+| Módulo com LED e pinos | 2,5 g | 72,5 g·mm | **7,9×** |
+
+E o elétrico é pior: **o módulo tem pull-up próprio para o seu VCC.** Alimentado
+em 5 V, a saída vai a 5 V — e o ESP32-C3 **não tolera 5 V** na entrada.
+
+**Dessolde o A3144 da placa e monte-o nu**, no bolso de 4,8 × 3,6 × 1,7 mm que já
+existe no CAD, com o pull-up de 10 kΩ para **3,3 V** do esquema. Resolve massa,
+tensão e encaixe de uma vez. A placa vira bancada de teste.
+
+### A rampa e o governor não vêm do ESC
+
+O manual do BLHeli_S Rev16.x lista todos os parâmetros programáveis: *startup
+power*, *commutation timing*, *demag compensation*, direção, beeps, *programming
+by TX*, min/max/center throttle, proteção térmica, *low RPM power protect* e
+*brake on stop*.
+
+**Não há governor. Não há corte por baixa tensão. Não há tempo de rampa.**
+
+Três consequências:
+
+1. O corte por baixa tensão que estava como pendência **não existe** — item
+   encerrado.
+2. A **rampa de ≥ 8 s vem do gerador de sinal**, não do ESC. Isso torna o gerador
+   ainda mais obrigatório.
+3. Se a imagem "respirar", a correção **não** é modo governor. Ou se aceita a
+   variação, ou se troca por firmware com telemetria de rotação.
+
+Dois ajustes que valem para o nosso caso, e que o manual descreve:
+
+- **Low RPM power protect = desabilitado.** A 1800 RPM estamos a 26 % da rotação
+  a vazio, exatamente o regime que essa proteção limita. O manual diz que
+  desabilitá-la "pode ser necessário para atingir potência plena em motores de
+  baixo kv com tensão de alimentação baixa". Em troca, aumenta o risco de perda
+  de sincronismo — por isso é ajuste de bancada, não de projeto.
+- **Brake on stop = desabilitado.** O BLHeli_S usa *damped light* sempre, com
+  frenagem regenerativa. Frear um rotor de 27,6 J contra uma fonte de bancada,
+  que não afunda corrente, empurra a tensão do barramento para cima.
+
+---
+
+## 4. Dúvidas que ficaram, e por que não travam
 
 | Dúvida | Por que não bloqueia |
 |---|---|
@@ -172,7 +229,7 @@ recomendação.
 
 ---
 
-## 4. Onde cada número mora
+## 5. Onde cada número mora
 
 | Se você precisa de… | Vá para |
 |---|---|

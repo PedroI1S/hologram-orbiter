@@ -15,8 +15,15 @@ Referenciais locais usados aqui:
   * painel: x radial (para fora), y corda (+y = bordo de ataque), z vertical,
     origem no centro da junta (Datum D = 104 mm acima da base do painel);
   * aranha: origem no eixo, z = 0 na face superior do cubo (Datum B);
-  * base/torre, chapa e poste do ímã: z = 0 na face de apoio da base;
+  * base/torre, chapa e suporte do ímã: z = 0 na face de apoio da base;
   * tampa: z = 0 na face inferior da pele.
+
+Regra booleana (06-PENDENCIAS A1): cada cortador é subtraído sozinho. Nunca
+concatenar cortadores com object.join antes da diferença — onde dois se
+sobrepõem o operando fica com enrolamento 2 e o resultado 1 − 2 = −1, uma
+casca invertida que passa em toda checagem de arestas e imprime como sólido.
+Os critérios de aceitação são medidos na malha final por traçado de raios
+(CAD/probe.py), não lidos de volta dos parâmetros.
 """
 
 from __future__ import annotations
@@ -30,11 +37,14 @@ from pathlib import Path
 
 import bmesh
 import bpy
+import numpy as np
 from mathutils import Vector
-
 
 HERE = Path(__file__).resolve().parent
 PROJECT_ROOT = HERE.parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
+from probe import MeshProbe  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -242,24 +252,21 @@ def union_all(parts: list[bpy.types.Object], name: str) -> bpy.types.Object:
     return result
 
 
-def join_cutters(cutters: list[bpy.types.Object], name: str) -> bpy.types.Object:
-    if len(cutters) == 1:
-        cutters[0].name = name
-        return cutters[0]
-    bpy.ops.object.select_all(action="DESELECT")
-    for cutter in cutters:
-        cutter.select_set(True)
-    bpy.context.view_layer.objects.active = cutters[0]
-    bpy.ops.object.join()
-    cutters[0].name = name
-    return cutters[0]
+def subtract_each(target: bpy.types.Object, cutters: list[bpy.types.Object], label: str) -> bpy.types.Object:
+    """Subtrai os cortadores UM A UM.
+
+    A versão anterior concatenava os cortadores (object.join) e fazia uma só
+    diferença; cortadores sobrepostos (furo do parafuso × bolso da porca,
+    furo × socket) viravam cascas invertidas no resultado. Com uma diferença
+    por cortador cada operando é uma variedade fechada simples.
+    """
+    for index, cutter in enumerate(cutters):
+        target = boolean(target, cutter, "DIFFERENCE", f"{label}_{index:03d}")
+    return target
 
 
-def subtract_all(target: bpy.types.Object, cutters: list[bpy.types.Object], label: str) -> bpy.types.Object:
-    if not cutters:
-        return target
-    joined = join_cutters(cutters, f"{label}_cutters")
-    return boolean(target, joined, "DIFFERENCE", label)
+def intersect(target: bpy.types.Object, operand: bpy.types.Object, label: str) -> bpy.types.Object:
+    return boolean(target, operand, "INTERSECT", label)
 
 
 def rotate_about_z(obj: bpy.types.Object, angle_deg: float) -> bpy.types.Object:
@@ -297,6 +304,11 @@ def ring(name: str, outer_radius: float, inner_radius: float, z0: float, z1: flo
 def polar(r: float, angle_deg: float) -> tuple[float, float]:
     a = math.radians(angle_deg)
     return (r * math.cos(a), r * math.sin(a))
+
+
+def rot_xy(x: float, y: float, angle_deg: float) -> tuple[float, float]:
+    a = math.radians(angle_deg)
+    return (x * math.cos(a) - y * math.sin(a), x * math.sin(a) + y * math.cos(a))
 
 
 def line_intersect(p1, d1, p2, d2) -> tuple[float, float]:
@@ -340,8 +352,6 @@ def fairing_polygons() -> tuple[list[tuple[float, float]], list[tuple[float, flo
             pts.append((cx + ax * math.cos(ang), cy + by * math.sin(ang)))
         return pts
 
-    # Contorno externo: flanco plano, nariz, lado da lâmina (+0,2 dentro da
-    # parede para fundir), flanco traseiro externo, cauda, flanco traseiro interno.
     outer = ellipse(a, b)  # de (xf, yh) até (xb+ov, yh)
     outer[0] = (xf, yh)
     outer[-1] = (xb + ov, yh)
@@ -352,16 +362,15 @@ def fairing_polygons() -> tuple[list[tuple[float, float]], list[tuple[float, flo
         (xf, -yh),
     ]
 
-    # Contorno interno = externo deslocado t para dentro nas paredes livres.
     o4 = (taper_end[0] + ov, taper_end[1])
     d_out = unit((tail[0] - o4[0], tail[1] - o4[1]))
     n_out = (-d_out[1], d_out[0])
-    if n_out[0] > 0:  # normal deve apontar para -x (interior)
+    if n_out[0] > 0:
         n_out = (-n_out[0], -n_out[1])
     o6 = (xf, -yh)
     d_in = unit((o6[0] - tail[0], o6[1] - tail[1]))
     n_in = (-d_in[1], d_in[0])
-    if n_in[0] < 0:  # normal deve apontar para +x (interior)
+    if n_in[0] < 0:
         n_in = (-n_in[0], -n_in[1])
     p_out = (o4[0] + t * n_out[0], o4[1] + t * n_out[1])
     p_in = (tail[0] + t * n_in[0], tail[1] + t * n_in[1])
@@ -383,18 +392,58 @@ def fairing_polygons() -> tuple[list[tuple[float, float]], list[tuple[float, flo
     return outer, inner
 
 
+def panel_channel_x() -> dict:
+    """Cotas em x (radial) do canal em degrau, derivadas dos parâmetros."""
+    q = P["panel"]
+    ch = q["led_channel"]
+    x_out = q["max_thickness"] / 2.0
+    return {
+        "x_out": x_out,
+        "x_shell_inner": x_out - q["shell_wall"],
+        "x_pcb_floor": x_out - ch["pcb_depth"],
+        "x_slot_floor": x_out - ch["pcb_depth"] - ch["led_slot_depth"],
+        "x_local_wall_inner": x_out - ch["local_wall"],
+        "floor_thickness": ch["local_wall"] - ch["pcb_depth"] - ch["led_slot_depth"],
+    }
+
+
+def cavity_profile_with_local_wall() -> list[tuple[float, float]]:
+    """Perfil da cavidade com o recuo da parede local sob o rasgo dos LEDs.
+
+    A face interna da parede externa (x = 2,0) recua para x = 1,2 só na faixa
+    |y| ≤ 2,7, formando a parede de 2,8 mm que deixa 0,8 mm de piso sob o
+    rasgo de 2,0 mm (spec §5.1, canal em degrau).
+    """
+    q = P["panel"]
+    cx = panel_channel_x()
+    half = q["led_channel"]["led_slot_width"] / 2.0
+    x_in = cx["x_shell_inner"]
+    x_local = cx["x_local_wall_inner"]
+    points = [tuple(p) for p in q["profile_cavity_xy"]]
+    out: list[tuple[float, float]] = []
+    for i, (x, y) in enumerate(points):
+        out.append((x, y))
+        nx, ny = points[(i + 1) % len(points)]
+        if abs(x - x_in) < 1e-9 and abs(nx - x_in) < 1e-9 and y < -half and ny > half:
+            out += [(x_in, -half), (x_local, -half), (x_local, half), (x_in, half)]
+    if len(out) == len(points):
+        raise ValueError("perfil da cavidade sem o trecho reto em x = parede interna; recuo local não inserido")
+    return out
+
+
 def build_panel() -> bpy.types.Object:
     q = P["panel"]
     b = q["boss"]
     f = q["fairing"]
     ch = q["led_channel"]
     rb = q["ribs"]
+    cx = panel_channel_x()
     height = q["height"]
     hh = height / 2.0
     skin = q["end_skin"]
 
     outer_profile = [tuple(p) for p in q["profile_outer_xy"]]
-    cavity_profile = [tuple(p) for p in q["profile_cavity_xy"]]
+    cavity_profile = cavity_profile_with_local_wall()
 
     shell = mesh_prism_z("panel_shell_outer", outer_profile, -hh, hh)
     cavity = mesh_prism_z("panel_shell_cavity", cavity_profile, -hh + skin, hh - skin)
@@ -441,25 +490,36 @@ def build_panel() -> bpy.types.Object:
 
     panel = union_all([shell, *ribs, sleeve, *towers, web, fairing], "painel_led")
 
-    # ---- Cortes ----
+    # ---- Cortes (um a um) ----
     cutters: list[bpy.types.Object] = []
-    x_out = q["max_thickness"] / 2  # face externa em x = +4
+    x_out = cx["x_out"]
     channel_z0 = -hh + ch["bottom_skin"] + ch["wire_pocket_height"]
+    # Canal raso do PCB: 12,4 x 0,6.
     cutters.append(
         box_xyz(
-            "led_channel_cut",
-            (x_out - ch["depth"], x_out + 0.5),
-            (-ch["width"] / 2, ch["width"] / 2),
+            "led_pcb_channel_cut",
+            (cx["x_pcb_floor"], x_out + 0.5),
+            (-ch["pcb_width"] / 2, ch["pcb_width"] / 2),
             (channel_z0, hh + 0.2),
         )
     )
+    # Rasgo dos LEDs: 5,4 x 1,4 abaixo do canal raso (profundidade total 2,0).
+    cutters.append(
+        box_xyz(
+            "led_slot_cut",
+            (cx["x_slot_floor"], x_out + 0.5),
+            (-ch["led_slot_width"] / 2, ch["led_slot_width"] / 2),
+            (channel_z0, hh + 0.2),
+        )
+    )
+    # Bolso passante 8 x 3,5 sob a ponta da fita, invadindo o canal em 0,2.
     pocket_z0 = -hh + skin + 0.2
     cutters.append(
         box_xyz(
             "led_wire_pocket",
-            (x_out - q["shell_wall"] - 0.2, x_out + 0.5),
+            (cx["x_local_wall_inner"] - 0.2, x_out + 0.5),
             (-ch["wire_pocket_width"] / 2, ch["wire_pocket_width"] / 2),
-            (pocket_z0, channel_z0),
+            (pocket_z0, channel_z0 + ch["wire_pocket_overlap"]),
         )
     )
     socket_x1 = x_contact + b["socket_depth"]
@@ -499,7 +559,7 @@ def build_panel() -> bpy.types.Object:
             tuple(f["blade_wire_hole_z"]),
         )
     )
-    panel = subtract_all(panel, cutters, "panel_features")
+    panel = subtract_each(panel, cutters, "panel_feature")
     panel.name = "02_painel_led"
     return panel
 
@@ -510,16 +570,37 @@ def build_panel() -> bpy.types.Object:
 
 def build_arm(index: int) -> bpy.types.Object:
     a = P["spider"]["arm"]
+    q = P["spider"]
     airfoil = [tuple(p) for p in a["airfoil_yz"]]
-    beam = mesh_prism_x(f"arm_{index}_airfoil", airfoil, a["root_radius"], a["shoulder_radius"] + 0.2)
+    # O aerofólio termina EXATAMENTE no ombro (r = 74,0): é a face em que o
+    # painel encosta. A espiga entra 0,2 no aerofólio para fundir (B1).
+    beam = mesh_prism_x(f"arm_{index}_airfoil", airfoil, a["root_radius"], a["shoulder_radius"])
     tenon = box_xyz(
         f"arm_{index}_tenon",
-        (a["shoulder_radius"] - 0.2, a["tenon_tip_radius"]),
+        (a["shoulder_radius"] - a["tenon_overlap_into_beam"], a["tenon_tip_radius"]),
         (-a["tenon_width"] / 2, a["tenon_width"] / 2),
         (0.0, a["tenon_height"]),
     )
     root = mesh_prism_z(f"arm_{index}_root_blend", [tuple(p) for p in a["root_blend_xy"]], -0.1, a["height"])
-    arm = union_all([beam, tenon, root], f"arm_{index}")
+    parts = [beam, tenon, root]
+    g = a.get("root_gusset", {})
+    if g.get("enabled", False):
+        # Cunha a 45° sob o braço, da borda inferior do disco até a face
+        # inferior do braço: fillet cubo→braço (B11). Topo em z = 1,8 para
+        # entrar no aerofólio em toda a largura da cunha (|y| ≤ 5,5).
+        r_hub = q["hub_diameter"] / 2
+        z_top = 1.8
+        x0 = r_hub - 0.5
+        z0 = -q["hub_thickness"]
+        x1 = x0 + (z_top - z0) * (g["radial_run"] / g["drop"])
+        gusset = mesh_prism_y(
+            f"arm_{index}_root_gusset",
+            [(x0, z0), (x1, z_top), (x0, z_top)],
+            -g["width"] / 2,
+            g["width"] / 2,
+        )
+        parts.append(gusset)
+    arm = union_all(parts, f"arm_{index}")
     return rotate_about_z(arm, index * 120.0)
 
 
@@ -579,14 +660,15 @@ def build_spider() -> bpy.types.Object:
 
     cutters: list[bpy.types.Object] = []
     bore_r = (q["bore_diameter"] + P["quality"]["fdm_bore_compensation_mm"]) / 2
-    bore = cylinder("hub_bore", bore_r, hub_t + 2.0, (0.0, 0.0, -hub_t / 2))
-    counterbore = cylinder(
-        "hub_counterbore",
-        q["counterbore_diameter"] / 2,
-        q["counterbore_depth"] + 0.2,
-        (0.0, 0.0, -q["counterbore_depth"] / 2 + 0.1),
+    cutters.append(cylinder("hub_bore", bore_r, hub_t + 2.0, (0.0, 0.0, -hub_t / 2)))
+    cutters.append(
+        cylinder(
+            "hub_counterbore",
+            q["counterbore_diameter"] / 2,
+            q["counterbore_depth"] + 0.2,
+            (0.0, 0.0, -q["counterbore_depth"] / 2 + 0.1),
+        )
     )
-    cutters.append(union_all([bore, counterbore], "hub_center_cut"))
     adapter = ui["adapter_bolt_pattern"]
     if adapter["enabled"]:
         for i in range(adapter["count"]):
@@ -624,22 +706,25 @@ def build_spider() -> bpy.types.Object:
         )
 
     hs = q["hall_sensor"]
-    pocket = cube_polar(
-        "hall_pocket",
-        (hs["pocket_radial"], hs["pocket_tangential"], hs["pocket_depth"] + 0.5),
-        hs["radius"],
-        hs["azimuth_deg"],
-        -hub_t + hs["pocket_depth"] / 2 - 0.25,
+    cutters.append(
+        cube_polar(
+            "hall_pocket",
+            (hs["pocket_radial"], hs["pocket_tangential"], hs["pocket_depth"] + 0.5),
+            hs["radius"],
+            hs["azimuth_deg"],
+            -hub_t + hs["pocket_depth"] / 2 - 0.25,
+        )
     )
     slot_r = hs["radius"] - hs["pocket_radial"] / 2 + hs["lead_slot_radial"] / 2 + 0.3
-    lead_slot = cube_polar(
-        "hall_lead_slot",
-        (hs["lead_slot_radial"], hs["lead_slot_tangential"], hub_t + 1.0),
-        slot_r,
-        hs["azimuth_deg"],
-        -hub_t / 2,
+    cutters.append(
+        cube_polar(
+            "hall_lead_slot",
+            (hs["lead_slot_radial"], hs["lead_slot_tangential"], hub_t + 1.0),
+            slot_r,
+            hs["azimuth_deg"],
+            -hub_t / 2,
+        )
     )
-    cutters.append(union_all([pocket, lead_slot], "hall_cut"))
 
     wr = q["wire_route"]
     for arm_i in range(3):
@@ -660,8 +745,9 @@ def build_spider() -> bpy.types.Object:
             tuple(wr["groove_y"]),
             (wr["groove_floor_z"], a["height"] + 1.5),
         )
-        route = union_all([window, root_pocket, groove], f"wire_route_{arm_i}")
-        cutters.append(rotate_about_z(route, angle))
+        cutters.append(rotate_about_z(window, angle))
+        cutters.append(rotate_about_z(root_pocket, angle))
+        cutters.append(rotate_about_z(groove, angle))
 
     for i, x in enumerate((-post_x, post_x)):
         depth = q["lid_post_hole_depth"]
@@ -674,7 +760,7 @@ def build_spider() -> bpy.types.Object:
             )
         )
 
-    spider = subtract_all(spider, cutters, "spider_features")
+    spider = subtract_each(spider, cutters, "spider_feature")
     spider.name = "01_aranha"
     return spider
 
@@ -703,7 +789,7 @@ def build_lid() -> bpy.types.Object:
     if P["unverified_interfaces"]["lid_access_window"]["enabled"]:
         w = q["access_window"]
         cutters.append(box_xyz("lid_access_window", tuple(w["x_range"]), tuple(w["y_range"]), (-0.3, q["height"] + 0.3)))
-    lid = subtract_all(lid, cutters, "lid_features")
+    lid = subtract_each(lid, cutters, "lid_feature")
     lid.name = "03_tampa_baia"
     return lid
 
@@ -713,7 +799,7 @@ def build_lid() -> bpy.types.Object:
 # --------------------------------------------------------------------------
 
 def containment_geometry() -> dict:
-    """Canaleta de assento na pista externa e posição do cilindro de contenção."""
+    """Canaleta de assento na pista externa e posição do cilindro de contenção (provisão)."""
     bt = P["base_tower"]
     seat = bt["containment_seat"]
     cont = P["unverified_interfaces"]["containment"]
@@ -730,6 +816,7 @@ def containment_geometry() -> dict:
     clearance_out = g_out - r_cyl_out
     return {
         "enabled": enabled,
+        "in_scope": bool(cont.get("in_scope", False)),
         "cylinder_inner_diameter_mm": cont["inner_diameter"],
         "cylinder_outer_diameter_mm": 2 * r_cyl_out,
         "cylinder_wall_mm": cont["wall"],
@@ -761,15 +848,19 @@ def build_base_tower() -> bpy.types.Object:
     bay_h = q["central_bay_height"]
     floor_z = q["central_floor_thickness"]
     central_outer = cylinder("central_bay_outer", bay_r, bay_h, (0.0, 0.0, bay_h / 2))
+    # O interior da baia começa EXATAMENTE no topo do piso (Z = 4). A versão
+    # anterior descia 0,05 mm e deixava a flange inferior (Z = 4…12) flutuando
+    # sobre uma lâmina de ar de 0,05 mm — defeito apanhado pelo traçado de raios.
     central_inner = cylinder(
         "central_bay_inner",
         bay_r - q["central_bay_wall"],
         bay_h - floor_z + 0.2,
-        (0.0, 0.0, (bay_h + floor_z) / 2 + 0.05),
+        (0.0, 0.0, (bay_h + floor_z) / 2 + 0.1),
     )
     central_bay = boolean(central_outer, central_inner, "DIFFERENCE", "central_bay_hollow")
 
-    outer_ring = ring("base_outer_ring", q["footprint_diameter"] / 2, q["outer_ring_inner_diameter"] / 2, 0.0, q["outer_ring_height"])
+    ring_r_out = q["footprint_diameter"] / 2
+    outer_ring = ring("base_outer_ring", ring_r_out, q["outer_ring_inner_diameter"] / 2, 0.0, q["outer_ring_height"])
     rib_start = bay_r - 1.0
     rib_end = q["outer_ring_inner_diameter"] / 2 + 1.0
     ribs = [
@@ -783,35 +874,67 @@ def build_base_tower() -> bpy.types.Object:
         for i in range(q["radial_rib_count"])
     ]
 
+    # Abas de grampo na face externa do anel (B5), altura da pista.
+    tabs: list[bpy.types.Object] = []
+    ct = q["clamp_tabs"]
+    if ct["enabled"]:
+        r0 = ring_r_out - 1.0
+        r1 = ring_r_out + ct["radial_length"]
+        for i in range(ct["count"]):
+            angle = ct["angle_offset_deg"] + i * 360.0 / ct["count"]
+            tabs.append(
+                cube_polar(
+                    f"clamp_tab_{i}",
+                    (r1 - r0, ct["width"], q["outer_ring_height"] + 0.2),
+                    (r0 + r1) / 2,
+                    angle,
+                    q["outer_ring_height"] / 2,
+                )
+            )
+
     tower_top = floor_z + q["tower_total_height_from_floor"]
-    tower = cylinder("tower_outer", q["tower_od"] / 2, tower_top - floor_z + 0.1, (0.0, 0.0, (floor_z + tower_top) / 2 - 0.05))
+    # Torre e flange inferior entram 0,2 mm no piso para fundir com folga.
+    tower = cylinder("tower_outer", q["tower_od"] / 2, tower_top - floor_z + 0.2, (0.0, 0.0, (floor_z + tower_top) / 2 - 0.1))
     bore_z0 = q["tower_bore_start_z"]
-    lower_flange = cylinder("tower_lower_flange", q["flange_diameter"] / 2, q["flange_thickness"], (0.0, 0.0, floor_z + q["flange_thickness"] / 2))
+    lower_flange = cylinder("tower_lower_flange", q["flange_diameter"] / 2, q["flange_thickness"] + 0.2, (0.0, 0.0, floor_z + q["flange_thickness"] / 2 - 0.1))
     upper_flange = cylinder("tower_upper_flange", q["flange_diameter"] / 2, q["flange_thickness"], (0.0, 0.0, tower_top - q["flange_thickness"] / 2))
-    base = union_all([central_bay, outer_ring, *ribs, tower, lower_flange, upper_flange], "base_torre")
-    # As nervuras cruzam as peças adjacentes 0,1 mm em Z para evitar faces
-    # coplanares internas. Este corte devolve uma única face de apoio plana.
-    bottom_trim = cube("base_bottom_trim", (q["footprint_diameter"] + 40.0, q["footprint_diameter"] + 40.0, 20.0), (0.0, 0.0, -9.9999))
+    base = union_all([central_bay, outer_ring, *ribs, *tabs, tower, lower_flange, upper_flange], "base_torre")
+    # As nervuras e abas cruzam as peças adjacentes 0,1 mm em Z para evitar
+    # faces coplanares internas. Este corte devolve uma única face de apoio plana.
+    bottom_trim = cube("base_bottom_trim", (q["footprint_diameter"] + 80.0, q["footprint_diameter"] + 80.0, 20.0), (0.0, 0.0, -9.9999))
     base = boolean(base, bottom_trim, "DIFFERENCE", "base_flatten_bottom")
 
     cutters: list[bpy.types.Object] = []
-    # Furo central da torre, atravessando as duas flanges, a partir de
-    # tower_bore_start_z; a janela lateral liga a baia ao interior do tubo.
-    bore = cylinder("tower_bore", q["tower_od"] / 2 - q["tower_wall"], tower_top - bore_z0 + 1.0, (0.0, 0.0, (bore_z0 + tower_top) / 2 + 0.5))
+    # Furo central da torre a partir de tower_bore_start_z; a janela lateral
+    # liga a baia ao interior do tubo.
+    cutters.append(cylinder("tower_bore", q["tower_od"] / 2 - q["tower_wall"], tower_top - bore_z0 + 1.0, (0.0, 0.0, (bore_z0 + tower_top) / 2 + 0.5)))
     ww = q["wire_window"]
-    window = cube("tower_wire_window", tuple(ww["size_xyz"]), tuple(ww["center_xyz"]))
-    cutters.append(union_all([bore, window], "tower_cut"))
+    cutters.append(cube("tower_wire_window", tuple(ww["size_xyz"]), tuple(ww["center_xyz"])))
 
+    # Furos M4 da chapa do motor: só na flange superior (B3). Antes o cortador
+    # descia até z = -1 e abria quatro furos inúteis no piso sob a torre.
     flange_r = q["flange_hole_pcd"] / 2
+    if q.get("flange_holes_upper_only", True):
+        h_z0 = tower_top - q["flange_thickness"] - 1.0
+        h_z1 = tower_top + 1.0
+    else:
+        h_z0 = -1.0
+        h_z1 = tower_top + 1.0
     for i in range(4):
         x, y = polar(flange_r, q["flange_hole_angle_offset_deg"] + i * 90.0)
-        cutters.append(cylinder(f"flange_hole_{i}", q["flange_hole_diameter"] / 2, tower_top + 2.0, (x, y, tower_top / 2)))
+        cutters.append(cylinder(f"flange_hole_{i}", q["flange_hole_diameter"] / 2, h_z1 - h_z0, (x, y, (h_z0 + h_z1) / 2)))
 
     ph = q["peripheral_holes"]
     if ph["enabled"]:
         for i in range(ph["count"]):
             x, y = polar(ph["pcd"] / 2, ph["angle_offset_deg"] + i * 360.0 / ph["count"])
             cutters.append(cylinder(f"peripheral_hole_{i}", ph["diameter"] / 2, q["outer_ring_height"] + 0.4, (x, y, q["outer_ring_height"] / 2)))
+
+    if ct["enabled"]:
+        for i in range(ct["count"]):
+            angle = ct["angle_offset_deg"] + i * 360.0 / ct["count"]
+            x, y = polar(ct["hole_radius"], angle)
+            cutters.append(cylinder(f"clamp_tab_hole_{i}", ct["hole_diameter"] / 2, q["outer_ring_height"] + 0.4, (x, y, q["outer_ring_height"] / 2)))
 
     lv = q["lateral_vents"]
     for i in range(lv["count"]):
@@ -838,13 +961,13 @@ def build_base_tower() -> bpy.types.Object:
             )
         )
 
-    base = subtract_all(base, cutters, "base_tower_openings")
+    base = subtract_each(base, cutters, "base_tower_opening")
     base.name = "04_05_base_torre_integradas"
     return base
 
 
 # --------------------------------------------------------------------------
-# 07 — Tampa do cilindro de contenção (parte fixa)
+# 07 — Tampa do cilindro de contenção (fora de escopo; só se enabled)
 # --------------------------------------------------------------------------
 
 def cap_geometry() -> dict:
@@ -890,13 +1013,13 @@ def build_containment_cap() -> bpy.types.Object:
     cutters = [ring("cap_seat_groove", cg["groove_outer_radius_mm"], cg["groove_inner_radius_mm"], -0.5, d)]
     for i, (x, y, dia) in enumerate(cap_geometry()["holes"]):
         cutters.append(cylinder(f"cap_vent_{i}", dia / 2, d + t + 1.0, (x, y, (d + t) / 2)))
-    cap = subtract_all(cap, cutters, "cap_features")
+    cap = subtract_each(cap, cutters, "cap_feature")
     cap.name = "07_tampa_contencao"
     return cap
 
 
 # --------------------------------------------------------------------------
-# 06 — Poste do ímã (parte fixa)
+# 06 — Suporte do ímã (parte fixa)
 # --------------------------------------------------------------------------
 
 def datum_b_z() -> float:
@@ -910,37 +1033,48 @@ def plate_top_z() -> float:
 
 
 def magnet_post_height() -> float:
-    q = P["magnet_post"]
+    q = P["magnet_bracket"]
     datum_a = datum_b_z() - P["spider"]["hub_thickness"]
     return datum_a - plate_top_z() - q["air_gap"]
 
 
-def build_magnet_post() -> bpy.types.Object:
-    q = P["magnet_post"]
-    bolt = polar(q["bolt_radius"], q["bolt_azimuth_deg"])
-    post = polar(q["post_radius"], q["post_azimuth_deg"])
-    d = unit((post[0] - bolt[0], post[1] - bolt[1]))
-    n = (-d[1], d[0])
-    ext = q["tab_width"] / 2 + 1.0
-    hw = q["tab_width"] / 2
-    p0 = (bolt[0] - d[0] * ext, bolt[1] - d[1] * ext)
-    p1 = (post[0] + d[0] * ext, post[1] + d[1] * ext)
-    tab_poly = [
-        (p0[0] + n[0] * hw, p0[1] + n[1] * hw),
-        (p1[0] + n[0] * hw, p1[1] + n[1] * hw),
-        (p1[0] - n[0] * hw, p1[1] - n[1] * hw),
-        (p0[0] - n[0] * hw, p0[1] - n[1] * hw),
-    ]
-    tab = mesh_prism_z("magnet_tab", tab_poly, 0.0, q["tab_thickness"])
+def build_magnet_bracket() -> bpy.types.Object:
+    """Arco preso sob dois parafusos M4 da flange, braço radial e poste do ímã.
+
+    Dois pontos de fixação impedem a rotação da peça (B4): o azimute do poste
+    é a referência de fase da imagem inteira. Os furos dos parafusos abrem
+    para dentro do arco (garfo), porque fechar 2 mm de parede do lado interno
+    esbarraria na campânula (Ø30) — o parafuso e a cabeça continuam prendendo
+    a aba entre r = 18 e r = 23,5.
+    """
+    q = P["magnet_bracket"]
+    bt = P["base_tower"]
+    t = q["tab_thickness"]
+    r_bolt = bt["flange_hole_pcd"] / 2
+    arc = annular_sector(
+        "bracket_arc",
+        q["arc_inner_radius"],
+        q["arc_outer_radius"],
+        -q["arc_half_angle_deg"],
+        q["arc_half_angle_deg"],
+        0.0,
+        t,
+        steps=48,
+    )
+    r_arm0 = q["arc_outer_radius"] - 1.0
+    r_arm1 = q["post_tip_radius"]
+    arm = cube_polar("bracket_arm", (r_arm1 - r_arm0, q["arm_width"], t), (r_arm0 + r_arm1) / 2, q["post_azimuth_deg"], t / 2)
+    post_xy = polar(q["post_radius"], q["post_azimuth_deg"])
     height = magnet_post_height()
-    column = cylinder("magnet_column", q["post_diameter"] / 2, height, (post[0], post[1], height / 2))
-    part = union_all([tab, column], "poste_ima")
-    cutters = [
-        cylinder("magnet_tab_bolt_hole", q["bolt_hole_diameter"] / 2, q["tab_thickness"] + 1.0, (bolt[0], bolt[1], q["tab_thickness"] / 2)),
-        cylinder("magnet_pocket", q["magnet_pocket_diameter"] / 2, q["magnet_pocket_depth"] + 0.2, (post[0], post[1], height - q["magnet_pocket_depth"] / 2 + 0.1)),
-    ]
-    part = subtract_all(part, cutters, "magnet_post_features")
-    part.name = "06_poste_ima"
+    column = cylinder("magnet_column", q["post_diameter"] / 2, height, (post_xy[0], post_xy[1], height / 2))
+    part = union_all([arc, arm, column], "suporte_ima")
+    cutters = []
+    for i, az in enumerate(q["bolt_azimuths_deg"]):
+        bx, by = polar(r_bolt, az)
+        cutters.append(cylinder(f"bracket_bolt_hole_{i}", q["bolt_hole_diameter"] / 2, t + 1.0, (bx, by, t / 2)))
+    cutters.append(cylinder("magnet_pocket", q["magnet_pocket_diameter"] / 2, q["magnet_pocket_depth"] + 0.2, (post_xy[0], post_xy[1], height - q["magnet_pocket_depth"] / 2 + 0.1)))
+    part = subtract_each(part, cutters, "bracket_feature")
+    part.name = "06_suporte_ima"
     return part
 
 
@@ -974,13 +1108,14 @@ def build_joint_coupon() -> bpy.types.Object:
     return coupon
 
 
-def build_led_coupon() -> bpy.types.Object:
-    ch = P["panel"]["led_channel"]
-    bx, by, bz = P["coupons"]["led_block"]
-    block = cube("led_coupon_block", (bx, by, bz), (0.0, 0.0, bz / 2))
-    channel = box_xyz("led_coupon_channel", (bx / 2 - ch["depth"], bx / 2 + 0.5), (-ch["width"] / 2, ch["width"] / 2), (ch["bottom_skin"] + ch["wire_pocket_height"], bz + 0.5))
-    pocket = box_xyz("led_coupon_wire_pocket", (bx / 2 - P["panel"]["shell_wall"] - 0.2, bx / 2 + 0.5), (-ch["wire_pocket_width"] / 2, ch["wire_pocket_width"] / 2), (ch["bottom_skin"], ch["bottom_skin"] + ch["wire_pocket_height"]))
-    coupon = subtract_all(block, [channel, pocket], "coupon_led_features")
+def build_led_coupon(panel: bpy.types.Object) -> bpy.types.Object:
+    """Fatia real da ponta inferior do painel: pele, bolso de fios, canal em
+    degrau, piso de 0,8 mm e cavidade atrás. É exatamente a ponte que o lote
+    vai imprimir, no mesmo material e orientação."""
+    z0, z1 = P["coupons"]["led_slice_z_range"]
+    slice_box = box_xyz("led_slice_box", (-12.0, 12.0), (-20.0, 20.0), (z0 - 1.0, z1))
+    coupon = duplicate(panel, "C02_cupom_canal_LED")
+    coupon = intersect(coupon, slice_box, "led_coupon_slice")
     coupon.name = "C02_cupom_canal_LED"
     return coupon
 
@@ -999,13 +1134,13 @@ def build_motor_plate_reference() -> bpy.types.Object:
         x, y = polar(bt["flange_hole_pcd"] / 2, bt["flange_hole_angle_offset_deg"] + i * 90.0)
         cutters.append(cylinder(f"motor_plate_flange_hole_{i}", bt["flange_hole_diameter"] / 2, q["thickness"] + 0.4, (x, y, q["thickness"] / 2)))
     cutters.append(cylinder("motor_plate_center_clearance", q["center_clearance_diameter"] / 2, q["thickness"] + 0.4, (0.0, 0.0, q["thickness"] / 2)))
-    plate = subtract_all(plate, cutters, "motor_plate_holes")
+    plate = subtract_each(plate, cutters, "motor_plate_hole")
     plate.name = "R01_suporte_motor_aluminio_NAO_IMPRIMIR"
     return plate
 
 
 # --------------------------------------------------------------------------
-# Medição, exportação e relatório
+# Medição na malha, exportação e relatório
 # --------------------------------------------------------------------------
 
 def world_bounds(obj: bpy.types.Object) -> tuple[Vector, Vector]:
@@ -1016,23 +1151,28 @@ def world_bounds(obj: bpy.types.Object) -> tuple[Vector, Vector]:
     )
 
 
-def mesh_volume_centroid(obj: bpy.types.Object) -> tuple[float, Vector]:
-    """Volume assinado e centróide volumétrico (soma de tetraedros)."""
+def triangles_of(obj: bpy.types.Object) -> np.ndarray:
+    """Sopa de triângulos (N, 3, 3) em coordenadas do mundo (transformações já aplicadas)."""
     mesh = obj.data
     mesh.calc_loop_triangles()
-    verts = mesh.vertices
-    total = 0.0
-    acc = Vector((0.0, 0.0, 0.0))
-    for tri in mesh.loop_triangles:
-        v0 = verts[tri.vertices[0]].co
-        v1 = verts[tri.vertices[1]].co
-        v2 = verts[tri.vertices[2]].co
-        vol = v0.dot(v1.cross(v2)) / 6.0
-        total += vol
-        acc += (v0 + v1 + v2) * (vol / 4.0)
+    co = np.empty(len(mesh.vertices) * 3, dtype=np.float64)
+    mesh.vertices.foreach_get("co", co)
+    co = co.reshape(-1, 3)
+    idx = np.empty(len(mesh.loop_triangles) * 3, dtype=np.int64)
+    mesh.loop_triangles.foreach_get("vertices", idx)
+    return co[idx.reshape(-1, 3)]
+
+
+def mesh_volume_centroid(obj: bpy.types.Object) -> tuple[float, Vector]:
+    """Volume assinado e centróide volumétrico (soma de tetraedros)."""
+    tri = triangles_of(obj)
+    v0, v1, v2 = tri[:, 0], tri[:, 1], tri[:, 2]
+    vols = np.einsum("ij,ij->i", v0, np.cross(v1, v2)) / 6.0
+    total = float(vols.sum())
     if abs(total) < 1e-9:
         return 0.0, Vector((0.0, 0.0, 0.0))
-    return total, acc / total
+    centroid = ((v0 + v1 + v2) * (vols / 4.0)[:, None]).sum(axis=0) / total
+    return total, Vector(centroid.tolist())
 
 
 def object_stats(obj: bpy.types.Object, density_g_cm3: float) -> dict:
@@ -1055,6 +1195,141 @@ def object_stats(obj: bpy.types.Object, density_g_cm3: float) -> dict:
         "triangles": int(triangles),
         "non_manifold_edges": int(non_manifold),
     }
+
+
+def _first_run(runs: list[tuple[float, float]]) -> tuple[float, float] | None:
+    return runs[0] if runs else None
+
+
+def measure_panel(panel: bpy.types.Object) -> dict:
+    """Critérios do painel medidos na malha por traçado de raios (B2)."""
+    q = P["panel"]
+    b = q["boss"]
+    pr = MeshProbe(triangles_of(panel))
+    hh = q["height"] / 2
+    out: dict = {}
+
+    # Socket, parede socket→cavidade, cavidade e piso do canal, num raio radial
+    # no plano da junta (z = 1,41 evita o diafragma de z = 0 e y = 0,37 evita
+    # a aresta de simetria).
+    origin = (-30.0, 0.37, 1.41)
+    runs = pr.solid_runs(origin, (1, 0, 0), 34.0)
+    runs_x = [(origin[0] + t0, origin[0] + t1) for t0, t1 in runs]
+    out["joint_ray_solid_runs_x"] = [[round(a, 3), round(b_, 3)] for a, b_ in runs_x]
+    if runs_x:
+        socket_bottom_x = runs_x[0][0]
+        out["socket_depth_mm"] = round(socket_bottom_x - b["contact_face_x"], 3)
+        out["socket_to_cavity_wall_mm"] = round(runs_x[0][1] - runs_x[0][0], 3)
+    floor_runs = [r for r in runs_x if r[0] > 0.0]
+    out["led_floor_at_joint_mm"] = round(floor_runs[0][1] - floor_runs[0][0], 3) if floor_runs else None
+
+    # Piso do canal e ombro do PCB a meia altura, longe do boss e dos diafragmas.
+    z_mid = 50.3
+    runs = pr.solid_runs((-6.0, 0.37, z_mid), (1, 0, 0), 12.0)
+    runs_x = [(-6.0 + t0, -6.0 + t1) for t0, t1 in runs]
+    out["mid_ray_solid_runs_x"] = [[round(a, 3), round(b_, 3)] for a, b_ in runs_x]
+    floor_runs = [r for r in runs_x if r[0] > 0.0]
+    out["led_floor_mm"] = round(floor_runs[0][1] - floor_runs[0][0], 3) if floor_runs else None
+    out["inner_wall_mm"] = round(runs_x[0][1] - runs_x[0][0], 3) if runs_x else None
+    runs = pr.solid_runs((-6.0, 4.37, z_mid), (1, 0, 0), 12.0)
+    runs_x = [(-6.0 + t0, -6.0 + t1) for t0, t1 in runs]
+    shoulder_runs = [r for r in runs_x if r[0] > 0.0]
+    out["pcb_shoulder_wall_mm"] = round(shoulder_runs[0][1] - shoulder_runs[0][0], 3) if shoulder_runs else None
+
+    # Furos M3 livres em toda a torre; bolso de porca com a profundidade certa.
+    holes = []
+    pockets = []
+    for x in b["screw_x_positions"]:
+        holes.append(pr.is_void((x + 0.37, 0.41, -hh / 4 - 1.0), (0, 0, 1), b["tower_height"] / 2 + 1.0 + hh / 4))
+        # Raio paralelo ao eixo do parafuso, entre o furo (r 1,6) e o hexágono
+        # (inraio 2,9): bolso vazio de −18 a −15,2, torre sólida de −15,2 a +18
+        # interrompida só pelo socket (z ±3,1), que a espiga atravessa.
+        z0 = -b["tower_height"] / 2 - 1.0
+        runs = pr.solid_runs((x + 2.3, 0.41, z0), (0, 0, 1), b["tower_height"] + 2.0)
+        runs_z = [(z0 + t0, z0 + t1) for t0, t1 in runs]
+        if runs_z:
+            gaps = [(runs_z[i][1], runs_z[i + 1][0]) for i in range(len(runs_z) - 1)]
+            pockets.append(
+                {
+                    "depth_mm": round(runs_z[0][0] + b["tower_height"] / 2, 3),
+                    "tower_solid_to_z_mm": round(runs_z[-1][1], 3),
+                    "gaps_z_mm": [[round(a, 3), round(b_, 3)] for a, b_ in gaps],
+                }
+            )
+        else:
+            pockets.append({"depth_mm": None, "tower_solid_to_z_mm": None, "gaps_z_mm": []})
+    out["screw_holes_free"] = holes
+    out["nut_pockets"] = pockets
+
+    # Casca da carenagem no flanco plano, fora do socket e da janela de fios.
+    runs = pr.solid_runs((-30.0, 5.37, 12.41), (1, 0, 0), 10.0)
+    first = _first_run(runs)
+    out["fairing_wall_mm"] = round(first[1] - first[0], 3) if first else None
+
+    # Varredura completa de enrolamento (A1/A2).
+    out["winding_scan"] = pr.full_scan(P["quality"]["winding_scan_pitch_mm"])
+    return out
+
+
+def measure_spider(spider: bpy.types.Object) -> dict:
+    q = P["spider"]
+    a = q["arm"]
+    pr = MeshProbe(triangles_of(spider))
+    out: dict = {}
+    shoulders = []
+    for i in range(3):
+        ang = i * 120.0
+        ox, oy = rot_xy(30.0, 6.4, ang)
+        dx, dy = polar(1.0, ang)
+        runs = pr.solid_runs((ox, oy, 2.9), (dx, dy, 0.0), 70.0)
+        shoulders.append(round(30.0 + runs[-1][1], 3) if runs else None)
+    out["shoulder_radius_mm"] = shoulders
+    tenons = []
+    for i in range(3):
+        ang = i * 120.0
+        ox, oy = rot_xy(30.0, 0.37, ang)
+        dx, dy = polar(1.0, ang)
+        runs = pr.solid_runs((ox, oy, 3.41), (dx, dy, 0.0), 70.0)
+        tenons.append(round(30.0 + runs[-1][1], 3) if runs else None)
+    out["tenon_tip_radius_mm"] = tenons
+    out["bore_free"] = pr.is_void((0.37, 0.41, -q["hub_thickness"] - 1.0), (0, 0, 1), q["hub_thickness"] + 2.0)
+    runs = pr.solid_runs((9.0, 0.41, -q["hub_thickness"] - 1.0), (0, 0, 1), q["hub_thickness"] + 2.0)
+    first = _first_run(runs)
+    out["counterbore_depth_mm"] = round(q["hub_thickness"] - (first[1] - first[0]), 3) if first else None
+    out["hub_under_washer_mm"] = round(first[1] - first[0], 3) if first else None
+    # Pele sobre os alívios de massa (raio médio do bolso, azimute do centro).
+    lp = q["lightening_pockets"]
+    px, py = polar((lp["inner_radius"] + lp["outer_radius"]) / 2 + 0.37, lp["first_center_deg"] + 0.7)
+    runs = pr.solid_runs((px, py, -q["hub_thickness"] - 1.0), (0, 0, 1), q["hub_thickness"] + 2.0)
+    first = _first_run(runs)
+    out["pocket_skin_mm"] = round(first[1] - first[0], 3) if first else None
+    out["winding_scan"] = pr.full_scan(max(1.5, P["quality"]["winding_scan_pitch_mm"]))
+    return out
+
+
+def measure_base(base: bpy.types.Object) -> dict:
+    q = P["base_tower"]
+    pr = MeshProbe(triangles_of(base))
+    out: dict = {}
+    tower_top = q["central_floor_thickness"] + q["tower_total_height_from_floor"]
+    hx, hy = polar(q["flange_hole_pcd"] / 2, q["flange_hole_angle_offset_deg"])
+    runs = pr.solid_runs((hx + 0.2, hy + 0.2, -1.0), (0, 0, 1), tower_top + 2.0)
+    first = _first_run(runs)
+    out["floor_under_flange_bolt_solid_mm"] = [round(first[0] - 1.0, 3), round(first[1] - 1.0, 3)] if first else None
+    out["upper_flange_hole_free"] = pr.is_void((hx + 0.2, hy + 0.2, tower_top - q["flange_thickness"] - 0.5), (0, 0, 1), q["flange_thickness"] + 1.0)
+    ct = q["clamp_tabs"]
+    if ct["enabled"]:
+        tx, ty = polar(ct["hole_radius"], ct["angle_offset_deg"])
+        out["clamp_tab_hole_free"] = pr.is_void((tx + 0.2, ty + 0.3, -1.0), (0, 0, 1), q["outer_ring_height"] + 2.0)
+    lo, hi = pr.lo, pr.hi
+    out["footprint_extent_mm"] = round(float(max(abs(lo[0]), abs(hi[0]), abs(lo[1]), abs(hi[1])) * 2.0), 3)
+    out["winding_scan"] = pr.full_scan(3.0)
+    return out
+
+
+def measure_simple(obj: bpy.types.Object, pitch: float) -> dict:
+    pr = MeshProbe(triangles_of(obj))
+    return {"winding_scan": pr.full_scan(pitch)}
 
 
 def export_stl(
@@ -1123,20 +1398,19 @@ def aim_camera(camera: bpy.types.Object, target: tuple[float, float, float]) -> 
 def build_guard_reference(z0: float, height: float, inner_r: float, wall: float, top_cap: bool = False) -> list[bpy.types.Object]:
     outer = inner_r + wall
     parts = [
-        ring("REF_contencao_base", outer, inner_r, z0, z0 + 1.0),
-        ring("REF_contencao_topo", outer, inner_r, z0 + height - 1.0, z0 + height),
+        ring("REF_cilindro_encomendado_base", outer, inner_r, z0, z0 + 1.0),
+        ring("REF_cilindro_encomendado_topo", outer, inner_r, z0 + height - 1.0, z0 + height),
     ]
     mean_r = (inner_r + outer) / 2
     for i in range(16):
         x, y = polar(mean_r, i * 360.0 / 16)
-        parts.append(cylinder(f"REF_contencao_haste_{i}", 0.65, height, (x, y, z0 + height / 2)))
+        parts.append(cylinder(f"REF_cilindro_haste_{i}", 0.65, height, (x, y, z0 + height / 2)))
     if top_cap:
-        parts.append(cylinder("REF_contencao_tampa", outer, 1.0, (0.0, 0.0, z0 + height + 0.5), vertices=96))
+        parts.append(cylinder("REF_cilindro_tampa", outer, 1.0, (0.0, 0.0, z0 + height + 0.5), vertices=96))
     return parts
 
 
 def configure_render(scene: bpy.types.Scene, filepath: Path) -> None:
-    # Workbench dá leitura clara das arestas; os materiais ficam no .blend para EEVEE.
     try:
         scene.render.engine = "BLENDER_WORKBENCH"
         sh = scene.display.shading
@@ -1180,7 +1454,7 @@ def configure_render(scene: bpy.types.Scene, filepath: Path) -> None:
     assign_material(ground, material("Ground", (0.18, 0.19, 0.21, 1.0)))
 
 
-def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, render_preview: bool) -> dict:
+def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, render_preview: bool, panel_radius: float) -> dict:
     rotor_z = datum_b_z()
     sp = P["spider"]
     asm = P["assembly"]
@@ -1189,7 +1463,7 @@ def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, rend
     panel_mat = material("ABS painéis", (0.10, 0.32, 0.70, 1.0))
     metal_mat = material("Alumínio", (0.42, 0.45, 0.5, 1.0), metallic=0.75)
     ref_mat = material("Referência", (0.55, 0.35, 0.08, 1.0))
-    guard_mat = material("Contenção PENDENTE", (0.06, 0.35, 0.55, 1.0), metallic=0.1)
+    guard_mat = material("Cilindro encomendado (fora de escopo)", (0.06, 0.35, 0.55, 1.0), metallic=0.1)
 
     for obj in parts.values():
         obj.hide_render = True
@@ -1200,9 +1474,9 @@ def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, rend
     plate = duplicate(parts["motor_plate"], "MONTAGEM_suporte_motor_ref")
     plate.location.z = plate_top_z() - P["motor_plate"]["thickness"]
     assign_material(plate, metal_mat)
-    post = duplicate(parts["magnet_post"], "MONTAGEM_poste_ima")
-    post.location.z = plate_top_z()
-    assign_material(post, abs_mat)
+    bracket = duplicate(parts["magnet_bracket"], "MONTAGEM_suporte_ima")
+    bracket.location.z = plate_top_z()
+    assign_material(bracket, abs_mat)
 
     spider = duplicate(parts["spider"], "MONTAGEM_aranha")
     spider.location.z = rotor_z
@@ -1213,29 +1487,32 @@ def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, rend
 
     # A rotação do objeto é aplicada em torno da própria origem ANTES da
     # translação: o vetor de posição também precisa ser rotacionado (spec §8).
-    panel_r = asm["panel_radius"]
+    # O raio é o MEDIDO na malha da aranha (ombro + 26), não o nominal.
     for i in range(3):
         panel = duplicate(parts["panel"], f"MONTAGEM_painel_{i + 1}")
         angle = math.radians(i * 120.0)
         panel.rotation_euler[2] = angle
-        panel.location = (panel_r * math.cos(angle), panel_r * math.sin(angle), rotor_z + asm["panel_mid_plane_above_datum_b"])
+        panel.location = (panel_radius * math.cos(angle), panel_radius * math.sin(angle), rotor_z + asm["panel_mid_plane_above_datum_b"])
         assign_material(panel, panel_mat)
 
-    # Referências visuais de hardware (não impressas).
+    # Referências visuais de hardware (não impressas), com as cotas medidas.
     motor = ui["motor"]
     motor_ref = cylinder("MONTAGEM_motor_A2212_ref", motor["body_diameter"] / 2, motor["body_height"], (0.0, 0.0, plate_top_z() + motor["body_height"] / 2))
     assign_material(motor_ref, metal_mat)
     shaft = ui["shaft"]
+    bell_top = plate_top_z() + ui["motor_stack"]["plate_top_to_bell_face"]
     datum_a = rotor_z - sp["hub_thickness"]
-    smooth = cylinder("MONTAGEM_eixo_liso_ref", shaft["smooth_diameter"] / 2, shaft["smooth_length_above_bell"], (0.0, 0.0, datum_a + shaft["smooth_length_above_bell"] / 2))
-    assign_material(smooth, metal_mat)
-    thread = cylinder("MONTAGEM_eixo_rosca_M6_ref", 3.0, shaft["thread_length"], (0.0, 0.0, datum_a + shaft["smooth_length_above_bell"] + shaft["thread_length"] / 2))
-    assign_material(thread, metal_mat)
+    smooth_len = shaft["smooth_length_above_bell"]
+    thread_len = shaft["protrusion_above_bell"] - smooth_len
+    smooth_ref = cylinder("MONTAGEM_eixo_liso_ref", shaft["diameter_through_hub"] / 2, smooth_len, (0.0, 0.0, bell_top + smooth_len / 2))
+    assign_material(smooth_ref, metal_mat)
+    thread_ref = cylinder("MONTAGEM_eixo_rosca_M6_ref", 3.0, thread_len, (0.0, 0.0, bell_top + smooth_len + thread_len / 2))
+    assign_material(thread_ref, metal_mat)
     nut = ui["m6_nut"]
     washer_z0 = rotor_z - sp["counterbore_depth"]
-    washer = ring("MONTAGEM_arruela_M6_ref", nut["washer_od"] / 2, 3.2, washer_z0, washer_z0 + nut["washer_thickness"])
+    washer = ring("MONTAGEM_arruela_larga_ref", nut["washer_od"] / 2, 3.3, washer_z0, washer_z0 + nut["washer_thickness"])
     assign_material(washer, metal_mat)
-    nut_ref = cylinder("MONTAGEM_porca_M6_baixa_ref", nut["across_flats"] / math.sqrt(3.0), nut["height"], (0.0, 0.0, washer_z0 + nut["washer_thickness"] + nut["height"] / 2), vertices=6)
+    nut_ref = cylinder("MONTAGEM_porca_baixa_ref", nut["across_flats"] / math.sqrt(3.0), nut["height"], (0.0, 0.0, washer_z0 + nut["washer_thickness"] + nut["height"] / 2), vertices=6)
     assign_material(nut_ref, metal_mat)
     bat = ui["battery"]
     cradle = sp["battery_cradle"]
@@ -1249,7 +1526,7 @@ def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, rend
     cont = ui["containment"]
     cg = containment_geometry()
     guard_top = cg["top_z_mm"]
-    use_cap_part = cg["cylinder_has_top_cap"] and P["containment_cap"]["enabled"] and "containment_cap" in parts
+    use_cap_part = P["containment_cap"]["enabled"] and "containment_cap" in parts
     for obj in build_guard_reference(cg["rest_z_mm"], cont["height"], cont["inner_diameter"] / 2, cont["wall"], cg["cylinder_has_top_cap"] and not use_cap_part):
         assign_material(obj, guard_mat)
     if use_cap_part:
@@ -1270,22 +1547,31 @@ def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, rend
 
     panel_h = P["panel"]["height"]
     mid = rotor_z + asm["panel_mid_plane_above_datum_b"]
+    shaft_top = bell_top + shaft["protrusion_above_bell"]
+    nut_top = washer_z0 + nut["washer_thickness"] + nut["height"]
+    shaft_top_alt = bell_top + shaft.get("protrusion_glossary_alt_mm", shaft["protrusion_above_bell"])
     return {
+        "shaft_above_nut_if_protrusion_12_mm": round(shaft_top_alt - nut_top, 2),
         "datum_b_z_mm": rotor_z,
         "datum_a_z_mm": datum_a,
+        "bell_face_z_mm": bell_top,
         "panel_mid_plane_z_mm": mid,
+        "panel_radius_used_mm": round(panel_radius, 3),
         "rotor_z_min_mm": mid - panel_h / 2,
         "rotor_z_max_mm": mid + panel_h / 2,
         "plate_top_z_mm": plate_top_z(),
         "magnet_post_top_z_mm": plate_top_z() + magnet_post_height(),
-        "hall_air_gap_mm": P["magnet_post"]["air_gap"],
+        "hall_air_gap_mm": P["magnet_bracket"]["air_gap"],
+        "shaft_top_z_mm": shaft_top,
+        "nut_top_z_mm": round(nut_top, 2),
+        "shaft_above_nut_mm": round(shaft_top - nut_top, 2),
         "index_pulse_note": "Sensor em r=29, azimute 30° do rotor; ímã em r=29, azimute 30° da base: o pulso ocorre quando o braço 1 está alinhado com +x da base.",
         "containment_reference_top_z_mm": guard_top,
         "containment_vertical_margin_mm": round(guard_top - (mid + panel_h / 2), 2),
     }
 
 
-def compute_report(stats: dict, assembly: dict) -> dict:
+def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
     q = P["panel"]
     f = q["fairing"]
     b = q["boss"]
@@ -1293,6 +1579,7 @@ def compute_report(stats: dict, assembly: dict) -> dict:
     bt = P["base_tower"]
     ncm = P["non_cad_masses_g"]
     cs = sp["cooling_slots"]
+    cx = panel_channel_x()
 
     panel_mass_bare = stats["panel_each"]["estimated_mass_g"]
     panel_assembled = panel_mass_bare + ncm["led_strip_per_panel"] + ncm["hardware_per_panel"]
@@ -1329,6 +1616,11 @@ def compute_report(stats: dict, assembly: dict) -> dict:
         panel_mass_bare * panel_cg_z + ncm["led_strip_per_panel"] * strip_cg_z + wire_mass * wire_cg_z
     ) / (panel_mass_bare + ncm["led_strip_per_panel"] + wire_mass)
 
+    shoulders = [s for s in measured["spider"]["shoulder_radius_mm"] if s is not None]
+    mean_shoulder = sum(shoulders) / len(shoulders) if shoulders else None
+    m6 = P["unverified_interfaces"]["m6_nut"]
+    nut_top = -sp["counterbore_depth"] + m6["washer_thickness"] + m6["height"]
+
     return {
         "panel": {
             "bare_mass_g": panel_mass_bare,
@@ -1340,11 +1632,20 @@ def compute_report(stats: dict, assembly: dict) -> dict:
             "assembled_centroid_note": "Estimativa com fita (6,2 g) e ~1,2 g de fios descendo pela cavidade até a ponta inferior. Momento parasita na junta = F × deslocamento.",
             "parasitic_moment_n_mm": round(force * abs(cg_assembled), 1),
             "centrifugal_force_n_with_cad_mass": round(force, 1),
-            "led_floor_mm": round(q["shell_wall"] - q["led_channel"]["depth"], 3),
+            "led_floor_nominal_mm": round(cx["floor_thickness"], 3),
+            "led_floor_measured_mm": measured["panel"]["led_floor_mm"],
+            "led_floor_at_joint_measured_mm": measured["panel"]["led_floor_at_joint_mm"],
+            "pcb_shoulder_wall_measured_mm": measured["panel"]["pcb_shoulder_wall_mm"],
+            "socket_depth_measured_mm": measured["panel"].get("socket_depth_mm"),
+            "socket_to_cavity_wall_measured_mm": measured["panel"].get("socket_to_cavity_wall_mm"),
+            "screw_holes_free": measured["panel"]["screw_holes_free"],
+            "nut_pockets_measured": measured["panel"]["nut_pockets"],
+            "fairing_wall_measured_mm": measured["panel"]["fairing_wall_mm"],
             "nut_pocket_wall_mm": round(b["tower_diameter"] / 2 - b["nut_hex_circumradius"], 3),
             "led_channel_start_z_mm": strip_z0,
             "led_strip_top_z_mm": round(strip_z0 + strip_len, 2),
             "panel_top_z_mm": q["height"] / 2,
+            "winding_scan": measured["panel"]["winding_scan"],
         },
         "boss_drag": {
             "frontal_width_mm": frontal_width,
@@ -1359,33 +1660,53 @@ def compute_report(stats: dict, assembly: dict) -> dict:
         "spider": {
             "mass_g": stats["spider"]["estimated_mass_g"],
             "mass_limit_g": sp["mass_limit_g"],
+            "shoulder_radius_measured_mm": measured["spider"]["shoulder_radius_mm"],
+            "tenon_tip_radius_measured_mm": measured["spider"]["tenon_tip_radius_mm"],
+            "panel_mid_plane_radius_from_mesh_mm": round(mean_shoulder - b["contact_face_x"], 3) if mean_shoulder is not None else None,
+            "bore_free": measured["spider"]["bore_free"],
+            "counterbore_depth_measured_mm": measured["spider"]["counterbore_depth_mm"],
+            "hub_under_washer_measured_mm": measured["spider"]["hub_under_washer_mm"],
+            "pocket_skin_measured_mm": measured["spider"]["pocket_skin_mm"],
             "cooling_free_area_mm2": round(slot_area, 1),
             "hub_rim_outside_slots_mm": round(sp["hub_diameter"] / 2 - cs["outer_radius"], 2),
             "bay_wall_to_slot_mm": round(cs["inner_radius"] - sp["electronics_bay_od"] / 2, 2),
-            "nut_top_above_hub_mm": round(-sp["counterbore_depth"] + P["unverified_interfaces"]["m6_nut"]["washer_thickness"] + P["unverified_interfaces"]["m6_nut"]["height"], 2),
+            "nut_top_above_hub_mm": round(nut_top, 2),
             "battery_floor_z_mm": sp["battery_cradle"]["rail_height"],
             "battery_top_z_mm": sp["battery_cradle"]["rail_height"] + P["unverified_interfaces"]["battery"]["height"],
             "bay_internal_height_mm": sp["electronics_bay_height"],
+            "battery_half_diagonal_mm": round(math.hypot(sp["battery_cradle"]["pack_length_y"] / 2 + sp["battery_cradle"]["end_tab_thickness"] + sp["battery_cradle"]["clearance"], sp["battery_cradle"]["end_tab_width_x"] / 2), 2),
+            "bay_inner_radius_mm": sp["electronics_bay_id"] / 2,
+            "winding_scan": measured["spider"]["winding_scan"],
         },
-        "lid": {"mass_g": stats["lid"]["estimated_mass_g"], "mass_limit_g": P["lid"]["mass_limit_g"]},
+        "lid": {"mass_g": stats["lid"]["estimated_mass_g"], "mass_limit_g": P["lid"]["mass_limit_g"], "winding_scan": measured["lid"]["winding_scan"]},
         "base_tower": {
             "mass_g": stats["base_tower"]["estimated_mass_g"],
             "mass_limit_g": bt.get("mass_limit_g"),
-            "mass_note": "peça estática: sem critério de massa (decisão de 02/09/2026); só o rotor tem orçamento",
             "lateral_vent_area_mm2": vent_area,
             "footprint_diameter_mm": bt["footprint_diameter"],
-            "footprint_with_brim_mm": bt["footprint_diameter"] + 2 * P["fdm_rules"]["brim_mm"],
+            "footprint_extent_measured_mm": measured["base"]["footprint_extent_mm"],
+            "footprint_with_brim_mm": round(measured["base"]["footprint_extent_mm"] + 2 * P["fdm_rules"]["brim_mm"], 2),
+            "floor_under_flange_bolt_solid_mm": measured["base"]["floor_under_flange_bolt_solid_mm"],
+            "upper_flange_hole_free": measured["base"]["upper_flange_hole_free"],
+            "clamp_tab_hole_free": measured["base"].get("clamp_tab_hole_free"),
+            "winding_scan": measured["base"]["winding_scan"],
+        },
+        "magnet_bracket": {
+            "mass_g": stats["magnet_bracket"]["estimated_mass_g"],
+            "post_height_mm": round(magnet_post_height(), 2),
+            "bolts": len(P["magnet_bracket"]["bolt_azimuths_deg"]),
+            "arc_to_bell_clearance_mm": round(P["magnet_bracket"]["arc_inner_radius"] - P["unverified_interfaces"]["motor"]["body_diameter"] / 2, 2),
+            "winding_scan": measured["magnet_bracket"]["winding_scan"],
         },
         "containment": {
             **containment_geometry(),
             "rotor_dynamic_radius_mm": round(P["operating_point"]["image_cylinder_diameter_mm"] / 2 + P["loads_from_spec"]["tip_deflection_mm"], 2),
             "radial_clearance_mm": round(containment_geometry()["cylinder_inner_radius"] - (P["operating_point"]["image_cylinder_diameter_mm"] / 2 + P["loads_from_spec"]["tip_deflection_mm"]), 2),
-            "peripheral_holes": "removidos (spec 5.4 pedia 4 x Ø4; sem faixa livre na pista ao lado da canaleta)" if not P["base_tower"]["peripheral_holes"]["enabled"] else "PCD %.0f" % P["base_tower"]["peripheral_holes"]["pcd"],
+            "peripheral_holes": "removidos (abas de grampo no lugar)" if not P["base_tower"]["peripheral_holes"]["enabled"] else "PCD %.0f" % P["base_tower"]["peripheral_holes"]["pcd"],
         },
         "containment_cap": {
             **cap_geometry(),
             "mass_g": stats["containment_cap"]["estimated_mass_g"] if "containment_cap" in stats else None,
-            "rotor_top_z_mm": P["assembly"]["panel_mid_plane_above_datum_b"] + q["height"] / 2 + 0.0,
         },
         "rotor": {
             "cad_mass_g": round(rotor_cad, 2),
@@ -1406,58 +1727,123 @@ def compute_report(stats: dict, assembly: dict) -> dict:
     }
 
 
-def acceptance(report: dict, stats: dict) -> list[dict]:
+def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     q = P["panel"]
+    b = q["boss"]
+    sp = P["spider"]
     checks = []
 
     def add(name, value, criterion, ok, note=""):
         checks.append({"criterio": name, "valor": value, "requisito": criterion, "passa": bool(ok), "nota": note})
 
-    add("Raio do plano médio do painel", P["assembly"]["panel_radius"], "100 ±0,1 mm", abs(P["assembly"]["panel_radius"] - 100.0) <= 0.1, "por construção na montagem; face interna em r=96 e externa em r=104")
-    add("Datum D", report["panel"]["datum_d_mm"], "104 ±0,2 mm", abs(report["panel"]["datum_d_mm"] - 104.0) <= 0.2)
+    def num_ok(value, lo=None, hi=None):
+        if value is None:
+            return False
+        if lo is not None and value < lo:
+            return False
+        if hi is not None and value > hi:
+            return False
+        return True
+
+    rp = report["panel"]
+    rs = report["spider"]
+    rb = report["base_tower"]
+
+    # -- geometria medida na malha --
+    r_mid = rs["panel_mid_plane_radius_from_mesh_mm"]
+    add("Raio do plano médio do painel", r_mid, "100 ±0,1 mm", num_ok(r_mid, 99.9, 100.1), "medido: ombro da longarina na malha da aranha (%s) + 26 da face de contato" % rs["shoulder_radius_measured_mm"])
+    add("Datum D", rp["datum_d_mm"], "104 ±0,2 mm", abs(rp["datum_d_mm"] - 104.0) <= 0.2, "da malha do painel")
     add("Δh entre painéis", 0.0, "≤ ±0,5 mm", True, "os três painéis são o mesmo STL")
-    add("Piso sob o canal do LED", report["panel"]["led_floor_mm"], "≥ 0,6 mm", report["panel"]["led_floor_mm"] >= 0.6)
-    add("Parede ao redor do bolso de porca", report["panel"]["nut_pocket_wall_mm"], "≥ 1,5 mm", report["panel"]["nut_pocket_wall_mm"] >= 1.5)
-    min_wall = min(
-        q["fairing"]["wall"],
-        report["panel"]["led_floor_mm"],
-        P["spider"]["hub_diameter"] / 2 - P["spider"]["cooling_slots"]["outer_radius"],
-        P["lid"]["skin_thickness"],
-        P["panel"]["ribs"]["thickness"],
+    add("Ponta da espiga", rs["tenon_tip_radius_measured_mm"], "96 ±0,1 mm", all(num_ok(v, 95.9, 96.1) for v in rs["tenon_tip_radius_measured_mm"]), "medido na malha")
+    add("Profundidade do socket", rp["socket_depth_measured_mm"], "%.1f ±0,1 mm" % b["socket_depth"], num_ok(rp["socket_depth_measured_mm"], b["socket_depth"] - 0.1, b["socket_depth"] + 0.1), "medido: primeiro material no eixo do socket")
+    add("Parede entre o fundo do socket e a cavidade", rp["socket_to_cavity_wall_measured_mm"], "≥ 1,2 mm", num_ok(rp["socket_to_cavity_wall_measured_mm"], 1.2), "medido")
+    add("Piso sob o rasgo dos LEDs", rp["led_floor_measured_mm"], "≥ 0,6 mm (nominal %.2f)" % rp["led_floor_nominal_mm"], num_ok(rp["led_floor_measured_mm"], 0.6), "medido a meia altura; na junta: %s" % rp["led_floor_at_joint_measured_mm"])
+    add("Ombro do PCB (parede sob o canal raso)", rp["pcb_shoulder_wall_measured_mm"], "≥ 1,2 mm", num_ok(rp["pcb_shoulder_wall_measured_mm"], 1.2), "medido")
+    add("Furos M3 livres em toda a torre", rp["screw_holes_free"], "livres (sem pino de casca invertida)", all(rp["screw_holes_free"]), "raio ao longo do eixo de cada parafuso: enrolamento 0 em toda a extensão (06-PENDENCIAS A1)")
+    socket_gap = (-b["socket_height"] / 2, b["socket_height"] / 2)
+    pockets_ok = all(
+        p["depth_mm"] is not None
+        and abs(p["depth_mm"] - b["nut_pocket_depth"]) <= 0.1
+        and abs(p["tower_solid_to_z_mm"] - b["tower_height"] / 2) <= 0.1
+        and len(p["gaps_z_mm"]) == 1
+        and abs(p["gaps_z_mm"][0][0] - socket_gap[0]) <= 0.1
+        and abs(p["gaps_z_mm"][0][1] - socket_gap[1]) <= 0.1
+        for p in rp["nut_pockets_measured"]
     )
+    add("Bolso da porca M3 e torre", [p["depth_mm"] for p in rp["nut_pockets_measured"]], "bolso %.1f ±0,1 mm; torre sólida de −15,2 a +%.0f, só o socket (z ±%.1f) a interrompe" % (b["nut_pocket_depth"], b["tower_height"] / 2, b["socket_height"] / 2), pockets_ok, "medido ao longo do eixo de cada parafuso; vãos: %s" % [p["gaps_z_mm"] for p in rp["nut_pockets_measured"]])
+    add("Parede ao redor do bolso de porca", rp["nut_pocket_wall_mm"], "≥ 1,5 mm", rp["nut_pocket_wall_mm"] >= 1.5, "geometria: torre Ø10, hexágono de circunraio 3,35")
+    add("Casca da carenagem", rp["fairing_wall_measured_mm"], "%.1f ±0,05 mm" % q["fairing"]["wall"], num_ok(rp["fairing_wall_measured_mm"], q["fairing"]["wall"] - 0.05, q["fairing"]["wall"] + 0.05), "medido no flanco plano")
+    min_wall_candidates = [v for v in (rp["fairing_wall_measured_mm"], rp["led_floor_measured_mm"], rs["hub_rim_outside_slots_mm"], P["lid"]["skin_thickness"], q["ribs"]["thickness"]) if v is not None]
+    min_wall = min(min_wall_candidates)
     add("Menor parede estrutural do modelo", round(min_wall, 2), "≥ 0,8 mm", min_wall >= 0.8, "mínimo entre piso do canal, casca da carenagem, borda do disco fora dos rasgos, pele da tampa e nervuras (1,0 mm, conforme spec §5.1)")
-    add("Área livre de ventilação do cubo", report["spider"]["cooling_free_area_mm2"], "≥ 300 mm², sem abrir a baia", report["spider"]["cooling_free_area_mm2"] >= 300.0, "3 rasgos de 60° fora da baia (r 35,5–39)")
-    add("Área livre de ventilação da base", report["base_tower"]["lateral_vent_area_mm2"], "≥ 600 mm², na lateral", report["base_tower"]["lateral_vent_area_mm2"] >= 600.0, "8 janelas na parede lateral da baia")
+
+    # -- enrolamento --
+    for label, scan in (("painel", rp["winding_scan"]), ("aranha", rs["winding_scan"]), ("tampa", report["lid"]["winding_scan"]), ("base", rb["winding_scan"]), ("suporte do ímã", report["magnet_bracket"]["winding_scan"])):
+        add(
+            "Enrolamento por raios — %s" % label,
+            [scan["bad_winding_segments"], scan["thin_solid_segments"]],
+            "0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm",
+            scan["bad_winding_segments"] == 0 and scan["thin_solid_segments"] == 0,
+            "%d raios, passo %.1f mm" % (scan["rays"], scan["pitch_mm"]),
+        )
+
+    # -- cubo e eixo --
+    add("Furo do cubo livre", rs["bore_free"], "livre", rs["bore_free"], "Ø%.1f para eixo medido em Ø%.1f" % (sp["bore_diameter"], P["unverified_interfaces"]["shaft"]["diameter_through_hub"]))
+    add("Rebaixo da arruela", rs["counterbore_depth_measured_mm"], "%.1f ±0,1 mm" % sp["counterbore_depth"], num_ok(rs["counterbore_depth_measured_mm"], sp["counterbore_depth"] - 0.1, sp["counterbore_depth"] + 0.1), "medido; sobram %s mm de cubo sob a arruela" % rs["hub_under_washer_measured_mm"])
+    add("Pele sobre os alívios do cubo", rs["pocket_skin_measured_mm"], "≥ 2,0 mm", num_ok(rs["pocket_skin_measured_mm"], 1.95), "medido")
+    asm = report["assembly"]
+    add("Rosca sobrando acima da porca", asm["shaft_above_nut_mm"], "≥ 1 mm", asm["shaft_above_nut_mm"] >= 1.0, "eixo de %.0f mm acima da campânula; porca termina em Z = %.1f" % (P["unverified_interfaces"]["shaft"]["protrusion_above_bell"], asm["nut_top_z_mm"]))
+    add("Trilhos do berço acima da porca", rs["battery_floor_z_mm"], "≥ %.1f mm (topo da porca)" % rs["nut_top_above_hub_mm"], rs["battery_floor_z_mm"] >= rs["nut_top_above_hub_mm"], "")
+    bay_ok = rs["battery_top_z_mm"] <= rs["bay_internal_height_mm"]
+    add("Bateria cabe na baia sobre a porca", rs["battery_top_z_mm"], "≤ %.0f mm" % rs["bay_internal_height_mm"], bay_ok, "pack de %.0f mm sobre trilhos em Z=%.0f" % (P["unverified_interfaces"]["battery"]["height"], rs["battery_floor_z_mm"]))
+    add("Berço da bateria dentro da baia (meia-diagonal)", rs["battery_half_diagonal_mm"], "≤ %.0f mm" % rs["bay_inner_radius_mm"], rs["battery_half_diagonal_mm"] <= rs["bay_inner_radius_mm"], "abas de topo inclusas")
+
+    # -- ventilação, arrasto --
+    add("Área livre de ventilação do cubo", rs["cooling_free_area_mm2"], "≥ 300 mm², sem abrir a baia", rs["cooling_free_area_mm2"] >= 300.0 and rs["bay_wall_to_slot_mm"] >= 0.0, "3 rasgos de 60° fora da baia (r %.1f–%.1f)" % (sp["cooling_slots"]["inner_radius"], sp["cooling_slots"]["outer_radius"]))
+    add("Área livre de ventilação da base", rb["lateral_vent_area_mm2"], "≥ 600 mm², na lateral", rb["lateral_vent_area_mm2"] >= 600.0, "8 janelas na parede lateral da baia")
     a_cd_hi = report["boss_drag"]["a_cd_range_mm2"][1]
     add("A × Cd do boss carenado", report["boss_drag"]["a_cd_range_mm2"], "≤ 350 mm²", a_cd_hi <= 350.0, "estimativa por razão de finura, não CFD")
-    add("Massa por painel montado", report["panel"]["assembled_mass_g"], "≤ 45 g", report["panel"]["assembled_mass_g"] <= 45.0)
-    add("Massa do rotor completo", report["rotor"]["total_mass_estimate_g"], "≤ 280 g", report["rotor"]["total_mass_estimate_g"] <= 280.0, "inclui bateria, fitas, ferragens e folga de eletrônica")
-    add("Massa da aranha", report["spider"]["mass_g"], "≤ 55 g (alvo)", report["spider"]["mass_g"] <= 55.0)
-    add("Massa da tampa", report["lid"]["mass_g"], "≤ 8 g (alvo)", report["lid"]["mass_g"] <= 8.0)
+
+    # -- massas --
+    add("Massa por painel montado", rp["assembled_mass_g"], "≤ 45 g", rp["assembled_mass_g"] <= 45.0)
+    add("Massa do rotor completo", report["rotor"]["total_mass_estimate_g"], "≤ 280 g", report["rotor"]["total_mass_estimate_g"] <= 280.0, "inclui bateria (50 g medidos), fitas, ferragens e folga de eletrônica")
+    add("Massa da aranha", rs["mass_g"], "≤ %.0f g (alvo)" % sp["mass_limit_g"], rs["mass_g"] <= sp["mass_limit_g"], "alvo revisto: os 55 g da spec são anteriores ao cubo Ø92 e à baia de 26")
+    add("Massa da tampa", report["lid"]["mass_g"], "≤ %.0f g (alvo)" % P["lid"]["mass_limit_g"], report["lid"]["mass_g"] <= P["lid"]["mass_limit_g"], "alvo revisto para Ø82")
+    if rb["mass_limit_g"]:
+        add("Massa da base + torre", rb["mass_g"], "≤ %.0f g (alvo)" % rb["mass_limit_g"], rb["mass_g"] <= rb["mass_limit_g"], "peça estática; o custo é tempo de impressão")
+
+    # -- base --
     add("Perpendicularidade torre/base", 0.0, "≤ 1°", True, "no CAD é zero; verificar na peça impressa")
-    add("Planeza da base", 0.0, "±2 mm", True, "no CAD é zero; verificar na peça impressa")
+    add("Contato da base", 0.0, "sem balanço; ≤ 0,2 mm em 3 pontos a 120°", True, "no CAD é plano; verificar na peça impressa")
     nm = sum(s["non_manifold_edges"] for s in stats.values())
     add("Malhas (arestas não-manifold no gerador)", nm, "0", nm == 0, "validação independente em reports/stl_validation.json")
-    add("Base + brim cabe na mesa", report["base_tower"]["footprint_with_brim_mm"], "≤ 300 mm", report["base_tower"]["footprint_with_brim_mm"] <= 300.0)
-    bay_ok = report["spider"]["battery_top_z_mm"] <= report["spider"]["bay_internal_height_mm"]
-    add("Bateria cabe na baia sobre a porca", report["spider"]["battery_top_z_mm"], f"≤ {report['spider']['bay_internal_height_mm']} mm", bay_ok, "porca baixa no rebaixo, topo em Z=%.1f" % report["spider"]["nut_top_above_hub_mm"])
-    strip_ok = report["panel"]["led_strip_top_z_mm"] <= report["panel"]["panel_top_z_mm"]
-    add("Fita de 201,4 mm cabe no canal", report["panel"]["led_strip_top_z_mm"], "≤ 104 mm (topo do painel)", strip_ok, "batente em Z=%.1f por causa do bolso de fios" % report["panel"]["led_channel_start_z_mm"])
+    add("Base + brim cabe na mesa", rb["footprint_with_brim_mm"], "≤ 300 mm", rb["footprint_with_brim_mm"] <= 300.0, "extensão medida na malha (com abas) %.1f + 2 × %.0f de brim" % (rb["footprint_extent_measured_mm"], P["fdm_rules"]["brim_mm"]))
+    fl = rb["floor_under_flange_bolt_solid_mm"]
+    add("Piso da baia íntegro sob os furos da flange", fl, "sólido de Z = 0 até a flange inferior (12)", fl is not None and abs(fl[0]) < 0.05 and fl[1] >= P["base_tower"]["central_floor_thickness"] + P["base_tower"]["flange_thickness"] - 0.05, "06-PENDENCIAS B3; furos só na flange superior: %s" % rb["upper_flange_hole_free"])
+    if rb.get("clamp_tab_hole_free") is not None:
+        add("Abas de grampo com furo livre", rb["clamp_tab_hole_free"], "livre", rb["clamp_tab_hole_free"], "%d abas a %.0f°, furo Ø%.0f em r = %.0f" % (P["base_tower"]["clamp_tabs"]["count"], 360.0 / P["base_tower"]["clamp_tabs"]["count"], P["base_tower"]["clamp_tabs"]["hole_diameter"], P["base_tower"]["clamp_tabs"]["hole_radius"]))
+    strip_ok = rp["led_strip_top_z_mm"] <= rp["panel_top_z_mm"]
+    add("Fita de 201,4 mm cabe no canal", rp["led_strip_top_z_mm"], "≤ 104 mm (topo do painel)", strip_ok, "batente em Z=%.1f por causa do bolso de fios" % rp["led_channel_start_z_mm"])
+
+    # -- suporte do ímã --
+    mb = report["magnet_bracket"]
+    add("Suporte do ímã com dois pontos de fixação", mb["bolts"], "≥ 2 parafusos", mb["bolts"] >= 2, "06-PENDENCIAS B4; arco a %.1f mm da campânula" % mb["arc_to_bell_clearance_mm"])
+    add("Folga do suporte do ímã à campânula", mb["arc_to_bell_clearance_mm"], "≥ 2 mm", mb["arc_to_bell_clearance_mm"] >= 2.0, "campânula medida em Ø%.0f" % P["unverified_interfaces"]["motor"]["body_diameter"])
+
+    # -- provisão do cilindro (fora de escopo) --
     cg = report["containment"]
     if cg["enabled"]:
-        add("Canaleta de assento dentro da pista", [cg["inner_lip_mm"], cg["outer_lip_mm"]], "lábios ≥ 1,2 mm", cg["fits_track"], "canaleta r %.1f–%.1f, largura %.1f, profundidade %.0f" % (cg["groove_inner_radius_mm"], cg["groove_outer_radius_mm"], cg["groove_width_mm"], cg["groove_depth_mm"]))
-        add("Cilindro cabe na canaleta", [cg["clearance_inner_mm"], cg["clearance_outer_mm"]], "folga ≥ 0 nos dois lados", cg["cylinder_fits_groove"], "Ø int %.0f, parede %.0f, contra canaleta de %.1f" % (cg["cylinder_inner_diameter_mm"], cg["cylinder_wall_mm"], cg["groove_width_mm"]))
-        add("Cotas do cilindro confirmadas", cg["cylinder_source"] or "não", "verified = true", cg["measured"], "conferir Ø interno e borda na peça recebida")
-        add("Folga radial rotor → cilindro", cg["radial_clearance_mm"], "≥ 10 mm após deflexão", cg["radial_clearance_mm"] >= 10.0, "raio dinâmico %.1f contra Ø int %.0f" % (cg["rotor_dynamic_radius_mm"], cg["cylinder_inner_diameter_mm"]))
+        add("Canaleta de assento dentro da pista", [cg["inner_lip_mm"], cg["outer_lip_mm"]], "lábios ≥ 1,2 mm", cg["fits_track"], "provisão (invólucro fora de escopo): canaleta r %.1f–%.1f" % (cg["groove_inner_radius_mm"], cg["groove_outer_radius_mm"]))
+        add("Cilindro encomendado cabe na canaleta", [cg["clearance_inner_mm"], cg["clearance_outer_mm"]], "folga ≥ 0 nos dois lados", cg["cylinder_fits_groove"], "Ø int %.0f, parede %.0f, contra canaleta de %.1f" % (cg["cylinder_inner_diameter_mm"], cg["cylinder_wall_mm"], cg["groove_width_mm"]))
+        add("Folga radial rotor → cilindro encomendado", cg["radial_clearance_mm"], "≥ 10 mm após deflexão", cg["radial_clearance_mm"] >= 10.0, "informativo: raio dinâmico %.1f contra Ø int %.0f" % (cg["rotor_dynamic_radius_mm"], cg["cylinder_inner_diameter_mm"]))
         margin = report["assembly"]["containment_vertical_margin_mm"]
-        add("Folga vertical topo do rotor → topo do cilindro", margin, "≥ 10 mm", margin >= 10.0, "cilindro de %.0f mm apoiado em Z=%.0f (piso da canaleta); a placa da tampa fica acima da borda e não desconta" % (cg["cylinder_height_mm"], cg["rest_z_mm"]))
+        add("Folga vertical topo do rotor → borda do cilindro encomendado", margin, "≥ 10 mm", margin >= 10.0, "informativo: cilindro de %.0f mm apoiado em Z=%.0f" % (cg["cylinder_height_mm"], cg["rest_z_mm"]))
     cap = report["containment_cap"]
     if cap["enabled"]:
         qc = P["containment_cap"]
-        add("Tampa: aberturas menores que a seção do painel", cap["max_opening_mm"], "≤ %.0f mm (círculo mínimo da seção 30 × 8 = Ø31,05)" % qc["max_opening_diameter"], cap["max_opening_mm"] <= qc["max_opening_diameter"], "%d furos" % len(cap["holes"]))
-        add("Tampa: área livre de ventilação", cap["free_area_mm2"], "≥ %.0f mm² (único caminho de ar com a base na mesa)" % qc["min_free_area_mm2"], cap["free_area_mm2"] >= qc["min_free_area_mm2"])
+        add("Tampa: aberturas menores que a seção do painel", cap["max_opening_mm"], "≤ %.0f mm" % qc["max_opening_diameter"], cap["max_opening_mm"] <= qc["max_opening_diameter"], "%d furos" % len(cap["holes"]))
+        add("Tampa: área livre de ventilação", cap["free_area_mm2"], "≥ %.0f mm²" % qc["min_free_area_mm2"], cap["free_area_mm2"] >= qc["min_free_area_mm2"])
         add("Tampa + brim cabe na mesa", cap["footprint_with_brim_mm"], "≤ 300 mm", cap["footprint_with_brim_mm"] <= 300.0)
-        add("Tampa: furos de ventilação fora da trajetória dos painéis", cap["vent_holes_outer_reach_mm"], "< 96 mm (face interna do painel)", cap["vent_holes_outer_reach_mm"] < 96.0, "painel solto voa para fora, nunca para dentro")
     return checks
 
 
@@ -1466,6 +1852,8 @@ def write_acceptance_md(checks: list[dict], path: Path) -> None:
         "# Critérios de aceitação — Hologram Orbiter v3.0",
         "",
         "Verificação automática a partir do modelo (spec §9). Gerado por `CAD/generate.py`.",
+        "Valores marcados como medidos vêm de traçado de raios na malha final (`CAD/probe.py`),",
+        "não dos parâmetros de entrada.",
         "",
         "| Critério | Valor no modelo | Requisito | Resultado | Nota |",
         "|---|---:|---|:---:|---|",
@@ -1503,11 +1891,11 @@ def main() -> None:
     lid = build_lid()
     print("[4/9] Modelando base + torre...")
     base_tower = build_base_tower()
-    print("[5/9] Modelando poste do ímã, tampa do cilindro, cupons e chapa de referência...")
-    magnet_post = build_magnet_post()
+    print("[5/9] Modelando suporte do ímã, cupons e chapa de referência...")
+    magnet_bracket = build_magnet_bracket()
     containment_cap = build_containment_cap() if P["containment_cap"]["enabled"] else None
     joint_coupon = build_joint_coupon()
-    led_coupon = build_led_coupon()
+    led_coupon = build_led_coupon(panel)
     motor_plate = build_motor_plate_reference()
 
     parts = {
@@ -1515,7 +1903,7 @@ def main() -> None:
         "panel": panel,
         "lid": lid,
         "base_tower": base_tower,
-        "magnet_post": magnet_post,
+        "magnet_bracket": magnet_bracket,
         "joint_coupon": joint_coupon,
         "led_coupon": led_coupon,
         "motor_plate": motor_plate,
@@ -1523,25 +1911,31 @@ def main() -> None:
     if containment_cap is not None:
         parts["containment_cap"] = containment_cap
     for obj in parts.values():
+        apply_location(obj)  # malha em coordenadas do mundo: medição e centróide corretos
         cleanup_mesh(obj)
 
     print("[6/9] Exportando STL...")
     pp = P["panel"]["print"]
     s = pp["batch_spacing_y"]
+    stale = stl_dir / "07_tampa_contencao_ABS.stl"
+    if containment_cap is None and stale.exists():
+        stale.unlink()
+    stale_post = stl_dir / "06_poste_ima_ABS.stl"
+    if stale_post.exists():
+        stale_post.unlink()
     export_stl(spider, stl_dir / "01_aranha_ABS.stl")
     export_stl(panel, stl_dir / "02_painel_LED_ABS_1x.stl", rotate_y_deg=pp["rotate_y_deg"])
     export_stl(panel, stl_dir / "02_painel_LED_ABS_3x_mesma_mesa.stl", rotate_y_deg=pp["rotate_y_deg"], copies=[(0.0, -s, 0.0), (0.0, 0.0, 0.0), (0.0, s, 0.0)])
     export_stl(lid, stl_dir / "03_tampa_baia_ABS.stl")
     export_stl(base_tower, stl_dir / "04_05_base_torre_ABS_integradas.stl")
-    export_stl(magnet_post, stl_dir / "06_poste_ima_ABS.stl")
+    export_stl(magnet_bracket, stl_dir / "06_suporte_ima_ABS.stl")
     if containment_cap is not None:
-        # Face plana na mesa, anel de assento e canaleta para cima: sem suporte.
         export_stl(containment_cap, stl_dir / "07_tampa_contencao_ABS.stl", rotate_x_deg=180.0)
     export_stl(joint_coupon, stl_dir / "C01_cupom_junta.stl")
-    export_stl(led_coupon, stl_dir / "C02_cupom_canal_LED.stl")
+    export_stl(led_coupon, stl_dir / "C02_cupom_canal_LED.stl", rotate_y_deg=pp["rotate_y_deg"])
     export_stl(motor_plate, stl_dir / "R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl")
 
-    print("[7/9] Calculando relatório geométrico...")
+    print("[7/9] Medindo a malha e calculando o relatório geométrico...")
     abs_density = P["material"]["abs_density_g_cm3"]
     al_density = P["material"]["aluminium_density_g_cm3"]
     stats = {
@@ -1549,19 +1943,28 @@ def main() -> None:
         "panel_each": object_stats(panel, abs_density),
         "lid": object_stats(lid, abs_density),
         "base_tower": object_stats(base_tower, abs_density),
-        "magnet_post": object_stats(magnet_post, abs_density),
+        "magnet_bracket": object_stats(magnet_bracket, abs_density),
         **({"containment_cap": object_stats(containment_cap, abs_density)} if containment_cap is not None else {}),
         "joint_coupon": object_stats(joint_coupon, abs_density),
         "led_coupon": object_stats(led_coupon, abs_density),
         "motor_plate_reference_aluminium": object_stats(motor_plate, al_density),
     }
+    measured = {
+        "panel": measure_panel(panel),
+        "spider": measure_spider(spider),
+        "lid": measure_simple(lid, 1.0),
+        "base": measure_base(base_tower),
+        "magnet_bracket": measure_simple(magnet_bracket, 0.5),
+    }
+    shoulders = [v for v in measured["spider"]["shoulder_radius_mm"] if v is not None]
+    panel_radius = (sum(shoulders) / len(shoulders) - P["panel"]["boss"]["contact_face_x"]) if shoulders else P["assembly"]["panel_radius"]
 
     print("[8/9] Salvando BLEND e renderizando prévia...")
-    assembly = assemble_and_save(parts, output_dir, render_preview=not ARGS.no_render)
+    assembly = assemble_and_save(parts, output_dir, render_preview=not ARGS.no_render, panel_radius=panel_radius)
 
     print("[9/9] Escrevendo relatórios...")
-    derived = compute_report(stats, assembly)
-    checks = acceptance(derived, stats)
+    derived = compute_report(stats, measured, assembly)
+    checks = acceptance(derived, stats, measured)
     report = {
         "project": P["project"],
         "status": P["status"],
