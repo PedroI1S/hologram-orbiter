@@ -1,0 +1,150 @@
+{
+  "project": {
+    "name": "Hologram Orbiter",
+    "version": "2.1",
+    "units": "mm",
+    "source_spec": "../../Especificacao-CAD-v2.1.md"
+  },
+  "manufacturing_status": "PROVISIONAL_AWAITING_MEASUREMENTS",
+  "geometry": {
+    "spider": {
+      "dimensions_mm": [
+        193.763,
+        223.738,
+        30.95
+      ],
+      "volume_cm3": 55.339,
+      "estimated_mass_g": 57.55,
+      "triangles": 6808,
+      "non_manifold_edges": 0
+    },
+    "panel_each": {
+      "dimensions_mm": [
+        30.0,
+        30.0,
+        208.0
+      ],
+      "volume_cm3": 25.852,
+      "estimated_mass_g": 26.89,
+      "triangles": 1850,
+      "non_manifold_edges": 0
+    },
+    "lid": {
+      "dimensions_mm": [
+        70.0,
+        70.0,
+        5.0
+      ],
+      "volume_cm3": 7.292,
+      "estimated_mass_g": 7.58,
+      "triangles": 1238,
+      "non_manifold_edges": 0
+    },
+    "base_tower": {
+      "dimensions_mm": [
+        300.0,
+        300.0,
+        154.0
+      ],
+      "volume_cm3": 294.633,
+      "estimated_mass_g": 306.42,
+      "triangles": 7948,
+      "non_manifold_edges": 0
+    },
+    "damper_each": {
+      "dimensions_mm": [
+        16.0,
+        16.0,
+        8.0
+      ],
+      "volume_cm3": 1.542,
+      "estimated_mass_g": 1.85,
+      "triangles": 512,
+      "non_manifold_edges": 0
+    },
+    "containment_ring": {
+      "dimensions_mm": [
+        300.0,
+        300.0,
+        10.0
+      ],
+      "volume_cm3": 90.96,
+      "estimated_mass_g": 109.15,
+      "triangles": 512,
+      "non_manifold_edges": 0
+    },
+    "joint_coupon": {
+      "dimensions_mm": [
+        58.0,
+        24.0,
+        12.0
+      ],
+      "volume_cm3": 9.685,
+      "estimated_mass_g": 10.07,
+      "triangles": 60,
+      "non_manifold_edges": 0
+    },
+    "led_coupon": {
+      "dimensions_mm": [
+        8.0,
+        30.0,
+        30.0
+      ],
+      "volume_cm3": 6.623,
+      "estimated_mass_g": 6.89,
+      "triangles": 28,
+      "non_manifold_edges": 0
+    }
+  },
+  "mass_budget": {
+    "estimated_rotor_mass_g_at_abs_density": 145.8,
+    "spec_limit_g": 120.0,
+    "passes_published_total_limit": false,
+    "note": "Estimativa geométrica em densidade maciça; o fatiador altera peças volumétricas conforme infill, mas paredes finas permanecem quase maciças."
+  },
+  "envelope_checks": {
+    "rotor_vertical_min_mm": 87.0,
+    "rotor_vertical_max_mm": 295.0,
+    "specified_guard_height_mm": 260.0,
+    "guard_if_started_at_ground_shortfall_mm": 35.0,
+    "rotor_static_radius_mm": 134.0,
+    "rotor_radius_with_3p5mm_deflection_mm": 137.5,
+    "containment_inner_radius_mm": 140.0,
+    "radial_clearance_deflected_mm": 2.5
+  },
+  "unverified_interfaces": {
+    "motor_bell_mount": {
+      "verified": false,
+      "hole_count": 4,
+      "pcd": 19.0,
+      "hole_diameter": 3.2,
+      "center_clearance_diameter": 12.0,
+      "note": "Valor provisório comum em alguns motores 2212; medir a campânula real antes de imprimir a aranha."
+    },
+    "motor_base_mount": {
+      "verified": false,
+      "hole_count": 4,
+      "pcd": 19.0,
+      "hole_diameter": 3.2,
+      "note": "Valor provisório; medir a base real do motor antes de furar a chapa de alumínio."
+    },
+    "motor_stack_height": {
+      "verified": false,
+      "bracket_to_rotor_datum": 34.0,
+      "note": "Assumido para fechar a cota de 188 mm do solo; medir o conjunto motor/suporte."
+    },
+    "led_strip": {
+      "verified": false,
+      "width": 13.0,
+      "depth": 1.8,
+      "usable_channel_length": 206.0,
+      "note": "Canal nominal da especificação com batente inferior de 2 mm; medir fita HD107S montada."
+    },
+    "battery": {
+      "verified": false,
+      "max_envelope_diameter": 62.0,
+      "max_envelope_height": 18.0,
+      "note": "Envelope provisório dentro da baia de Ø70 x 20 mm; medir pack LiPo 2S real."
+    }
+  }
+}

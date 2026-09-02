@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Blender
+*.blend1
+*.blend2
+
+# temporários
+.chk*.html
+*.tmp

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80.0mm" height="94.0mm" viewBox="-40.0 -40.0 80.0 94.0">
+<rect x="-30.0" y="-30.0" width="60.0" height="60.0" fill="none" stroke="#000" stroke-width="0.3"/>
+<circle cx="-8.000" cy="9.500" r="1.600" fill="none" stroke="#000" stroke-width="0.3"><title>motor M3 (retangulo 16 x 19) Ø3.2</title></circle>
+<circle cx="8.000" cy="9.500" r="1.600" fill="none" stroke="#000" stroke-width="0.3"><title>motor M3 (retangulo 16 x 19) Ø3.2</title></circle>
+<circle cx="8.000" cy="-9.500" r="1.600" fill="none" stroke="#000" stroke-width="0.3"><title>motor M3 (retangulo 16 x 19) Ø3.2</title></circle>
+<circle cx="-8.000" cy="-9.500" r="1.600" fill="none" stroke="#000" stroke-width="0.3"><title>motor M3 (retangulo 16 x 19) Ø3.2</title></circle>
+<circle cx="14.142" cy="-14.142" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
+<circle cx="-14.142" cy="-14.142" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
+<circle cx="-14.142" cy="14.142" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
+<circle cx="14.142" cy="14.142" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
+<circle cx="0.000" cy="-0.000" r="6.000" fill="none" stroke="#000" stroke-width="0.3"><title>alivio central (eixo/fios) - NAO VERIFICADO Ø12.0</title></circle>
+<text x="-30.0" y="36.0" font-size="3.2" font-family="sans-serif">R01 suporte do motor — alumínio 2.0 mm — escala 1:1 — NÃO IMPRIMIR EM 3D</text>
+<text x="-30.0" y="40.5" font-size="2.6" font-family="sans-serif">4× Ø3.2 motor (16 × 19) · 4× Ø4.0 flange PCD 40.0 · centro Ø12.0 (verificar)</text>
+</svg>

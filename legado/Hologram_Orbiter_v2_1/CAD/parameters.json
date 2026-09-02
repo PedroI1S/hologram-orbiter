@@ -1,0 +1,151 @@
+{
+  "project": {
+    "name": "Hologram Orbiter",
+    "version": "2.1",
+    "units": "mm",
+    "source_spec": "../../Especificacao-CAD-v2.1.md"
+  },
+  "manufacturing_status": "PROVISIONAL_AWAITING_MEASUREMENTS",
+  "material": {
+    "abs_density_g_cm3": 1.04,
+    "tpu_density_g_cm3": 1.20
+  },
+  "unverified_interfaces": {
+    "motor_bell_mount": {
+      "verified": false,
+      "hole_count": 4,
+      "pcd": 19.0,
+      "hole_diameter": 3.2,
+      "center_clearance_diameter": 12.0,
+      "note": "Valor provisório comum em alguns motores 2212; medir a campânula real antes de imprimir a aranha."
+    },
+    "motor_base_mount": {
+      "verified": false,
+      "hole_count": 4,
+      "pcd": 19.0,
+      "hole_diameter": 3.2,
+      "note": "Valor provisório; medir a base real do motor antes de furar a chapa de alumínio."
+    },
+    "motor_stack_height": {
+      "verified": false,
+      "bracket_to_rotor_datum": 34.0,
+      "note": "Assumido para fechar a cota de 188 mm do solo; medir o conjunto motor/suporte."
+    },
+    "led_strip": {
+      "verified": false,
+      "width": 13.0,
+      "depth": 1.8,
+      "usable_channel_length": 206.0,
+      "note": "Canal nominal da especificação com batente inferior de 2 mm; medir fita HD107S montada."
+    },
+    "battery": {
+      "verified": false,
+      "max_envelope_diameter": 62.0,
+      "max_envelope_height": 18.0,
+      "note": "Envelope provisório dentro da baia de Ø70 x 20 mm; medir pack LiPo 2S real."
+    }
+  },
+  "quality": {
+    "curve_segments": 64,
+    "boolean_solver": "MANIFOLD",
+    "abs_shrink_compensation_percent": 0.0,
+    "joint_xy_clearance_each_side": 0.1,
+    "joint_bottom_clearance": 0.5
+  },
+  "panel": {
+    "height": 208.0,
+    "chord": 30.0,
+    "max_thickness": 8.0,
+    "shell_wall": 2.0,
+    "led_channel_width": 13.0,
+    "led_channel_depth": 1.8,
+    "led_channel_bottom_stop": 2.0,
+    "boss_depth": 24.0,
+    "boss_chord_envelope": 28.0,
+    "boss_height_envelope": 36.0,
+    "socket_width": 11.2,
+    "socket_height": 6.2,
+    "socket_depth": 22.0,
+    "screw_hole_diameter": 3.2,
+    "screw_positions_from_contact": [6.0, 16.0],
+    "nut_hex_circumradius": 3.35,
+    "nut_pocket_depth": 2.8,
+    "rib_thickness": 1.0,
+    "rib_z_positions": [-70.0, -35.0, 0.0, 35.0, 70.0]
+  },
+  "spider": {
+    "hub_diameter": 80.0,
+    "hub_thickness": 6.0,
+    "spar_root_radius": 40.0,
+    "spar_shoulder_radius": 104.0,
+    "spar_tip_radius": 126.0,
+    "spar_chord": 15.0,
+    "spar_height": 6.0,
+    "tenon_width": 11.0,
+    "tenon_height": 6.0,
+    "root_blend_radius": 5.0,
+    "screw_hole_diameter": 3.2,
+    "screw_radii": [110.0, 120.0],
+    "cooling_hole_count": 6,
+    "cooling_hole_diameter": 8.0,
+    "cooling_hole_pcd": 30.0,
+    "electronics_bay_od": 70.0,
+    "electronics_bay_id": 66.0,
+    "electronics_bay_height": 20.0,
+    "lid_screw_spacing": 58.0,
+    "impeller_outer_radius": 35.0,
+    "impeller_inner_radius": 15.0,
+    "impeller_blade_count": 6,
+    "impeller_blade_height": 5.0,
+    "impeller_blade_thickness": 2.0
+  },
+  "lid": {
+    "diameter": 70.0,
+    "height": 5.0,
+    "skin_thickness": 1.6,
+    "rim_wall": 1.6,
+    "screw_hole_diameter": 3.0
+  },
+  "base_tower": {
+    "footprint_diameter": 300.0,
+    "outer_ring_inner_diameter": 280.0,
+    "outer_ring_height": 8.0,
+    "central_bay_od": 100.0,
+    "central_bay_wall": 4.0,
+    "central_bay_height": 80.0,
+    "central_floor_thickness": 4.0,
+    "radial_rib_count": 8,
+    "radial_rib_width": 8.0,
+    "radial_rib_height": 8.0,
+    "tower_total_height_from_floor": 150.0,
+    "tower_od": 30.0,
+    "tower_wall": 4.0,
+    "flange_diameter": 60.0,
+    "flange_thickness": 8.0,
+    "flange_hole_pcd": 40.0,
+    "flange_hole_diameter": 4.0,
+    "peripheral_hole_pcd": 290.0,
+    "peripheral_hole_diameter": 4.0,
+    "vent_hole_pcd": 76.0,
+    "vent_hole_diameter": 10.0,
+    "expected_rotor_datum_from_ground": 188.0
+  },
+  "damper": {
+    "diameter": 16.0,
+    "height": 8.0,
+    "hole_diameter": 3.2
+  },
+  "containment_ring": {
+    "inner_diameter": 280.0,
+    "outer_diameter": 300.0,
+    "height": 10.0
+  },
+  "reference_parts": {
+    "motor_plate_width": 60.0,
+    "motor_plate_depth": 60.0,
+    "motor_plate_thickness": 2.0,
+    "acrylic_guard_inner_diameter": 292.0,
+    "acrylic_guard_wall": 4.0,
+    "acrylic_guard_height": 260.0
+  }
+}

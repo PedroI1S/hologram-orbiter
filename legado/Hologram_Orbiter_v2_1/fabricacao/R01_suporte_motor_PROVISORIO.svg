@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="60mm" height="60mm" viewBox="-30 -30 60 60">
+  <title>Suporte motor 60x60x2 mm — furação provisória, não fabricar sem medir</title>
+  <g fill="none" stroke="black" stroke-width="0.2">
+    <rect x="-30" y="-30" width="60" height="60"/>
+    <!-- Motor provisório: 4 x Ø3,2 em PCD 19 -->
+    <circle cx="9.5" cy="0" r="1.6"/>
+    <circle cx="0" cy="9.5" r="1.6"/>
+    <circle cx="-9.5" cy="0" r="1.6"/>
+    <circle cx="0" cy="-9.5" r="1.6"/>
+    <!-- Coxins/flange: 4 x Ø4 em PCD 40, defasados 45 graus -->
+    <circle cx="14.1421" cy="14.1421" r="2"/>
+    <circle cx="-14.1421" cy="14.1421" r="2"/>
+    <circle cx="-14.1421" cy="-14.1421" r="2"/>
+    <circle cx="14.1421" cy="-14.1421" r="2"/>
+    <path d="M-3,0H3M0,-3V3" stroke-width="0.1"/>
+  </g>
+  <text x="-28" y="27" font-size="2.4">PROVISORIO — medir motor 2212 antes de fabricar</text>
+</svg>
