@@ -59,7 +59,7 @@ Três mudanças de método que vêm junto:
 | Verificação do CAD contra os critérios da especificação | relatório de conformidade |
 | Compras do caminho crítico | bateria, ESP32-C3, regulador, hall, ímã, fio, filamento |
 | Encomenda do cilindro de contenção | tubo PC Ø275 × 4 mm × 300 mm |
-| Medição do assento da campânula | decide se o adaptador de hélice é necessário |
+| ~~Medição do assento da campânula~~ | movida para a Fase 2 — o cubo já traz os dois padrões de fixação |
 | Layout da baia de eletrônica | confirma que tudo cabe em Ø66 × 20 |
 
 **Portão G0:** CAD entregue e aprovado nos critérios do §9 da especificação;
@@ -82,6 +82,7 @@ raio 100 ±0,1 mm · Δh ≤ ±0,5 mm. Peça fora de tolerância é reimpressa, 
 
 | Atividade | Saída |
 |---|---|
+| **Medir o assento da campânula** | decide o fixador: adaptador de hélice ou eixo M6 |
 | Motor na chapa, chapa na torre | conjunto fixo alinhado |
 | Aranha no eixo, com arruela metálica e porca baixa | rotor acoplado |
 | Painéis nas longarinas, porcas nyloc | rotor completo, sem LEDs |
@@ -153,7 +154,7 @@ da eletrônica de bordo.
 | Motor aquece além do previsto | média | alto | curva térmica sem estabilizar | ventilação da baia; é o fator que decide |
 | Partida sensorless falha | **média** | médio | travamento na rampa | rampa de 12 s; duty alto; ESC sensored |
 | Δm entre painéis fora | média | médio | pesagem em G1 | massa adesiva; reimpressão |
-| Assento da campânula pequeno demais | média | alto | medição na Fase 0 | adaptador de hélice em alumínio |
+| Assento da campânula pequeno demais | média | médio | medição na Fase 2 | adaptador de hélice; furos PCD 19 já existem |
 | Baia não comporta a eletrônica | média | médio | layout na Fase 0 | ESP32-C3; regulador menor; baia mais alta |
 | Vibração acima do limite | baixa | médio | FFT em G3 | balanceamento em dois planos |
 | Fluência do painel em operação | **média** | alto | ponta afastando entre medições | limitar tempo contínuo; medir deflexão a quente |

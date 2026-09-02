@@ -13,11 +13,14 @@ tampa, poste ou a base; os itens P0 impedem operar o rotor.
    acima do topo do rotor (293), menos a espessura da tampa; folga radial
    26,5 mm após a deflexão. Restam: ensaio de dobra numa sobra (PMMA versus
    PC) e conferir Ø interno e planeza da borda na peça recebida.
-2. **Assento do cubo na campânula (spec §5.2).** Medir o diâmetro útil. Se for
-   vazado, usar adaptador de hélice de alumínio e os 4 furos PCD 19 do cubo.
-3. **Altura do conjunto motor (30 mm)** derivada do datasheet, não medida.
+2. **Altura do conjunto motor (30 mm)** derivada do datasheet, não medida.
 
 ## P1 — antes de liberar o projeto
+
+3b. **Assento do cubo na campânula (spec §5.2).** Rebaixado de P0 para cá: o
+   cubo já traz os dois caminhos de fixação (furo Ø8 + rebaixo Ø13 × 2, e 4
+   furos Ø3,2 em PCD 19), então a aranha pode ser impressa antes. A medição
+   decide o fixador na montagem, não a geometria.
 
 4. **Isolador de vibração (spec §5.7).** Modelado como montagem rígida; os 4
    furos Ø4 em PCD 40 servem aos dois caminhos.

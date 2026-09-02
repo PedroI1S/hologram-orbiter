@@ -278,10 +278,15 @@ motor mostra a face superior da campânula **vazada, com raios**, não um disco
 plano. Se for esse o caso, o cubo assentaria só num ressalto central pequeno, o
 que dá pouca rigidez a tombamento para um rotor de Ø208.
 
-Duas saídas: medir a face e, se o assento útil for menor que ~Ø20, usar um
-**adaptador de hélice em alumínio** (peça comercial barata, flange Ø25–30) que
-prende no eixo e ao qual a aranha é parafusada. Isso dá assento largo, concêntrico
-e rígido, e resolve de uma vez o aperto sobre ABS.
+**Não é decisão de CAD.** O cubo já traz os dois caminhos: furo Ø8 com rebaixo
+Ø13 × 2 para o eixo M6, **e** 4 furos Ø3,2 em PCD 19 para parafusar num adaptador
+de hélice. A aranha pode ser impressa antes de a campânula ser medida.
+
+O que a medição decide é o **fixador**, na montagem: se o assento útil for menor
+que ~Ø20, use adaptador de hélice em alumínio (peça comercial, flange Ø25–30)
+parafusado pelos furos em PCD 19 — assento largo, concêntrico, torque positivo e
+sem aperto sobre ABS. Isso também elimina o risco de fluência do aperto M6
+(~40 MPa sob a arruela). Compre os dois jogos de fixação; são alguns reais.
 
 **Massa alvo:** ≤ 55 g.
 
