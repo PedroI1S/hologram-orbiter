@@ -71,8 +71,9 @@ a impeça.
 
 **Duas bases de massa, de propósito.** As cargas estruturais (força, deflexão,
 tensão) usam **44,5 g por painel** — o teto do limite de 45 g. Dimensionar pelo
-pior caso é o certo, e o modelo v3.0 saiu mais leve, em 41,87 g, o que só
-aumenta a margem: F real 148,8 N e SF 2,68.
+pior caso é o certo. O modelo v3.0 saiu em 41,87 g, mas o canal de 2,2 mm com
+parede local de 3,0 (§5.1) acrescenta 2,7 g: o painel real vai a **44,5 g** e a
+carga de projeto passa a ser a real, sem folga.
 
 Já o **balanceamento usa a massa real do rotor, 252 g**, porque ali a direção
 segura é a oposta: rotor mais leve significa desbalanceamento admissível menor.
@@ -546,7 +547,7 @@ impresso deitado. É a superfície mais delicada do projeto — o piso de 0,80 m
 existe justamente para dar 4 camadas ali.
 
 **Cupons de calibração.** Gerar dois corpos de prova pequenos antes do lote:
-um da junta espiga/socket (11 × 6) e um do canal do LED (12,4 × 1,2). Custam
+um da junta espiga/socket (11 × 6) e um do canal do LED (12,4 × 2,2). Custam
 minutos e evitam reimprimir painéis de 208 mm.
 
 ---

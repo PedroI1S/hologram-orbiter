@@ -19,7 +19,7 @@ Todas saem do gerador paramétrico. Ver [`01-ESPECIFICACAO-CAD-v3.0.md`](01-ESPE
 | 04/05 | Base + torre integradas | 1 | 250 cm³ | ≤ 300 g | 12–18 h |
 | 06 | Suporte do ímã de índice | 1 | 8 cm³ | — | 30 min |
 | C01 | Cupom da junta 11 × 6 | 1 | 10 cm³ | — | 15 min |
-| C02 | Cupom do canal 12,4 × 1,2 | 1 | 6 cm³ | — | 10 min |
+| C02 | Cupom do canal 12,4 × 2,2 | 1 | 6 cm³ | — | 10 min |
 
 **Total: ~432 cm³ ≈ 0,45 kg.** Comprar **1 kg** — o refugo em ABS é real e os
 painéis podem precisar de segunda tiragem por massa fora de tolerância.
