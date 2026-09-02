@@ -71,9 +71,9 @@ a impeça.
 
 **Duas bases de massa, de propósito.** As cargas estruturais (força, deflexão,
 tensão) usam **44,5 g por painel** — o teto do limite de 45 g. Dimensionar pelo
-pior caso é o certo. O modelo v3.0 saiu em 41,87 g, mas o canal de 2,2 mm com
-parede local de 3,0 (§5.1) acrescenta 2,7 g: o painel real vai a **44,5 g** e a
-carga de projeto passa a ser a real, sem folga.
+pior caso é o certo. O modelo v3.0 saiu em 41,87 g e o canal em degrau (§5.1)
+acrescenta 0,9 g: o painel real fica em **~42,8 g**, com folga de 4 % contra o
+caso de projeto.
 
 Já o **balanceamento usa a massa real do rotor, 252 g**, porque ali a direção
 segura é a oposta: rotor mais leve significa desbalanceamento admissível menor.
@@ -410,7 +410,8 @@ resolução de **~90 mg em r = 90 mm**. Furos roscados, rasgos para massa adesiv
 ou postes com arruelas — a forma é livre, a resolução não.
 
 **Berço da bateria:** alojamento que centre o pack de ~57 × 30 × 13 mm na baia
-Ø66. Projete-o para centrar bem, mas **não conte com ele** para fechar o
+Ø78. Com a folga da baia ampliada ele pode ser caixa fechada, que centra melhor.
+Ainda assim **não conte com ele** para fechar o
 balanceamento.
 
 ### 5.7 Isolador de vibração — EM ABERTO
@@ -555,7 +556,7 @@ Bico de 0,4 mm, camada de 0,2 mm, ABS em câmara fechada.
 | Base + torre | torre em Z, sem inclinação, brim de 8–12 mm |
 | Tampa | plana |
 
-O canal do LED forma uma ponte de 12,4 mm a 1,2 mm de altura quando o painel é
+O rasgo dos LEDs forma uma ponte de 5,4 mm a 2,0 mm de altura quando o painel é
 impresso deitado. É a superfície mais delicada do projeto — o piso de 0,80 mm
 existe justamente para dar 4 camadas ali.
 

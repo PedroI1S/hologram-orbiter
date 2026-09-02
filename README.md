@@ -16,7 +16,7 @@ endereçáveis giram a 1800 RPM e formam uma imagem cilíndrica suspensa de
 | Acionamento | ✅ A2212 920KV · ESC 15 A · fonte de bancada em 6–7 V |
 | Óptica | ✅ HD107S 144 LED/m · ESP32-C3 · hall no rotor |
 | Especificação CAD | ✅ escrita, corrigida e verificada |
-| Modelo CAD | ⚠️ **painéis bloqueados** — dois P0 de malha; demais peças liberadas |
+| Modelo CAD | ⚠️ **regeneração pendente** — 12 itens, 2 deles P0 nos painéis |
 | Compras | 🛒 não iniciadas |
 | Isolamento de vibração | ⚠️ decisão pendente — montagem inicial rígida |
 
@@ -26,13 +26,15 @@ Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para gira
 
 ## Por onde começar
 
-> ### ⛔ Não imprima o lote de painéis
-> Revisão independente de 02/09 encontrou **cascas invertidas** (enrolamento −1)
-> nos furos M3 e uma **membrana de espessura zero** no canal do LED, nos STL
-> `02_painel_*`. Confirmei os dois por ray cast próprio. Causa em
-> `generate.py`: `subtract_all()` concatena os cortadores em vez de uni-los.
-> Aranha, tampas, base, poste, cupons e chapa podem ir para a impressora.
-> Detalhe em [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md).
+> ### ⛔ Aguardando regeneração do CAD
+> Doze itens em fila, dois deles bloqueadores nos painéis: **cascas invertidas**
+> (enrolamento −1) nos furos M3 e uma **membrana de espessura zero** no canal do
+> LED, ambos confirmados por ray cast independente. Causa em `generate.py`:
+> `subtract_all()` concatena os cortadores em vez de uni-los.
+>
+> Entram na mesma rodada o canal em degrau (a fita medida tem 2,0 mm, não 1,0) e
+> a baia ampliada para Ø78 × 26. Lista completa em
+> [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md).
 
 | Se você vai… | Leia |
 |---|---|
@@ -43,6 +45,7 @@ Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para gira
 | Montar a eletrônica | [`05-ESQUEMA-ELETRICO-v3.0.md`](05-ESQUEMA-ELETRICO-v3.0.md) |
 | Saber de onde veio um número | [`00-AUDITORIA-E-INTEGRACAO-v2.1.md`](00-AUDITORIA-E-INTEGRACAO-v2.1.md) |
 | Ver o que ainda falta | [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md) |
+| Entender um termo, ou saber se um número foi medido | [`07-GLOSSARIO-E-PREMISSAS.md`](07-GLOSSARIO-E-PREMISSAS.md) |
 
 **Hierarquia de autoridade.** Em caso de conflito: o arquivo de parâmetros do CAD
 manda em cota; a especificação manda em requisito; o plano de ensaios manda em
@@ -60,7 +63,7 @@ critério de aceite; a auditoria manda em grandeza física.
 | Corrente de fase prevista | 4,44 A | 14,4 W na fonte |
 | Temperatura do motor prevista | 43 °C | limite de aceite: 55 °C |
 | Força centrífuga por painel | 148,8 N | SF de 2,7 na flexão |
-| Massa do painel montado | 41,9 g | Δm entre os três ≤ **0,084 g** |
+| Massa do painel montado | ~42,8 g | Δm entre os três ≤ **0,084 g** |
 | Massa do rotor | 252 g | desbalanceamento admissível 8,4 g·mm |
 | Energia armazenada | 26,1 J | um painel solto: 7,4 J a 19,6 m/s |
 
@@ -107,6 +110,7 @@ README.md                          este arquivo
 04-PLANO-DE-ENSAIOS-v3.0.md        cinco bloqueadores e critérios
 05-ESQUEMA-ELETRICO-v3.0.md        eletrônica embarcada do rotor
 06-PENDENCIAS-ABERTAS-v3.0.md      o que ainda falta
+07-GLOSSARIO-E-PREMISSAS.md        vocabulário e o que é medido × assumido
 Hologram_Orbiter_v3_0/             CAD, STLs, montagem, relatórios
 legado/                            versões anteriores, arquivadas
 ```

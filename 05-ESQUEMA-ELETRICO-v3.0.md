@@ -140,25 +140,11 @@ BATERIA    ADC a cada 2 s; abaixo de 1,58 V (= 6,6 V, 3,3 V/célula)
            então bateria cheia cairia na região não linear.
 ```
 
-### 5.1 Se só houver célula 1S
-
-Uma 1S de 1000 mAh (45 × 26 × 10) cabe, mas troca o buck por um **boost de 5 V** e
-exige **limitar o brilho global no firmware** — a HD107S tem campo de 5 bits para
-isso. A 3,7 V a corrente de entrada sobe a 8,7 A em branco pleno e a 10,7 A com a
-célula quase vazia; um módulo desse porte não cabe na baia. Limitando a saída a
-~10 W, a entrada cai para 3,2–3,9 A.
-
-O divisor do ADC muda para **1:2 (100k/100k)**: 2,1 V a 4,2 V, corte em 1,5 V
-(3,0 V por célula) — dentro da faixa linear do ADC.
-
-Duas células 1S **não** formam um 2S aqui: lado a lado estouram o Ø66, empilhadas
-estouram os 20 mm.
-
 ## 7. Montagem na baia
 
 | Item | Envelope | Onde |
 |---|---:|---|
-| Bateria 2S 850 mAh | 55 × 30 × 13 | quatro apoios (não caixa), sobre a porca M6 rebaixada |
+| Bateria 2S | até 67 × 30 × 20 | berço em caixa, sobre a porca M6 rebaixada |
 | Buck 5 V | ~25 × 20 × 10 | parede da baia, longe da bateria |
 | ESP32-C3 Super Mini | 22 × 18 × 5 | parede oposta |
 | 74AHCT125 + pull-up + divisor | ~20 × 15 | placa perfurada junto ao MCU |
@@ -166,13 +152,14 @@ estouram os 20 mm.
 | Chave e conector de carga | — | janela da tampa |
 | A3144 | TO-92 | bolso na face inferior do cubo, r = 29 mm |
 
-A baia tem Ø66 × 20 mm úteis, dos quais 5,6 vão para a porca. Com o pack de
-55 × 30 × 13 no meio, sobram dois segmentos circulares nas laterais para o buck e
-o MCU, e **apenas 7 mm acima do pack** — o capacitor de Ø10 deitado não passa aí e
-precisa ir para um segmento lateral.
+A baia foi **ampliada para Ø78 × 26 mm** (cubo Ø92), dos quais 5,6 vão para a
+porca: sobram **20,4 mm de altura** e 39 mm de raio útil. Isso aceita pack de até
+67 × 30 × 20 e deixa espaço vertical para o capacitor de Ø10 deitado, que na baia
+antiga não passava.
 
-**Recomendado: subir `electronics_bay_height` de 20 para 25 mm.** Custa 2,2 g,
-leva o topo do rotor a 216 mm (os painéis vão a 293, sem conflito) e transforma
-7 mm de sobra em 12. **Confirme o layout com as placas reais em mãos antes de
-fechar o cubo.** Tudo que entrar aqui precisa ficar centrado: **1 mm de
+**A baia é intrinsecamente assimétrica** — buck numa parede, MCU na oposta,
+capacitor num segmento. O capacitor sozinho, a r ≈ 25 mm, vale 62 g·mm contra os
+~9 admissíveis. "Tudo centrado" não é atingível com peças diferentes em lados
+diferentes: **faça o esboço de layout com as massas reais e planeje o contrapeso**,
+em vez de corrigir depois. Tudo que entrar aqui precisa ficar centrado: **1 mm de
 excentricidade em 48 g já são 48 g·mm**, seis vezes o admissível.

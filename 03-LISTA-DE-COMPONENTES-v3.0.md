@@ -56,7 +56,7 @@ Tudo isto gira junto com o rotor.
 | Fita LED | **HD107S 144 LED/m**, RGB, 1 m — medida em **12,0 × 2,0 mm** | ✅ | — |
 | Microcontrolador | **ESP32-C3 Super Mini** (~22 × 18 mm) | ✅ | — |
 | Regulador 5 V | buck **5 V / ≥ 5 A** (mini560 ou XL4015) | 🛒 | 15 |
-| Bateria | **LiPo 2S 850 mAh**, **55 × 30 × 13 mm**, ~47 g | 🛒 | 60–90 |
+| Bateria | **LiPo 2S**, envelope livre até **67 × 30 × 20 mm**, ≥ 15C, com balanceador JST-XH | 🛒 | 140–300 |
 | Conector | XT30 ou JST-XH para carga e balanceamento | 🛒 | 8 |
 | Chave liga/desliga | slide ou toggle miniatura, acesso pela tampa | 🛒 | 5 |
 | Sensor de índice | **A3144** (digital, TO-92, coletor aberto) — **no rotor** | 🛒 | 3 |
@@ -69,11 +69,13 @@ Tudo isto gira junto com o rotor.
 | Fita de poliéster transparente | 0,05–0,1 mm, retenção mecânica da fita LED | 🛒 | 15 |
 | Carregador LiPo 2S | balanceador | ⚠️ | 60 |
 
-> **Risco de empacotamento — verificar antes de congelar o cubo.** Bateria
-> 57 × 30 × 13, mais MCU, regulador, chave e conector, tudo dentro de uma baia
-> de Ø66 × 20 mm. Um DevKit ESP32 de 55 × 28 mm **não cabe** junto com a bateria;
-> por isso a espec pede um C3 Super Mini. O regulador de 5 V não estava previsto
-> em nenhuma versão anterior. Vale um esboço de layout da baia antes do CAD fechar.
+> **Empacotamento — a baia foi ampliada por causa disto.** Bateria, MCU,
+> regulador, deslocador de nível, capacitor, chave e conector numa baia que era
+> de Ø66 × 20 mm. Passou para **Ø78 × 26**, o que leva a altura útil de 14,4 para
+> 20,4 mm. Um DevKit ESP32 de 55 × 28 mm ainda não caberia junto com a bateria;
+> o C3 Super Mini (22 × 18) cabe. O regulador de 5 V não estava previsto em
+> nenhuma versão anterior. **Faça o esboço de layout com as placas reais antes de
+> o cubo ser fechado** — é o que ainda pode surpreender.
 
 > **Duas armadilhas elétricas que não são opcionais.**
 >
@@ -86,24 +88,28 @@ Tudo isto gira junto com o rotor.
 > margem. Ou entra o 74AHCT125, ou ajuste o buck para **4,5 V**, o que baixa o
 > limiar para ~3,15 V e resolve sem componente — ao custo de um pouco de brilho.
 
-> **Envelope máximo do pack — o que realmente manda.** A baia tem Ø66 × 20 mm e a
-> porca M6 ocupa até Z = 5,6, então sobram **14,4 mm de altura**. No plano, o
-> limite não é o comprimento sozinho: é a **meia-diagonal ≤ 33 mm**.
+> **Envelope do pack, com a baia ampliada.** A baia passa a Ø78 × 26 mm e a porca
+> M6 ocupa até Z = 5,6, então sobram **20,4 mm de altura** e raio útil de 39 mm.
+> No plano, o limite não é o comprimento sozinho: é a **meia-diagonal**.
 >
-> | Pack | Meia-diagonal | Altura sobre a porca | |
-> |---|---:|---:|---|
-> | **55 × 30 × 13** | **31,3 mm** | **18,6 mm** | **adotado** |
-> | 57 × 30 × 13 | 32,2 mm | 18,6 mm | no limite |
-> | 58 × 30 × 17 | 32,7 mm | 22,6 mm | reprova na altura |
+> | Largura do pack | Comprimento máximo | Altura máxima |
+> |---:|---:|---:|
+> | 25 mm | 70 mm | 20,4 mm |
+> | **30 mm** | **67 mm** | **20,4 mm** |
+> | 35 mm | 63 mm | 20,4 mm |
 >
-> **O berço não pode ser caixa fechada.** Uma parede de 1,5 mm em volta levaria a
-> meia-diagonal a 33,4 e estouraria. Use **quatro apoios**, longe dos cantos:
-> batentes em x = ±28,5 (y de −10 a +10) e pastilhas em y = ±16 (x de −15 a +15),
-> 8 mm de altura. Nos cantos sobram 1,7 mm; nas pontas 5,5; no meio dos lados 18.
+> Contando 1,5 mm de berço. Com essa folga o berço **pode** ser caixa fechada,
+> que centra melhor que apoios soltos — e centragem é o que a tolerância de
+> excentricidade exige.
 >
 > A retenção é simples porque **o pack fica no eixo de rotação**: sendo simétrico
 > em torno do centro, a resultante centrífuga sobre ele é praticamente nula. Uma
 > espuma sob a tampa segura contra vibração.
+>
+> **Três especificações decidem, não o rótulo de aplicação:** química LiPo,
+> taxa ≥ 15C, e conector de balanceamento **JST-XH de 3 vias** além do de
+> potência. Sem o balanceador não há carga célula a célula, e num pack que gira
+> lacrado isso não é aceitável.
 
 **Por que 2S e não outra coisa:****Por que 2S e não outra coisa:** a fita é 5 V e puxa **27 W em branco pleno**
 (87 LEDs × 60 mA), com 5,1 W típico em conteúdo POV. Um pack de 850 mAh dá

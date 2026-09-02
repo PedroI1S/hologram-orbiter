@@ -23,7 +23,7 @@ Entregáveis finais:
 | Cadeia de acionamento | ✅ definida — A2212 920KV, ESC 15 A, fonte de bancada |
 | Cadeia óptica | ✅ definida — HD107S 144/m, ESP32-C3, hall no rotor |
 | Especificação CAD | ✅ escrita e corrigida |
-| Modelo CAD | ⚠️ painéis bloqueados por 2 P0 de malha; demais peças liberadas |
+| Modelo CAD | ⚠️ regeneração pendente — 12 itens, 2 deles P0 nos painéis |
 | Compras | 🛒 não iniciadas |
 | Isolamento de vibração | ⚠️ decisão pendente; montagem inicial rígida |
 
@@ -57,7 +57,7 @@ Três mudanças de método que vêm junto:
 | Modelagem CAD v3.0 | gerador paramétrico, STLs, montagem, relatórios |
 | Verificação do CAD contra os critérios da especificação | relatório de conformidade |
 | Compras do caminho crítico | bateria, ESP32-C3, regulador, hall, ímã, fio, filamento |
-| Layout da baia de eletrônica | confirma que tudo cabe em Ø66 × 20 |
+| Layout da baia de eletrônica | confirma que tudo cabe na baia ampliada, Ø78 × 26 |
 
 **Portão G0:** CAD entregue e aprovado nos critérios do §9 da especificação;
 cupons impressos e conferidos com a fita real.
@@ -205,4 +205,5 @@ já está escrito no plano de ensaios.
 | [`04-PLANO-DE-ENSAIOS-v3.0.md`](04-PLANO-DE-ENSAIOS-v3.0.md) | bloqueadores e critérios |
 | [`05-ESQUEMA-ELETRICO-v3.0.md`](05-ESQUEMA-ELETRICO-v3.0.md) | eletrônica embarcada do rotor |
 | [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md) | o que ainda falta |
+| [`07-GLOSSARIO-E-PREMISSAS.md`](07-GLOSSARIO-E-PREMISSAS.md) | vocabulário e origem de cada número |
 | [`00-AUDITORIA-E-INTEGRACAO-v2.1.md`](00-AUDITORIA-E-INTEGRACAO-v2.1.md) | memória de cálculo e histórico |
