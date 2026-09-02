@@ -19,7 +19,7 @@ Todas saem do gerador paramétrico. Ver [`01-ESPECIFICACAO-CAD-v3.0.md`](01-ESPE
 | 04/05 | Base + torre integradas | 1 | 250 cm³ | ≤ 300 g | 12–18 h |
 | 06 | Suporte do ímã de índice | 1 | 8 cm³ | — | 30 min |
 | C01 | Cupom da junta 11 × 6 | 1 | 10 cm³ | — | 15 min |
-| C02 | Cupom do canal 12,4 × 2,2 | 1 | 6 cm³ | — | 10 min |
+| C02 | Cupom do canal em degrau | 1 | 6 cm³ | — | 10 min |
 
 **Total: ~432 cm³ ≈ 0,45 kg.** Comprar **1 kg** — o refugo em ABS é real e os
 painéis podem precisar de segunda tiragem por massa fora de tolerância.
@@ -53,8 +53,8 @@ Tudo isto gira junto com o rotor.
 
 | Item | Espec | Sit. | ~R$ |
 |---|---|:--:|---:|
-| Fita LED | **HD107S 144 LED/m**, RGB, 1 m (usa 87 de 144) | ✅ | — |
-| Microcontrolador | **ESP32-C3 Super Mini** ou XIAO ESP32-C3 (~22 × 18 mm) | 🛒 | 25–40 |
+| Fita LED | **HD107S 144 LED/m**, RGB, 1 m — medida em **12,0 × 2,0 mm** | ✅ | — |
+| Microcontrolador | **ESP32-C3 Super Mini** (~22 × 18 mm) | ✅ | — |
 | Regulador 5 V | buck **5 V / ≥ 5 A** (mini560 ou XL4015) | 🛒 | 15 |
 | Bateria | **LiPo 2S 850 mAh**, **55 × 30 × 13 mm**, ~47 g | 🛒 | 60–90 |
 | Conector | XT30 ou JST-XH para carga e balanceamento | 🛒 | 8 |

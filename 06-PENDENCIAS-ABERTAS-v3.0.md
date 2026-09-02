@@ -56,7 +56,9 @@ canal em 0,2 mm em vez de tangenciá-lo.
 | B6 | `mass_limit_g` da base | 300, e o modelo dá 310 — único critério vermelho | 330 (a base não gira; massa ali só ajuda) |
 | B7 | Tampa de invólucro | `07_tampa_contencao_ABS.stl` existe no pacote | **remover** — fora de escopo |
 | B8 | `validate_stl.py` | checa aresta, degeneração e sinal do volume total | acrescentar **teste de enrolamento por raios** e **faces coincidentes** |
-| B9 | Canal do LED | 12,4 × **1,2** mm, para fita de 1,0 | **12,4 × 2,2 mm**, com a cavidade recuada de x = 2,0 para x = 1,0 na faixa do canal (parede local 3,0, piso 0,8) — a fita medida tem **2,0 mm** |
+| B9 | Canal do LED | 12,4 × **1,2** mm, para fita de 1,0 | **canal em degrau**: 12,4 × 0,6 para o PCB, rasgo de 5,4 × 1,4 para os LEDs, parede local 2,8 só sob o rasgo (§5.1) |
+| B10 | Baia de eletrônica | Ø66 × 20, altura útil 14,4 mm | **cubo Ø92, baia Ø82/Ø78 × 26** — altura útil 20,4 mm, +18 g. Rasgos de refrigeração migram para r 41,5–45 |
+| B11 | Fillet da raiz do braço | concordância termina em r = 46, absorvida pelo cubo Ø92 | refazer como fillet cubo→braço; é o ponto que carrega 158 N |
 
 ---
 
@@ -96,9 +98,9 @@ relação ao sensor e pode mantê-lo permanentemente ligado ou desligado.
 
 ### D1 · ~~Espessura da fita~~ — **medida em 02/09: 2,0 mm**
 
-A fita tem **12,0 × 2,0 mm**, não 12,0 × 1,0. O canal foi dimensionado para 1,0 e
-precisa ir a 2,2 mm de profundidade — ver **B9**, que é onde este item passou a
-viver. Deixar a fita saliente custaria +9 °C no motor.
+A fita tem **12,0 × 2,0 mm** no total: PCB de ~0,4 mm mais o encapsulamento 5050
+de 1,6. O canal foi dimensionado para 1,0 e precisa virar **canal em degrau** —
+ver **B9**. Deixar a fita saliente custaria +9 °C no motor.
 
 Com o canal corrigido, a estimativa térmica de 43 °C permanece válida.
 

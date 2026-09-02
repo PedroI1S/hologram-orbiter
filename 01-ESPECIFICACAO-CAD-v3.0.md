@@ -177,25 +177,33 @@ parede. Elas impedem o colapso da seção, não contribuem para rigidez de flex�
 
 | | valor | por quê |
 |---|---:|---|
-| Largura | **12,4 mm** | fita medida com 12,0 mm + 0,2 de folga por lado |
-| Profundidade | **2,2 mm** | fita medida com **2,0 mm** (medição de 02/09) |
-| Parede local sob o canal | **3,0 mm** | cavidade recua de x = 2,0 para x = 1,0 na faixa do canal |
+| Canal raso (PCB) | **12,4 × 0,6 mm** | PCB de ~0,4 mm assenta pelos ombros |
+| Rasgo fundo (LEDs) | **5,4 × 1,4 mm** | encapsulamento 5050 de 5,0 × 5,0 × 1,6 |
+| Profundidade total | **2,0 mm** | fita rente à superfície |
+| Parede local sob o rasgo | **2,8 mm** | cavidade recua de x = 2,0 para x = 1,2, só na faixa de 5,4 mm |
 | Batente inferior | 2,0 mm | apoio da ponta da fita |
 | Comprimento útil | 206 mm | 29 LEDs a 6,944 mm de passo |
-| **Piso remanescente** | **0,80 mm** | parede local de 3,0 menos canal de 2,2 |
+| **Piso remanescente** | **0,80 mm** | parede local de 2,8 menos rasgo de 2,0 |
 
 > O piso de 0,80 mm é o número crítico desta peça. São 4 camadas, em ponte de
 > 12,4 mm, e é a superfície onde a fita se apoia. **Nunca deixe cair abaixo de
 > 0,6 mm.**
 >
-> **Engrosse a parede localmente, não a lâmina.** A fita tem 2,0 mm e o canal
-> precisa de 2,2; numa parede de 2,0 isso romperia a cavidade. A solução é recuar
-> a cavidade de x = 2,0 para x = 1,0 apenas na faixa de 12,4 mm do canal —
-> parede local de 3,0 mm, piso de 0,8, e o perfil aerodinâmico intacto. Custa
-> 2,7 g por painel.
+> **Canal em degrau, porque o PCB é fino e o LED é grosso.** O PCB tem ~0,4 mm
+> e é contínuo; quem tem 1,6 mm é o encapsulamento 5050, que ocupa 5 mm de
+> largura a cada 6,944 mm. Um canal reto de 2,2 mm romperia a parede de 2,0.
+>
+> Canal raso de 12,4 × 0,6 para o PCB, rasgo de 5,4 × 1,4 só para os LEDs, e a
+> parede engrossada para 2,8 mm **apenas sob o rasgo**. Custa 0,9 g por painel
+> contra 2,7 do canal reto, e a ponte de 0,8 mm passa a vencer **5,4 mm em vez
+> de 12,4** — muito mais confiável. O PCB apoia nos ombros, que é onde o adesivo
+> trabalha melhor.
 >
 > Engrossar a lâmina inteira de 8 para 10 mm também resolveria, mas com **+25 %
 > de área frontal** e o mesmo aumento no arrasto. Não faça isso.
+>
+> Óptica: com o LED 1,4 mm abaixo num rasgo de 5,4, o corte fica em 63° — fora
+> dos ±60° de abertura do 5050. Sem vinhetagem.
 >
 > Deixar a fita saliente 0,8 mm custa **+12 mN·m de torque, +1,1 A e +9 °C** no
 > motor. Não é opção.
@@ -238,7 +246,7 @@ painéis contra 158,1 N cada um, e abriga a eletrônica de bordo.
 
 | Feature | Cota |
 |---|---|
-| Disco do cubo | Ø80 × 6 mm |
+| Disco do cubo | **Ø92** × 6 mm |
 | **Furo central** | **Ø8 H8**, para o eixo M6 do motor — ver §6.1 |
 | Rebaixo sob a porca | **Ø13 × 2 mm**, assento para arruela metálica — ver nota |
 | Braços | 3 a 120°, seção aerodinâmica 15 (corda, Y) × 6 (altura, Z) |
@@ -247,7 +255,7 @@ painéis contra 158,1 N cada um, e abriga a eletrônica de bordo.
 | **Ponta da espiga** | **r = 96 mm** |
 | Espiga | 11,0 × 6,0 mm, 22 mm de comprimento |
 | Furos dos parafusos | 2 por braço, Ø3,2 em **r = 80 e r = 90** |
-| Baia de eletrônica | anel Ø70 externo / Ø66 interno, 20 mm de altura |
+| Baia de eletrônica | anel **Ø82 externo / Ø78 interno, 26 mm** de altura |
 | Postes da tampa | 2, espaçados 58 mm, furo Ø2,8 |
 
 **Perfil dos braços.** Espessura máxima a ~33% da corda a partir de +y, afilando
@@ -264,10 +272,15 @@ subir pelo cubo, mas a baia de eletrônica ocupa de r = 33 a r = 35 e furos
 dentro dela abririam o compartimento da bateria para o motor. Sobra o anel entre
 o Ø da baia e a borda do cubo.
 
-> **Solução proposta:** 6 rasgos em arco de 4 mm de largura em r ≈ 37,5, entre a
-> baia (r = 35) e a borda do cubo (r = 40). Área ≈ 470 mm², melhor que 6 furos
-> Ø8 (302 mm²) e sem invadir a baia. Se preferir outra solução, o requisito é:
-> **área livre ≥ 300 mm², sem abrir a baia da bateria.**
+> **No CAD v3.0:** 3 rasgos em arco de 60°, entre a baia e a borda do cubo. Com
+> o cubo em Ø92 e a baia em Ø82, eles migram para **r 41,5–45**. Requisito:
+> **área livre ≥ 300 mm², sem abrir a baia da bateria**, e fora da raiz dos
+> braços — 6 rasgos a 60° cairiam em cima delas.
+>
+> **⚠️ Fillet da raiz.** A concordância do braço termina em r = 46, que passa a
+> ser a própria borda do cubo Ø92. Ela deixa de existir como transição e precisa
+> ser refeita como fillet cubo→braço: é o ponto que carrega 158 N e sem
+> concordância vira concentrador de tensão.
 
 **Alívios de massa** no lado inferior do disco, deixando 2 mm de pele superior.
 Não coincidir com a raiz dos braços nem com os rasgos de ventilação.
@@ -298,7 +311,7 @@ menos os 2 do rebaixo, sobram 6 mm de engate útil (1 × D). Suficiente.
 
 ### 5.3 Tampa da baia — 1 unidade, ABS
 
-Ø70 × 5 mm, pele de 1,6 mm, aba de 1,6 mm, 2 furos Ø3 espaçados 58 mm.
+**Ø82** × 5 mm, pele de 1,6 mm, aba de 1,6 mm, 2 furos Ø3 espaçados 58 mm.
 
 **Requisito novo:** acesso à chave liga/desliga e ao conector de carga da
 bateria sem desmontar o rotor.
@@ -604,7 +617,7 @@ Autoverificáveis a partir do modelo, sem medir peça física.
 | Piso sob o canal do LED | ≥ 0,6 mm |
 | Parede ao redor do bolso de porca | ≥ 1,5 mm |
 | Menor parede estrutural do modelo | ≥ 0,8 mm |
-| Área livre de ventilação do cubo | ≥ 300 mm², sem abrir a baia |
+| Área livre de ventilação do cubo | ≥ 300 mm², sem abrir a baia, fora da raiz dos braços |
 | Área livre de ventilação da base | ≥ 600 mm², **na lateral** (serve à baia, não ao motor) |
 | A × Cd do boss carenado | ≤ 350 mm² |
 | Massa por painel montado | ≤ 45 g |
