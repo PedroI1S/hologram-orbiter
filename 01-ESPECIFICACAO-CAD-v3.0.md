@@ -309,8 +309,30 @@ Impressa integrada, sem separar no fatiador.
 | Furos das flanges | 4 × Ø4 em PCD 40, a 45° |
 | Passagem de fiação | furo central da torre + janela lateral |
 | Furos periféricos | 4 × Ø4 em PCD 290 |
-| Planeza da face de apoio | ±2 mm |
+| **Contato com a mesa** | sem balanço; folga ≤ 0,2 mm em 3 pontos a 120° na pista |
 | Perpendicularidade da torre | ≤ 1° |
+
+**Apoio na mesa — critério de contato, não de planeza.** A base apoia em toda a
+face inferior: fundo da baia, nervuras e pista. Isso é **melhor** que três pés —
+a carga da torre desce direto para a mesa e as nervuras ficam integralmente
+respaldadas. Mas só vale se a peça sair plana, e ABS de Ø280 empena com a
+periferia subindo, o que concentraria o contato num disco de Ø100.
+
+Por isso o aceite é **contato**, não planeza: sobre superfície plana, a base não
+balança e um calibrador acusa ≤ 0,2 mm em três pontos a 120° na pista externa.
+Fora disso, lixar os pontos altos.
+
+> Não converta em três pés sem antes medir. Fazê-lo transforma a nervura em
+> elemento estrutural — o caminho vira torre → piso → nervura → pé — e a seção
+> atual de 8 × 8 mm num vão de 90 mm dá 2,8 N/mm, contra os ~66 N/mm que um modo
+> de balanço em 60 Hz exigiria. A nervura teria que ir a ~8 × 20 mm. Só reabra
+> isso se o ensaio de impacto (§Bloqueador C) voltar abaixo de 45 Hz, e aí o que
+> cresce é a **nervura**, não o pé.
+
+**Três abas de fixação.** Na face externa do anel, a 120°, com furo Ø5 — fora da
+canaleta e fora de qualquer caminho de carga. São o único ponto de grampo da
+base: a pista de 10 mm tem a canaleta no meio e lábios de 2,8 mm, onde grampo
+tipo C não pega.
 
 **Ventilação — requisito, não detalhe.** As aberturas de ar da baia central
 **têm que sair pela parede lateral**. Furos no piso da baia ficam vedados assim
@@ -607,7 +629,7 @@ Autoverificáveis a partir do modelo, sem medir peça física.
 | Massa por painel montado | ≤ 45 g |
 | Massa do rotor completo | ≤ 280 g |
 | Perpendicularidade torre/base | ≤ 1° |
-| Planeza da base | ±2 mm |
+| **Contato da base** | sem balanço; ≤ 0,2 mm em 3 pontos a 120° |
 | Malhas | watertight, 0 arestas não-manifold, 0 triângulos degenerados |
 | Orientação dos STL | base em Z = 0, escala em mm, volume orientado positivo |
 

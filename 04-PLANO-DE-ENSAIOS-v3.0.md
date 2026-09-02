@@ -221,6 +221,6 @@ Não são formalidade. O rotor guarda **26 J** e um painel solto sai a
 - **Parada de emergência** ao alcance, cortando a fonte.
 - **Subir em patamares** com inspeção entre eles. Nunca ir direto a 1800.
 - Após qualquer reimpressão ou remontagem, **refazer o balanceamento**.
-- **Grampear a base à bancada** antes de qualquer ensaio de rotação. Ela tem
-  310 g e não tem furos de fixação.
+- **Grampear a base à bancada** pelas três abas externas do anel antes de
+  qualquer ensaio de rotação. Ela tem 310 g e caminha se o contato for ruim.
 - Óculos de proteção, sempre.
