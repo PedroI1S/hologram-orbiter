@@ -1,6 +1,6 @@
 # Lista de componentes — Hologram Orbiter v3.0
 
-Estado em 01/09/2026. Preços em BRL são **estimativas de ordem de grandeza**
+Estado em 03/09/2026. Preços em BRL são **estimativas de ordem de grandeza**
 para orçamento, não cotações.
 
 Legenda: ✅ já temos · 🛒 comprar · ⚠️ decisão pendente
@@ -11,18 +11,19 @@ Legenda: ✅ já temos · 🛒 comprar · ⚠️ decisão pendente
 
 Todas saem do gerador paramétrico. Ver [`01-ESPECIFICACAO-CAD-v3.0.md`](01-ESPECIFICACAO-CAD-v3.0.md).
 
-| # | Peça | Qtd | Volume | Massa | Tempo |
-|---|---|---:|---:|---:|---|
-| 01 | Aranha | 1 | 52 cm³ | ≤ 55 g | 4–5 h |
-| 02 | Painel LED | 3 | 33 cm³ ea. | ≤ 34,2 g nu | 8–10 h (lote) |
-| 03 | Tampa da baia | 1 | 7 cm³ | ≤ 8 g | 30 min |
-| 04/05 | Base + torre integradas | 1 | 250 cm³ | ≤ 300 g | 12–18 h |
-| 06 | Suporte do ímã de índice | 1 | 8 cm³ | — | 30 min |
-| C01 | Cupom da junta 11 × 6 | 1 | 10 cm³ | — | 15 min |
-| C02 | Cupom do canal em degrau | 1 | 6 cm³ | — | 10 min |
+| # | Peça | Qtd | Volume (CAD) | Massa maciça (CAD) | Limite | Tempo |
+|---|---|---:|---:|---:|---|---|
+| 01 | Aranha (com pilares e guias da baia) | 1 | 65 cm³ | 67,5 g | ≤ 75 g (alvo) | 5–6 h |
+| 02 | Painel LED | 3 | 30,7 cm³ ea. | 31,9 g nu | ≤ 45 g montado | 8–10 h (lote) |
+| 03 | Tampa da baia Ø82 | 1 | 9,7 cm³ | 10,1 g | ≤ 12 g (alvo) | 30 min |
+| 04/05 | Base + torre integradas, 4 abas | 1 | 309 cm³ | 321 g | ≤ 330 g (alvo) | 12–18 h |
+| 06 | Suporte do ímã (dois parafusos) | 1 | 1,7 cm³ | 1,7 g | — | 15 min |
+| C01 | Cupom da junta 11 × 6 | 1 | 9,7 cm³ | 10,1 g | — | 15 min |
+| C02 | Cupom do canal do LED (fatia real de 30 mm do painel) | 1 | 3,4 cm³ | 3,5 g | — | 10 min |
 
-**Total: ~432 cm³ ≈ 0,45 kg.** Comprar **1 kg** — o refugo em ABS é real e os
-painéis podem precisar de segunda tiragem por massa fora de tolerância.
+**Total: ~490 cm³ ≈ 0,5 kg em densidade maciça** (menos com infill). Comprar
+**1 kg** — o refugo em ABS é real e os painéis podem precisar de segunda
+tiragem por massa fora de tolerância.
 
 **Imprimir os cupons primeiro.** Custam 25 minutos e evitam refazer um lote de
 painéis de 208 mm por causa de folga na junta ou no canal.
@@ -37,8 +38,8 @@ painéis de 208 mm por causa de folga na junta ou no canal.
 | ESC | **LittleBee Spring 20A**, BLHeli_S, 25 × 13 mm | ✅ | — |
 | Fonte de bancada | ajustável; operar em **6–7 V**, ≥ 5 A | ✅ | — |
 | Gerador do sinal do ESC | **Arduino** com rampa e botão de parada — ver §8 do esquema | ✅ | — |
-| **Arruela larga Ø20 × M6** | aço, assento do aperto no cubo | 🛒 | 2 |
-| Porca M6 autotravante **baixa** | ~6 mm de altura — **não** a cônica de 14 mm que veio com o motor. Apertar a **0,6 N·m** | 🛒 | 2 |
+| **Arruela Ø20 × Ø8,5 × 2 mm, alumínio** | cortar da mesma chapa da R01 (a referência de corte traz o disco). O furo precisa passar pelo **colar Ø8 do eixo**, que sobe 5–7 mm acima da campânula: uma arruela M6 assentaria no colar e a porca não apertaria o cubo. Alternativa de prateleira: DIN 125 M8 em aço (Ø16; 3,4 MPa no ABS) | 🛒 | — |
+| **Porca M6 fina DIN 439B** (3 mm) + Loctite 243 | **não** a cônica de 14 mm que veio com o motor, **nem** a autotravante baixa de 6 mm: com o colar até 5–7 mm e a rosca acabando em 12–14, a de 6 mm terminaria no fim do eixo. Apertar a **0,6 N·m** | 🛒 | 2 |
 
 
 > **Aperte a 0,6 N·m, com arruela Ø20.** O atrito precisa transmitir 46 mN·m, o
@@ -56,7 +57,7 @@ Tudo isto gira junto com o rotor.
 |---|---|:--:|---:|
 | Fita LED | **HD107S 144 LED/m**, RGB, 1 m — medida em **12,0 × 2,0 mm** | ✅ | — |
 | Microcontrolador | **ESP32-C3 Super Mini** (~22 × 18 mm) | ✅ | — |
-| Regulador 5 V | buck **5 V / ≥ 5 A** (mini560 ou XL4015) | 🛒 | 15 |
+| Regulador 5 V | buck **5 V / ≥ 5 A mini560** (22 × 17 × 6 mm, ~2 g), em pé numa ranhura na parede da baia. **Não** XL4015 (51 × 26 × 14, ~18 g): não cabe na baia nem no orçamento de 15 g | 🛒 | 15 |
 | Bateria | **LiFePO4 2S 800 mAh 20C**, 58 × 30 × 17 mm, 50 g, 6,6 V | ✅ | — |
 | Conector | XT30 ou JST-XH para carga e balanceamento | 🛒 | 8 |
 | Chave liga/desliga | slide ou toggle miniatura, acesso pela tampa | 🛒 | 5 |
@@ -72,11 +73,13 @@ Tudo isto gira junto com o rotor.
 
 > **Empacotamento — a baia foi ampliada por causa disto.** Bateria, MCU,
 > regulador, deslocador de nível, capacitor, chave e conector numa baia que era
-> de Ø66 × 20 mm. Passou para **Ø78 × 26**, o que leva a altura útil de 14,4 para
-> 20,4 mm. Um DevKit ESP32 de 55 × 28 mm ainda não caberia junto com a bateria;
-> o C3 Super Mini (22 × 18) cabe. O regulador de 5 V não estava previsto em
-> nenhuma versão anterior. **Faça o esboço de layout com as placas reais antes de
-> o cubo ser fechado** — é o que ainda pode surpreender.
+> de Ø66 × 20 mm. Passou para **Ø78 × 26**, com 21 mm úteis acima da porca. Um
+> DevKit ESP32 de 55 × 28 mm não caberia junto com a bateria; o C3 Super Mini
+> (22 × 18) cabe. O esboço de layout está no CAD (`spider.bay_layout`) e é
+> verificado pelo gerador: placa de interface em +x sob a janela da tampa,
+> ESP32-C3 em −x, buck em pé na parede, capacitor em pé numa cerca. As massas
+> são de catálogo e somam exatamente os 15 g de folga: **pesar cada peça real
+> antes de fixar**.
 
 > **Duas armadilhas elétricas que não são opcionais.**
 >
@@ -89,33 +92,23 @@ Tudo isto gira junto com o rotor.
 > margem. Ou entra o 74AHCT125, ou ajuste o buck para **4,5 V**, o que baixa o
 > limiar para ~3,15 V e resolve sem componente — ao custo de um pouco de brilho.
 
-> **Envelope do pack, com a baia ampliada.** A baia passa a Ø78 × 26 mm e a porca
-> M6 ocupa até Z = 5,6, então sobram **20,4 mm de altura** e raio útil de 39 mm.
-> No plano, o limite não é o comprimento sozinho: é a **meia-diagonal**.
+> **O pack comprado cabe.** LiFePO4 2S de 58 × 30 × 17 mm deitado ao longo de
+> y, sobre trilhos em Z = 6 que passam por cima da arruela e da porca fina (topo
+> em Z = 5); o topo do pack fica em Z = 23, dentro dos 26 da baia, e a
+> meia-diagonal do berço, 32,3 mm, dentro do raio útil de 39. Paredes laterais e
+> abas de topo centram o pack; **a retenção é simples porque ele fica no eixo de
+> rotação**: sendo simétrico em torno do centro, a resultante centrífuga sobre
+> ele é praticamente nula. Uma espuma sob a tampa segura contra vibração.
 >
-> | Largura do pack | Comprimento máximo | Altura máxima |
-> |---:|---:|---:|
-> | 25 mm | 70 mm | 20,4 mm |
-> | **30 mm** | **67 mm** | **20,4 mm** |
-> | 35 mm | 63 mm | 20,4 mm |
->
-> Contando 1,5 mm de berço. Com essa folga o berço **pode** ser caixa fechada,
-> que centra melhor que apoios soltos — e centragem é o que a tolerância de
-> excentricidade exige.
->
-> A retenção é simples porque **o pack fica no eixo de rotação**: sendo simétrico
-> em torno do centro, a resultante centrífuga sobre ele é praticamente nula. Uma
-> espuma sob a tampa segura contra vibração.
->
-> **Três especificações decidem, não o rótulo de aplicação:** química LiPo,
-> taxa ≥ 15C, e conector de balanceamento **JST-XH de 3 vias** além do de
-> potência. Sem o balanceador não há carga célula a célula, e num pack que gira
-> lacrado isso não é aceitável.
+> **O que decide, não o rótulo de aplicação:** taxa ≥ 15C (o pack tem 20C) e
+> conector de balanceamento **JST-XH de 3 vias** além do de potência. Sem o
+> balanceador não há carga célula a célula, e num pack que gira lacrado isso
+> não é aceitável. Carregar sempre em **modo LiFe**.
 
-**Por que 2S e não outra coisa:****Por que 2S e não outra coisa:** a fita é 5 V e puxa **27 W em branco pleno**
-(87 LEDs × 60 mA), com 5,1 W típico em conteúdo POV. Um pack de 850 mAh dá
-~70 min de conteúdo típico. 2S com buck é o arranjo padrão; 1S com boost seria
-pior em eficiência e corrente.
+**Por que 2S e não outra coisa:** a fita é 5 V e puxa **27 W em branco pleno**
+(87 LEDs × 60 mA), com 5,1 W típico em conteúdo POV. O pack LiFePO4 de 800 mAh
+a 6,6 V guarda ~5,3 Wh: ~60 min de conteúdo típico. 2S com buck é o arranjo
+padrão; 1S com boost seria pior em eficiência e corrente.
 
 ---
 
@@ -127,7 +120,7 @@ pior em eficiência e corrente.
 | Parafuso **M3 × 40** + porca **plana** M3 | fixação painel → longarina | 6 + 6 | 🛒 | 10 |
 | Trava química média (Loctite 243) | substitui o nyloc nas juntas do painel | 1 | 🛒 | 25 |
 | Parafuso **M3 × 6** | motor → chapa (padrão 16 × 19 mm) | 4 | 🛒 | 3 |
-| Parafuso M4 × 16 + porca nylon | chapa → flange da torre | 4 + 4 | 🛒 | 5 |
+| Parafuso M4 × 16 (2) e **M4 × 20** (2, sob a aba de 2,5 mm do suporte do ímã) + porca nylon | chapa → flange da torre | 4 + 4 | 🛒 | 5 |
 | Parafuso M3 × 10 | tampa da baia | 2 | 🛒 | 2 |
 | Massa de balanceamento | fita adesiva de chumbo ou tungstênio | — | 🛒 | 20 |
 | Grampos tipo C | fixação da base à bancada nos ensaios | 2 | 🛒 | 20 |
@@ -146,7 +139,7 @@ pior em eficiência e corrente.
 
 ---
 
-## 6. Instrumentação para os ensaios
+## 5. Instrumentação para os ensaios
 
 | Item | Espec | Por quê | Sit. | ~R$ |
 |---|---|---|:--:|---:|
@@ -164,7 +157,7 @@ pior em eficiência e corrente.
 
 ---
 
-## 7. Consumíveis
+## 6. Consumíveis
 
 | Item | Qtd | ~R$ |
 |---|---|---:|
@@ -174,20 +167,20 @@ pior em eficiência e corrente.
 
 ---
 
-## 8. Resumo de compra
+## 7. Resumo de compra
 
 | Bloco | ~R$ |
 |---|---:|
-
-| Acionamento (adaptador, porcas) | 18 |
-| Eletrônica de bordo | 165–220 |
+| Acionamento (porca fina; a arruela sai da chapa) | 2 |
+| Eletrônica de bordo | 45–65 |
 | Estrutura e fixação | 83 |
-| Instrumentação | 115–195 |
+| Instrumentação | 75–155 |
 | Consumíveis | 140–180 |
-| **Total estimado** | **520–690** |
+| **Total estimado** | **345–485** |
 
-Carregador LiPo (R$ 60), paquímetro (R$ 50) e tacômetro (R$ 40) entram se ainda
-não houver no laboratório.
+Carregador **em modo LiFe** (R$ 60) e paquímetro (R$ 50) entram se ainda não
+houver no laboratório. O tacômetro sai da conta se o ESC for reflashado com
+Bluejay, que entrega a rotação por telemetria.
 
 ### Prioridade de compra
 

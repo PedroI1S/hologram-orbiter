@@ -25,10 +25,10 @@ painel três vezes por volta: o olho integra e vê uma imagem cilíndrica suspen
         ▐  │      ╱   ╲         │  ▌
         ▐  ╰────────┬───────────╯  ▌
                  torre + motor
-        ═══════════════════════════      base Ø300
+        ═══════════════════════════      base Ø280
 ```
 
-O rotor carrega a própria energia e eletrônica: bateria LiPo 2S, ESP32 e as três
+O rotor carrega a própria energia e eletrônica: bateria LiFePO4 2S, ESP32 e as três
 fitas viajam com ele. A parte fixa tem o motor, o ESC, a fonte e o sensor de
 índice angular. Nada de anel coletor.
 
@@ -65,19 +65,28 @@ a impeça.
 | Deflexão da ponta do painel | 2,48 mm | raio dinâmico do rotor: 106,5 mm |
 | Tensão de flexão no painel | 13,9 MPa (SF ≈ 2,5) | seção da lâmina, parede de 2 mm |
 | Energia cinética do rotor | 27,6 J | energia armazenada em operação |
-| Energia de um painel solto | 7,9 J a 19,6 m/s | idem |
+| Energia de um painel solto | 7,4 J a 18,9 m/s (velocidade no CG, r = 100) | idem |
 | Inércia do rotor | 1,55 g·m² | rampa de partida ≥ 8 s |
 | Desbalanceamento admissível | **8,4 g·mm** | contrapesos, berço da bateria, Δm |
 
-**Duas bases de massa, de propósito.** As cargas estruturais (força, deflexão,
-tensão) usam **44,5 g por painel** — o teto do limite de 45 g. Dimensionar pelo
-pior caso é o certo. O modelo v3.0 saiu em 41,87 g e o canal em degrau (§5.1)
-acrescenta 0,9 g: o painel real fica em **~42,8 g**, com folga de 4 % contra o
-caso de projeto.
+**Duas bases de massa, de propósito.**
 
-Já o **balanceamento usa a massa real do rotor, 252 g**, porque ali a direção
-segura é a oposta: rotor mais leve significa desbalanceamento admissível menor.
-Usar 273 g afrouxaria o critério em 8 %. Não unifique as duas bases.
+As **cargas estruturais** (força, deflexão, tensão) usam o **teto do limite,
+44,5 g por painel**. Dimensionar pelo pior caso é o certo, e o painel real fica
+em ~42,1 g — 31,9 g do modelo (canal de 12,4 × 2,0 com parede local), mais fita
+e ferragens.
+
+O **balanceamento usa a massa real do rotor**, porque ali a direção segura é a
+oposta: rotor mais leve significa desbalanceamento admissível menor.
+
+```
+U_adm = m_rotor × 33,4 µm        Δm entre painéis = U_adm / 100 mm
+```
+
+Com os **252 g** da v3.0 original: U_adm = 8,4 g·mm e Δm ≤ 0,084 g. O CAD atual
+estima ~274 g (eletrônica de catálogo e contrapeso incluídos), o que afrouxaria
+para 0,091 g. **Não antecipe esse afrouxamento:** use 8,4 g·mm até pesar o rotor
+montado.
 
 ---
 
@@ -114,9 +123,8 @@ Z =  85    base do painel                    (189 − 104)
 Z = 293    topo do painel                    (189 + 104)
 ```
 
-> Os 30 mm entre a chapa e o Datum B saem do datasheet: corpo do motor de 24 mm
-> Os 30 mm entre a chapa e o Datum B saem do datasheet: corpo do motor de 24 mm
-> mais 6 mm de cubo. Confirmar com paquímetro na montagem. Se o isolador (§5.7)
+> Os 30 mm entre a chapa e o Datum B: corpo do motor de 24 mm (**medido com
+> paquímetro em 02/09/2026**, Ø27,8) mais 6 mm de cubo. Se o isolador (§5.7)
 > entrar neste caminho de carga, some a altura dele aqui.
 
 ---
@@ -177,33 +185,35 @@ parede. Elas impedem o colapso da seção, não contribuem para rigidez de flex�
 
 | | valor | por quê |
 |---|---:|---|
-| Canal raso (PCB) | **12,4 × 0,6 mm** | PCB de ~0,4 mm assenta pelos ombros |
-| Rasgo fundo (LEDs) | **5,4 × 1,4 mm** | encapsulamento 5050 de 5,0 × 5,0 × 1,6 |
-| Profundidade total | **2,0 mm** | fita rente à superfície |
-| Parede local sob o rasgo | **2,8 mm** | cavidade recua de x = 2,0 para x = 1,2, só na faixa de 5,4 mm |
+| Canal | **12,4 × 2,0 mm** | PCB de ~0,4 mm colado no fundo; LEDs 5050 (1,5–1,6 mm) rentes à face externa |
+| Parede local sob o canal | **2,8 mm** | cavidade recua de x = 2,0 para x = 1,2 numa faixa de **14,4 mm** (canal + 1,0 de cada lado) |
 | Batente inferior | 2,0 mm | apoio da ponta da fita |
 | Comprimento útil | 206 mm | 29 LEDs a 6,944 mm de passo |
-| **Piso remanescente** | **0,80 mm** | parede local de 2,8 menos rasgo de 2,0 |
+| **Piso remanescente** | **0,80 mm** | parede local de 2,8 menos canal de 2,0, em ponte de 12,4 mm |
 
 > O piso de 0,80 mm é o número crítico desta peça. São 4 camadas, em ponte de
 > 12,4 mm, e é a superfície onde a fita se apoia. **Nunca deixe cair abaixo de
 > 0,6 mm.**
 >
-> **Canal em degrau, porque o PCB é fino e o LED é grosso.** O PCB tem ~0,4 mm
-> e é contínuo; quem tem 1,6 mm é o encapsulamento 5050, que ocupa 5 mm de
-> largura a cada 6,944 mm. Um canal reto de 2,2 mm romperia a parede de 2,0.
+> **Por que não um canal em degrau.** A versão de 02/09 desta seção previa um
+> canal raso de 12,4 × 0,6 para o PCB e um rasgo de 5,4 × 1,4 só para os
+> LEDs. A fita é um PCB plano com os LEDs **em cima**: o degrau só funcionaria
+> com a fita montada de cabeça para baixo, e com os LEDs para fora eles
+> sobressairiam 1,4 mm da face — o caso proibido abaixo. Apontado por Pedro em
+> 03/09/2026.
 >
-> Canal raso de 12,4 × 0,6 para o PCB, rasgo de 5,4 × 1,4 só para os LEDs, e a
-> parede engrossada para 2,8 mm **apenas sob o rasgo**. Custa 0,9 g por painel
-> contra 2,7 do canal reto, e a ponte de 0,8 mm passa a vencer **5,4 mm em vez
-> de 12,4** — muito mais confiável. O PCB apoia nos ombros, que é onde o adesivo
-> trabalha melhor.
+> Com os LEDs para fora, o PCB é o elemento mais fundo e a única forma de deixar
+> a fita rente é um canal de **12,4 × 2,0** com a parede engrossada em toda a
+> largura, mais 1,0 mm de terra de cada lado para ligar o piso à parede de 2,0
+> por uma área e não por uma linha. Custa **+0,3 g por painel** contra o canal
+> original de 1,2 (o canal mais fundo devolve quase tudo o que a parede
+> engrossada acrescenta). A ponte é de 12,4 mm a 0,8 mm, **a mesma do canal
+> original**, validada no cupom C02, que é uma fatia real do painel.
 >
 > Engrossar a lâmina inteira de 8 para 10 mm também resolveria, mas com **+25 %
 > de área frontal** e o mesmo aumento no arrasto. Não faça isso.
 >
-> Óptica: com o LED 1,4 mm abaixo num rasgo de 5,4, o corte fica em 63° — fora
-> dos ±60° de abertura do 5050. Sem vinhetagem.
+> Óptica: LED rente à face, sem paredes ao lado — sem vinhetagem.
 >
 > Deixar a fita saliente 0,8 mm custa **+12 mN·m de torque, +1,1 A e +9 °C** no
 > motor. Não é opção.
@@ -247,28 +257,32 @@ painéis contra 158,1 N cada um, e abriga a eletrônica de bordo.
 | Feature | Cota |
 |---|---|
 | Disco do cubo | **Ø92** × 6 mm |
-| **Furo central** | **Ø8 H8**, para o eixo M6 do motor — ver §6.1 |
-| Rebaixo sob a porca | **Ø13 × 2 mm**, assento para arruela metálica — ver nota |
+| **Furo central** | **Ø8 H8**, para o colar Ø8 do eixo — ver §6.1 |
+| Rebaixo sob a porca | **nenhum** — a arruela assenta no topo do cubo; ver a nota sobre o colar do eixo |
 | Braços | 3 a 120°, seção aerodinâmica 15 (corda, Y) × 6 (altura, Z) |
-| Raiz do braço | r = 38 mm, com concordância até r ≈ 51 |
+| Raiz do braço | r = 38 mm (dentro do cubo); alargamento em planta de r 39 a 46 e cunha a 45° sob o braço de r 46 a 53 (fillet cubo→braço) |
 | **Ombro (Datum C)** | **r = 74 mm** |
 | **Ponta da espiga** | **r = 96 mm** |
 | Espiga | 11,0 × 6,0 mm, 22 mm de comprimento |
 | Furos dos parafusos | 2 por braço, Ø3,2 em **r = 80 e r = 90** |
 | Baia de eletrônica | anel **Ø82 externo / Ø78 interno, 26 mm** de altura |
-| Postes da tampa | 2, espaçados 58 mm, furo Ø2,8 |
+| Postes da tampa | 2, espaçados **70 mm** no eixo y (encostados na parede da baia, entre os braços), furo Ø2,8 |
 
 **Perfil dos braços.** Espessura máxima a ~33% da corda a partir de +y, afilando
 para a fuga em −y. Mesma lógica da lâmina. O braço útil tem só 58 mm (de r = 38
 a r = 96), dos quais 22 são espiga — reproporcione a concordância da raiz para
 não engolir o trecho aerodinâmico.
 
+**Sulco de fiação.** O sulco de 4,4 × ~3 mm no lado de fuga (r 48–70, §6.3)
+reduz a seção do braço de ~63 para ~47 mm² e desloca o centróide ~2 mm: sob
+158 N dá ~9 MPa e SF ≈ 3 em tração. Aceitável; fica registrado.
+
 **Folga da junta:** espiga 11,0 × 6,0 contra socket 11,2 × 6,2 = **0,1 mm por
 lado**. Comprimento 22,0 contra 22,5 = **0,5 mm de fundo**. A espiga não encosta
 no fundo: a carga radial vai toda para os dois parafusos M3, por projeto.
 
 **Ventilação — resolva com atenção.** O ar de refrigeração do motor precisa
-subir pelo cubo, mas a baia de eletrônica ocupa de r = 33 a r = 35 e furos
+subir pelo cubo, mas a parede da baia de eletrônica ocupa de r = 39 a r = 41 e furos
 dentro dela abririam o compartimento da bateria para o motor. Sobra o anel entre
 o Ø da baia e a borda do cubo.
 
@@ -277,10 +291,12 @@ o Ø da baia e a borda do cubo.
 > **área livre ≥ 300 mm², sem abrir a baia da bateria**, e fora da raiz dos
 > braços — 6 rasgos a 60° cairiam em cima delas.
 >
-> **⚠️ Fillet da raiz.** A concordância do braço termina em r = 46, que passa a
-> ser a própria borda do cubo Ø92. Ela deixa de existir como transição e precisa
-> ser refeita como fillet cubo→braço: é o ponto que carrega 158 N e sem
-> concordância vira concentrador de tensão.
+> **Fillet da raiz.** Com o cubo Ø92 a concordância antiga (até r = 46) ficava
+> inteira sobre o disco. O CAD a substitui por duas coisas: o alargamento em
+> planta da raiz, da parede da baia (r 39) à borda do disco (r 46), e uma
+> **cunha a 45° sob o braço**, da borda inferior do disco até r ≈ 53, 11 mm de
+> largura, que remove o canto reentrante no ponto que carrega 158 N e imprime
+> sem suporte.
 
 **Alívios de massa** no lado inferior do disco, deixando 2 mm de pele superior.
 Não coincidir com a raiz dos braços nem com os rasgos de ventilação.
@@ -300,23 +316,35 @@ assento plano de Ø20 no rebaixo do cubo.
 
 **Não use a porca cônica que acompanha o motor.** Ela tem 14 mm de altura e
 ocuparia 14 dos 20 mm internos da baia, sobrando 6 mm para uma bateria de 13 mm.
-Use **porca M6 autotravante baixa em rebaixo de Ø13 × 2 mm**: o topo fica a 4 mm
-do cubo e sobram 16 mm para a bateria.
+**O colar do eixo muda a fixação.** O desenho do motor (§6.1) mostra um colar
+Ø8 × 5 sob a rosca, dentro de uma saliência total cotada em 14: o colar sobe
+5 mm acima da campânula, ou 7 se os 2 mm que faltam na soma forem um ressalto
+sob ele. O cubo tem 6 mm. Logo o colar termina acima do fundo de qualquer
+rebaixo, e uma arruela M6 (furo 6,4) assentaria no aço do colar, não no ABS:
+a porca apertaria o colar e o cubo ficaria solto.
 
-Engate da rosca: o eixo tem ~5 mm de Ø8 liso e ~7 mm de rosca acima da campânula.
-O cubo de 6 mm cobre os 5 lisos mais 1 de rosca, deixando **6 mm de rosca livre** —
-menos os 2 do rebaixo, sobram 6 mm de engate útil (1 × D). Suficiente.
+Fixação válida nas duas leituras: **sem rebaixo; arruela Ø20 × Ø8,5 × 2 mm em
+alumínio** (cortada da chapa da R01; o furo passa pelo colar) sobre o topo do
+cubo; **porca M6 fina DIN 439B (3 mm) com trava química** Loctite 243, a
+0,6 N·m. Pilha sobre o topo do cubo: arruela 0–2, porca 2–5, ponta do eixo em
++8 (ou +6 na leitura de 12 mm) — sobram 3 mm (ou 1) de rosca, e o topo da
+porca fica 1 mm abaixo dos trilhos da bateria (Z = 6). Pressão no ABS:
+500 N / 259 mm² = 1,9 MPa. A porca autotravante baixa de 6 mm não cabe em
+nenhuma leitura: terminaria em +8, no fim do eixo. **Medir no motor, a partir
+da face em que o cubo assenta: topo do colar e ponta do eixo.**
 
-**Massa alvo:** ≤ 55 g.
+**Massa alvo:** ≤ 75 g (o cubo Ø92 com a baia de 26 mm dá 66 g em ABS maciço;
+os 55 g eram do cubo Ø80). O limite que vale é o do rotor, 280 g.
 
 ### 5.3 Tampa da baia — 1 unidade, ABS
 
-**Ø82** × 5 mm, pele de 1,6 mm, aba de 1,6 mm, 2 furos Ø3 espaçados 58 mm.
+**Ø82** × 5 mm, pele de 1,6 mm, aba de 1,6 mm, 2 furos Ø3 espaçados 70 mm (eixo
+y), 6 copos de balanceamento em r = 34.
 
 **Requisito novo:** acesso à chave liga/desliga e ao conector de carga da
 bateria sem desmontar o rotor.
 
-**Massa alvo:** ≤ 8 g.
+**Massa alvo:** ≤ 12 g (só a pele de 1,6 mm em Ø82 tem 8,8 g; o CAD dá 10,1).
 
 ### 5.4 Base e torre — peça única, ABS
 
@@ -330,9 +358,9 @@ Impressa integrada, sem separar no fatiador.
 | Nervuras radiais | 8 unidades, 8 × 8 mm, da baia até a pista |
 | Torre | Ø30 externo, parede 4 mm, 150 mm a partir do piso |
 | Flange inferior e superior | Ø60 × 8 mm |
-| Furos das flanges | 4 × Ø4 em PCD 40, a 45° |
+| Furos das flanges | 4 × Ø4 em PCD 40, a 45°, **só na flange superior** |
 | Passagem de fiação | furo central da torre + janela lateral |
-| Furos periféricos | 4 × Ø4 em PCD 290 |
+| Furos periféricos | removidos — as abas de grampo fazem a fixação |
 | **Contato com a mesa** | sem balanço; folga ≤ 0,2 mm em 3 pontos a 120° na pista |
 | Perpendicularidade da torre | ≤ 1° |
 
@@ -353,10 +381,13 @@ Fora disso, lixar os pontos altos.
 > isso se o ensaio de impacto (§Bloqueador C) voltar abaixo de 45 Hz, e aí o que
 > cresce é a **nervura**, não o pé.
 
-**Três abas de fixação.** Na face externa do anel, a 120°, com furo Ø5 — fora da
-canaleta e fora de qualquer caminho de carga. São o único ponto de grampo da
-base: a pista de 10 mm tem a canaleta no meio e lábios de 2,8 mm, onde grampo
-tipo C não pega.
+**Quatro abas de fixação.** Na face externa do anel, a 90° (45°, 135°, 225°,
+315°), 16 mm radiais × 20 mm × 8 mm, furo Ø5 em r = 149 — fora da canaleta e
+fora de qualquer caminho de carga. São o único ponto de grampo da base: a pista
+de 10 mm tem a canaleta no meio e lábios de 2,8 mm, onde grampo tipo C não pega.
+São quatro a 90° e não três a 120° porque só os cantos da mesa de 300 × 300 têm
+lugar: uma aba a 165° chegaria a x = −151 mm e não caberia nem sem brim; nos
+cantos ela termina em |x| = |y| = 110 e o brim em 118. Três delas bastam.
 
 **Ventilação — requisito, não detalhe.** As aberturas de ar da baia central
 **têm que sair pela parede lateral**. Furos no piso da baia ficam vedados assim
@@ -397,22 +428,28 @@ Os dois padrões não colidem: raio máximo do padrão do motor ≈ 12,4 mm cont
 Não são acessório. São o que fecha o balanceamento, e têm alvo numérico.
 
 Com rotor de 251 g a 30 rps em grau G6.3, o desbalanceamento admissível é
-**8,4 g·mm** (rotor de 252 g como construído). Nenhuma das duas maiores fontes
+**8,4 g·mm** (rotor de 252 g como construído — ver a fórmula em §2.1). Nenhuma das duas maiores fontes
 é atingível por posicionamento:
 
 | Fonte | Limite implicado |
 |---|---:|
 | Δm entre os três painéis | ≤ 0,084 g |
-| Excentricidade da bateria de 48 g | ≤ 0,175 mm |
+| Excentricidade da bateria de 50 g | ≤ 0,17 mm |
 
 **Requisito:** previsão de correção em **dois planos** (estático e binário), com
 resolução de **~90 mg em r = 90 mm**. Furos roscados, rasgos para massa adesiva
 ou postes com arruelas — a forma é livre, a resolução não.
 
-**Berço da bateria:** alojamento que centre o pack de ~57 × 30 × 13 mm na baia
-Ø78. Com a folga da baia ampliada ele pode ser caixa fechada, que centra melhor.
-Ainda assim **não conte com ele** para fechar o
-balanceamento.
+**Berço da bateria:** alojamento que centre o pack LiFePO4 de 58 × 30 × 17 mm na
+baia Ø78: trilhos a Z = 6 sobre a arruela e a porca fina, paredes laterais e
+abas de topo. Ainda assim **não conte com ele** para fechar o balanceamento.
+
+> **No CAD:** plano 1 = três alívios na face inferior do cubo (r 17–36, 4 mm de
+> fundo, até ~13 g de tungstênio cada); plano 2 = seis copos na tampa em r = 34
+> (~1 g de tungstênio por copo, 34 g·mm). Separação axial de ~30 mm contra
+> 208 mm de rotor: o binário se corrige mal, e a resolução fina fica em r = 34
+> (0,1 g = 3,4 g·mm, o equivalente aos 90 mg em r = 90), não em r = 90. O
+> layout da baia já pede ~2,2 g no alívio de 180°; o Bloqueador C decide o resto.
 
 ### 5.7 Isolador de vibração — EM ABERTO
 
@@ -438,11 +475,11 @@ os 4 furos Ø4 em PCD 40 já servem aos dois caminhos.
 
 | | valor |
 |---|---|
-| Corpo | Ø27,8 × 24 mm |
+| Corpo | Ø27,8 × 24 mm (**medido** em 02/09/2026) |
 | Massa | 52 g |
 | Tensão | 7,4–14,8 V (2–4S) |
 | **Furação da base** | **4 × M3 num retângulo de 16 × 19 mm** |
-| **Eixo** | **M6, saliência de 14 mm** (≈5 mm de Ø8 liso + 7 mm de rosca) |
+| **Eixo** | desenho cotado: **colar Ø8 × 5 + rosca M6 × 7** dentro de uma saliência total de **14** (a soma dá 12; os 2 mm restantes devem ser um ressalto Ø6,9 sob o colar) — **medir topo do colar e ponta a partir da face de apoio** |
 | Porca do eixo | cônica, M6, sextavado 12 mm, 14 mm de altura |
 | Constante de torque | 10,38 mN·m/A |
 | Resistência efetiva | 0,221 Ω |
@@ -453,10 +490,11 @@ os 4 furos Ø4 em PCD 40 já servem aos dois caminhos.
 > o eixo M6 é o único caminho nativo de fixação. Os 4 furos em PCD 19 do cubo só
 > servem com adaptador de hélice comprado à parte.
 >
-> O rotor se prende pelo **eixo M6** —
-> cubo assentado contra a face do motor, porca baixa e arruela Ø20 a 0,6 N·m
-> (§5.2). A porca cônica que acompanha o motor tem 14 mm e não serve: ocuparia
-> a baia de eletrônica.
+> O rotor se prende pelo **eixo M6**: cubo assentado nos raios da campânula e
+> centrado pelo colar Ø8, arruela Ø20 × Ø8,5 em alumínio e porca M6 fina com
+> trava química a 0,6 N·m (§5.2). A porca cônica que acompanha o motor tem
+> 14 mm e não serve: ocuparia a baia de eletrônica. A autotravante baixa de
+> 6 mm terminaria no fim do eixo.
 
 ### 6.2 Fita LED: HD107S 144 LED/m, RGB
 
@@ -467,19 +505,24 @@ os 4 furos Ø4 em PCD 40 já servem aos dois caminhos.
 | LEDs por painel | 29 (altura útil 201 mm) |
 | Total | 87 LEDs, de 144 disponíveis no rolo de 1 m |
 | Consumo | 5,1 W típico · 27 W em branco pleno |
-| Taxa de dados | 17,2 Mbit/s a 180 colunas (limite da fita: 30 MHz) |
+| Taxa de dados | 15,4 Mbit/s a 1800 RPM e 180 colunas; 17,2 a 2000 RPM (limite da fita: 30 MHz) |
 
 ### 6.3 Restante da cadeia
 
-ESC de 15 A com rampa configurável · fonte de bancada ajustável para o motor ·
-ESP32 no rotor · sensor hall + ímã para o índice angular · bateria 2S de
-850–1000 mAh, ≥20C, ~57 × 30 × 13 mm, ~48 g (a comprar) · impressora com câmara
+ESC LittleBee Spring 20A (BLHeli_S) · fonte de bancada ajustável para o motor ·
+ESP32-C3 no rotor · sensor hall + ímã para o índice angular · bateria LiFePO4 2S
+de 800 mAh, 20C, 58 × 30 × 17 mm, 50 g (comprada) · impressora com câmara
 fechada, volume 300 × 300 mm.
 
 **Requisitos que não têm peça na versão anterior e precisam existir:**
 
 - **canal de fiação** da baia até cada painel, por dentro da longarina — fio
   correndo por fora custa arrasto e desbalanceamento assimétrico;
+- **sensor de índice** no rotor e ímã na parte fixa — ver abaixo;
+- **berço da bateria e layout da baia** com contrapeso planejado (§5.6);
+- **suporte do ímã** com dois pontos de fixação, porque o azimute dele é a
+  referência de fase da imagem inteira.
+
 #### Referência de fase — por que existe um sensor hall
 
 O ESP32 gira junto com o rotor e **não sabe para onde está apontando**. Para a
@@ -506,18 +549,21 @@ O sensor passa pelo ímã uma vez por volta e gera um pulso que diz duas coisas:
 Um único pulso serve aos três painéis: sabendo θ, o firmware calcula que o painel
 A está em θ, o B em θ+120° e o C em θ+240°.
 
-**Margem de erro.** Ímã Ø4 mm com o sensor a r ≈ 37,5 mm dá velocidade de
-passagem de 7,1 m/s e pulso de ~0,85 ms. A resposta do A3144 mais a latência de
+**Margem de erro.** Ímã Ø4 mm com o sensor a r = 29 mm (onde o CAD o coloca)
+dá velocidade de passagem de 5,5 m/s e pulso de ~1,1 ms. A resposta do A3144 mais a latência de
 interrupção somam ~5 µs, ou **0,05° — um trigésimo sétimo de uma coluna.** O
 sensor não é o elo fraco.
 
-**Consequência para o firmware e para o ESC.** Como a fase se corrige a cada
-volta, o erro residual é uma deformação azimutal que cresce do início ao fim de
-cada volta, proporcional à variação de rotação entre voltas. Para ficar abaixo de
-1/4 de coluna, a rotação precisa ser estável dentro de **~0,14 % de uma volta
-para a outra**. A inércia de 1,55 g·m² ajuda muito nisso. Se o ensaio E mostrar a
-imagem "respirando", a causa é essa e a correção é o **modo governor do ESC**,
-não o sensor.
+**Consequência para o firmware.** Como a fase se corrige a cada volta, o erro
+residual é uma deformação azimutal que cresce do início ao fim de cada volta,
+proporcional à variação de rotação entre voltas. Para ficar abaixo de 1/4 de
+coluna, a rotação precisa ser estável dentro de **~0,14 % de uma volta para a
+outra**.
+
+A inércia de 1,55 g·m² resolve isso sozinha: cogging de 3 mN·m dá 0,034 %,
+ripple de comutação de 10 mN·m dá 0,114 %, e só uma perda quase total do torque
+de arrasto por uma volta inteira sairia do orçamento. **Não é preciso controle de
+rotação em malha fechada** — e o BLHeli_S não o oferece.
 
 #### Implantação
 
@@ -525,7 +571,8 @@ não o sensor.
   Quem precisa do pulso de índice é o ESP32, que gira junto; sem anel coletor,
   um sensor na base não teria como entregar o pulso a ele. O sensor vai na face
   inferior do cubo e o ímã num poste sobre a chapa do motor, com entreferro de
-  2–3 mm, em raio livre da campânula (r ≈ 35–40 mm). Posição angular cotada — é
+  2–3 mm, em raio livre da campânula (r = 29 mm no CAD: 15 mm além da campânula
+  de Ø27,8; azimute 20° nos dois, rotor e base). Posição angular cotada — é
   a referência de fase da imagem inteira.
 - **fiação dos painéis:** 4 condutores por painel (5 V, GND, DATA, CLK). Cada
   painel puxa **1,74 A** em branco pleno, então **AWG 24 para 5 V e GND** e
@@ -556,12 +603,13 @@ Bico de 0,4 mm, camada de 0,2 mm, ABS em câmara fechada.
 | Base + torre | torre em Z, sem inclinação, brim de 8–12 mm |
 | Tampa | plana |
 
-O rasgo dos LEDs forma uma ponte de 5,4 mm a 2,0 mm de altura quando o painel é
+O canal do LED forma uma ponte de 12,4 mm a 2,0 mm de altura quando o painel é
 impresso deitado. É a superfície mais delicada do projeto — o piso de 0,80 mm
 existe justamente para dar 4 camadas ali.
 
 **Cupons de calibração.** Gerar dois corpos de prova pequenos antes do lote:
-um da junta espiga/socket (11 × 6) e um do canal do LED (12,4 × 2,2). Custam
+um da junta espiga/socket (11 × 6) e uma fatia real de 30 mm da ponta do painel
+com o canal de 12,4 × 2,0, na orientação de impressão do lote. Custam
 minutos e evitam reimprimir painéis de 208 mm.
 
 ---
@@ -587,6 +635,7 @@ reports/                 validação de malha e relatório geométrico
 | `02_painel_LED_ABS_3x_mesma_mesa.stl` | 1 lote |
 | `03_tampa_baia_ABS.stl` | 1 |
 | `04_05_base_torre_ABS_integradas.stl` | 1 |
+| `06_suporte_ima_ABS.stl` | 1 |
 | `C01_cupom_junta.stl` | cupom |
 | `C02_cupom_canal_LED.stl` | cupom |
 | `R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl` | referência de corte |
@@ -626,11 +675,13 @@ Autoverificáveis a partir do modelo, sem medir peça física.
 | Perpendicularidade torre/base | ≤ 1° |
 | **Contato da base** | sem balanço; ≤ 0,2 mm em 3 pontos a 120° |
 | Malhas | watertight, 0 arestas não-manifold, 0 triângulos degenerados |
+| **Enrolamento por raios** | 0 trechos com enrolamento fora de {0, 1} e 0 membranas, em varredura de ≤ 1,5 mm nos três eixos — watertight não basta: uma casca invertida passa nele |
+| Furos M3, socket e bolso da porca | medidos na malha: livres de ponta a ponta, profundidades ±0,1 mm |
 | Orientação dos STL | base em Z = 0, escala em mm, volume orientado positivo |
 
-Cavidades internas seladas aparecem como componentes conexos extras com volume
-negativo. Isso é **correto** para peça oca — o painel deve ter 1 casca externa
-mais uma cavidade por vão entre nervuras.
+A cavidade do painel é aberta por projeto (vãos nos diafragmas, furo na lâmina e
+bolso na ponta): o STL tem **1 componente**. Cavidades seladas apareceriam como
+componentes conexos extras com volume negativo.
 
 ---
 
@@ -650,21 +701,23 @@ Arrasto (Cd lâmina 0,35 · boss carenado):
    P_cobre = I²R = 4,4 W   →   T_motor = 25 + 3,5·(4,4+0,7) = 43 °C
 
 Massa do painel nu, medida no STL v3.0 = 31,67 g
-                   + 0,9 (parede local do canal em degrau, a regenerar)  = 32,6 g
-Massa do painel montado = 32,6 + 6,2 (fita) + 4,0 (ferragens) ≈ 42,8 g
+                   + 0,3 (canal 12,4 × 2,0 com parede local de 2,8)     = 31,9 g
+Massa do painel montado = 31,9 + 6,2 (fita) + 4,0 (ferragens) ≈ 42,1 g
 
 CARGA DE PROJETO usa o teto do limite, 44,5 g — ver §2.1:
 Força centrífuga  F = m·ω²·r = 0,0445 · 188,50² · 0,100 = 158,1 N
 Deflexão 2,48 mm · Tensão 13,9 MPa · SF ≈ 2,5 (ABS ~35 MPa)
 Inércia 1,55 g·m² · Energia 27,6 J · um painel solto 7,4 J a 18,9 m/s
-Rotor completo: 252 g hoje; ~273 g com a baia ampliada (a pesar)
+Rotor completo: ~274 g com a baia ampliada, o layout da eletrônica (15 g de
+  catálogo) e o contrapeso de 2,2 g — pesar e recalcular
 Balanceamento: e = 6,3/188,50 = 33,4 µm → U = 0,252 · 33,4 = 8,4 g·mm
   (cargas pelo teto de 44,5 g; balanceamento pela massa real — ver §2.1)
 Partida: rampa de 8 s → 8,0 A de pico (inércia é 100× a de uma hélice)
 ```
 
 **Corrente de fase ≠ corrente da fonte.** Os 4,44 A são de fase — é deles que
-sai o aquecimento. A fonte de bancada vê 15,7 W, ou seja **2,1 A em 7,4 V**.
+sai o aquecimento. A fonte de bancada vê **14,4 W** (8,7 W de eixo, 4,4 W de
+cobre e ~1,3 W de perdas no ESC e no ferro), ou seja **~2,1 A em 7 V**.
 Ajustar a fonte para 6–7 V para o ESC operar em duty alto: a 1800 RPM o motor
 está a 26% da rotação a vazio em 2S, e duty baixo piora a comutação.
 

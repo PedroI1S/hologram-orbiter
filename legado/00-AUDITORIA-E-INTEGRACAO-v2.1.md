@@ -1,3 +1,9 @@
+> **Arquivado em 03/09/2026.** Este documento é o registro histórico da auditoria da
+> v2.1 e da decisão que gerou a v3.0. A memória de cálculo vigente é o §10 de
+> [`../01-ESPECIFICACAO-CAD-v3.0.md`](../01-ESPECIFICACAO-CAD-v3.0.md); o que falta está em
+> [`../06-PENDENCIAS-ABERTAS-v3.0.md`](../06-PENDENCIAS-ABERTAS-v3.0.md). Os números daqui
+> sobre contenção, datum, coxim e fixação do rotor foram substituídos.
+
 # Auditoria técnica e integração — Hologram Orbiter v2.1
 
 Documento único de consolidação do pacote v2.1: os cinco documentos soltos
@@ -18,7 +24,7 @@ independente a partir dos parâmetros e dos STL, não copiados dos documentos.
 >
 > **Ponto de operação congelado: raio de 100 mm @ 1800 RPM = 90 Hz.**
 > O CAD v3.0 será modelado a partir de
-> [`01-ESPECIFICACAO-CAD-v3.0.md`](01-ESPECIFICACAO-CAD-v3.0.md), que é uma
+> [`01-ESPECIFICACAO-CAD-v3.0.md`](../01-ESPECIFICACAO-CAD-v3.0.md), que é uma
 > especificação de construção autossuficiente — escrita do zero, sem referência
 > a esta versão. Esta auditoria passa a ser o **registro histórico**
 > do que estava errado na v2.1 e a memória de cálculo que sustenta a decisão.
@@ -457,96 +463,7 @@ incluir boss, longarina e o efeito de ar confinado dentro do cilindro.
 
 ---
 
-## 3. Adequação ao invólucro existente e números aposentados
-
-*Seção acrescentada em 01/09/2026, após a equipe informar que (a) o cilindro de
-contenção já existe fisicamente e (b) a `TABELA-COMPARATIVA` não existe.*
-
-### 3.1 A guarda virou restrição fixa: baixar o rotor
-
-Com o cilindro já comprado, a altura dele deixa de ser variável. A geometria do
-painel trava as duas cotas que importam:
-
-```
-topo do rotor = datum + 107 mm      (painel centrado em datum+3, meia-altura 104)
-base do rotor = datum − 101 mm
-datum         = altura_da_torre + 38 mm    (piso 4 + torre + 34 do conjunto motor)
-```
-
-Impondo 10 mm de folga no topo e 15 mm sobre as nervuras da base (z = 8 mm), a
-janela admissível do datum é:
-
-| Guarda | Apoio | Datum mín. | Datum máx. | Torre máx. | Situação vs. projeto atual (datum 188 / torre 150) |
-|---:|---:|---:|---:|---:|---|
-| 240 mm | solo | 124 | **123** | 85 | **impossível** — a janela fecha |
-| 240 mm | z=8 | 124 | 131 | 93 | baixar 57 mm |
-| **260 mm** | **solo** | 124 | **143** | **105** | **baixar 45 mm** |
-| 260 mm | z=8 | 124 | 151 | 113 | baixar 37 mm |
-| 280 mm | solo | 124 | 163 | 125 | baixar 25 mm |
-| 300 mm | z=8 | 124 | 191 | 153 | cabe sem mudar nada |
-| 305 mm | solo | 124 | 188 | 150 | cabe, no limite exato |
-
-Se o cilindro for mesmo de 260 mm apoiado no solo, o alvo é
-**datum = 140 mm → `tower_total_height_from_floor` = 102 mm** (hoje 150). Se o
-coxim de 8 mm entrar no caminho de carga (lacuna 08), passa a 94 mm.
-
-Isso **é uma melhora**, não um remendo: torre 32 % mais curta é mais rígida em
-flexão, o centro de massa desce, e o balanço sobre o mancal diminui. O único
-custo é estético — a imagem passa a ocupar Z = 39…243 mm em vez de 87…295, ou
-seja, fica mais perto da base. E o custo prático é zero **se a base/torre ainda
-não tiver sido impressa**: é a alteração de um número em `parameters.json` antes
-do maior print do projeto (154 mm de altura, ~306 g).
-
-**Folga radial** — depende do diâmetro interno real. Raio estático do rotor
-134 mm, deflexão prevista 2,5–5,4 mm (§6.3):
-
-| Ø interno | Folga estática | Após 2,5 mm | Após 5,4 mm |
-|---:|---:|---:|---:|
-| 280 mm | 6,0 mm | 3,5 mm | **0,6 mm** |
-| 290 mm | 11,0 mm | 8,5 mm | 5,6 mm |
-| 292 mm | 12,0 mm | 9,5 mm | 6,6 mm |
-| 300 mm | 16,0 mm | 13,5 mm | 10,6 mm |
-| 310 mm | 21,0 mm | 18,5 mm | 15,6 mm |
-
-Mínimo saudável: **≥ 10 mm depois da deflexão máxima**, para ainda absorver
-tolerância de impressão, empeno, batimento e erro de montagem. Ou seja, o
-cilindro precisa de **Ø interno ≥ 300 mm** — ou o raio do rotor precisa cair.
-
-### 3.2 Folha de medição do invólucro
-
-Antes de qualquer decisão de datum, medir a peça que existe:
-
-| Item | Medida | Por quê |
-|---|---|---|
-| Altura total | mm | Entra direto na tabela de §3.1 |
-| Ø interno | mm | Folga radial; manda no conflito com o anel (F-06) |
-| Ø externo / parede | mm | Confirma os 4 mm assumidos |
-| Como apoia na base | z₀ = 0 ou 8 mm | Muda a janela de datum em 8 mm |
-| Planeza da borda de apoio | mm | Assento sem tensão no anel |
-| Tem fundo/tampa? | sim/não | Contenção axial: o painel também pode subir |
-
-**Identificação do material** (fazer numa sobra, nunca na peça inteira):
-
-1. **Ensaio de dobra — o mais decisivo.** Segure uma tira de sobra e force.
-   PMMA trinca cedo, com fratura limpa e estalo seco. PC dobra muito além do
-   escoamento, embranquece na dobra e **não quebra**. Se dobrar 90° sem partir,
-   é PC.
-2. **Borda cortada.** PMMA tem aresta azulada, "água clara". PC em seção grossa
-   tem leve tom amarelo/âmbar.
-3. **Risco.** PMMA é mais duro; PC sem coating risca com facilidade.
-4. **Chama, em local ventilado, numa lasca.** PMMA queima limpo, com chama
-   crepitante e cheiro adocicado/frutado (monômero). PC solta fumaça preta e
-   fuliginosa e tende a se autoextinguir.
-5. **Procedência.** Nota fiscal ou o próprio fornecedor resolve em um minuto.
-   Se foi vendido como "tubo de acrílico", é PMMA — que é exatamente o que a
-   Especificação Peça 9 e o BOM deste projeto pedem.
-
-**Se der PMMA:** não use como contenção de ensaio. Ele serve como *invólucro
-óptico* (é opticamente melhor que PC, inclusive), com uma contenção real por
-fora ou ao redor durante os ensaios de rotação — chapa metálica, tela de aço,
-ou simplesmente ensaiar o rotor dentro de uma caixa fechada com operação remota.
-
-### 3.3 Números aposentados
+## 3. Números aposentados
 
 A `TABELA-COMPARATIVA-v2-v2.1.md` não existe e não será recuperada. Ela era a
 única memória de cálculo citada pelo projeto. Os valores abaixo **não têm origem
@@ -792,47 +709,12 @@ o que é mais um motivo para o CFD modelar o volume fechado, e não a pá isolad
 
 ## 7. Plano de ação
 
-### Antes de imprimir qualquer coisa que não seja cupom
+Cumprido e superado. A decisão de projeto que esta auditoria motivou está no
+[ponto de operação v3.0](../01-ESPECIFICACAO-CAD-v3.0.md), e o que ainda falta está
+em [`06-PENDENCIAS-ABERTAS-v3.0.md`](../06-PENDENCIAS-ABERTAS-v3.0.md).
 
-| # | Ação | Fecha |
-|---|---|---|
-| 0 | **Medir o cilindro que já existe** (altura, Ø interno, apoio) e **identificar o material** por ensaio de dobra numa sobra | §3.1, §3.2, F-06 |
-| 1 | Preencher `docs/MEDICOES_DE_ENTRADA.md` (campânula, base do motor, altura do conjunto, fita, LiPo) | as 5 interfaces `verified: false` |
-| 2 | Especificar motor, tensão, ESC e bateria; **re-derivar o limite de corrente** (o 5,8 A ficou órfão) e reescrever o critério A em torque/potência | F-03, F-14, §3.3 |
-| 2b | **Baixar `tower_total_height_from_floor`** para caber na guarda real, antes de imprimir a base | §3.1 |
-| 3 | Corrigir o piso do canal do LED para ≥ 0,6 mm e regenerar os STL | F-04 |
-| 4 | Rever furos de refrigeração (teia de 0,72 mm) e bolso da porca (0,65 mm) | lacunas 6 e 7 |
-| 5 | Aplicar o patch da montagem e regerar o `.blend` para checagem de interferência | F-05 |
-
-### Antes de girar
-
-| # | Ação | Fecha |
-|---|---|---|
-| 6 | Refazer o orçamento de massa com bateria, fitas e ferragens | F-10 |
-| 7 | Refazer força, energia e contenção com a massa real | F-01, F-06 |
-| 8 | Confirmar PC por ensaio; se for PMMA, ensaiar dentro de contenção externa. Resolver o conflito anel × cilindro com o Ø interno real | F-06, §3.2 |
-| 9 | Decidir o isolamento: montagem rígida assumida, ou isolador redimensionado com critério em fn | F-07 |
-| 10 | Reescrever o Teste 4 do guia TPU (≤ 1,4 ciclo para 50%) e a massa de aceite (1,85 g) | F-08, F-09 |
-| 11 | Acrescentar Δm ≤ ±0,085 g entre painéis e cota radial 130 ±0,1 mm | F-11, F-12 |
-| 12 | Documentar sentido de giro, sensor de índice, caminho de sinal e roteamento de fios | lacunas 1–4 |
-
-### Documental
-
-| # | Ação | Fecha |
-|---|---|---|
-| 13 | ~~Recuperar a `TABELA-COMPARATIVA`~~ — **impossível, confirmado**. Aposentar formalmente os números órfãos e adotar §6 como memória de cálculo | F-14, §3.3 |
-| 14 | Corrigir o README: números, tamanhos, referências cruzadas, Datum D, cronograma | F-15…F-18 |
-| 15 | Suavizar a afirmação sobre flicker no Plano §2.1 | F-19 |
-| 16 | Corrigir os erros factuais do guia TPU (impressoras, câmara, hotend, orientação, tempo) | F-20 |
-
-### Sobre a decisão 1200 → 1800 RPM
-
-Ela foi tomada com base numa margem térmica que, refeita com os números do
-próprio documento, **não existe** (F-02), e com uma força centrífuga 71× menor
-que a real (F-01). Isso não significa que 1800 RPM seja inviável — significa que
-**a decisão ainda não foi tomada com dados válidos**. O caminho honesto é tratar
-1800 RPM como hipótese, manter 1500 RPM como fallback declarado, e deixar o
-termopar e o CFD decidirem.
+Este documento é **registro histórico**: serve para rastrear de onde veio uma
+grandeza física e por que a v2.1 foi refeita. Nada aqui é instrução corrente.
 
 ---
 

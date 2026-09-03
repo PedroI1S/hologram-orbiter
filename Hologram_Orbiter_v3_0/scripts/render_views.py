@@ -139,7 +139,7 @@ def main() -> None:
     render("painel_boss_lado", (c.x + 140, boss.y + 5, hi.z - 5), (c.x, boss.y + 5, hi.z - 12), ortho_scale=64)
     render("painel_completo", (c.x, c.y - 330, hi.z + 240), (c.x, c.y, c.z), lens=45)
     render("painel_ponta_inferior_canal", (lo.x + 30, c.y - 40, lo.z - 40), (lo.x + 6, c.y, lo.z + 2), lens=70)
-    # Seção do canal em degrau vista pela ponta (a fatia do cupom mostra o mesmo).
+    # Seção do canal do LED vista pela ponta (a fatia do cupom mostra o mesmo).
 
     show_only(spider)
     render("aranha_topo", (0, 0, 400), (0, 0, 0), ortho_scale=215)
@@ -174,7 +174,7 @@ def main() -> None:
     c = (lo + hi) / 2
     render("cupom_canal_led", (c.x + 40, c.y - 45, hi.z + 45), (c.x, c.y, c.z), lens=70)
     # Olhando para dentro da face cortada (z = -74 do painel), de cima e de viés:
-    # mostra a seção em degrau, o piso de 0,8 e a cavidade atrás.
+    # mostra o canal, o piso de 0,8 e a cavidade atrás.
     render("cupom_canal_led_secao", (hi.x + 38, c.y - 22, hi.z + 26), (hi.x, c.y, c.z + 1), lens=70)
 
     if cap is not None:

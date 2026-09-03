@@ -14,11 +14,11 @@ endereçáveis giram a 1800 RPM e formam uma imagem cilíndrica suspensa de
 |---|---|
 | Ponto de operação | ✅ congelado — r = 100 mm · 1800 RPM · 90 Hz |
 | Acionamento | ✅ A2212 920KV · ESC LittleBee Spring 20A (BLHeli_S) · fonte de bancada |
-| Óptica | ✅ HD107S 144 LED/m · ESP32-C3 · A3144 no rotor |
+| Óptica | ✅ HD107S 144 LED/m (12 × 2 mm) · ESP32-C3 · A3144 nu no rotor |
 | Especificação CAD | ✅ escrita, corrigida e verificada |
-| Modelo CAD | ⚠️ **regeneração pendente** — 12 itens, 2 deles P0 nos painéis |
+| Modelo CAD | ✅ **regenerado em 03/09 (rev. 3.0.2)** — A1/A2 e B1–B11 fechados, desvios ratificados, fixação do eixo refeita pelo desenho do motor, layout da baia verificado; 51 de 51 critérios |
 | Compras | 🔄 motor, ESC, fita, ESP32-C3, bateria LiFe e hall em mãos |
-| Isolamento de vibração | ⚠️ decisão pendente — montagem inicial rígida |
+| Isolamento de vibração | ⚠️ montagem rígida; o ensaio de impacto decide |
 
 Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para girar.**
 
@@ -26,14 +26,22 @@ Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para gira
 
 ## Por onde começar
 
-> ### ⛔ Aguardando regeneração do CAD
-> Doze itens em fila, dois deles bloqueadores nos painéis: **cascas invertidas**
-> (enrolamento −1) nos furos M3 e uma **membrana de espessura zero** no canal do
-> LED, ambos confirmados por ray cast independente. Causa em `generate.py`:
-> `subtract_all()` concatena os cortadores em vez de uni-los.
+> ### ✅ CAD regenerado em 03/09/2026 — imprimir; medir o eixo antes da ferragem
+> As cascas invertidas dos furos M3 foram confirmadas por traçado de raios e
+> corrigidas (cada cortador é subtraído sozinho); o eixo de cada parafuso é
+> vazio de ponta a ponta. Entraram o canal de 12,4 × 2,0 para a fita de 2 mm, o cubo Ø92 com a baia
+> Ø78 × 26, o fillet da raiz, as abas de grampo, o suporte do ímã com dois
+> parafusos, o layout da baia com contrapeso planejado e os critérios medidos
+> na malha. O traçado de raios ainda achou e corrigiu uma lâmina de ar de
+> 0,05 mm sob a flange da torre.
 >
-> Entram na mesma rodada o canal em degrau (a fita medida tem 2,0 mm, não 1,0) e
-> a baia ampliada para Ø78 × 26. Lista completa em
+> **O desenho do motor mudou a fixação do rotor.** O colar Ø8 do eixo sobe 5 a
+> 7 mm acima da campânula: a arruela M6 Ø20 da spec assentaria nele e a porca
+> não apertaria o cubo. Agora é arruela Ø20 × Ø8,5 em alumínio (cortada da
+> chapa) e porca M6 fina com trava química. Falta medir, a partir da face de
+> apoio, o topo do colar e a ponta do eixo. O rotor fecha em 274,3 g com
+> massas de catálogo para a eletrônica: pesar tudo antes de fixar. Pacote em
+> [`Hologram_Orbiter_v3_0/`](Hologram_Orbiter_v3_0/README.md); o que falta em
 > [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md).
 
 | Se você vai… | Leia |
@@ -43,13 +51,14 @@ Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para gira
 | Comprar | [`03-LISTA-DE-COMPONENTES-v3.0.md`](03-LISTA-DE-COMPONENTES-v3.0.md) |
 | Ensaiar | [`04-PLANO-DE-ENSAIOS-v3.0.md`](04-PLANO-DE-ENSAIOS-v3.0.md) |
 | Montar a eletrônica | [`05-ESQUEMA-ELETRICO-v3.0.md`](05-ESQUEMA-ELETRICO-v3.0.md) |
-| Saber de onde veio um número | [`00-AUDITORIA-E-INTEGRACAO-v2.1.md`](00-AUDITORIA-E-INTEGRACAO-v2.1.md) |
+| Saber de onde veio um número | §10 da especificação (memória de cálculo) e [`07-GLOSSARIO-E-PREMISSAS.md`](07-GLOSSARIO-E-PREMISSAS.md) §2; a auditoria da v2.1 está em [`legado/`](legado/LEIA-ME.md) |
 | Ver o que ainda falta | [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md) |
 | Entender um termo, ou saber se um número foi medido | [`07-GLOSSARIO-E-PREMISSAS.md`](07-GLOSSARIO-E-PREMISSAS.md) |
 
 **Hierarquia de autoridade.** Em caso de conflito: o arquivo de parâmetros do CAD
-manda em cota; a especificação manda em requisito; o plano de ensaios manda em
-critério de aceite; a auditoria manda em grandeza física.
+manda em cota; a especificação manda em requisito e, no §10, em grandeza física;
+o plano de ensaios manda em critério de aceite; o glossário diz o que foi medido
+e o que é premissa.
 
 ---
 
@@ -62,10 +71,10 @@ critério de aceite; a auditoria manda em grandeza física.
 | Taxa de imagem | 90 Hz | 3 painéis × 30 rps |
 | Corrente de fase prevista | 4,44 A | 14,4 W na fonte |
 | Temperatura do motor prevista | 43 °C | limite de aceite: 55 °C |
-| Força centrífuga por painel | 148,8 N | SF de 2,7 na flexão |
-| Massa do painel montado | ~42,8 g | Δm entre os três ≤ **0,084 g** |
-| Massa do rotor | 252 g | desbalanceamento admissível 8,4 g·mm |
-| Energia armazenada | 26,1 J | um painel solto: 7,4 J a 19,6 m/s |
+| Força centrífuga por painel | 149,7 N (massa CAD) · 158,1 N (projeto, 44,5 g) | SF ≈ 2,5 na flexão |
+| Massa do painel montado | ~42,1 g | Δm entre os três ≤ **0,084 g** |
+| Massa do rotor | ~274,3 g (CAD + catálogo + contrapeso; folga de 5,7 g até 280) | desbalanceamento admissível 8,4 g·mm (conservador, com 252 g) |
+| Energia armazenada | 27,6 J | um painel solto: 7,4 J a 18,9 m/s |
 
 ---
 
@@ -103,8 +112,7 @@ balança de 0,1 g mede exatamente o tamanho do erro que deveria detectar.
 
 ```
 README.md                          este arquivo
-00-AUDITORIA-E-INTEGRACAO-v2.1.md  memória de cálculo e histórico
-01-ESPECIFICACAO-CAD-v3.0.md       cotas, tolerâncias, requisitos de modelagem
+01-ESPECIFICACAO-CAD-v3.0.md       cotas, tolerâncias, requisitos de modelagem, memória de cálculo (§10)
 02-PLANO-DE-PROJETO-v3.0.md        fases, portões, cronograma, riscos
 03-LISTA-DE-COMPONENTES-v3.0.md    BOM, compras, instrumentação
 04-PLANO-DE-ENSAIOS-v3.0.md        cinco bloqueadores e critérios
@@ -112,7 +120,7 @@ README.md                          este arquivo
 06-PENDENCIAS-ABERTAS-v3.0.md      o que ainda falta
 07-GLOSSARIO-E-PREMISSAS.md        vocabulário e o que é medido × assumido
 Hologram_Orbiter_v3_0/             CAD, STLs, montagem, relatórios
-legado/                            versões anteriores, arquivadas
+legado/                            v2.0, v2.1 e a auditoria da v2.1, arquivadas
 ```
 
 ---
@@ -125,5 +133,6 @@ legado/                            versões anteriores, arquivadas
 | v2.1 | ago/2026 | Subiu para 1800 RPM mantendo r = 130. Reprovada em auditoria. |
 | **v3.0** | **set/2026** | **1800 RPM com r = 100 mm. 90 Hz a 43 °C.** |
 
-Os documentos das versões anteriores estão em `legado/`, arquivados. Eles contêm
-números que a auditoria invalidou — **não os use como referência.**
+Os documentos das versões anteriores e a auditoria que as reprovou estão em
+`legado/`, arquivados. Eles contêm números que a v3.0 substituiu — **não os use
+como referência.**

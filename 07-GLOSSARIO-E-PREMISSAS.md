@@ -17,7 +17,12 @@ ela é vazada, com 5 raios, e não tem furos roscados.
 **Base do motor** — a parte **fixa**, onde saem os três fios de fase. É ela que
 parafusa na chapa de alumínio, pelo padrão de 4 × M3 em retângulo 16 × 19 mm.
 
-**kv** — rotação por volt sem carga. 920 kv em 7,4 V dá 6808 RPM a vazio.
+**Colar do eixo** — o trecho Ø8 × 5 mm do eixo entre a campânula e a rosca M6.
+É ele que centra o cubo (furo Ø8 H8), e é por ele que a arruela precisa de furo
+Ø8,5: uma arruela M6 assentaria no colar e a porca não apertaria o cubo.
+
+**kv** — rotação por volt sem carga. 920 kv em 7 V dá 6440 RPM a vazio; a
+1800 RPM o motor está a 28 % disso.
 
 **Kt** — constante de torque, `9,5493 / kv`. Diz quanto torque sai por ampère.
 
@@ -58,7 +63,13 @@ controlador e conversores. Gira junto.
 tinha frequência natural de 400–620 Hz contra os ≤ 21 Hz que isolar 30 Hz exige.
 A montagem é rígida.
 
-**Contrapeso** — massa de correção do balanceamento, em dois planos.
+**Contrapeso** — massa de correção do balanceamento, em dois planos: os
+alívios da face inferior do cubo (r 17–36) e os copos da tampa (r = 34). O
+layout da baia já pede ~2,2 g de tungstênio no alívio de 180°.
+
+**Canal do LED** — o rebaixo de 12,4 × 2,0 mm na face externa do painel onde a
+fita cola: PCB no fundo, LEDs rentes à face. Sob ele a parede engrossa de 2,0
+para 2,8 mm numa faixa de 14,4, deixando o piso de 0,8.
 
 ### Geometria e fabricação
 
@@ -72,7 +83,7 @@ Datum D, por exemplo, é a altura do boss a partir da base do painel: 104 mm.
 específica. Custam minutos e evitam refazer painéis de 8 a 10 horas.
 
 **Ponte** *(bridging)* — trecho que a impressora extruda no vazio, entre dois
-apoios. O piso de 0,8 mm sob o rasgo dos LEDs é uma ponte de 5,4 mm.
+apoios. O piso de 0,8 mm sob o canal do LED é uma ponte de 12,4 mm.
 
 **Enrolamento** *(winding number)* — quantas vezes a superfície envolve um ponto.
 Enrolamento **+1** é sólido normal; **−1** é uma casca invertida, que parece
@@ -113,7 +124,11 @@ numérico, método de medição e caminho de contingência.
 
 ### Elétrica
 
-**Buck** — conversor abaixador. 7,4 V da bateria para 5 V da fita.
+**Buck** — conversor abaixador. 6,6 V da bateria LiFePO4 para 5 V da fita.
+
+**LiFePO4** *(LiFe)* — química de lítio-ferro-fosfato. 3,3 V por célula em vez
+dos 3,7 do LiPo, curva de descarga plana, e não incha nem queima como LiPo.
+**Carrega em modo LiFe, a 3,6 V/célula** — modo LiPo, a 4,2, destrói o pack.
 
 **Nyloc** — porca com anel de nylon que trava por atrito. **Não cabe** no bolso
 de 2,8 mm do painel (tem 4,0 mm); ali vai porca plana com trava química.
@@ -138,9 +153,10 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | Resistência efetiva | 0,221 Ω | ponto de catálogo com hélice | ⚠️ **envelope, não Rm** |
 | Furação da base do motor | retângulo 16 × 19, 4 × M3 | datasheet | ✅ |
 | Campânula | vazada, 5 raios, sem furos roscados | datasheet | ✅ |
-| Eixo | M6, 12 mm de saliência | datasheet | ✅ |
-| Altura total do motor | 36 mm (24 do corpo + 12 do eixo) × Ø27,8 | medido | ✅ |
-| **Chapa → Datum B** | **30 mm** (24 do corpo + 6 do cubo) | derivado | ⚠️ o cubo desliza no eixo, não apoia nele |
+| Eixo | colar Ø8 × 5 + rosca M6 × 7, sob cota total de 14 (a soma dá 12) | desenho cotado do datasheet | ⚠️ **medir topo do colar e ponta a partir da face de apoio** |
+| Corpo do motor | 24 mm × Ø27,8 | medido | ✅ |
+| **Chapa → Datum B** | **30 mm** (24 do corpo + 6 do cubo) | derivado | ✅ o cubo assenta nos raios da campânula; o colar entra no furo Ø8 |
+| Arruela e porca do eixo | Ø20 × Ø8,5 × 2 em alumínio + M6 fina DIN 439B com trava química | projeto (o colar Ø8 não passa por arruela M6) | ⚠️ conferir espessura e altura reais |
 | Fita HD107S | 12,0 × 2,0 mm, 144 LED/m | **medido** | ✅ |
 | ESP32-C3 Super Mini | ~22 × 18 × 5 mm | em mãos | ✅ |
 | ESC LittleBee Spring | **20 A contínuo, 25 A pico**, 25 × 13 mm, BLHeli_S em EFM8BB21 | datasheet | ✅ |
@@ -154,8 +170,9 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | **Cd da lâmina** | **0,35** | tabela de razão de finura | ❌ **o ensaio decide** |
 | **A·Cd do boss** | **≤ 350 mm²** | estimativa por finura | ❌ |
 | Módulo do ABS | 2 GPa | catálogo genérico | ❌ |
-| Massa do painel montado | ~42,8 g | CAD + fita + ferragens | ⚠️ pesar |
-| Massa do rotor | ~273 g | soma do CAD e não-impressos | ⚠️ pesar |
+| Massa do painel montado | ~42,1 g | CAD (31,9 nu) + fita + ferragens | ⚠️ pesar |
+| Massa do rotor | ~274 g | CAD + bateria medida + eletrônica de catálogo (15 g) + contrapeso planejado (2,2 g) | ⚠️ pesar; folga de 5,7 g |
+| Eletrônica da baia | 5,5 + 3,0 + 2,0 + 2,5 + 2,0 g | catálogo | ❌ **pesar cada peça** |
 | Sensor de índice | **A3144 nu**, TO-92, 0,2 g | dessoldado do módulo | ✅ |
 | Gerador de sinal do ESC | Arduino ou gerador de bancada | em mãos | ✅ |
 
@@ -198,8 +215,9 @@ Três consequências:
    encerrado.
 2. A **rampa de ≥ 8 s vem do gerador de sinal**, não do ESC. Isso torna o gerador
    ainda mais obrigatório.
-3. Se a imagem "respirar", a correção **não** é modo governor. Ou se aceita a
-   variação, ou se troca por firmware com telemetria de rotação.
+3. Se a imagem "respirar", a correção **não** é modo governor — e provavelmente
+   não será preciso: a inércia mantém a variação entre voltas em 0,03 a 0,11 %,
+   contra 0,14 % de orçamento.
 
 Dois ajustes que valem para o nosso caso, e que o manual descreve:
 
@@ -218,9 +236,9 @@ Dois ajustes que valem para o nosso caso, e que o manual descreve:
 
 | Dúvida | Por que não bloqueia |
 |---|---|
-| Assento útil da campânula | O aperto está decidido: arruela Ø20 a 0,6 N·m dá 500 N contra os 22 N necessários. Mesmo assentando só nos raios, sobra atrito. |
-| Altura do conjunto motor | Derivada do datasheet em 30 mm. Um erro de ±2 mm desloca o rotor em Z sem afetar nada estrutural. |
-| Rosca do eixo | ~6 mm de engate livre acima do cubo, suficiente para M6. Conferir na montagem. |
+| Assento útil da campânula | O aperto está decidido: arruela Ø20 × Ø8,5 a 0,6 N·m dá 500 N contra os 22 N necessários. Mesmo assentando só nos raios, sobra atrito. O desenho mostra a face plana. |
+| Altura do conjunto motor | Corpo medido em 24 mm; Datum B = chapa + 30. Um erro de ±2 mm desloca o rotor em Z sem afetar nada estrutural. |
+| Colar e rosca do eixo | O desenho não fecha a soma (5 + 7 ≠ 14). A fixação vale nas duas leituras: porca fina de 3 mm sobre arruela de 2, sobram 3 mm de rosca com a ponta em 14 e 1 mm com 12. Medir antes de comprar a porca. |
 | Polaridade do ímã | O A3144 é unipolar. Se não pulsar, inverta o ímã antes de suspeitar do firmware. |
 | Campo do motor no sensor hall | Estático em relação ao sensor. Verificar com o motor montado, antes de colar. |
 | Frequência natural da parte fixa | O tubo dá 63 Hz. O que não se sabe é o balanço da base sobre a mesa, e o ensaio de impacto resolve em uma tarde. |
@@ -232,10 +250,11 @@ Dois ajustes que valem para o nosso caso, e que o manual descreve:
 | Se você precisa de… | Vá para |
 |---|---|
 | Uma cota | [`01-ESPECIFICACAO-CAD-v3.0.md`](01-ESPECIFICACAO-CAD-v3.0.md) |
-| A origem de uma grandeza física | §10 da especificação, ou §6 da auditoria |
+| A origem de uma grandeza física | §10 da especificação, e a tabela §2 acima |
 | Um critério de aceite | [`04-PLANO-DE-ENSAIOS-v3.0.md`](04-PLANO-DE-ENSAIOS-v3.0.md) |
+| O que o CAD mede na malha | `Hologram_Orbiter_v3_0/reports/ACEITACAO.md` |
 | O que ainda falta | [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md) |
-| Por que a v2.1 foi refeita | [`00-AUDITORIA-E-INTEGRACAO-v2.1.md`](00-AUDITORIA-E-INTEGRACAO-v2.1.md) |
+| Por que a v2.1 foi refeita | [`legado/00-AUDITORIA-E-INTEGRACAO-v2.1.md`](legado/00-AUDITORIA-E-INTEGRACAO-v2.1.md), arquivada |
 
 **Regra que vale para tudo:** se um número aparece em dois documentos com valores
 diferentes, o da especificação vence — e o outro é um erro a corrigir, não uma

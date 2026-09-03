@@ -21,15 +21,15 @@ estimado. É a maior incerteza do projeto e a entrada de todo o caso térmico.
 patamares de 600, 1000, 1400 e 1800 RPM, 2 min em cada. Ler **tensão e corrente
 na fonte de bancada** e calcular a potência de entrada.
 
-| Corrente de fase | P entrada | I na fonte a 7,4 V | T motor prevista | |
+| Corrente de fase | P entrada | I na fonte a 7 V | T motor prevista | |
 |---:|---:|---:|---:|---|
-| 3,0 A | 9,0 W | 1,21 A | 34 °C | |
-| 4,0 A | 12,7 W | 1,71 A | 40 °C | |
+| 3,0 A | 9,0 W | 1,29 A | 34 °C | |
+| 4,0 A | 12,7 W | 1,81 A | 40 °C | |
 | **4,44 A** | **14,4 W** | **1,95 A** | **43 °C** | ← ponto de projeto |
-| 5,0 A | 16,8 W | 2,27 A | 47 °C | |
-| 5,5 A | 19,1 W | 2,58 A | 51 °C | limite aceitável |
-| 6,0 A | 21,4 W | 2,90 A | 55 °C | abortar |
-| 8,0 A | 32,1 W | 4,34 A | 77 °C | parar imediatamente |
+| 5,0 A | 16,8 W | 2,40 A | 47 °C | |
+| 5,5 A | 19,1 W | 2,73 A | 51 °C | limite aceitável |
+| 6,0 A | 21,4 W | 3,06 A | 55 °C | abortar |
+| 8,0 A | 32,1 W | 4,59 A | 77 °C | parar imediatamente |
 
 **Critério de aceite:** P_entrada **≤ 20 W** a 1800 RPM, em regime estável.
 
@@ -92,8 +92,8 @@ registrar o decaimento. FFT dá a primeira frequência natural da parte fixa.
 
 O tubo Ø30 × 4 × 150 sozinho, com 322 g no topo, dá **k ≈ 50 N/mm e fn ≈ 63 Hz**
 — confortável contra os 30 Hz de excitação. O que essa conta não cobre é o
-**balanço da base sobre a mesa**: ela apoia, não é presa, e sem os furos
-periféricos não há onde grampear a pista. Se a medição der **fn < 45 Hz**,
+**balanço da base sobre a mesa**: ela apoia, e é presa só pelas quatro abas de
+grampo nos cantos do anel. Medir grampeada e solta. Se a medição der **fn < 45 Hz**,
 reforce antes de montar o motor: piso 100 % sólido num raio de 40 mm em torno da
 torre e 4 a 8 gussets da torre para a parede da baia, que hoje não trabalha.
 
@@ -120,10 +120,15 @@ patamar, lendo **30 Hz** (1× rotação) e 60 Hz (2×).
 2. **Dinâmico, em rotação** — com o acelerômetro, método da massa de teste:
    medir a fase e a amplitude do pico de 30 Hz, adicionar massa conhecida numa
    posição angular conhecida, medir de novo, resolver o vetor de correção.
-   Resolução necessária: **~90 mg em r = 90 mm**.
+   Resolução necessária: **~90 mg em r = 90 mm**. No CAD os planos são os três
+   alívios da face inferior do cubo (r 17–36, plano 1; até ~13 g de tungstênio
+   cada) e os seis copos da tampa (r = 34, plano 2; ~1 g de tungstênio por
+   copo = 34 g·mm). A correção grossa do layout da baia já está planejada:
+   ~2,2 g no alívio de 180°. O ajuste fino em r = 34 vale 3,4 g·mm por 0,1 g,
+   que é a mesma resolução de 90 mg em r = 90 — com balança de 0,01 g.
 
 **Se falhar:** repetir o balanceamento em dois planos. Se persistir, procurar
-excentricidade da bateria (48 g deslocados 1 mm já dão 48 g·mm, seis vezes o
+excentricidade da bateria (50 g deslocados 1 mm já dão 50 g·mm, seis vezes o
 admissível) ou empeno de painel.
 
 ---
@@ -139,7 +144,7 @@ partidas consecutivas do repouso até 1800 RPM.
 
 **Critérios de aceite:**
 - 10 de 10 partidas bem-sucedidas, sem travamento nem ruído de dessincronismo;
-- pico de corrente na fonte durante a rampa ≤ **4,5 A a 7,4 V** (equivale a 8,0 A
+- pico de corrente na fonte durante a rampa ≤ **4,8 A a 7 V** (equivale a 8,0 A
   de fase);
 - nenhum evento de proteção do ESC.
 
@@ -155,7 +160,7 @@ partidas consecutivas do repouso até 1800 RPM.
 5. **Desabilitar o "Brake on stop".** O BLHeli_S freia com regeneração, e uma
    fonte de bancada não afunda corrente: frear 27,6 J empurra o barramento para
    cima.
-4. Se nada resolver, o caminho é um ESC sensored ou um controlador FOC.
+6. Se nada resolver, o caminho é um ESC sensored ou um controlador FOC.
 
 ---
 
@@ -175,7 +180,7 @@ parado e com movimento rápido dos olhos (sacada). Registrar com celular a 240 f
 | Sintoma | Causa provável | Correção |
 |---|---|---|
 | Imagem tripla ou fantasma | Δh ou raio diferentes entre painéis | remedir Datum D e o raio; reimprimir o painel fora |
-| Deslocamento angular entre varreduras | folga na junta espiga/socket | apertar; verificar as porcas nyloc |
+| Deslocamento angular entre varreduras | folga na junta espiga/socket | apertar; verificar as porcas planas e a trava química |
 | Borda vertical serrilhada | jitter de fase do sensor de índice | verificar entreferro e histerese do hall |
 | Imagem "respirando" ou cisalhada | rotação instável entre voltas | **o BLHeli_S não tem governor** — ver abaixo |
 | Cintilação periférica | 90 Hz insuficiente para o brilho usado | reduzir brilho, ou subir para 2000 RPM se A e B passarem |
@@ -231,6 +236,7 @@ Não são formalidade. O rotor guarda **26 J** e um painel solto sai a
 - **Parada de emergência** ao alcance, cortando a fonte.
 - **Subir em patamares** com inspeção entre eles. Nunca ir direto a 1800.
 - Após qualquer reimpressão ou remontagem, **refazer o balanceamento**.
-- **Grampear a base à bancada** pelas três abas externas do anel antes de
-  qualquer ensaio de rotação. Ela tem 310 g e caminha se o contato for ruim.
+- **Grampear a base à bancada** pelas abas externas do anel (quatro, nos
+  cantos; três bastam) antes de qualquer ensaio de rotação. Ela tem 321 g e
+  caminha se o contato for ruim.
 - Óculos de proteção, sempre.

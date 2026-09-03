@@ -20,18 +20,20 @@ Entregáveis finais:
 | Bloco | Situação |
 |---|---|
 | Ponto de operação | ✅ congelado — r = 100 mm, 1800 RPM, 90 Hz |
-| Cadeia de acionamento | ✅ definida — A2212 920KV, ESC 15 A, fonte de bancada |
-| Cadeia óptica | ✅ definida — HD107S 144/m, ESP32-C3, hall no rotor |
-| Especificação CAD | ✅ escrita e corrigida |
-| Modelo CAD | ⚠️ regeneração pendente — 12 itens, 2 deles P0 nos painéis |
-| Compras | 🛒 não iniciadas |
-| Isolamento de vibração | ⚠️ decisão pendente; montagem inicial rígida |
+| Cadeia de acionamento | ✅ A2212 920KV · ESC LittleBee Spring 20A · fonte de bancada · gerador Arduino |
+| Cadeia óptica | ✅ HD107S 144/m · ESP32-C3 · A3144 nu no rotor |
+| Especificação CAD | ✅ escrita, corrigida e alinhada ao CAD em 03/09 |
+| Modelo CAD | ✅ regenerado em 03/09 (rev. 3.0.2): 51 de 51 critérios, medidos na malha; layout da baia verificado |
+| Compras | 🔄 motor, ESC, fita, ESP32-C3, bateria LiFe e hall em mãos; faltam buck, shifter, ímã, ferragens, chapa e filamento |
+| Medições | ⚠️ colar e ponta do eixo a partir da face de apoio; massa real da eletrônica |
+| Isolamento de vibração | ⚠️ montagem rígida; o ensaio de impacto decide |
 
 ## 3. Como este plano difere do anterior
 
 A versão anterior perseguia 90 Hz subindo a rotação com o raio fixo em 130 mm.
 Como a potência aerodinâmica escala com **ω³r³**, isso exigia 9,76 A e levava o
-motor a 101 °C — inviável com o A2212 920KV e o ESC de 15 A que temos.
+motor a 101 °C — inviável com o A2212 920KV que temos, cujo limite prático é
+térmico, em torno de 5,5 A.
 
 Os mesmos 90 Hz, na **mesma** 1800 RPM, com o raio em 100 mm, custam **4,44 A e
 43 °C**. O alvo estava certo desde o começo; a alavanca estava errada.
@@ -57,7 +59,7 @@ Três mudanças de método que vêm junto:
 | Modelagem CAD v3.0 | gerador paramétrico, STLs, montagem, relatórios |
 | Verificação do CAD contra os critérios da especificação | relatório de conformidade |
 | Compras do caminho crítico | bateria, ESP32-C3, regulador, hall, ímã, fio, filamento |
-| Layout da baia de eletrônica | confirma que tudo cabe na baia ampliada, Ø78 × 26 |
+| Layout da baia de eletrônica | esboço verificado no CAD (envelope, interferências, contrapeso); pesar as peças reais |
 
 **Portão G0:** CAD entregue e aprovado nos critérios do §9 da especificação;
 cupons impressos e conferidos com a fita real.
@@ -80,8 +82,8 @@ raio 100 ±0,1 mm · Δh ≤ ±0,5 mm. Peça fora de tolerância é reimpressa, 
 | Atividade | Saída |
 |---|---|
 | Motor na chapa, chapa na torre | conjunto fixo alinhado |
-| Aranha no eixo, com arruela metálica e porca baixa | rotor acoplado |
-| Painéis nas longarinas, porcas nyloc | rotor completo, sem LEDs |
+| Aranha no eixo, com a arruela Ø20 × Ø8,5 em alumínio e a porca M6 fina com trava química | rotor acoplado |
+| Painéis nas longarinas, porcas planas com trava química | rotor completo, sem LEDs |
 | Balanceamento estático | painéis casados em massa |
 | Contenção de ensaio montada | caixa fechada, chapa ou tela |
 
@@ -150,7 +152,7 @@ da eletrônica de bordo.
 | Motor aquece além do previsto | média | alto | curva térmica sem estabilizar | ventilação da baia; é o fator que decide |
 | Partida sensorless falha | **média** | médio | travamento na rampa | rampa de 12 s; duty alto; ESC sensored |
 | Δm entre painéis fora | média | médio | pesagem em G1 | massa adesiva; reimpressão |
-| Baia não comporta a eletrônica | média | médio | layout na Fase 0 | ESP32-C3; regulador menor; baia mais alta |
+| Eletrônica mais pesada que o catálogo | média | médio | pesagem das peças reais (folga do rotor: 5,7 g) | mini560 em vez de XL4015; polyfuse em vez de porta-fusível; alívios mais fundos |
 | Vibração acima do limite | baixa | médio | FFT em G3 | balanceamento em dois planos |
 | Fluência do painel em operação | **média** | alto | ponta afastando entre medições | limitar tempo contínuo; medir deflexão a quente |
 | Falha estrutural do painel | baixa | **crítico** | trinca na inspeção | SF 2,5 — inspecionar entre patamares |
@@ -206,4 +208,4 @@ já está escrito no plano de ensaios.
 | [`05-ESQUEMA-ELETRICO-v3.0.md`](05-ESQUEMA-ELETRICO-v3.0.md) | eletrônica embarcada do rotor |
 | [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md) | o que ainda falta |
 | [`07-GLOSSARIO-E-PREMISSAS.md`](07-GLOSSARIO-E-PREMISSAS.md) | vocabulário e origem de cada número |
-| [`00-AUDITORIA-E-INTEGRACAO-v2.1.md`](00-AUDITORIA-E-INTEGRACAO-v2.1.md) | memória de cálculo e histórico |
+| [`legado/`](legado/LEIA-ME.md) | v2.0, v2.1 e a auditoria que as reprovou — histórico, não referência |

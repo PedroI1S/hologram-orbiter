@@ -73,7 +73,7 @@ alimentar a placa pelo mesmo trilho.
 | SPI CLK | GPIO 4 | 74AHCT125 entrada A | 20 MHz, DMA |
 | SPI MOSI | GPIO 6 | 74AHCT125 entrada B | dados da cadeia |
 | ÍNDICE | GPIO 3 | saída do A3144 | interrupção na borda de descida |
-| V_BAT | GPIO 0 (ADC) | divisor **150k / 47k** | 2,00 V a 8,4 V · corte em 1,58 V |
+| V_BAT | GPIO 0 (ADC) | divisor **150k / 47k** | 1,72 V a 7,2 V (LiFe cheia) · corte em 1,38 V (= 5,8 V) |
 | 5V | 5V | trilho do buck | — |
 | 3V3 | 3V3 | pull-up do hall | regulador da placa |
 | GND | GND | trilho comum | estrela no cubo |
@@ -108,11 +108,11 @@ e desbalanceia.
 
 ## 5. Orçamento de energia
 
-| Cenário | Potência | Na bateria 2S | Autonomia 850 mAh |
+| Cenário | Potência | Na bateria LiFePO4 2S (6,6 V) | Autonomia 800 mAh |
 |---|---:|---:|---:|
-| Branco pleno, 87 LEDs | 27,3 W | 4,34 A | 14 min |
-| Conteúdo claro (30 %) | 9,0 W | 1,44 A | 42 min |
-| **Típico POV (15 %)** | **5,1 W** | **0,81 A** | **74 min** |
+| Branco pleno, 87 LEDs | 27,3 W | 4,1 A (5C) | 12 min |
+| Conteúdo claro (30 %) | 9,0 W | 1,4 A | 35 min |
+| **Típico POV (15 %)** | **5,1 W** | **0,77 A** | **~60 min** |
 
 Conteúdo POV é majoritariamente escuro, então 15 % é o caso realista. O branco
 pleno dimensiona o buck e os condutores, não a autonomia.
@@ -153,27 +153,30 @@ BATERIA    LiFePO4 2S: 7,2 V cheia · 6,6 no platô · 5,0 vazia
 
 ## 7. Montagem na baia
 
-| Item | Envelope | Onde |
-|---|---:|---|
-| Bateria LiFePO4 2S | 58 × 30 × 17 | berço em caixa, sobre a porca M6 rebaixada |
-| Buck 5 V | ~25 × 20 × 10 | parede da baia, longe da bateria |
-| ESP32-C3 Super Mini | 22 × 18 × 5 | parede oposta |
-| 74AHCT125 + pull-up + divisor | ~20 × 15 | placa perfurada junto ao MCU |
-| C bulk 1000 µF | Ø10 × 20 | junto à saída do buck |
-| Chave e conector de carga | — | janela da tampa |
-| A3144 **nu** | TO-92 | bolso na face inferior do cubo, r = 29 mm — **não use a placa HW-477** |
+Layout no CAD (`spider.bay_layout`; render `exports/preview/montagem_baia.png`).
+Coordenadas do rotor: braço 1 em +x, Z = 0 no topo do cubo.
 
-A baia foi **ampliada para Ø78 × 26 mm** (cubo Ø92), dos quais 5,6 vão para a
-porca: sobram **20,4 mm de altura** e 39 mm de raio útil. Isso aceita pack de até
-67 × 30 × 20 e deixa espaço vertical para o capacitor de Ø10 deitado, que na baia
-antiga não passava.
+| Item | Envelope | Onde | Massa (catálogo) |
+|---|---:|---|---:|
+| Bateria LiFePO4 2S | 58 × 30 × 17 | berço central, deitada em y, sobre trilhos em Z = 6; a arruela e a porca fina terminam em Z = 5 | 50 g (medida) |
+| Placa de interface: 74AHCT125, pull-up, divisor, polyfuse, chave slide, JST-XH | 15 × 20 × 8 | +x, x 19,5…34,5 · y −5…15, em pilares de 6 mm, sob a janela da tampa; os terminais do hall sobem debaixo dela | 5,5 g |
+| ESP32-C3 Super Mini | 18 × 22,5 × 5 | −x, x −36…−18 · y ±11, em pilares de 6 mm; USB-C para −y | 3,0 g |
+| Buck 5 V mini560 | 22 × 17 × 6 | em pé numa ranhura na parede da baia a 140°, indutor para dentro | 2,0 g |
+| C bulk 1000 µF | Ø10 × 20 | em pé numa cerca em (22,5, −22), lado +x | 2,5 g |
+| Fios internos | — | — | 2,0 g |
+| A3144 **nu** | TO-92 | bolso na face inferior do cubo, r = 29 mm, azimute 20° — **não use a placa HW-477** | 0,2 g |
 
-**A baia é intrinsecamente assimétrica** — buck numa parede, MCU na oposta,
-capacitor num segmento. O capacitor sozinho, a r ≈ 25 mm, vale 62 g·mm contra os
-~9 admissíveis. "Tudo centrado" não é atingível com peças diferentes em lados
-diferentes: **faça o esboço de layout com as massas reais e planeje o contrapeso**,
-em vez de corrigir depois. Tudo que entrar aqui precisa ficar centrado: **1 mm de
-excentricidade em 48 g já são 48 g·mm**, seis vezes o admissível.
+A baia tem **Ø78 × 26 mm** (cubo Ø92), com 21 mm úteis acima da porca. Tudo
+elevado em pilares deixa o piso livre para os três feixes dos painéis, que saem
+pelas janelas da parede em Z 0,8–5,8.
+
+**A baia é intrinsecamente assimétrica**, e o esboço mostra quanto: com essas
+massas de catálogo o desbalanceamento nominal é de **73 g·mm a 14°**, oito vezes
+o admissível, corrigido com **2,2 g de massa de tungstênio no alívio de 180°**
+da face inferior do cubo (r ≈ 33). O gerador refaz essa conta a cada mudança de
+posição ou massa: **pesar cada peça real e atualizar `mass_g`** antes de fixar.
+Tudo que entrar aqui precisa ficar onde o CAD diz: **1 mm de excentricidade em
+50 g já são 50 g·mm**, seis vezes o admissível.
 
 ---
 

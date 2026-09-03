@@ -3,7 +3,7 @@
   "files": [
     {
       "file": "01_aranha_ABS.stl",
-      "triangle_count": 9504,
+      "triangle_count": 11230,
       "dimensions_mm": [
         148.7631,
         171.7769,
@@ -19,7 +19,7 @@
         85.8884,
         32.0
       ],
-      "signed_volume_cm3": 63.5487,
+      "signed_volume_cm3": 64.931,
       "degenerate_triangles": 0,
       "non_two_manifold_edges": 0,
       "connected_components": 1,
@@ -37,7 +37,7 @@
     },
     {
       "file": "02_painel_LED_ABS_1x.stl",
-      "triangle_count": 4164,
+      "triangle_count": 3988,
       "dimensions_mm": [
         208.0,
         50.0,
@@ -53,7 +53,7 @@
         15.0,
         30.0
       ],
-      "signed_volume_cm3": 31.7444,
+      "signed_volume_cm3": 30.7132,
       "degenerate_triangles": 0,
       "non_two_manifold_edges": 0,
       "connected_components": 1,
@@ -71,7 +71,7 @@
     },
     {
       "file": "02_painel_LED_ABS_3x_mesma_mesa.stl",
-      "triangle_count": 12492,
+      "triangle_count": 11964,
       "dimensions_mm": [
         208.0,
         170.0,
@@ -87,7 +87,7 @@
         75.0,
         30.0
       ],
-      "signed_volume_cm3": 95.2333,
+      "signed_volume_cm3": 92.1397,
       "degenerate_triangles": 0,
       "non_two_manifold_edges": 0,
       "connected_components": 3,
@@ -173,10 +173,10 @@
     },
     {
       "file": "06_suporte_ima_ABS.stl",
-      "triangle_count": 1716,
+      "triangle_count": 1726,
       "dimensions_mm": [
-        21.7083,
-        41.8573,
+        23.3863,
+        41.5544,
         21.5
       ],
       "bounds_min_mm": [
@@ -185,8 +185,8 @@
         0.0
       ],
       "bounds_max_mm": [
-        31.5119,
-        21.0801,
+        33.1898,
+        20.7772,
         21.5
       ],
       "signed_volume_cm3": 1.7385,
@@ -197,7 +197,7 @@
       "outward_orientation": true,
       "ray_winding": {
         "pitch_mm": 0.5,
-        "rays": 9896,
+        "rays": 10195,
         "bad_winding_segments": 0,
         "thin_solid_segments": 0,
         "examples": []
@@ -241,7 +241,7 @@
     },
     {
       "file": "C02_cupom_canal_LED.stl",
-      "triangle_count": 188,
+      "triangle_count": 154,
       "dimensions_mm": [
         30.0,
         30.0,
@@ -257,7 +257,7 @@
         15.0,
         8.0
       ],
-      "signed_volume_cm3": 3.5047,
+      "signed_volume_cm3": 3.3978,
       "degenerate_triangles": 0,
       "non_two_manifold_edges": 0,
       "connected_components": 1,

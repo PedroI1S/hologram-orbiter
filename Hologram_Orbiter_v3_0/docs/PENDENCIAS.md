@@ -1,60 +1,66 @@
 # Pendências e decisões em aberto — v3.0
 
-Estado em 02/09/2026. Nada aqui impede imprimir cupons, painéis, aranha,
-tampa, poste ou a base; os itens P0 impedem operar o rotor.
+Estado em 03/09/2026 (revisão 3.0.2), depois da regeneração que fechou A1, A2
+e B1 a B11 de `../../06-PENDENCIAS-ABERTAS-v3.0.md` e dos desvios de spec
+ratificados pelo revisor. Nada aqui impede imprimir cupons, painéis, aranha,
+tampa, suporte do ímã ou base; os itens P0 impedem operar o rotor.
 
 ## P0 — antes de girar
 
-2. **Altura do conjunto motor (30 mm)** derivada do datasheet, não medida.
+1. **Medir o eixo a partir da face em que o cubo assenta:** altura do topo do
+   colar Ø8 e da ponta da rosca. O desenho cotado diz colar 5 + rosca 7 numa
+   saliência total de 14 (a soma dá 12: os 2 mm restantes devem ser um ressalto
+   sob o colar). A fixação foi refeita para valer nas duas leituras — arruela
+   Ø20 × Ø8,5 × 2 em alumínio sobre o topo do cubo, porca M6 fina DIN 439B
+   com Loctite 243 — e sobram 3 mm de rosca (1 mm na leitura de 12). O número
+   real fecha a compra da porca e confirma que o colar não ultrapassa o topo da
+   arruela (+2 sobre o cubo; o colar chega a +1).
+2. **Pesar a eletrônica da baia.** O layout (`spider.bay_layout`) usa massas de
+   catálogo: placa de interface 5,5 g, ESP32-C3 3,0, buck mini560 2,0,
+   capacitor 2,5, fios 2,0 = 15,0 g, exatamente a folga. O rotor fecha em
+   274,3 g com o contrapeso de 2,2 g: **5,7 g de folga**. Um XL4015 (~18 g) no
+   lugar do mini560 estoura tudo.
 
 ## P1 — antes de liberar o projeto
 
-4. **Isolador de vibração (spec §5.7).** Modelado como montagem rígida; os 4
-   furos Ø4 em PCD 40 servem aos dois caminhos.
-5. **Eletrônica embarcada.** Placa ESP32, regulador 5 V, chave e conector de
-   carga sem dimensões: a janela da tampa é placeholder e os 15 g de folga no
-   orçamento do rotor são estimativa.
-6. **Massa de peças estáticas — resolvido em 02/09/2026.** Base + torre
-   (310 g) e tampa do cilindro (191 g com placa de 3 mm) não têm critério de
-   massa: só o rotor tem orçamento (≤ 280 g). O alvo de 300 g da spec para a
-   base fica registrado como histórico; o 306 g da v2.1 era artefato do bug
-   das nervuras sobrepostas.
-6a. **Ventilação com o cilindro fechado.** Com a base apoiada na mesa (pista
-   e nervuras de 8 mm encostadas) e a tampa fechada, o interior do cilindro
-   só troca ar pelos 13 furos da tampa (5 177 mm²). As janelas laterais da
-   baia (§5.4) passam a circular ar dentro do cilindro, não com a sala. Se a
-   térmica do motor pedir mais (spec §10.1, pior caso 99 °C), a saída barata
-   é dar pés à base (4 calços de ~10 mm sob a pista) para criar chaminé:
-   entra ar por baixo do anel, sai pela tampa. Não está modelado; é decisão.
-6b. **Furos periféricos removidos** (decisão de 02/09/2026). Com a canaleta
-   em r = 132,8–137,2 sobram 2,8 mm de cada lado da pista, sem lugar para
-   furo Ø4, e uma base de 310 g com 280 mm de apoio não precisa ser
-   parafusada na bancada. `base_tower.peripheral_holes.enabled = true` os
-   devolve, atravessando as nervuras em PCD 240.
-7. **Δm entre painéis ≤ 0,091 g** e **excentricidade da bateria ≤ 0,17 mm**
+3. **Isolador de vibração (spec §5.7).** Modelado como montagem rígida; os 4
+   furos Ø4 em PCD 40 (só na flange superior) servem aos dois caminhos.
+4. **Layout da baia — refinar com as peças reais.** Posições e envelopes são
+   parâmetros; o gerador refaz interferências, faixas dos feixes, massa e o
+   contrapeso. Nominal: desbalanceamento 73 g·mm a 14°, contrapeso 2,2 g de
+   tungstênio na ponta externa do alívio de 180° (r ≈ 33). Cada copo da tampa
+   (plano 2) leva ~1 g de tungstênio (34 g·mm em r = 34) para o ajuste fino.
+5. **Eletrônica para LiFe (06-PENDENCIAS C).** O pack comprado é LiFePO4 2S:
+   6,6 V nominal, 7,2 de carga, corte prático em ~5,8 V pelo dropout do buck.
+   Carregador em modo LiFe.
+6. **Δm entre painéis ≤ 0,084 g** e **excentricidade da bateria ≤ 0,17 mm**
    não são atingíveis por posicionamento: balancear em dois planos (alívios do
-   cubo e copos da tampa).
+   cubo em r 17–36 e copos da tampa em r = 34).
+7. **Massa das peças estáticas.** Base + torre com abas 321 g (alvo da spec
+   330); suporte do ímã 1,7 g. Só o rotor tem orçamento duro (≤ 280 g).
 
-## Conflitos documentais encontrados na spec v3.0
+## Desvios da especificação — ratificados pelo revisor em 03/09/2026
 
-- §5.4: "furos periféricos 4 × Ø4 em PCD 290" com base de Ø280. O meio da
-  pista (PCD 270) é onde fica a canaleta; os furos foram removidos, ver
-  item 6b.
-- §5.2 ainda cita 131,7 N por painel; o valor vigente é 158,1 N (§2.1 e §10).
-- §5.6 ainda cita rotor de 251 g e 8,4 g·mm; o vigente é 273 g e 9,1 g·mm.
-- §5.8 ainda cita deflexão de 2,07 mm; o vigente é 2,48 mm.
-- §5.1 "batente inferior 2,0 mm": mantido como pele de 2 mm, mas o apoio da
-  fita subiu para Z = −98,5 por causa do bolso de fios de 3,5 mm (a fita de
-  201,4 mm termina em Z = +102,9, dentro dos 104 do topo).
-- §7 "feature mínima 1,2 mm" versus §5.1 "nervuras de 1,0 mm": mantido 1,0
-  conforme §5.1.
-- §9 "cavidades internas seladas aparecem como componentes extras": na v3.0 a
-  cavidade do painel é **aberta** (vão nos diafragmas, furo na lâmina e bolso
-  na ponta), logo o STL tem 1 componente. É intencional: sem volume preso.
+- §5.1 canal em degrau: **abandonado** (apontado por Pedro em 03/09). Os LEDs
+  ficam em cima do PCB, então o PCB num canal raso e os LEDs num rasgo mais
+  fundo só funcionaria com a fita de cabeça para baixo. CAD: canal único
+  12,4 × 2,0, parede local 2,8 numa faixa de 14,4 mm, piso 0,8 em ponte de
+  12,4 (a mesma do canal original); +0,3 g por painel. Spec §5.1 corrigida.
+- §5.2 rebaixo Ø13 × 2 para arruela Ø20: **sem rebaixo**, arruela Ø20 × Ø8,5 em
+  alumínio e porca fina — o colar Ø8 do eixo não passava por nenhuma arruela
+  M6 nem cabia sob um rebaixo.
+- §5.2 postes da tampa a 58 mm: **y = ±35**, encostados na parede.
+- §5.2 / §5.3 alvos de massa: aranha 75 g (CAD 67,5), tampa 12 g (CAD 10,1).
+- §5.4 três abas a 120°: **quatro a 90°**, nos cantos da mesa.
+- §6.3 sensor a r ≈ 37,5 e azimute 30°: **r = 29, azimute 20°**, sensor e ímã.
+- Tampa 07 do invólucro: **removida** (fora de escopo).
+- §9 "cavidades seladas aparecem como componentes extras": a cavidade do painel
+  é aberta por projeto; o STL tem 1 componente.
 
-## Verificações não executadas (herdadas da v2.1)
+## Verificações não executadas (herdadas)
 
-FEA do painel/boss/espiga; análise modal; fadiga do painel (SF 2,5 em flexão);
-retenção dos parafusos a 1800 RPM; balanceamento instrumentado; ensaio de
-sobrevelocidade em contenção certificada; térmica do motor com termopar; CFD
-ou ensaio de arrasto do boss carenado (A×Cd hoje é estimativa por finura).
+FEA do painel/boss/espiga; análise modal; fluência do painel sob 12–14 MPa a
+quente; retenção dos parafusos a 1800 RPM; balanceamento instrumentado; ensaio
+de sobrevelocidade em contenção; térmica do motor com termopar; CFD ou ensaio
+de arrasto do boss carenado (A × Cd hoje é estimativa por finura); ensaio de
+impacto da base (06-PENDENCIAS D).
