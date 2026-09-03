@@ -30,7 +30,7 @@ Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para gira
 > As cascas invertidas dos furos M3 foram confirmadas por traçado de raios e
 > corrigidas (cada cortador é subtraído sozinho); o eixo de cada parafuso é
 > vazio de ponta a ponta. Entraram o canal de 12,4 × 2,0 para a fita de 2 mm, o cubo Ø92 com a baia
-> Ø78 × 26, o fillet da raiz, as abas de grampo, o suporte do ímã com dois
+> Ø78 × 29, o fillet da raiz, as abas de grampo, o suporte do ímã com dois
 > parafusos, o layout da baia com contrapeso planejado e os critérios medidos
 > na malha. O traçado de raios ainda achou e corrigiu uma lâmina de ar de
 > 0,05 mm sob a flange da torre.
@@ -39,7 +39,7 @@ Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para gira
 > 7 mm acima da campânula: a arruela M6 Ø20 da spec assentaria nele e a porca
 > não apertaria o cubo. Agora é arruela Ø20 × Ø8,5 em alumínio (cortada da
 > chapa) e porca M6 fina com trava química. Falta medir, a partir da face de
-> apoio, o topo do colar e a ponta do eixo. O rotor fecha em 274,3 g com
+> apoio, o topo do colar e a ponta do eixo. O rotor fecha em 278,6 g com
 > massas de catálogo para a eletrônica: pesar tudo antes de fixar. Pacote em
 > [`Hologram_Orbiter_v3_0/`](Hologram_Orbiter_v3_0/README.md); o que falta em
 > [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md).
@@ -73,8 +73,8 @@ e o que é premissa.
 | Temperatura do motor prevista | **46 °C** | limite de aceite: 55 °C (melhor caso 43 °C) |
 | Força centrífuga por painel | 149,7 N (massa CAD) · 158,1 N (projeto, 44,5 g) | SF ≈ 2,5 na flexão |
 | Massa do painel montado | ~42,1 g | Δm entre os três ≤ **0,084 g** |
-| Massa do rotor | ~274,3 g (CAD + catálogo + contrapeso; folga de 5,7 g até 280) | desbalanceamento admissível 8,4 g·mm (conservador, com 252 g) |
-| Energia armazenada | 27,6 J | um painel solto: 7,4 J a 18,9 m/s |
+| Massa do rotor | ~278,6 g (CAD + catálogo + contrapeso; folga de 1,4 g até 280) | desbalanceamento admissível 8,4 g·mm (conservador, com 252 g) |
+| Energia armazenada | 27,6 J | um painel solto: 7,9 J a 18,9 m/s |
 
 ---
 

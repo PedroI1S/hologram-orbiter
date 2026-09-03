@@ -2,7 +2,7 @@
 
 Complementa a especificação (§6.3) com a rota física que o CAD implementa.
 Cotas em mm; referenciais da spec §3. Atualizado para o cubo Ø92 e a baia
-Ø82/Ø78 × 26 (regeneração de 03/09/2026).
+Ø82/Ø78 × 29 (regeneração de 03/09/2026).
 
 ## 1. Rota dos quatro condutores por painel
 
@@ -42,7 +42,7 @@ entre eles. Aceitável; anotar.
 
 | Item | Onde | Cota |
 |---|---|---|
-| Sensor hall A3144 **nu** (TO-92, dessoldado do módulo HW-477 — 06-PENDENCIAS C3) | face inferior do cubo, face sensível para baixo | r = 29, azimute **20°** do rotor (braço 1 = 0°) |
+| Sensor hall A3144 **nu** (TO-92, dessoldado do módulo HW-477 — 06-PENDENCIAS C1) | face inferior do cubo, face sensível para baixo | r = 29, azimute **20°** do rotor (braço 1 = 0°) |
 | Terminais | rasgo 4,8 × 1,4 subindo até a baia, debaixo da placa de interface (onde está o pull-up) | r ≈ 27,3–28,7, azimute 20° |
 | Ímã Ø4 × 2 | topo do poste do `06_suporte_ima_ABS` | r = 29, azimute **20°** da base (+x = 0°) |
 | Entreferro | | 2,5 mm (poste termina em Z = 177,5; Datum A em Z = 180) |
@@ -76,8 +76,8 @@ duas leituras do desenho.
    porca cônica nem a autotravante baixa de 6 mm**: com a rosca acabando em
    12–14 mm, a de 6 mm terminaria no fim do eixo.
 4. Pilha sobre o topo do cubo: arruela 0–2, porca 2–5, ponta do eixo em +8 (ou
-   +6 na leitura de 12 mm). Os trilhos do berço ficam em Z = +6, a bateria em
-   Z = 6…23 dentro dos 26 mm da baia.
+   +6 na leitura de 12 mm). Os trilhos do berço ficam em Z = +9, a bateria em
+   Z = 9…26 dentro dos 29 mm da baia.
 5. Furos de provisão 4 × Ø3,2 em PCD 19 ficam sob a arruela: só servem com
    adaptador de hélice e com a arruela removida.
 
@@ -87,7 +87,7 @@ assenta: altura do topo do colar e da ponta do eixo.
 ## 4. Sequência de montagem do rotor
 
 1. Sensor hall nu no bolso inferior, terminais pelo rasgo; fixar com epóxi.
-   Conferir a polaridade do ímã antes de colar (06-PENDENCIAS C4).
+   Conferir a polaridade do ímã antes de colar (06-PENDENCIAS C2).
 2. Fios dos três painéis: passar pelas janelas da baia, bolsos das raízes e
    sulcos dos braços; deixar 60 mm de sobra na ponta do braço.
 3. Eletrônica conforme o layout `spider.bay_layout` (render
@@ -101,9 +101,10 @@ assenta: altura do topo do colar e da ponta do eixo.
    - **capacitor 1000 µF** em pé na cerca em (22,5, −22);
    - bateria LiFe (58 × 30 × 17, 50 g) no berço, deitada ao longo de y, por
      último.
-   Desbalanceamento nominal do conjunto: ~73 g·mm a ~13°. **Antes de fechar a
-   tampa**, colar ~2,2 g de massa de tungstênio na ponta externa do alívio de
-   180° (face inferior do cubo, r ≈ 33) e refinar na pesagem.
+   Desbalanceamento nominal do conjunto: ~63 g·mm a ~23°. **Antes de fechar a
+   tampa**, colar 2,19 g de massa de tungstênio na ponta externa do alívio de
+   180° e 0,87 g na do alívio de 300° (face inferior do cubo, r ≈ 33) e refinar
+   na pesagem.
 4. Painéis: encaixar a espiga no socket (0,1 mm/lado, 0,5 mm de fundo), passar
    os fios pela janela da carenagem, furo da lâmina e cavidade, soldar na fita.
    Parafusar 2 × M3 × 40 com porca plana no bolso hexagonal da base da torre e

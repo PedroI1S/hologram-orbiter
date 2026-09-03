@@ -107,14 +107,14 @@ monte o rotor real parado, e só então bata na torre.
 
 O tubo Ø30 × 4 × 150 dá **k ≈ 50 N/mm**. Com a massa concentrada **no topo do
 tubo** isso daria fn ≈ 63 Hz, e é esse o número que os documentos vinham
-publicando — mas a massa não está no topo. O CG do conjunto (rotor 274 g +
-motor 52 + chapa 18 = **344 g**, e não os 322 g da base, que é outra peça) fica
+publicando — mas a massa não está no topo. O CG do conjunto (rotor 279 g +
+motor 52 + chapa 18 = **349 g**, e não os 322 g da base, que é outra peça) fica
 em Z ≈ 185, **31 mm acima do topo da torre** (Z = 154). Para massa deslocada de
 `a` por um trecho rígido:
 
 ```
 k_eff = k / (1 + 3a/L + 3a²/L²) = 50 / (1 + 0,62 + 0,13) ≈ 29 N/mm
-fn    ≈ (1/2π)·√(29 000 / 0,344) ≈ 46 Hz
+fn    ≈ (1/2π)·√(29 000 / 0,349) ≈ 46 Hz
 ```
 
 e isso ainda ignora a inércia de rotação do rotor de 208 mm, a flexibilidade da
@@ -157,7 +157,7 @@ patamar, lendo **30 Hz** (1× rotação) e 60 Hz (2×).
    alívios da face inferior do cubo (r 17–36, plano 1; até ~13 g de tungstênio
    cada) e os seis copos da tampa (r = 34, plano 2; ~1 g de tungstênio por
    copo = 34 g·mm). A correção grossa do layout da baia já está planejada:
-   ~2,2 g no alívio de 180°. O ajuste fino em r = 34 vale 3,4 g·mm por 0,1 g,
+   2,19 g no alívio de 180° e 0,87 g no de 300°. O ajuste fino em r = 34 vale 3,4 g·mm por 0,1 g,
    que é a mesma resolução de 90 mg em r = 90 — com balança de 0,01 g.
 
 **Se falhar:** repetir o balanceamento em dois planos. Se persistir, procurar
@@ -263,7 +263,7 @@ adicionar eletrônica de bordo antes deles só aumenta o que se perde numa falha
 ## Regras de segurança em ensaio de rotação
 
 Não são formalidade. O rotor guarda **26 J** e um painel solto sai a
-**18,9 m/s** com 7,4 J.
+**18,9 m/s** com 7,9 J.
 
 - **Nunca girar sem contenção integral.** Caixa fechada, chapa ou tela de aço em
   torno do rotor. Não há exceção para "só um teste rápido".

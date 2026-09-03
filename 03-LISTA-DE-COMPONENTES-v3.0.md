@@ -13,10 +13,10 @@ Todas saem do gerador paramétrico. Ver [`01-ESPECIFICACAO-CAD-v3.0.md`](01-ESPE
 
 | # | Peça | Qtd | Volume (CAD) | Massa maciça (CAD) | Limite | Tempo |
 |---|---|---:|---:|---:|---|---|
-| 01 | Aranha (com pilares e guias da baia) | 1 | 65 cm³ | 67,5 g | ≤ 75 g (alvo) | 5–6 h |
+| 01 | Aranha (com pilares e guias da baia) | 1 | 68,3 cm³ | 71,0 g | ≤ 75 g (alvo) | 5–6 h |
 | 02 | Painel LED | 3 | 30,7 cm³ ea. | 31,9 g nu | ≤ 45 g montado | 8–10 h (lote) |
 | 03 | Tampa da baia Ø82 | 1 | 9,7 cm³ | 10,1 g | ≤ 12 g (alvo) | 30 min |
-| 04/05 | Base + torre integradas, 4 abas | 1 | 309 cm³ | 321 g | ≤ 330 g (alvo) | 12–18 h |
+| 04/05 | Base + torre integradas, 4 abas | 1 | 307 cm³ | 320 g | ≤ 330 g (alvo) | 12–18 h |
 | 06 | Suporte do ímã (dois parafusos) | 1 | 1,7 cm³ | 1,7 g | — | 15 min |
 | C01 | Cupom da junta 11 × 6 | 1 | 9,7 cm³ | 10,1 g | — | 15 min |
 | C02 | Cupom do canal do LED (fatia real de 30 mm do painel) | 1 | 3,4 cm³ | 3,5 g | — | 10 min |
@@ -83,7 +83,7 @@ Tudo isto gira junto com o rotor.
 >   dele estão a r = 29.
 >
 > regulador, deslocador de nível, capacitor, chave e conector numa baia que era
-> de Ø66 × 20 mm. Passou para **Ø78 × 26**, com 21 mm úteis acima da porca. Um
+> de Ø66 × 20 mm. Passou para **Ø78 × 29**, com 24 mm úteis acima da porca. Um
 > DevKit ESP32 de 55 × 28 mm não caberia junto com a bateria; o C3 Super Mini
 > (22 × 18) cabe. O esboço de layout está no CAD (`spider.bay_layout`) e é
 > verificado pelo gerador: placa de interface em +x sob a janela da tampa,
@@ -103,8 +103,8 @@ Tudo isto gira junto com o rotor.
 > limiar para ~3,15 V e resolve sem componente — ao custo de um pouco de brilho.
 
 > **O pack comprado cabe.** LiFePO4 2S de 58 × 30 × 17 mm deitado ao longo de
-> y, sobre trilhos em Z = 6 que passam por cima da arruela e da porca fina (topo
-> em Z = 5); o topo do pack fica em Z = 23, dentro dos 26 da baia, e a
+> y, sobre trilhos em Z = 9 que passam por cima da arruela e da porca fina (topo
+> em Z = 5); o topo do pack fica em Z = 26, dentro dos 29 da baia, e a
 > meia-diagonal do berço, 32,3 mm, dentro do raio útil de 39. Paredes laterais e
 > abas de topo centram o pack; **a retenção é simples porque ele fica no eixo de
 > rotação**: sendo simétrico em torno do centro, a resultante centrífuga sobre
@@ -117,7 +117,7 @@ Tudo isto gira junto com o rotor.
 
 **Por que 2S e não outra coisa:** a fita é 5 V e puxa **27 W em branco pleno**
 (87 LEDs × 60 mA), com 5,1 W típico em conteúdo POV. O pack LiFePO4 de 800 mAh
-a 6,6 V guarda ~5,3 Wh: ~60 min de conteúdo típico. 2S com buck é o arranjo
+a 6,6 V guarda ~5,3 Wh: ~50 min de conteúdo típico. 2S com buck é o arranjo
 padrão; 1S com boost seria pior em eficiência e corrente.
 
 ---

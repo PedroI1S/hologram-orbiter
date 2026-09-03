@@ -65,7 +65,8 @@ A montagem é rígida.
 
 **Contrapeso** — massa de correção do balanceamento, em dois planos: os
 alívios da face inferior do cubo (r 17–36) e os copos da tampa (r = 34). O
-layout da baia já pede ~2,2 g de tungstênio no alívio de 180°.
+layout da baia já pede 2,19 g de tungstênio no alívio de 180° e 0,87 g no
+de 300°.
 
 **Canal do LED** — o rebaixo de 12,4 × 2,0 mm na face externa do painel onde a
 fita cola: PCB no fundo, LEDs rentes à face. Sob ele a parede engrossa de 2,0
@@ -171,7 +172,7 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | **A·Cd do boss** | **≤ 350 mm²** | estimativa por finura | ❌ |
 | Módulo do ABS | 2 GPa | catálogo genérico | ❌ |
 | Massa do painel montado | ~42,1 g | CAD (31,9 nu) + fita + ferragens | ⚠️ pesar |
-| Massa do rotor | ~274 g | CAD + bateria medida + eletrônica de catálogo (15 g) + contrapeso planejado (2,2 g) | ⚠️ pesar; folga de 5,7 g |
+| Massa do rotor | ~278,6 g | CAD + bateria medida + eletrônica de catálogo (15 g) + contrapeso planejado (3,1 g) | ⚠️ pesar; folga de 1,4 g |
 | Eletrônica da baia | 5,5 + 3,0 + 2,0 + 2,5 + 2,0 g | catálogo | ❌ **pesar cada peça** |
 | Sensor de índice | **A3144 nu**, TO-92, 0,2 g | dessoldado do módulo | ✅ |
 | Gerador de sinal do ESC | Arduino ou gerador de bancada | em mãos | ✅ |
@@ -241,7 +242,7 @@ Dois ajustes que valem para o nosso caso, e que o manual descreve:
 | Colar e rosca do eixo | O desenho não fecha a soma (5 + 7 ≠ 14). A fixação vale nas duas leituras: porca fina de 3 mm sobre arruela de 2, sobram 3 mm de rosca com a ponta em 14 e 1 mm com 12. Medir antes de comprar a porca. |
 | Polaridade do ímã | O A3144 é unipolar. Se não pulsar, inverta o ímã antes de suspeitar do firmware. |
 | Campo do motor no sensor hall | Estático em relação ao sensor. Verificar com o motor montado, antes de colar. |
-| Frequência natural da parte fixa | O tubo dá 63 Hz. O que não se sabe é o balanço da base sobre a mesa, e o ensaio de impacto resolve em uma tarde. |
+| Frequência natural da parte fixa | Com a massa no topo do tubo daria 63 Hz, mas o CG fica 31 mm acima dele: a conta corrigida dá **≈ 46 Hz** (plano de ensaios, C0). O que não se sabe é o balanço da base sobre a mesa, e o ensaio de impacto resolve em uma tarde. |
 
 ---
 

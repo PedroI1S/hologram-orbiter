@@ -173,7 +173,7 @@ Coordenadas do rotor: braço 1 em +x, Z = 0 no topo do cubo.
 
 | Item | Envelope | Onde | Massa (catálogo) |
 |---|---:|---|---:|
-| Bateria LiFePO4 2S | 58 × 30 × 17 | berço central, deitada em y, sobre trilhos em Z = 6; a arruela e a porca fina terminam em Z = 5 | 50 g (medida) |
+| Bateria LiFePO4 2S | 58 × 30 × 17 | berço central, deitada em y, sobre trilhos em Z = 9; a arruela e a porca fina terminam em Z = 5 | 50 g (medida) |
 | Placa de interface: 74AHCT125, pull-up, divisor, polyfuse, chave slide, JST-XH | 15 × 20 × 8 | +x, x 19,5…34,5 · y −5…15, em pilares de 6 mm, sob a janela da tampa; os terminais do hall sobem debaixo dela | 5,5 g |
 | ESP32-C3 Super Mini | 18 × 22,5 × 5 | −x, x −36…−18 · y ±11, em pilares de 6 mm; USB-C para −y | 3,0 g |
 | Buck 5 V mini560 | 22 × 17 × 6 | em pé numa ranhura na parede da baia a 140°, indutor para dentro | 2,0 g |
@@ -181,14 +181,16 @@ Coordenadas do rotor: braço 1 em +x, Z = 0 no topo do cubo.
 | Fios internos | — | — | 2,0 g |
 | A3144 **nu** | TO-92 | bolso na face inferior do cubo, r = 29 mm, azimute 20° — **não use a placa HW-477** | 0,2 g |
 
-A baia tem **Ø78 × 26 mm** (cubo Ø92), com 21 mm úteis acima da porca. Tudo
+A baia tem **Ø78 × 29 mm** (cubo Ø92), com 24 mm úteis acima da porca. Tudo
 elevado em pilares deixa o piso livre para os três feixes dos painéis, que saem
 pelas janelas da parede em Z 0,8–5,8.
 
 **A baia é intrinsecamente assimétrica**, e o esboço mostra quanto: com essas
-massas de catálogo o desbalanceamento nominal é de **73 g·mm a 14°**, oito vezes
-o admissível, corrigido com **2,2 g de massa de tungstênio no alívio de 180°**
-da face inferior do cubo (r ≈ 33). O gerador refaz essa conta a cada mudança de
+massas de catálogo, somados os centróides que o gerador mede na aranha e na
+tampa e o sensor hall, o desbalanceamento nominal é de **63 g·mm a 23°**, sete
+vezes o admissível. A direção da correção não cai dentro de nenhum alívio, então
+ela é repartida: **2,19 g de tungstênio no alívio de 180° e 0,87 g no de 300°**,
+na face inferior do cubo (r ≈ 33). O gerador refaz essa conta a cada mudança de
 posição ou massa: **pesar cada peça real e atualizar `mass_g`** antes de fixar.
 Tudo que entrar aqui precisa ficar onde o CAD diz: **1 mm de excentricidade em
 50 g já são 50 g·mm**, seis vezes o admissível.

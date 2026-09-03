@@ -76,7 +76,7 @@ a impeça.
 | Deflexão da ponta do painel | 2,48 mm | raio dinâmico do rotor: 106,5 mm |
 | Tensão de flexão no painel | 13,9 MPa (SF ≈ 2,5) | seção da lâmina, parede de 2 mm |
 | Energia cinética do rotor | 27,6 J | energia armazenada em operação |
-| Energia de um painel solto | 7,4 J a 18,9 m/s (velocidade no CG, r = 100) | idem |
+| Energia de um painel solto | 7,9 J a 18,9 m/s (velocidade no CG, r = 100) | idem |
 | Inércia do rotor | 1,55 g·m² | rampa de partida ≥ 8 s |
 | Desbalanceamento admissível | **8,4 g·mm** | contrapesos, berço da bateria, Δm |
 
@@ -99,7 +99,7 @@ estima ~279 g **supondo ABS maciço** (eletrônica de catálogo e contrapeso
 incluídos), o que afrouxaria para 0,093 g.
 
 **Não antecipe nada: recalcule.** O afrouxamento não é o único desfecho. As
-peças impressas saem com 35 % de infill e os 173 g de CAD são de sólido maciço,
+peças impressas saem com 35 % de infill e os 177 g de CAD são de sólido maciço,
 então o rotor real tende a ficar **abaixo** dos 279 g — e possivelmente abaixo
 dos 252. A 240 g o limite **aperta** para U_adm = 8,0 g·mm e Δm ≤ 0,080 g. Use
 8,4 g·mm até pesar o rotor montado, e depois recalcule pela massa medida, para
@@ -328,8 +328,8 @@ aperto. O risco de fluência do ABS aparece só se alguém apertar demais:
 | 3,0 N·m | 2500 N | 39,8 MPa — escoa | 9,5 MPa |
 
 **Especificado: arruela Ø20 e torque de 0,6 N·m.** Dá 23× de margem na
-transmissão de torque e 1,9 MPa no ABS, longe de qualquer fluência. Prever
-assento plano de Ø20 no rebaixo do cubo.
+transmissão de torque e 1,9 MPa no ABS, longe de qualquer fluência. O assento
+plano de Ø20 é o topo do cubo, sem rebaixo — ver abaixo.
 
 **Não use a porca cônica que acompanha o motor.** Ela tem 14 mm de altura e
 ocuparia 14 dos 20 mm internos da baia, sobrando 6 mm para uma bateria de 13 mm.
@@ -345,12 +345,12 @@ alumínio** (cortada da chapa da R01; o furo passa pelo colar) sobre o topo do
 cubo; **porca M6 fina DIN 439B (3 mm) com trava química** Loctite 243, a
 0,6 N·m. Pilha sobre o topo do cubo: arruela 0–2, porca 2–5, ponta do eixo em
 +8 (ou +6 na leitura de 12 mm) — sobram 3 mm (ou 1) de rosca, e o topo da
-porca fica 1 mm abaixo dos trilhos da bateria (Z = 6). Pressão no ABS:
+porca fica 4 mm abaixo dos trilhos da bateria (Z = 9). Pressão no ABS:
 500 N / 259 mm² = 1,9 MPa. A porca autotravante baixa de 6 mm não cabe em
 nenhuma leitura: terminaria em +8, no fim do eixo. **Medir no motor, a partir
 da face em que o cubo assenta: topo do colar e ponta do eixo.**
 
-**Massa alvo:** ≤ 75 g (o cubo Ø92 com a baia de 26 mm dá 66 g em ABS maciço;
+**Massa alvo:** ≤ 75 g (o cubo Ø92 com a baia de 29 mm dá 71 g em ABS maciço;
 os 55 g eram do cubo Ø80). O limite que vale é o do rotor, 280 g.
 
 ### 5.3 Tampa da baia — 1 unidade, ABS
@@ -458,7 +458,7 @@ resolução de **~90 mg em r = 90 mm**. Furos roscados, rasgos para massa adesiv
 ou postes com arruelas — a forma é livre, a resolução não.
 
 **Berço da bateria:** alojamento que centre o pack LiFePO4 de 58 × 30 × 17 mm na
-baia Ø78: trilhos a Z = 6 sobre a arruela e a porca fina, paredes laterais e
+baia Ø78: trilhos a Z = 9 sobre a arruela e a porca fina, paredes laterais e
 abas de topo. Ainda assim **não conte com ele** para fechar o balanceamento.
 
 > **No CAD:** plano 1 = três alívios na face inferior do cubo (r 17–36, 4 mm de
@@ -466,7 +466,8 @@ abas de topo. Ainda assim **não conte com ele** para fechar o balanceamento.
 > (~1 g de tungstênio por copo, 34 g·mm). Separação axial de ~30 mm contra
 > 208 mm de rotor: o binário se corrige mal, e a resolução fina fica em r = 34
 > (0,1 g = 3,4 g·mm, o equivalente aos 90 mg em r = 90), não em r = 90. O
-> layout da baia já pede ~2,2 g no alívio de 180°; o Bloqueador C decide o resto.
+> layout da baia já pede 2,19 g no alívio de 180° e 0,87 g no de 300°; o
+> Bloqueador C decide o resto.
 
 ### 5.7 Isolador de vibração — EM ABERTO
 
@@ -731,8 +732,8 @@ Deflexão 2,5 a 5,0 mm · Tensão 12 a 16 MPa · SF ≈ 2,0 a 2,8 — derivaçã
 Inércia 1,55 g·m² · Energia 27,6 J · um painel solto 7,9 J a 18,9 m/s
   (0,5 × 0,0445 × 18,85² — pelo teto de 44,5 g, como as demais cargas; os
    7,4 J publicados antes usavam os 42,1 g estimados)
-Rotor completo: ~274 g com a baia ampliada, o layout da eletrônica (15 g de
-  catálogo) e o contrapeso de 2,2 g — pesar e recalcular
+Rotor completo: ~278,6 g com a baia ampliada, o layout da eletrônica (15 g de
+  catálogo) e o contrapeso repartido de 3,1 g — pesar e recalcular
 Balanceamento: e = 6,3/188,50 = 33,4 µm → U = 0,252 · 33,4 = 8,4 g·mm
   (cargas pelo teto de 44,5 g; balanceamento pela massa real — ver §2.1)
 Partida: rampa de 8 s → 8,0 A de pico (inércia é 100× a de uma hélice)

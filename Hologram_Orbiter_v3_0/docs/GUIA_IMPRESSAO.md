@@ -1,4 +1,4 @@
-# Guia de impressão — v3.0 (revisão 3.0.2, 03/09/2026)
+# Guia de impressão — v3.0 (revisão 3.0.3, 03/09/2026)
 
 Bico 0,4 mm, camada 0,2 mm, ABS em câmara fechada (spec §7). Mesa de
 300 × 300 mm. Não altere a escala nem "conserte" os STL no fatiador: eles são
@@ -90,7 +90,7 @@ ventilação alta, antes de pensar em engrossar o piso.
 Faça o bolso da porca (hexágono de circunraio 3,35), os furos piloto Ø1,6 dos
 pilares e o furo Ø8 do cubo sem "expansão de furo" automática. Se o Ø8 sair
 justo, alargar com broca de 8 mm; o cubo assenta pela face, não pelo furo.
-**Nunca alargue além do colar real do eixo**: furo folgado desloca 274 g do
+**Nunca alargue além do colar real do eixo**: furo folgado desloca 279 g do
 centro e não tem conserto.
 
 ## Ferragens e chapa

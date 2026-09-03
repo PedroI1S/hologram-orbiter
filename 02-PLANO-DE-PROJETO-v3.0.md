@@ -160,7 +160,7 @@ da eletrônica de bordo.
 | Motor aquece além do previsto | média | alto | curva térmica sem estabilizar | ventilação da baia; é o fator que decide |
 | Partida sensorless falha | **média** | médio | travamento na rampa | rampa de 12 s; duty alto; ESC sensored |
 | Δm entre painéis fora | média | médio | pesagem em G1 | massa adesiva; reimpressão |
-| Eletrônica mais pesada que o catálogo | média | médio | pesagem das peças reais (folga do rotor: 5,7 g) | mini560 em vez de XL4015; polyfuse em vez de porta-fusível; alívios mais fundos |
+| Eletrônica mais pesada que o catálogo | média | médio | pesagem das peças reais (folga do rotor: 1,4 g) | mini560 em vez de XL4015; polyfuse em vez de porta-fusível; alívios mais fundos |
 | Vibração acima do limite | baixa | médio | FFT em G3 | balanceamento em dois planos |
 | Fluência do painel em operação | **média** | alto | ponta afastando entre medições | limitar tempo contínuo; medir deflexão a quente |
 | Falha estrutural do painel | baixa | **crítico** | trinca na inspeção | SF 2,5 — inspecionar entre patamares |

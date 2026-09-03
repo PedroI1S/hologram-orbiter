@@ -89,7 +89,7 @@ em **278,6 g**, 1,4 g abaixo do limite.
 
 **Falta:** pesar cada componente real e atualizar `mass_g`; as posições são
 parâmetros. Um XL4015 (~18 g) no lugar do mini560 não fecha. **Atenção à margem
-de massa:** 1,4 g é pouco. Ela é conservadora — os 173 g de CAD supõem ABS
+de massa:** 1,4 g é pouco. Ela é conservadora — os 177 g de CAD supõem ABS
 maciço e as peças saem com 35 % de infill —, mas pese a aranha e os painéis
 antes de acrescentar qualquer coisa ao rotor.
 
@@ -138,8 +138,7 @@ N52** (~2× o campo). Ver também C2 (polaridade) e C3 (campo do motor).
 **O ESC não é alimentado pela bateria** (ratificado por Pedro, 03/09, e já era o
 que o esquema 05 §8 descrevia): ele fica na **parte fixa**, alimentado pela
 **fonte de bancada em 6–7 V, ≥ 5 A**. A bateria LiFe do rotor alimenta só a
-fita, o ESP32-C3 e o sensor. As duas linhas de energia não se encontram — só o
-GND, que precisa ser comum.
+fita, o ESP32-C3 e o sensor. As duas linhas de energia não se encontram.
 
 Isso encerra a metade da pendência que dependia da origem da alimentação, e o
 **LVC também já estava encerrado**: o glossário §7 registra, do manual Rev16.x,
@@ -168,7 +167,7 @@ trilhos de 6 para 9. A aranha passou de 67,5 para **71,0 g** e o rotor de 274,3
 para **278,6 g**, contra o limite de **280 g**: sobram **1,4 g**, onde antes
 sobravam 5,7.
 
-A margem é conservadora — os 173 g de CAD supõem ABS maciço e as peças saem com
+A margem é conservadora — os 177 g de CAD supõem ABS maciço e as peças saem com
 35 % de infill, então o rotor real deve ficar abaixo disso —, mas ela não
 suporta mais nenhum acréscimo às cegas.
 

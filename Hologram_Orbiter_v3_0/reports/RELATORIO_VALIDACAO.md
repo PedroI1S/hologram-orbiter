@@ -1,6 +1,6 @@
 # Relatório de validação CAD — Hologram Orbiter v3.0
 
-Data: 03/09/2026, revisão 3.0.2. Unidade: milímetro. Gerador: Blender 5.2.1
+Data: 03/09/2026, revisão 3.0.3. Unidade: milímetro. Gerador: Blender 5.2.1
 LTS, solver booleano Manifold, um cortador por diferença. Validação
 independente: leitor de STL binário próprio (`scripts/validate_stl.py`,
 NumPy), sem Blender, com **teste de enrolamento por traçado de raios** e faces
@@ -26,12 +26,12 @@ zero faces coincidentes** ([`stl_validation.json`](stl_validation.json)).
 
 | Arquivo | Triângulos | Componentes | Volume (cm³) | Envelope (mm) | Raios |
 |---|---:|---:|---:|---|---:|
-| 01_aranha_ABS | 11 230 | 1 | 64,93 | 148,8 × 171,8 × 32 | 17 903 @ 1,43 |
+| 01_aranha_ABS | 11 238 | 1 | 68,26 | 148,8 × 171,8 × 35 | 18 355 @ 1,43 |
 | 02_painel_LED_ABS_1x | 3 988 | 1 | 30,71 | 208 × 50 × 30 | 6 227 @ 1,73 |
 | 02_painel_LED_ABS_3x_mesma_mesa | 11 964 | 3 | 92,14 | 208 × 170 × 30 | 15 939 @ 1,73 |
 | 03_tampa_baia_ABS | 6 538 | 1 | 9,74 | 82 × 82 × 5 | 17 080 @ 0,68 |
-| 04_05_base_torre_ABS_integradas | 7 690 | 1 | 308,98 | 280 × 280 × 154 | 30 492 @ 2,33 |
-| 06_suporte_ima_ABS | 1 726 | 1 | 1,74 | 22 × 42 × 21,5 | 9 896 @ 0,5 |
+| 04_05_base_torre_ABS_integradas | 8 080 | 1 | 307,50 | 280 × 280 × 154 | 30 492 @ 2,33 |
+| 06_suporte_ima_ABS | 1 726 | 1 | 1,74 | 23,4 × 41,6 × 21,5 | 10 195 @ 0,5 |
 | C01_cupom_junta | 60 | 1 | 9,69 | 58 × 24 × 12 | 10 268 @ 0,5 |
 | C02_cupom_canal_LED | 154 | 1 | 3,40 | 30 × 30 × 8 | 6 076 @ 0,5 |
 | R01_suporte_motor (alumínio, não imprimir) | 3 536 | 1 | 6,81 | 60 × 60 × 2 | 16 348 @ 0,5 |
@@ -60,14 +60,14 @@ valores geométricos saem de traçado de raios no STL final, não dos parâmetro
 | Arruela passa pelo colar Ø8 (furo − colar) | 0,5 | ≥ 0,3 | ✅ |
 | Porca não toca o colar (topo da arruela − topo do colar) | 1,0 | ≥ 0,5 | ✅ |
 | Rosca sobrando acima da porca | 3,0 (1,0 na leitura de 12 mm) | ≥ 1 | ✅ |
-| Topo da porca (+5) abaixo dos trilhos (6) · bateria 23 ≤ 26 · meia-diagonal 32,3 ≤ 39 | sim | — | ✅ |
+| Topo da porca (+5) abaixo dos trilhos (9) · bateria 26 ≤ 29 · meia-diagonal 32,3 ≤ 39 | sim | — | ✅ |
 | Layout da baia: envelope, interferências, faixas dos feixes | ok | — | ✅ |
 | Eletrônica embarcada estimada | 15,0 g | ≤ 15 g | ✅ (no limite) |
-| Contrapeso planejado | 2,2 g no alívio de 180° | dentro de ±18°, ≤ 13,9 g | ✅ |
+| Contrapeso planejado | 2,19 g a 180° + 0,87 g a 300° | cabe nos alívios (≤ 13,9 g cada); resíduo ≤ 8,4 g·mm | ✅ |
 | Ventilação do cubo · da base | 476 mm² · 1 152 mm² | ≥ 300 · ≥ 600 lateral | ✅ |
 | A × Cd do boss carenado | 238–317 mm² | ≤ 350 | ✅ estimativa |
-| Massa por painel montado · rotor completo | 42,1 g · **274,3 g** | ≤ 45 · ≤ 280 | ✅ (folga de 5,7 g) |
-| Aranha · tampa · base + torre | 67,5 · 10,1 · 321,3 g | ≤ 75 · ≤ 12 · ≤ 330 (alvos) | ✅ |
+| Massa por painel montado · rotor completo | 42,1 g · **278,6 g** | ≤ 45 · ≤ 280 | ✅ (folga de 1,4 g) |
+| Aranha · tampa · base + torre | 71,0 · 10,1 · 319,8 g | ≤ 75 · ≤ 12 · ≤ 330 (alvos) | ✅ |
 | Malhas · base + brim na mesa | 0 não-manifold · 296 | 0 · ≤ 300 | ✅ |
 | Piso íntegro sob os furos da flange · furos só na flange superior | Z 0…12 sólido | — | ✅ |
 | Abas de grampo com furo livre · suporte do ímã com 2 parafusos, 4,6 mm da campânula | sim | — | ✅ |
@@ -120,19 +120,19 @@ Z =  85 … 293   envelope do rotor
 
 | Grandeza | Valor |
 |---|---:|
-| Cubo · baia | Ø92 × 6 · Ø82/Ø78 × 26 |
+| Cubo · baia | Ø92 × 6 · Ø82/Ø78 × 29 |
 | Rasgos de refrigeração | 3 × 60° em r 41,5–45 = 476 mm² |
 | Alívios de massa (plano 1 de balanceamento) | 3 × 36° em r 17–36, 4 mm de fundo, pele 2,0 medida; 13,9 g de tungstênio cabem em cada |
 | Fillet cubo→braço | cunha a 45° sob o braço, r 45,5–53,3, 11 mm de largura, + alargamento em planta r 39–46 |
 | Postes da tampa | Ø8 em y = ±35, encostados na parede |
-| Berço | pack 58 × 30 × 17 sobre trilhos em Z = 6; topo em Z = 23 |
+| Berço | pack 58 × 30 × 17 sobre trilhos em Z = 9; topo em Z = 26 |
 | Placa de interface (5,5 g) | 15 × 20 × 8 em (27, 5), Z 6–14, 4 pilares Ø3,5 com piloto Ø1,6; sob a janela da tampa |
 | ESP32-C3 (3,0 g) | 18 × 22,5 × 5 em (−27, 0), Z 6–11, 4 pilares |
 | Buck mini560 (2,0 g) | 6 × 17 × 22 em pé na ranhura da parede a 140° (guias 1,2 × 22) |
 | Capacitor 1000 µF (2,5 g) | Ø10 × 20 em pé em (22,5, −22), cerca Ø12,6 × 3 |
 | Fios (2,0 g) | no centro |
-| Desbalanceamento nominal | 72,6 g·mm a 13,7° (admissível 8,4) |
-| Contrapeso planejado | 2,2 g de tungstênio a 193,7°, no alívio de 180°, r ≈ 33 |
+| Desbalanceamento nominal | 63,0 g·mm a 23,3° somando eletrônica (72,6 a 13,7°), aranha, tampa e hall (admissível 8,4) |
+| Contrapeso planejado | 2,19 g de tungstênio no alívio de 180° + 0,87 g no de 300°, r ≈ 33; resíduo 0,06 g·mm |
 | Suporte do ímã | arco r 18,5–24,5 × 2,5 sob os M4 de ±45°, braço até r = 33,5, poste Ø8 × 21,5 em r = 29, 20°; 1,7 g |
 
 ## Base
@@ -142,7 +142,7 @@ Z =  85 … 293   envelope do rotor
 | Abas de grampo | 4 × (16 radiais × 20 × 8) a 45°, 135°, 225°, 315°; furo Ø5 em r = 149; extensão 280 + brim 8 = 296 |
 | Furos M4 da flange | só na flange superior (Z 146–154); piso sólido de 0 a 12 sob eles |
 | Canaleta de provisão | r 132,8–137,2 × 3, piso em Z = 5; lábios de 2,8 mm |
-| Massa | 321,3 g (alvo 330) |
+| Massa | 319,8 g (alvo 330) |
 
 ## Números derivados do modelo
 
@@ -153,13 +153,13 @@ Z =  85 … 293   envelope do rotor
 | Força centrífuga com a massa CAD (42,1 g) | 149,7 N |
 | Momento parasita na junta | 0,18 N·m |
 | Corda da carenagem / largura frontal / finura | 49 / 22 / 2,23 |
-| Rotor: CAD 173,5 g + fitas 18,6 + ferragens 12 + bateria 50 + arruela e porca 3 + eletrônica 15 + contrapeso 2,2 | 274,3 g |
+| Rotor: CAD 176,9 g + fitas 18,6 + ferragens 12 + bateria 50 + arruela e porca 3 + eletrônica 15 + contrapeso 3,1 | 278,6 g |
 
 ## Não verificáveis no modelo
 
 - **Eixo**: alturas do colar e da ponta a partir da face de apoio não medidas;
   o desenho não fecha a soma (5 + 7 ≠ 14). A fixação vale nas duas leituras.
-- **Eletrônica da baia**: massas de catálogo; a folga do rotor é 5,7 g.
+- **Eletrônica da baia**: massas de catálogo; a folga do rotor é 1,4 g.
 - Arruela e porca reais, ímã, eletrônica: `verified: false` em `parameters.json`.
 - **A × Cd** é estimativa por razão de finura, não CFD nem ensaio.
 - FEA, modal, fluência, retenção de parafusos, balanceamento instrumentado e

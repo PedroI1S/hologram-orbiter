@@ -12,11 +12,12 @@ A pasta `../legado/Hologram_Orbiter_v2_1/` é registro histórico e não foi alt
 
 **PROVISÓRIO — AGUARDANDO MEDIÇÕES. Não liberado para girar a 1800 RPM.**
 
-Regenerado em 03/09/2026 (revisão 3.0.2) com a lista `06-PENDENCIAS-ABERTAS`
-(A1, A2, B1 a B11), os desvios de spec ratificados pelo revisor, as medições do
-glossário e o desenho cotado do motor. Liberados para impressão: os dois cupons
-(`C01`, `C02`), os painéis, a aranha, a tampa da baia, o suporte do ímã e a
-base. Os 54 critérios automáticos passam.
+Regenerado em 03/09/2026 (revisão 3.0.3) com a lista `06-PENDENCIAS-ABERTAS`
+(A1, A2, B1 a B11), a revisão independente do mesmo dia, os desvios de spec
+ratificados pelo revisor, as medições do glossário e o desenho cotado do
+motor. Liberados para impressão: os dois cupons (`C01`, `C02`), os painéis, a
+aranha, a tampa da baia, o suporte do ímã e a base. Os 54 critérios
+automáticos passam.
 
 **Uma medição antes de comprar ferragem:** a partir da face da campânula em que
 o cubo assenta, a altura do topo do **colar Ø8** do eixo e da ponta da rosca. O
@@ -77,7 +78,7 @@ STL à mão. `./scripts/build.sh --no-render` pula as prévias da montagem.
   12,4 mm do canal original. O "canal em degrau" da spec, com o PCB num canal
   raso e os LEDs num rasgo mais fundo, foi abandonado: os LEDs ficam em cima
   do PCB, e com a fita montada para fora eles sobressairiam 1,4 mm.
-- **Cubo Ø92, baia Ø82/Ø78 × 26** (B10), rasgos de refrigeração em r 41,5–45,
+- **Cubo Ø92, baia Ø82/Ø78 × 29** (B10), rasgos de refrigeração em r 41,5–45,
   alívios r 17–36, postes da tampa em y = ±35, berço para o pack LiFe
   58 × 30 × 17 (50 g).
 - **Fixação do eixo refeita pelo desenho do motor.** O colar Ø8 × 5 (ou 7) sob
@@ -87,12 +88,13 @@ STL à mão. `./scripts/build.sh --no-render` pula as prévias da montagem.
   da chapa) e **porca M6 fina DIN 439B com Loctite 243**. Três critérios novos
   conferem furo × colar, altura do colar × arruela e rosca sobrando (3 mm; 1 mm
   na leitura de 12).
-- **Layout da baia (D2)** parametrizado e verificado: placa de interface em +x
+- **Layout da baia (D1)** parametrizado e verificado: placa de interface em +x
   sob a janela da tampa, ESP32-C3 em −x, buck mini560 em pé numa ranhura na
   parede a 140°, capacitor em pé numa cerca, tudo elevado em pilares de 6 mm
   para deixar o piso livre aos feixes. Massas de catálogo somam 15,0 g, a
-  folga exata. Desbalanceamento nominal 73 g·mm a 14°, corrigido com **2,2 g**
-  de massa de tungstênio no alívio de 180°.
+  folga exata. Desbalanceamento nominal 63 g·mm a 23° (com os centróides da
+  aranha, da tampa e do hall), corrigido com **2,19 g** de tungstênio no alívio
+  de 180° e **0,87 g** no de 300°.
 - **Fillet cubo→braço** (cunha a 45°), **ombro em 74,0** exato, **furos só na
   flange superior**, **quatro abas de grampo**, **suporte do ímã sob dois
   parafusos**, tampa 07 removida, cupom C02 como fatia real do painel.
@@ -109,14 +111,14 @@ STL à mão. `./scripts/build.sh --no-render` pula as prévias da montagem.
 |---|---:|---|
 | Painel nu | 31,9 g | — |
 | Painel montado (fita 6,2 + ferragens 4,0) | 42,1 g | ≤ 45 g ✅ |
-| Aranha (Ø92, baia de 26, pilares e guias) | 67,5 g | ≤ 75 g ✅ |
+| Aranha (Ø92, baia de 29, pilares e guias) | 71,0 g | ≤ 75 g ✅ |
 | Tampa da baia (Ø82) | 10,1 g | ≤ 12 g ✅ |
-| Rotor completo (bateria 50, eletrônica 15, ferragem do eixo 3, contrapeso 2,2) | **274,3 g** | ≤ 280 g ✅ — folga de 5,7 g |
-| Base + torre com abas | 321,3 g | ≤ 330 g ✅ |
+| Rotor completo (bateria 50, eletrônica 15, ferragem do eixo 3, contrapeso 3,1) | **278,6 g** | ≤ 280 g ✅ — folga de 1,4 g |
+| Base + torre com abas | 319,8 g | ≤ 330 g ✅ |
 | Suporte do ímã | 1,7 g | peça estática |
 
 Os 54 critérios automáticos passam
-([`reports/ACEITACAO.md`](reports/ACEITACAO.md)). A folga do rotor é de 5,7 g
+([`reports/ACEITACAO.md`](reports/ACEITACAO.md)). A folga do rotor é de 1,4 g
 com massas de catálogo para a eletrônica: **pesar cada componente** antes de
 fixar, e não trocar o mini560 por um XL4015. Consulte
 [`docs/GUIA_IMPRESSAO.md`](docs/GUIA_IMPRESSAO.md) antes de fatiar,
