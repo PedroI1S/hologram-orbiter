@@ -195,6 +195,10 @@
       "diameter": 4.0,
       "height": 2.0,
       "grade": "N35",
+      "polarity": "face positiva do ima aponta para o sensor (repulsao)",
+      "polarity_decided_by": "Pedro, 03/09/2026 (pendencia C2)",
+      "polarity_bench_confirmed": false,
+      "polarity_note": "ATENCAO antes de colar: o A3144 e unipolar e comuta com o polo SUL apresentado a face MARCADA do TO-92 (familia A314x). 'Face positiva' costuma designar o NORTE do ima. Se as duas convencoes valerem ao pe da letra, o ima fica invertido e nao ha pulso de indice — falha cujo sintoma parece firmware. A nomenclatura nao resolve porque 'positiva' e 'repulsao' dependem do ima de referencia usado no teste. RESOLVER NA BANCADA: A3144 com 3,3 V e pull-up de 10 k, aproximar a face escolhida da face marcada do TO-92 a ~3 mm; a saida tem de ir a nivel BAIXO. So entao colar. Ver 06-PENDENCIAS C2, C3 e C8.",
       "verified": false
     },
     "panel_wiring": {

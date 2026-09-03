@@ -161,7 +161,7 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | ESP32-C3 Super Mini | ~22 × 18 × 5 mm | em mãos | ✅ |
 | ESC LittleBee Spring | **20 A contínuo, 25 A pico**, 25 × 13 mm, BLHeli_S em EFM8BB21 | datasheet | ✅ |
 | ESC: governor | **não existe** em BLHeli_S | manual Rev16.x | ✅ |
-| ESC: corte por baixa tensão | **não existe** em BLHeli_S | manual Rev16.x | ✅ |
+| ESC: corte por baixa tensão | **não existe** em BLHeli_S — o LVC definido acima não se aplica a este ESC | manual Rev16.x | ✅ |
 | ESC: tempo de rampa | **não existe** — só *startup power* (0,031–1,5) | manual Rev16.x | ✅ |
 | Fonte de bancada | ajustável | em mãos | ✅ |
 | Bateria LiFePO4 800 mAh | 58 × 30 × 17 mm, 50 g, **6,6 V nominal**, 2S, 20C | comprada | ✅ |

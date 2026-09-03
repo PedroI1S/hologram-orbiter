@@ -30,20 +30,29 @@ com a ponta em 14, 1 mm com 12.
 **Medir no motor, a partir da face em que o cubo assenta:** altura do topo do
 colar e da ponta do eixo. Campos `unverified_interfaces.shaft.*`.
 
-### B'3 · Canal do LED — ratificar a correção da spec §5.1
+### C2 · Polaridade do ímã — decidida, confirmar na bancada antes de colar
 
-A spec previa um canal em degrau (PCB num canal raso de 0,6, LEDs num rasgo
-1,4 mais fundo). Os LEDs ficam **em cima** do PCB: o degrau só funcionaria com
-a fita de cabeça para baixo, e com os LEDs para fora eles sobressairiam 1,4 mm.
-Apontado por Pedro em 03/09; §5.1 corrigida para **canal único 12,4 × 2,0**,
-parede local 2,8 numa faixa de 14,4 mm, piso 0,8 em ponte de 12,4 (a mesma do
-canal original). Falta o revisor ratificar.
+**Decisão de Pedro, 03/09: a face positiva do ímã aponta para o sensor
+(repulsão).** Registrada em `unverified_interfaces.magnet.polarity`.
 
-### C2 · Polaridade do ímã
+**Um alerta antes de colar.** O A3144 é unipolar e comuta com o **polo sul**
+apresentado à **face marcada** (serigrafada) do TO-92 — é assim que a família
+A314x é especificada. "Face positiva" costuma designar o **norte** do ímã. Se as
+duas convenções valerem como escritas, o ímã está invertido e **não haverá pulso
+de índice** — exatamente a falha que esta pendência existe para evitar, e cujo
+sintoma parece problema de firmware.
 
-O A3144 é **unipolar**: comuta com um polo só. Se o ímã for colado invertido não
-há pulso de índice, e o sintoma parece falha de firmware. Definir e cotar qual
-face do ímã aponta para o sensor (campo `unverified_interfaces.magnet`).
+Como "positiva" e "repulsão" dependem de qual ímã de referência foi usado no
+teste, a nomenclatura não resolve sozinha. **O ensaio de bancada resolve, e leva
+um minuto:**
+
+1. Alimentar o A3144 nu com 3,3 V e o pull-up de 10 k.
+2. Aproximar a face escolhida do ímã da **face marcada** do TO-92, a ~3 mm
+   (o entreferro efetivo do projeto — ver C8).
+3. A saída tem de ir a **nível baixo**. Se não for, é a outra face.
+
+Só depois disso a cola entra. Fazer junto com C3 (campo do motor) e C8
+(entreferro), que exigem a mesma montagem.
 
 ### C3 · Campo do motor sobre o sensor
 
@@ -124,13 +133,27 @@ motor (`motor_stack.plate_top_to_bell_face`, medida mas com
 colar o ímã**. Se passar de 3,0 mm, usar calços sob o poste, ou um ímã **Ø5 × 3
 N52** (~2× o campo). Ver também C2 (polaridade) e C3 (campo do motor).
 
-### C9 · ESC LittleBee a 6 V · saída dos fios de fase
+### C9 · ESC a 6 V · saída dos fios de fase
 
-Dois itens que só o hardware em mãos fecha:
+**O ESC não é alimentado pela bateria** (ratificado por Pedro, 03/09, e já era o
+que o esquema 05 §8 descrevia): ele fica na **parte fixa**, alimentado pela
+**fonte de bancada em 6–7 V, ≥ 5 A**. A bateria LiFe do rotor alimenta só a
+fita, o ESP32-C3 e o sensor. As duas linhas de energia não se encontram — só o
+GND, que precisa ser comum.
 
-- **ESC a 6 V.** O LittleBee é 2–4S; 6 V está **abaixo** dos 7,4 V nominais de
-  2S. Verificar se o regulador interno e o *gate driver* funcionam em 6 V antes
-  de contar com a faixa de ajuste 6–7 V da fonte.
+Isso encerra a metade da pendência que dependia da origem da alimentação, e o
+**LVC também já estava encerrado**: o glossário §7 registra, do manual Rev16.x,
+que BLHeli_S **não tem corte por baixa tensão**. Sobra um resíduo estreito:
+
+- **Margem do ESC em 6 V.** O LittleBee Spring é especificado para **2–4S**, ou
+  seja 7,4 V nominais no piso da faixa, e o projeto o opera deliberadamente em
+  **6–7 V** para manter o duty alto (spec §10). O que ainda não foi verificado
+  não é o LVC nem a fonte, e sim se o **regulador interno** (que alimenta o
+  EFM8BB21) e o **gate driver** têm margem em 6,0 V. Gate drive fraco não
+  desliga o ESC: aumenta o RdsOn e aparece como calor no ESC e comutação suja.
+  **Fechar assim:** operar o primeiro ensaio em **7,0 V**, não em 6,0, e só
+  descer se o ESC ficar frio e a comutação limpa. Se houver instabilidade,
+  suba a tensão antes de suspeitar do sinal.
 - **Fios de fase.** O motor assenta plano na chapa R01 e os fios saem pela
   lateral do estator. Para descerem pelo alívio central Ø12 e pela torre eles
   precisam de um rasgo na chapa ou de um caminho pela borda —
@@ -279,6 +302,7 @@ tomadas a favor de **manter a geometria e declarar o suporte**.
 | B'5 | Postes da tampa a 58 mm | y = ±35, encostados na parede (ratificado) |
 | B'6 | Alvos de massa da aranha e da tampa | 75 g e 12 g (ratificado) |
 | B'7 | Lâmina de ar de 0,05 mm sob a flange inferior | achada pelo traçado de raios; corrigida |
+| B'3 | Canal do LED em degrau | **ratificado por Pedro em 03/09:** canal único 12,4 × 2,0, parede local 2,8 numa faixa de 14,4, piso 0,8 em ponte de 12,4. O degrau da spec §5.1 só funcionaria com a fita de cabeça para baixo |
 | B'8 | Eletrônica para LiFe | esquema 05 e glossário atualizados: corte em 5,8 V pelo buck, carregador em modo LiFe |
 | C1 | Módulo hall HW-477 no rotor | decidido: A3144 nu no bolso do cubo, pull-up para 3,3 V |
 | E1 | Sulco de fiação reduz a seção do braço | anotado na spec §5.2 |
