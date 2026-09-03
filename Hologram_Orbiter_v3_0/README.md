@@ -16,7 +16,7 @@ Regenerado em 03/09/2026 (revisão 3.0.2) com a lista `06-PENDENCIAS-ABERTAS`
 (A1, A2, B1 a B11), os desvios de spec ratificados pelo revisor, as medições do
 glossário e o desenho cotado do motor. Liberados para impressão: os dois cupons
 (`C01`, `C02`), os painéis, a aranha, a tampa da baia, o suporte do ímã e a
-base. Os 51 critérios automáticos passam.
+base. Os 54 critérios automáticos passam.
 
 **Uma medição antes de comprar ferragem:** a partir da face da campânula em que
 o cubo assenta, a altura do topo do **colar Ø8** do eixo e da ponta da rosca. O
@@ -115,7 +115,7 @@ STL à mão. `./scripts/build.sh --no-render` pula as prévias da montagem.
 | Base + torre com abas | 321,3 g | ≤ 330 g ✅ |
 | Suporte do ímã | 1,7 g | peça estática |
 
-Os 51 critérios automáticos passam
+Os 54 critérios automáticos passam
 ([`reports/ACEITACAO.md`](reports/ACEITACAO.md)). A folga do rotor é de 5,7 g
 com massas de catálogo para a eletrônica: **pesar cada componente** antes de
 fixar, e não trocar o mini560 por um XL4015. Consulte

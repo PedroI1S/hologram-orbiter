@@ -22,7 +22,7 @@ parafusa na chapa de alumínio, pelo padrão de 4 × M3 em retângulo 16 × 19 m
 Ø8,5: uma arruela M6 assentaria no colar e a porca não apertaria o cubo.
 
 **kv** — rotação por volt sem carga. 920 kv em 7 V dá 6440 RPM a vazio; a
-1800 RPM o motor está a 28 % disso.
+1800 RPM o motor está a 26 % disso (base 7,4 V, como no resto do pacote; a 7 V daria 28 %).
 
 **Kt** — constante de torque, `9,5493 / kv`. Diz quanto torque sai por ampère.
 
@@ -194,7 +194,7 @@ no rotor:
 vai a 5 V — e o ESP32-C3 **não tolera 5 V** na entrada.
 
 **Balanceamento.** Uma placa de 18 × 15 mm pesa 1,5 a 2,5 g. A r = 29 mm isso
-vale 43 a 72 g·mm, contra os 9,1 admissíveis: **5 a 8 vezes fora**. O A3144 nu,
+vale 43 a 72 g·mm, contra os **8,4** admissíveis: **5 a 9 vezes fora**. O A3144 nu,
 em TO-92, pesa 0,2 g e vale 5,8 g·mm.
 
 O bolso do CAD tem 4,8 × 3,6 × 1,7 mm, dimensionado para o TO-92. Dessolde o
@@ -237,7 +237,7 @@ Dois ajustes que valem para o nosso caso, e que o manual descreve:
 | Dúvida | Por que não bloqueia |
 |---|---|
 | Assento útil da campânula | O aperto está decidido: arruela Ø20 × Ø8,5 a 0,6 N·m dá 500 N contra os 22 N necessários. Mesmo assentando só nos raios, sobra atrito. O desenho mostra a face plana. |
-| Altura do conjunto motor | Corpo medido em 24 mm; Datum B = chapa + 30. Um erro de ±2 mm desloca o rotor em Z sem afetar nada estrutural. |
+| Altura do conjunto motor | Corpo medido em 24 mm; Datum B = chapa + 30. Um erro de ±2 mm desloca o rotor em Z **sem afetar nada estrutural — mas leva junto o entreferro do hall**, que é nominalmente 2,5 mm e tem só ~30 % de margem de campo. ±2 mm ali põem o entreferro entre 0,5 e 4,5 mm, e a 4,5 o A3144 não comuta. **Meça o entreferro montado antes de colar o ímã** (pendência C8). |
 | Colar e rosca do eixo | O desenho não fecha a soma (5 + 7 ≠ 14). A fixação vale nas duas leituras: porca fina de 3 mm sobre arruela de 2, sobram 3 mm de rosca com a ponta em 14 e 1 mm com 12. Medir antes de comprar a porca. |
 | Polaridade do ímã | O A3144 é unipolar. Se não pulsar, inverta o ímã antes de suspeitar do firmware. |
 | Campo do motor no sensor hall | Estático em relação ao sensor. Verificar com o motor montado, antes de colar. |

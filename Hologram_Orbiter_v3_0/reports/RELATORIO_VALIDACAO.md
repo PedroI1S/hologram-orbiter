@@ -44,7 +44,7 @@ envelope de 280 × 280.
 
 ## Critérios de aceitação (spec §9), medidos na malha
 
-Verificação automática em [`ACEITACAO.md`](ACEITACAO.md): **51 de 51**. Os
+Verificação automática em [`ACEITACAO.md`](ACEITACAO.md): **54 de 54**. Os
 valores geométricos saem de traçado de raios no STL final, não dos parâmetros.
 
 | Critério | Modelo | Requisito | |
@@ -167,7 +167,7 @@ Z =  85 … 293   envelope do rotor
 
 ## Conclusão
 
-Malhas válidas em topologia **e** em enrolamento; 51 critérios geométricos e
+Malhas válidas em topologia **e** em enrolamento; 54 critérios geométricos e
 de montagem atendidos, medidos na malha. Liberados os cupons e a impressão de
 painéis, aranha, tampa da baia, suporte do ímã e base; a chapa e o disco da
 arruela saem do mesmo DXF. O conjunto não está liberado para operar a

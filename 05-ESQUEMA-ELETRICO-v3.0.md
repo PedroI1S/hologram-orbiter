@@ -52,7 +52,7 @@ protegida.
 > **Use o A3144 nu, não a placa HW-477.** O módulo tem pull-up próprio para o seu
 > VCC: alimentado em 5 V, a saída vai a 5 V e queima a entrada do ESP32-C3. E a
 > placa de 18 × 15 mm pesa 1,5–2,5 g, que a r = 29 mm valem 43 a 72 g·mm contra
-> os 9,1 admissíveis. Dessoldado, o TO-92 pesa 0,2 g e cabe no bolso do CAD.
+> os **8,4** admissíveis. Dessoldado, o TO-92 pesa 0,2 g e cabe no bolso do CAD.
 
 ### 2.2 3,3 V não aciona a fita com segurança
 
@@ -70,10 +70,10 @@ alimentar a placa pelo mesmo trilho.
 
 | Sinal | Pino | Vai para | Nota |
 |---|---|---|---|
-| SPI CLK | GPIO 4 | 74AHCT125 entrada A | 20 MHz, DMA |
+| SPI CLK | GPIO 4 | 74AHCT125 entrada A | 20 MHz (180 colunas) · 30 MHz para 256, DMA |
 | SPI MOSI | GPIO 6 | 74AHCT125 entrada B | dados da cadeia |
 | ÍNDICE | GPIO 3 | saída do A3144 | interrupção na borda de descida |
-| V_BAT | GPIO 0 (ADC) | divisor **150k / 47k** | 1,72 V a 7,2 V (LiFe cheia) · corte em 1,38 V (= 5,8 V) |
+| V_BAT | GPIO 0 (ADC) | divisor **150k / 47k** + **100 nF ao GND no pino** | 1,72 V a 7,2 V (LiFe cheia) · corte em 1,38 V (= 5,8 V) |
 | 5V | 5V | trilho do buck | — |
 | 3V3 | 3V3 | pull-up do hall | regulador da placa |
 | GND | GND | trilho comum | estrela no cubo |
@@ -112,19 +112,28 @@ e desbalanceia.
 |---|---:|---:|---:|
 | Branco pleno, 87 LEDs | 27,3 W | 4,1 A (5C) | 12 min |
 | Conteúdo claro (30 %) | 9,0 W | 1,4 A | 35 min |
-| **Típico POV (15 %)** | **5,1 W** | **0,77 A** | **~60 min** |
+| **Típico POV (15 %)** | **5,1 W** | **0,93 A** | **~50 min** |
 
 Conteúdo POV é majoritariamente escuro, então 15 % é o caso realista. O branco
 pleno dimensiona o buck e os condutores, não a autonomia.
+
+A coluna "na bateria" inclui o **rendimento do buck (85–90 %)** e o consumo do
+**ESP32-C3 (~0,3 W)**, que a versão anterior omitia: 5,1 W de LED viram
+5,1/0,875 + 0,3 = 6,13 W na entrada, ou 0,93 A em 6,6 V, e 800 mAh dão ~50 min —
+não os 60 que saíam de dividir 5,1 W por 6,6 V direto. Conte 45 min úteis com o
+corte por tensão.
 
 | Taxa de dados | Quadros/s | Mbit/s | |
 |---|---:|---:|---|
 | 1800 RPM × 180 colunas | 5400 | 15,4 | folgado |
 | 2000 RPM × 180 colunas | 6000 | 17,2 | folgado |
-| 1800 RPM × 256 colunas | 7680 | 22,0 | cabe |
+| 1800 RPM × 256 colunas | 7680 | 22,0 | **não cabe a 20 MHz** — ver abaixo |
 
-Cadeia única de 87 LEDs = 2859 bits por quadro. SPI a 20 MHz com DMA cobre todos
-os casos; a HD107S aceita até 30 MHz.
+Cadeia única de 87 LEDs = 2859 bits por quadro. SPI a 20 MHz com DMA cobre os
+dois primeiros casos, **não o terceiro**: 22,0 Mbit/s exige clock acima de
+22 MHz. Para 256 colunas, suba o SPI para **30 MHz** — o ESP32-C3 faz, e é o
+limite da própria HD107S. Não há folga acima disso: 256 colunas a 2000 RPM
+pediriam 24,4 Mbit/s e o teto da fita já estaria à vista.
 
 ## 6. Firmware — o mínimo
 
@@ -139,10 +148,16 @@ MAPEAMENTO um quadro = 87 LEDs, na ordem física da cadeia
              LED 58 – 86  → painel 3, ângulo θ + 240°
            os três lêem colunas diferentes do mesmo instante
 
-SPI        20 MHz, modo 0, DMA, buffer duplo
+SPI        20 MHz p/ 180 colunas (30 MHz p/ 256), modo 0, DMA, buffer duplo
            quadro APA102: 32 bits de início + 87 × 32 + 44 de fim
 
 BATERIA    LiFePO4 2S: 7,2 V cheia · 6,6 no platô · 5,0 vazia
+           ATENÇÃO (pendência C7): confirme a ENTRADA MÍNIMA do buck real.
+           Muitos módulos "mini560 5 V" pedem 7 V (ou V_out + 1,5 V). Se for
+           esse o caso, o conversor passa quase toda a descarga em dropout,
+           entrega V_in menos a queda e cai abaixo dos 4,5 V que garantem o
+           V_IH da fita. O corte "em 5,8 V pelo dropout do buck" é PREMISSA,
+           não datasheet. Mínimo aceitável: <= 5,5 V, ou trocar por buck-boost.
            ADC a cada 2 s; corte em 1,38 V (= 5,8 V), que é o limite
            de entrada do buck, não o da química
            apaga a imagem e pisca um LED de aviso

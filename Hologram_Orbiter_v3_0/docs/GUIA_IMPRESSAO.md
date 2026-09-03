@@ -28,13 +28,49 @@ cota muda em `CAD/parameters.json`.
 
 | Peça | Como está no STL | Suporte |
 |---|---|---|
-| Painel | deitado, 208 mm em X, boss e carenagem para cima, canal do LED contra a mesa | nenhum na lâmina; a carenagem é uma casca vertical aberta; os bolsos hexagonais das porcas ficam de lado (ponte de 6 mm, ok) |
+| Painel | deitado, 208 mm em X, boss e carenagem para cima, canal do LED contra a mesa | **sim, em duas regiões** — ver "Balanços declarados" abaixo. Os bolsos hexagonais das porcas ficam de lado (ponte de 6 mm, ok) |
 | Aranha | plana, face inferior do cubo na mesa | **sim, sob os braços**: eles ficam 6 mm acima da mesa (Datum B + 3). A cunha de 45° sob a raiz, os pilares de 6 mm, as guias de 22 mm do buck e a cerca do capacitor imprimem sem suporte; usar suporte em árvore com 0,2 mm de folga só sob os braços, de r ≈ 53 até a ponta |
 | Tampa da baia | plana, pele na mesa; copos de balanceamento para cima | nenhum |
-| Base + torre | torre em Z, sem inclinação | nenhum; as janelas laterais de 12 mm são pontes curtas; as abas são maciças |
+| Base + torre | torre em Z, sem inclinação | **sim, sob a flange superior** — ver "Balanços declarados". As janelas laterais de 12 mm são pontes curtas; as abas são maciças |
 | Suporte do ímã | arco na mesa, poste para cima | nenhum |
-| Cupom C02 | como o painel: deitado, canal contra a mesa | nenhum |
+| Cupom C02 | como o painel: deitado, canal contra a mesa | **sim, sob a fuga** (o cupom é uma fatia real: reproduz o mesmo balanço de 73°) |
 | Cupom C01 | como exportado | nenhum |
+
+## Balanços declarados
+
+Análise de normais das malhas exportadas na orientação acima (base em Z = 0),
+confirmada por contagem de área por faceta. O ângulo é medido **a partir da
+vertical**: 0° é parede vertical, 90° é teto horizontal. O fatiador precisa de
+suporte acima de 45°.
+
+| Peça | Região | Ângulo | Área | Suporte |
+|---|---|:---:|---:|---|
+| Painel | fuga da lâmina, y −15…−5, z 0–3 | **73°** | ~2 100 mm² | **quebra-fácil**, 3 mm de altura × 10 mm de largura, ao longo dos 208 mm |
+| Painel | cauda da carenagem, y −35…−15, z 5–17,5 | **58–65°** | 1 873 mm² | **em árvore, dentro da casca**, 0,2 mm de folga |
+| Painel | nariz R4, primeiro 1 mm | 60–90° | ~400 mm² | tolerável, sem suporte |
+| Base | face inferior da flange superior, Z = 146, r 16–27 | **90°** | 2 069 mm² | **em árvore**, da laje da baia até a flange |
+| Aranha | face inferior dos braços, Z = 6 | 90° | 630 mm² | já declarado acima |
+
+Três observações sobre a tabela, porque a revisão de 03/09 as levantou e a decisão
+foi **manter a geometria e declarar o suporte**:
+
+- **Fuga da lâmina (73°).** Com a face +x na mesa, o afilamento (4,−5) → (1,−15)
+  sobe 3 mm em 10 mm de y: cada camada de 0,2 mm avança 0,67 mm sobre a
+  anterior, 167 % da largura do filete de um bico de 0,4. Sem suporte o bico
+  extruda no ar e a superfície que droopa é o **bordo de fuga aerodinâmico**. O
+  suporte deixa marca ali; é o preço de não mexer no perfil. Alternativa
+  registrada e descartada nesta revisão: perfil de fundo plano (face +x reta até
+  y = −15, afilando só pelo lado −x), que imprimiria sem suporte.
+- **Cauda da carenagem (58°).** Casca de 0,8 mm em 23 mm de rampa. Encurtar a
+  cauda de y = −35 para −27 daria 45° e dispensaria o suporte, **mas** derruba a
+  razão de finura de 2,23 para 1,86 e leva o A × Cd estimado para ~277–356 mm²,
+  contra o critério de ≤ 350. Por isso a cauda fica e o suporte entra.
+- **Flange da torre (90°).** Anel horizontal de 15 mm de largura a 146 mm de
+  altura: **não é ponte**, não há apoio do outro lado. Sem suporte a face
+  inferior sai como fio solto e os furos M4 ficam sem espessura útil. Suporte em
+  árvore da laje da baia até a flange. Alternativa registrada e descartada: cone
+  a 45° sob a flange (Ø60 em Z = 146 → Ø30 em Z = 131, ~10 g), que imprimiria
+  sem suporte nenhum.
 
 O canal do LED forma uma ponte de **12,4 mm a 2,0 mm da mesa**, com 0,8 mm de
 espessura (4 camadas): é a superfície mais delicada do projeto, e é a mesma

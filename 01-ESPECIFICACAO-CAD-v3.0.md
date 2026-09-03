@@ -47,11 +47,22 @@ fitas viajam com ele. A parte fixa tem o motor, o ESC, a fonte e o sensor de
 | Taxa de imagem | **90 Hz** |
 | Cilindro de imagem | **Ø208 × 201 mm** |
 | Resolução | 29 px vertical × 180 colunas |
-| Corrente de fase prevista | 4,44 A |
-| Temperatura do motor prevista | 43 °C |
+| Corrente de fase prevista | **4,95 A** (melhor caso 4,44 A) |
+| Temperatura do motor prevista | **46 °C** com Rth 3,5 (melhor caso 43 °C; 62 °C se o Rth vier 6,0) |
 
 Esses seis primeiros números não são negociáveis pela modelagem. Se alguma
 escolha geométrica os ameaçar, a escolha muda — não eles.
+
+> **Por que 4,95 A e não 4,44.** O par 4,44 A / 43 °C é a linha **Cd do boss =
+> 0,20** da tabela de sensibilidade em §10.1. O próprio CAD estima o boss em
+> Cd 0,30–0,40 (razão de finura 2,23, tabela de Hoerner) e o relatório publica
+> A × Cd = 238–317 mm²; o critério de aceite admite até 350 mm². Publicar a
+> linha de 0,20 como previsão anunciava uma margem térmica maior do que a
+> estimativa do próprio modelo sustenta. O ponto de projeto passa a ser a linha
+> **Cd do boss = 0,35** — 4,95 A / 46 °C — e 4,44 A / 43 °C fica registrado como
+> melhor caso. Nada muda em P ≤ 20 W nem no limite de 55 °C do bloqueador B; o
+> que muda é quanto de folga os documentos prometem. Uma carenagem que **passa**
+> no critério de 350 mm² dá 5,0 A e 47 °C, e 63 °C se o Rth vier em 6,0.
 
 **Esticada disponível, não alvo:** 2000 RPM = 100 Hz, a 5,49 A e 51 °C. Só é
 liberada depois que o arrasto real for medido. Não projete para ela; apenas não
@@ -84,9 +95,15 @@ U_adm = m_rotor × 33,4 µm        Δm entre painéis = U_adm / 100 mm
 ```
 
 Com os **252 g** da v3.0 original: U_adm = 8,4 g·mm e Δm ≤ 0,084 g. O CAD atual
-estima ~274 g (eletrônica de catálogo e contrapeso incluídos), o que afrouxaria
-para 0,091 g. **Não antecipe esse afrouxamento:** use 8,4 g·mm até pesar o rotor
-montado.
+estima ~279 g **supondo ABS maciço** (eletrônica de catálogo e contrapeso
+incluídos), o que afrouxaria para 0,093 g.
+
+**Não antecipe nada: recalcule.** O afrouxamento não é o único desfecho. As
+peças impressas saem com 35 % de infill e os 173 g de CAD são de sólido maciço,
+então o rotor real tende a ficar **abaixo** dos 279 g — e possivelmente abaixo
+dos 252. A 240 g o limite **aperta** para U_adm = 8,0 g·mm e Δm ≤ 0,080 g. Use
+8,4 g·mm até pesar o rotor montado, e depois recalcule pela massa medida, para
+cima ou para baixo.
 
 ---
 
@@ -697,6 +714,10 @@ R_efetiva = 0,221 Ω
    a hélice absorve ~89 W, logo 22 W de perda a 10 A
 
 Arrasto (Cd lâmina 0,35 · boss carenado):
+   PONTO DE PROJETO, Cd do boss 0,35 (estimativa do CAD, A×Cd ≈ 277 mm²):
+   T = 51,4 mN·m   →   I = T/Kt = 4,95 A
+   P_cobre = I²R = 5,4 W   →   T_motor = 25 + 3,5·(5,4+0,7) = 46 °C
+   MELHOR CASO, Cd do boss 0,20 (A×Cd = 158 mm²):
    T = 46,1 mN·m   →   I = T/Kt = 4,44 A
    P_cobre = I²R = 4,4 W   →   T_motor = 25 + 3,5·(4,4+0,7) = 43 °C
 
@@ -706,8 +727,10 @@ Massa do painel montado = 31,9 + 6,2 (fita) + 4,0 (ferragens) ≈ 42,1 g
 
 CARGA DE PROJETO usa o teto do limite, 44,5 g — ver §2.1:
 Força centrífuga  F = m·ω²·r = 0,0445 · 188,50² · 0,100 = 158,1 N
-Deflexão 2,48 mm · Tensão 13,9 MPa · SF ≈ 2,5 (ABS ~35 MPa)
-Inércia 1,55 g·m² · Energia 27,6 J · um painel solto 7,4 J a 18,9 m/s
+Deflexão 2,5 a 5,0 mm · Tensão 12 a 16 MPa · SF ≈ 2,0 a 2,8 — derivação abaixo
+Inércia 1,55 g·m² · Energia 27,6 J · um painel solto 7,9 J a 18,9 m/s
+  (0,5 × 0,0445 × 18,85² — pelo teto de 44,5 g, como as demais cargas; os
+   7,4 J publicados antes usavam os 42,1 g estimados)
 Rotor completo: ~274 g com a baia ampliada, o layout da eletrônica (15 g de
   catálogo) e o contrapeso de 2,2 g — pesar e recalcular
 Balanceamento: e = 6,3/188,50 = 33,4 µm → U = 0,252 · 33,4 = 8,4 g·mm
@@ -715,11 +738,57 @@ Balanceamento: e = 6,3/188,50 = 33,4 µm → U = 0,252 · 33,4 = 8,4 g·mm
 Partida: rampa de 8 s → 8,0 A de pico (inércia é 100× a de uma hélice)
 ```
 
-**Corrente de fase ≠ corrente da fonte.** Os 4,44 A são de fase — é deles que
-sai o aquecimento. A fonte de bancada vê **14,4 W** (8,7 W de eixo, 4,4 W de
-cobre e ~1,3 W de perdas no ESC e no ferro), ou seja **~2,1 A em 7 V**.
+**Corrente de fase ≠ corrente da fonte.** Os 4,95 A são de fase — é deles que
+sai o aquecimento. No ponto de projeto a fonte de bancada vê **16,2 W**, ou seja
+**~2,3 A em 7 V**; no melhor caso, **14,4 W** e **~2,1 A em 7 V**. Toda tabela
+de corrente na fonte neste pacote usa **7 V** como base: uma linha em 7,4 V dá
+um número 6 % menor e não é comparável.
 Ajustar a fonte para 6–7 V para o ESC operar em duty alto: a 1800 RPM o motor
 está a 26% da rotação a vazio em 2S, e duty baixo piora a comutação.
+
+### 10.0 Flexão do painel — hipóteses explícitas e faixa
+
+Os números de flexão vinham publicados como um trio fechado (2,48 mm · 13,9 MPa
+· SF 2,5) sem as hipóteses que os produzem. Elas são:
+
+```
+carga distribuída  w = F/L = 158,1 N / 208 mm = 0,76 N/mm
+balanço            L = 86 mm      (engaste na ponta das torres, z = 18)
+segundo momento    I = 910 mm⁴    (seção da lâmina, herdada da v2.1)
+módulo             E = 2,3 GPa
+
+δ = wL⁴/(8EI)          σ = (wL²/2)·c/I,  c = 4 mm (meia espessura)
+```
+
+Reproduzindo, e variando só o que é legitimamente incerto:
+
+| L (mm) | E (GPa) | δ (mm) | σ (MPa) | SF (35 MPa) | SF (ABS FDM ~30 MPa) |
+|---:|---:|---:|---:|---:|---:|
+| 86 (engaste na torre) | 2,3 | 2,5 | 12,3 | 2,8 | 2,4 |
+| 86 | 2,0 (glossário) | 2,9 | 12,3 | 2,8 | 2,4 |
+| 99 (engaste na luva, z = 5) | 2,0 | 5,0 | 16,4 | 2,1 | 1,8 |
+
+Quatro ressalvas que a faixa acima incorpora:
+
+1. O glossário lista **E = 2,0 GPa**; a conta original usava 2,3. A faixa cobre
+   os dois.
+2. O engaste em z = 18 supõe que as torres Ø10, ligadas à lâmina só pela alma de
+   2,4 mm e pela casca de 0,8, engastam a lâmina. O engaste **seguro** é a luva
+   (±5,1), o que alonga o balanço para 99 mm.
+3. O I = 910 mm⁴ é da v2.1, com canal de 1,2. Com o piso atual em x 1,2–2,0 ele
+   cai ~30 mm⁴.
+4. **35 MPa é ABS injetado.** ABS por FDM, no plano das camadas, fica em
+   25–30 MPa.
+
+O painel não falha em nenhuma linha da tabela, mas o SF realista é **~2, não
+2,5**, e a deflexão é de **3 a 5 mm, não 2,5**. O raio dinâmico vai de 106,5 para
+~109 mm — ainda folgado contra o cilindro Ø266. A consequência que importa é a
+**fluência**, que o plano de projeto já chama de risco maior: ela é bem mais
+provável a 16 MPa do que a 12. É por isso que o bloqueador B mede o crescimento
+da ponta, e não só a temperatura.
+
+A orientação de impressão está correta e deve ser mantida: a lâmina deitada põe
+a flexão no plano das camadas, que é onde o ABS FDM é forte.
 
 ### 10.1 Sensibilidade — por que a ventilação é requisito
 

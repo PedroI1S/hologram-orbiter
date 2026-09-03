@@ -793,39 +793,132 @@ def bay_layout_checks(components: list[dict]) -> dict:
     return {"ok": not problems, "problems": problems, "standoffs": pillars}
 
 
-def bay_balance(components: list[dict]) -> dict:
-    """Desbalanceamento estático nominal do conteúdo da baia e contrapeso que o corrige."""
+def bay_balance(components: list[dict], stats: dict | None = None) -> dict:
+    """Desbalanceamento estático nominal do rotor e contrapeso que o corrige.
+
+    Revisão 08, item 11: a versão anterior somava só os cinco itens da baia e
+    ignorava tudo o que o próprio CAD já mede. As peças impressas não são
+    axissimétricas — a aranha tem pilares, ranhura do buck, cerca, rasgo do
+    hall; a tampa tem a janela de acesso — e o `geometry_report` publica os
+    centróides. Cada um deles sozinho passa do admissível de 8,4 g·mm:
+
+        aranha  (−0,125, 0,085) × 67,5 g = 10,2 g·mm
+        tampa   (−0,947, 0)     × 10,1 g =  9,6 g·mm
+        hall    r = 29, 20°     ×  0,2 g =  5,8 g·mm
+
+    O bloqueador C corrige tudo no fim com o rotor real, mas o "contrapeso
+    planejado" é vendido como correção grossa e não pode nascer de um vetor
+    incompleto. `sources` mostra a decomposição.
+
+    Estimativa, não medição: os centróides são de sólido maciço e a peça sai
+    com infill. Serve para dimensionar o contrapeso, não para dispensar C.
+    """
     sp = P["spider"]
     lp = sp["lightening_pockets"]
     cw = sp["bay_layout"]["counterweight"]
-    ux = sum(c["mass_g"] * c["center_xy"][0] for c in components)
-    uy = sum(c["mass_g"] * c["center_xy"][1] for c in components)
-    total = sum(c["mass_g"] for c in components)
+
+    sources: list[dict] = []
+    ux = uy = 0.0
+    total = 0.0
+    for c in components:
+        m = c["mass_g"]
+        total += m
+        ux += m * c["center_xy"][0]
+        uy += m * c["center_xy"][1]
+    sources.append({
+        "id": "eletrônica da baia",
+        "mass_g": round(total, 2),
+        "u_g_mm": round(math.hypot(ux, uy), 1),
+        "azimuth_deg": round(math.degrees(math.atan2(uy, ux)) % 360.0, 1),
+    })
+    electronics_mass = total
+
+    # Peças impressas: centróide medido na malha pelo próprio gerador.
+    if stats:
+        for key, label in (("spider", "aranha (malha)"), ("lid", "tampa (malha)")):
+            st = stats.get(key)
+            if not st:
+                continue
+            m = st["estimated_mass_g"]
+            cxp, cyp = st["centroid_mm"][0], st["centroid_mm"][1]
+            ux += m * cxp
+            uy += m * cyp
+            sources.append({
+                "id": label,
+                "mass_g": round(m, 2),
+                "centroid_xy_mm": [round(cxp, 3), round(cyp, 3)],
+                "u_g_mm": round(m * math.hypot(cxp, cyp), 1),
+                "azimuth_deg": round(math.degrees(math.atan2(cyp, cxp)) % 360.0, 1),
+            })
+
+    # Sensor hall nu, colado no bolso da face inferior do cubo.
+    hs = sp["hall_sensor"]
+    hall_mass = P["non_cad_masses_g"].get("hall_sensor_bare", 0.2)
+    hx, hy = polar(hs["radius"], hs["azimuth_deg"])
+    ux += hall_mass * hx
+    uy += hall_mass * hy
+    sources.append({
+        "id": "sensor hall nu",
+        "mass_g": hall_mass,
+        "u_g_mm": round(hall_mass * hs["radius"], 1),
+        "azimuth_deg": float(hs["azimuth_deg"]),
+    })
+
     u = math.hypot(ux, uy)
     az_u = math.degrees(math.atan2(uy, ux)) % 360.0
     az_cw = (az_u + 180.0) % 360.0
-    best = None
-    for i in range(lp["count"]):
-        center = (lp["first_center_deg"] + i * 360.0 / lp["count"]) % 360.0
-        delta = abs((az_cw - center + 180.0) % 360.0 - 180.0)
-        if best is None or delta < best[1]:
-            best = (center, delta)
     r_cw = lp["outer_radius"] - cw["pocket_radius_offset_mm"]
+
+    centers = [(lp["first_center_deg"] + i * 360.0 / lp["count"]) % 360.0 for i in range(lp["count"])]
+    def sep(a: float, b: float) -> float:
+        return abs((a - b + 180.0) % 360.0 - 180.0)
+    order = sorted(centers, key=lambda c: sep(az_cw, c))
+    nearest, second = order[0], order[1]
+
+    # O contrapeso vai onde há bolso. Com os alívios a 120° o vetor pedido cai
+    # sempre entre dois deles: resolver as duas massas em vez de arredondar para
+    # o bolso mais próximo, que é o que deixava resíduo (revisão de 03/09, §3.5).
+    target = (-ux, -uy)
+    split_needed = sep(az_cw, nearest) > 1e-6
+    if split_needed:
+        a1 = math.radians(nearest)
+        a2 = math.radians(second)
+        det = math.cos(a1) * math.sin(a2) - math.cos(a2) * math.sin(a1)
+        m1 = (target[0] * math.sin(a2) - target[1] * math.cos(a2)) / det / r_cw
+        m2 = (target[1] * math.cos(a1) - target[0] * math.sin(a1)) / det / r_cw
+    else:
+        m1, m2 = u / r_cw, 0.0
+    placement = [
+        {"pocket_center_deg": nearest, "mass_g": round(m1, 2), "radius_mm": r_cw},
+        {"pocket_center_deg": second, "mass_g": round(m2, 2), "radius_mm": r_cw},
+    ]
+    placement = [q for q in placement if q["mass_g"] > 0.005]
+    total_cw = sum(q["mass_g"] for q in placement)
+
+    # Resíduo real do arranjo proposto, medido de volta a partir das massas.
+    rx = ux + sum(q["mass_g"] * r_cw * math.cos(math.radians(q["pocket_center_deg"])) for q in placement)
+    ry = uy + sum(q["mass_g"] * r_cw * math.sin(math.radians(q["pocket_center_deg"])) for q in placement)
+
     sector_area = math.radians(2 * lp["half_angle_deg"]) * (lp["outer_radius"] ** 2 - lp["inner_radius"] ** 2) / 2.0
+    capacity = round(sector_area * lp["depth"] * cw["putty_density_g_cm3"] / 1000.0, 1)
     return {
-        "electronics_mass_g": round(total, 2),
+        "electronics_mass_g": round(electronics_mass, 2),
         "allowance_g": P["non_cad_masses_g"]["onboard_electronics_allowance"],
+        "sources": sources,
         "unbalance_vector_g_mm": [round(ux, 1), round(uy, 1)],
         "unbalance_g_mm": round(u, 1),
         "unbalance_azimuth_deg": round(az_u, 1),
         "admissible_g_mm": P["loads_from_spec"]["admissible_unbalance_g_mm"],
         "counterweight_azimuth_deg": round(az_cw, 1),
-        "counterweight_pocket_center_deg": best[0],
-        "counterweight_inside_pocket": bool(best[1] <= lp["half_angle_deg"]),
-        "counterweight_angular_error_deg": round(best[1], 1),
+        "counterweight_placement": placement,
+        "counterweight_mass_g": round(total_cw, 2),
+        "counterweight_split": len(placement) > 1,
         "counterweight_radius_mm": r_cw,
-        "counterweight_mass_g": round(u / r_cw, 2),
-        "pocket_capacity_g": round(sector_area * lp["depth"] * cw["putty_density_g_cm3"] / 1000.0, 1),
+        "residual_g_mm": round(math.hypot(rx, ry), 2),
+        "residual_within_admissible": math.hypot(rx, ry) <= P["loads_from_spec"]["admissible_unbalance_g_mm"],
+        "pocket_capacity_g": capacity,
+        "counterweight_fits_pockets": all(q["mass_g"] <= capacity for q in placement),
+        "note": "Estimativa: centróides de sólido maciço, massas de eletrônica de catálogo. Dimensiona o contrapeso do plano 1; não substitui o bloqueador C com o rotor real.",
     }
 
 
@@ -1195,6 +1288,22 @@ def build_base_tower() -> bpy.types.Object:
     for i in range(4):
         x, y = polar(flange_r, q["flange_hole_angle_offset_deg"] + i * 90.0)
         cutters.append(cylinder(f"flange_hole_{i}", q["flange_hole_diameter"] / 2, h_z1 - h_z0, (x, y, (h_z0 + h_z1) / 2)))
+
+    # Rebaixo para as cabeças dos 4 × M3 do motor (revisão de 03/09, item 3). Os M3
+    # entram por baixo da chapa R01 e as cabeças ficam entre a chapa e a flange,
+    # em r = 12,42. Sem este rebaixo a chapa apoia nas quatro cabeças e não na
+    # flange, e o Datum B sai 2–3 mm alto. O piso do rebaixo olha para cima:
+    # não acrescenta balanço à impressão.
+    fmr = q.get("flange_motor_recess", {"enabled": False})
+    if fmr.get("enabled"):
+        cutters.append(
+            cylinder(
+                "flange_motor_head_recess",
+                fmr["diameter"] / 2,
+                fmr["depth"] + 1.0,
+                (0.0, 0.0, tower_top - fmr["depth"] / 2 + 0.5),
+            )
+        )
 
     ph = q["peripheral_holes"]
     if ph["enabled"]:
@@ -1579,11 +1688,39 @@ def measure_spider(spider: bpy.types.Object) -> dict:
     out["counterbore_depth_mm"] = round(q["hub_thickness"] - (first[1] - first[0]), 3) if first else None
     out["hub_under_washer_mm"] = round(first[1] - first[0], 3) if first else None
     # Pele sobre os alívios de massa (raio médio do bolso, azimute do centro).
+    # A pele é a distância do TETO do alívio ao topo do cubo. Medir pelo início
+    # da primeira corrida, não pelo comprimento dela: com os trilhos do berço em
+    # x = ±12 há material fundido acima do ponto de sondagem, e o comprimento
+    # passaria a somar trilho (revisão de 03/09: o valor virou 3,0 e deixou de medir a
+    # pele, ainda que continuasse "passando").
     lp = q["lightening_pockets"]
     px, py = polar((lp["inner_radius"] + lp["outer_radius"]) / 2 + 0.37, lp["first_center_deg"] + 0.7)
-    runs = pr.solid_runs((px, py, -q["hub_thickness"] - 1.0), (0, 0, 1), q["hub_thickness"] + 2.0)
+    z0 = -q["hub_thickness"] - 1.0
+    runs = pr.solid_runs((px, py, z0), (0, 0, 1), q["hub_thickness"] + 20.0)
     first = _first_run(runs)
-    out["pocket_skin_mm"] = round(first[1] - first[0], 3) if first else None
+    out["pocket_skin_mm"] = round(-(z0 + first[0]), 3) if first else None
+
+    # Revisão 08, item 2: menor raio de QUALQUER material acima do topo do cubo.
+    # A arruela Ø20 assenta no topo do cubo; se algo (os trilhos do berço) entra
+    # em r < 10, ela apoia nos cantos e a porca aperta torto. O raio é varrido na
+    # espessura da arruela, não lido dos parâmetros.
+    m6w = P["unverified_interfaces"]["m6_nut"]
+    min_r = None
+    for k in range(360):
+        dx, dy = polar(1.0, k + 0.37)
+        for z in (0.4, m6w["washer_thickness"] / 2, m6w["washer_thickness"] - 0.4):
+            runs = pr.solid_runs((0.0, 0.0, z), (dx, dy, 0.0), 45.0)
+            if runs and (min_r is None or runs[0][0] < min_r):
+                min_r = runs[0][0]
+    out["min_solid_radius_above_hub_mm"] = round(min_r, 3) if min_r is not None else None
+
+    # Revisão 08, item 1: topo do trilho medido na malha — é o fundo do pack, e
+    # é contra ele que a ponta do eixo tem de ter folga.
+    bc = q["battery_cradle"]
+    rx = max(bc["rail_x_positions"])
+    runs = pr.solid_runs((rx, 0.37, -q["hub_thickness"] - 1.0), (0, 0, 1), 60.0)
+    out["battery_floor_z_measured_mm"] = round(runs[-1][1] - q["hub_thickness"] - 1.0, 3) if runs else None
+
     out["winding_scan"] = pr.full_scan(max(1.5, P["quality"]["winding_scan_pitch_mm"]))
     return out
 
@@ -1602,6 +1739,19 @@ def measure_base(base: bpy.types.Object) -> dict:
     if ct["enabled"]:
         tx, ty = polar(ct["hole_radius"], ct["angle_offset_deg"])
         out["clamp_tab_hole_free"] = pr.is_void((tx + 0.2, ty + 0.3, -1.0), (0, 0, 1), q["outer_ring_height"] + 2.0)
+    # Revisão 08, item 3: rebaixo para as cabeças dos M3 do motor, medido na
+    # malha — profundidade no raio da cabeça e raio livre no topo da flange.
+    mot = P["unverified_interfaces"]["motor"]
+    r_head = math.hypot(mot["base_bolt_rectangle_x"] / 2, mot["base_bolt_rectangle_y"] / 2)
+    out["motor_screw_radius_mm"] = round(r_head, 3)
+    hx2, hy2 = polar(r_head, 30.0)  # longe dos furos M4 (45°) e do furo da torre
+    runs = pr.solid_runs((hx2, hy2, -1.0), (0, 0, 1), tower_top + 2.0)
+    top_at_head = (runs[-1][1] - 1.0) if runs else None
+    out["flange_top_at_motor_screw_radius_mm"] = round(top_at_head, 3) if top_at_head is not None else None
+    out["flange_motor_recess_depth_mm"] = round(tower_top - top_at_head, 3) if top_at_head is not None else None
+    runs = pr.solid_runs((0.0, 0.0, tower_top - 0.5), (1.0, 0.0, 0.0), 45.0)
+    out["flange_recess_free_radius_mm"] = round(runs[0][0], 3) if runs else None
+
     lo, hi = pr.lo, pr.hi
     out["footprint_extent_mm"] = round(float(max(abs(lo[0]), abs(hi[0]), abs(lo[1]), abs(hi[1])) * 2.0), 3)
     out["winding_scan"] = pr.full_scan(3.0)
@@ -1940,9 +2090,17 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
     m6 = P["unverified_interfaces"]["m6_nut"]
     nut_top = -sp["counterbore_depth"] + m6["washer_thickness"] + m6["height"]
 
+    # Ponta do eixo acima do topo do cubo, nas duas leituras do desenho cotado
+    # (14 e 12 mm sobre a campânula). É contra ela que o fundo do pack tem folga.
+    sh = P["unverified_interfaces"]["shaft"]
+    shaft_tip_hi = sh["protrusion_above_bell"] - sp["hub_thickness"]
+    shaft_tip_lo = sh.get("protrusion_alt_mm", sh["protrusion_above_bell"]) - sp["hub_thickness"]
+
+    deflection_worst = max(P["loads_from_spec"].get("tip_deflection_range_mm") or [P["loads_from_spec"]["tip_deflection_mm"]])
+
     layout = bay_layout_components()
     layout_checks = bay_layout_checks(layout)
-    balance = bay_balance(layout)
+    balance = bay_balance(layout, stats)
     counterweight = balance["counterweight_mass_g"]
     rotor_total_with_cw = rotor_total + counterweight
 
@@ -1999,6 +2157,13 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
             "bay_wall_to_slot_mm": round(cs["inner_radius"] - sp["electronics_bay_od"] / 2, 2),
             "nut_top_above_hub_mm": round(nut_top, 2),
             "battery_floor_z_mm": sp["battery_cradle"]["rail_height"],
+            "battery_floor_z_measured_mm": measured["spider"]["battery_floor_z_measured_mm"],
+            "min_solid_radius_above_hub_mm": measured["spider"]["min_solid_radius_above_hub_mm"],
+            "washer_seat_radius_mm": round(m6["washer_od"] / 2, 2),
+            "shaft_tip_above_hub_mm": round(shaft_tip_hi, 2),
+            "shaft_tip_above_hub_alt_mm": round(shaft_tip_lo, 2),
+            "shaft_tip_to_battery_floor_mm": round(measured["spider"]["battery_floor_z_measured_mm"] - shaft_tip_hi, 2),
+            "shaft_tip_to_battery_floor_alt_mm": round(measured["spider"]["battery_floor_z_measured_mm"] - shaft_tip_lo, 2),
             "battery_top_z_mm": sp["battery_cradle"]["rail_height"] + P["unverified_interfaces"]["battery"]["height"],
             "bay_internal_height_mm": sp["electronics_bay_height"],
             "battery_half_diagonal_mm": round(math.hypot(sp["battery_cradle"]["pack_length_y"] / 2 + sp["battery_cradle"]["end_tab_thickness"] + sp["battery_cradle"]["clearance"], sp["battery_cradle"]["end_tab_width_x"] / 2), 2),
@@ -2015,6 +2180,11 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
             "footprint_with_brim_mm": round(measured["base"]["footprint_extent_mm"] + 2 * P["fdm_rules"]["brim_mm"], 2),
             "floor_under_flange_bolt_solid_mm": measured["base"]["floor_under_flange_bolt_solid_mm"],
             "upper_flange_hole_free": measured["base"]["upper_flange_hole_free"],
+            "motor_screw_radius_mm": measured["base"].get("motor_screw_radius_mm"),
+            "flange_motor_recess_depth_mm": measured["base"].get("flange_motor_recess_depth_mm"),
+            "flange_recess_free_radius_mm": measured["base"].get("flange_recess_free_radius_mm"),
+            "motor_screw_head_diameter_mm": P["unverified_interfaces"]["motor"].get("base_bolt_head_diameter"),
+            "motor_screw_head_height_mm": P["unverified_interfaces"]["motor"].get("base_bolt_head_height"),
             "clamp_tab_hole_free": measured["base"].get("clamp_tab_hole_free"),
             "winding_scan": measured["base"]["winding_scan"],
         },
@@ -2027,8 +2197,13 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
         },
         "containment": {
             **containment_geometry(),
-            "rotor_dynamic_radius_mm": round(P["operating_point"]["image_cylinder_diameter_mm"] / 2 + P["loads_from_spec"]["tip_deflection_mm"], 2),
-            "radial_clearance_mm": round(containment_geometry()["cylinder_inner_radius"] - (P["operating_point"]["image_cylinder_diameter_mm"] / 2 + P["loads_from_spec"]["tip_deflection_mm"]), 2),
+            # Revisão 08, item 9: a folga é conferida pelo TOPO da faixa de
+            # deflexão, não pelo valor nominal de 2,48 mm, que supõe engaste na
+            # ponta das torres e E = 2,3 GPa.
+            "rotor_dynamic_radius_mm": round(P["operating_point"]["image_cylinder_diameter_mm"] / 2 + deflection_worst, 2),
+            "radial_clearance_mm": round(containment_geometry()["cylinder_inner_radius"] - (P["operating_point"]["image_cylinder_diameter_mm"] / 2 + deflection_worst), 2),
+            "tip_deflection_used_mm": deflection_worst,
+            "tip_deflection_range_mm": P["loads_from_spec"].get("tip_deflection_range_mm"),
             "peripheral_holes": "removidos (abas de grampo no lugar)" if not P["base_tower"]["peripheral_holes"]["enabled"] else "PCD %.0f" % P["base_tower"]["peripheral_holes"]["pcd"],
         },
         "containment_cap": {
@@ -2149,6 +2324,28 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
         % (sh["protrusion_above_bell"], sh.get("protrusion_alt_mm", sh["protrusion_above_bell"]), asm["shaft_above_nut_alt_protrusion_mm"], m6["height"], m6["washer_thickness"]),
     )
     add("Trilhos do berço acima da porca", rs["battery_floor_z_mm"], "≥ %.1f mm (topo da porca)" % rs["nut_top_above_hub_mm"], rs["battery_floor_z_mm"] >= rs["nut_top_above_hub_mm"], "")
+    # NOVO (revisão de 03/09, item 1). A porca não era o obstáculo mais alto: a ponta
+    # do eixo passa dela. Vale nas duas leituras do desenho, 14 e 12 mm.
+    gap_hi = rs["shaft_tip_to_battery_floor_mm"]
+    gap_lo = rs["shaft_tip_to_battery_floor_alt_mm"]
+    add(
+        "Fundo da bateria acima da ponta do eixo",
+        [gap_hi, gap_lo],
+        "≥ 1,0 mm nas duas leituras do eixo (14 e 12 mm sobre a campânula)",
+        gap_hi >= 1.0 and gap_lo >= 1.0,
+        "piso medido na malha em Z = %.1f; ponta do eixo em +%.1f (leitura de %.0f) e +%.1f (leitura de %.0f). Critério novo: o eixo é mais alto que a porca e nenhum critério os comparava"
+        % (rs["battery_floor_z_measured_mm"], rs["shaft_tip_above_hub_mm"], P["unverified_interfaces"]["shaft"]["protrusion_above_bell"], rs["shaft_tip_above_hub_alt_mm"], P["unverified_interfaces"]["shaft"].get("protrusion_alt_mm", 0)),
+    )
+    # NOVO (revisão de 03/09, item 2). Assento plano para a arruela Ø20.
+    min_r = rs["min_solid_radius_above_hub_mm"]
+    seat_r = rs["washer_seat_radius_mm"]
+    add(
+        "Assento da arruela livre acima do cubo",
+        min_r,
+        "menor raio sólido ≥ %.1f mm (raio da arruela + 0,3)" % (seat_r + 0.3),
+        min_r is not None and min_r >= seat_r + 0.3,
+        "varredura de 360 raios na espessura da arruela; os trilhos do berço são o material mais interno",
+    )
     bay_ok = rs["battery_top_z_mm"] <= rs["bay_internal_height_mm"]
     add("Bateria cabe na baia sobre a porca", rs["battery_top_z_mm"], "≤ %.0f mm" % rs["bay_internal_height_mm"], bay_ok, "pack de %.0f mm sobre trilhos em Z=%.0f" % (P["unverified_interfaces"]["battery"]["height"], rs["battery_floor_z_mm"]))
     add("Berço da bateria dentro da baia (meia-diagonal)", rs["battery_half_diagonal_mm"], "≤ %.0f mm" % rs["bay_inner_radius_mm"], rs["battery_half_diagonal_mm"] <= rs["bay_inner_radius_mm"], "abas de topo inclusas")
@@ -2157,14 +2354,26 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     bay = report["bay_layout"]
     add("Layout da baia: envelope, interferências e faixas dos feixes", "ok" if bay["ok"] else "; ".join(bay["problems"]), "tudo dentro de r = 38,5 e Z ≤ 25, sem interferência, piso livre nas faixas dos feixes", bay["ok"], "%d componentes; pilares em %s" % (len([c for c in bay["components"] if c["z_range_mm"]]), bay["standoffs"]))
     add("Eletrônica embarcada (estimada) dentro da folga", bay["electronics_mass_g"], "≤ %.0f g" % bay["allowance_g"], bay["electronics_mass_g"] <= bay["allowance_g"] + 1e-9, "massas de catálogo, não pesadas; o XL4015 sozinho (~18 g) estouraria")
+    # Revisão 08, item 11: o vetor agora soma os centróides das peças impressas
+    # e o sensor hall, e o contrapeso é repartido entre os dois alívios que
+    # cercam a direção pedida — arredondar para o alívio mais próximo deixava
+    # resíduo maior que o admissível.
     add(
         "Contrapeso planejado do layout",
-        bay["counterweight_mass_g"],
-        "no alívio oposto (±%.0f°), ≤ %.1f g de massa de tungstênio" % (sp["lightening_pockets"]["half_angle_deg"], bay["pocket_capacity_g"]),
-        bay["counterweight_inside_pocket"] and bay["counterweight_mass_g"] <= bay["pocket_capacity_g"],
-        "desbalanceamento nominal %.1f g·mm a %.0f° (admissível %.1f); contrapeso a %.0f°, no alívio de %.0f°, r = %.0f" % (bay["unbalance_g_mm"], bay["unbalance_azimuth_deg"], bay["admissible_g_mm"], bay["counterweight_azimuth_deg"], bay["counterweight_pocket_center_deg"], bay["counterweight_radius_mm"]),
+        [q["mass_g"] for q in bay["counterweight_placement"]],
+        "cabe nos alívios (≤ %.1f g cada) e deixa resíduo ≤ %.1f g·mm" % (bay["pocket_capacity_g"], bay["admissible_g_mm"]),
+        bay["counterweight_fits_pockets"] and bay["residual_within_admissible"],
+        "desbalanceamento nominal %.1f g·mm a %.1f° (admissível %.1f); correção a %.1f° repartida em %s; resíduo %.2f g·mm. Fontes: %s"
+        % (
+            bay["unbalance_g_mm"],
+            bay["unbalance_azimuth_deg"],
+            bay["admissible_g_mm"],
+            bay["counterweight_azimuth_deg"],
+            ", ".join("%.2f g no alívio de %.0f°" % (c["mass_g"], c["pocket_center_deg"]) for c in bay["counterweight_placement"]),
+            bay["residual_g_mm"],
+            "; ".join("%s %.1f g·mm a %.0f°" % (x["id"], x["u_g_mm"], x["azimuth_deg"]) for x in bay["sources"]),
+        ),
     )
-
     # -- ventilação, arrasto --
     add("Área livre de ventilação do cubo", rs["cooling_free_area_mm2"], "≥ 300 mm², sem abrir a baia", rs["cooling_free_area_mm2"] >= 300.0 and rs["bay_wall_to_slot_mm"] >= 0.0, "3 rasgos de 60° fora da baia (r %.1f–%.1f)" % (sp["cooling_slots"]["inner_radius"], sp["cooling_slots"]["outer_radius"]))
     add("Área livre de ventilação da base", rb["lateral_vent_area_mm2"], "≥ 600 mm², na lateral", rb["lateral_vent_area_mm2"] >= 600.0, "8 janelas na parede lateral da baia")
@@ -2187,6 +2396,23 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     add("Base + brim cabe na mesa", rb["footprint_with_brim_mm"], "≤ 300 mm", rb["footprint_with_brim_mm"] <= 300.0, "extensão medida na malha (com abas) %.1f + 2 × %.0f de brim" % (rb["footprint_extent_measured_mm"], P["fdm_rules"]["brim_mm"]))
     fl = rb["floor_under_flange_bolt_solid_mm"]
     add("Piso da baia íntegro sob os furos da flange", fl, "sólido de Z = 0 até a flange inferior (12)", fl is not None and abs(fl[0]) < 0.05 and fl[1] >= P["base_tower"]["central_floor_thickness"] + P["base_tower"]["flange_thickness"] - 0.05, "06-PENDENCIAS B3; furos só na flange superior: %s" % rb["upper_flange_hole_free"])
+    # NOVO (revisão de 03/09, item 3). As cabeças dos M3 do motor ficam entre a chapa
+    # e a flange; sem rebaixo a chapa apoia nelas e o Datum B sai alto.
+    rec_d = rb.get("flange_motor_recess_depth_mm")
+    rec_r = rb.get("flange_recess_free_radius_mm")
+    head_h = rb.get("motor_screw_head_height_mm")
+    head_d = rb.get("motor_screw_head_diameter_mm")
+    r_screw = rb.get("motor_screw_radius_mm")
+    if None not in (rec_d, rec_r, head_h, head_d, r_screw):
+        need_r = r_screw + head_d / 2 + 0.3
+        add(
+            "Rebaixo da flange livra as cabeças dos M3 do motor",
+            [rec_d, rec_r],
+            "profundidade ≥ %.1f mm e raio livre ≥ %.1f mm" % (head_h + 0.3, need_r),
+            rec_d >= head_h + 0.3 and rec_r >= need_r,
+            "medido na malha; cabeça Ø%.1f × %.1f em r = %.2f (retângulo %g × %g). Os M4 em PCD %g ficam fora do rebaixo e continuam definindo o assento da chapa"
+            % (head_d, head_h, r_screw, P["unverified_interfaces"]["motor"]["base_bolt_rectangle_x"], P["unverified_interfaces"]["motor"]["base_bolt_rectangle_y"], P["base_tower"]["flange_hole_pcd"]),
+        )
     if rb.get("clamp_tab_hole_free") is not None:
         add("Abas de grampo com furo livre", rb["clamp_tab_hole_free"], "livre", rb["clamp_tab_hole_free"], "%d abas a %.0f°, furo Ø%.0f em r = %.0f" % (P["base_tower"]["clamp_tabs"]["count"], 360.0 / P["base_tower"]["clamp_tabs"]["count"], P["base_tower"]["clamp_tabs"]["hole_diameter"], P["base_tower"]["clamp_tabs"]["hole_radius"]))
     strip_ok = rp["led_strip_top_z_mm"] <= rp["panel_top_z_mm"]

@@ -60,7 +60,7 @@ Tudo isto gira junto com o rotor.
 | Regulador 5 V | buck **5 V / ≥ 5 A mini560** (22 × 17 × 6 mm, ~2 g), em pé numa ranhura na parede da baia. **Não** XL4015 (51 × 26 × 14, ~18 g): não cabe na baia nem no orçamento de 15 g | 🛒 | 15 |
 | Bateria | **LiFePO4 2S 800 mAh 20C**, 58 × 30 × 17 mm, 50 g, 6,6 V | ✅ | — |
 | Conector | XT30 ou JST-XH para carga e balanceamento | 🛒 | 8 |
-| Chave liga/desliga | slide ou toggle miniatura, acesso pela tampa | 🛒 | 5 |
+| Chave liga/desliga | slide ou toggle miniatura, acesso pela tampa; **curso tangencial** — ver nota | 🛒 | 5 |
 | Sensor de índice | **A3144 nu**, dessoldado do módulo HW-477 — **no rotor** | ✅ | — |
 | Resistor de pull-up | 10 kΩ, do sinal do hall para **3,3 V** | 🛒 | 1 |
 | Deslocador de nível | **74AHCT125** para CLK e DATA — ou buck em 4,5 V | 🛒 | 5 |
@@ -72,6 +72,16 @@ Tudo isto gira junto com o rotor.
 | Carregador **modo LiFe** | 3,6 V/célula — modo LiPo (4,2 V) destrói o pack | ⚠️ | 60 |
 
 > **Empacotamento — a baia foi ampliada por causa disto.** Bateria, MCU,
+> **Tudo o que vai na baia sofre 98 a 114 g.** A aceleração centrífuga em
+> r = 27–32 mm é `ω²r` = 960 a 1140 m/s². Duas consequências práticas na compra:
+>
+> - a **chave** precisa ter o curso **tangencial**, não radial: uma slide com o
+>   curso apontando para fora se aciona sozinha sob 100 g;
+> - o **capacitor** Ø10 × 20 em pé, com 2,5 g em r = 31,5, leva **2,8 N** de
+>   lado no topo. Uma cerca de 3 mm no pé não segura: cole, ou use um polímero
+>   SMD deitado. Confirme também que o pack é de **células rígidas** — as pontas
+>   dele estão a r = 29.
+>
 > regulador, deslocador de nível, capacitor, chave e conector numa baia que era
 > de Ø66 × 20 mm. Passou para **Ø78 × 26**, com 21 mm úteis acima da porca. Um
 > DevKit ESP32 de 55 × 28 mm não caberia junto com a bateria; o C3 Super Mini

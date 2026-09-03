@@ -25,7 +25,8 @@ na fonte de bancada** e calcular a potência de entrada.
 |---:|---:|---:|---:|---|
 | 3,0 A | 9,0 W | 1,29 A | 34 °C | |
 | 4,0 A | 12,7 W | 1,81 A | 40 °C | |
-| **4,44 A** | **14,4 W** | **1,95 A** | **43 °C** | ← ponto de projeto |
+| 4,44 A | 14,4 W | **2,06 A** | 43 °C | melhor caso (Cd do boss 0,20) |
+| **4,95 A** | **16,2 W** | **2,31 A** | **46 °C** | ← **ponto de projeto** (Cd do boss 0,35) |
 | 5,0 A | 16,8 W | 2,40 A | 47 °C | |
 | 5,5 A | 19,1 W | 2,73 A | 51 °C | limite aceitável |
 | 6,0 A | 21,4 W | 3,06 A | 55 °C | abortar |
@@ -56,10 +57,18 @@ T × tempo a cada 30 s. Medir também a temperatura da baia da base e da chapa.
 |---|---|
 | Corpo do motor | **< 55 °C** e curva estabilizando, sem subida contínua |
 | Estrutura ABS próxima ao motor | < 60 °C |
-| Bateria no rotor | < 45 °C |
+| Bateria no rotor | < 45 °C — **só quando houver bateria embarcada**; ver nota |
 | **Deflexão da ponta do painel** | **crescimento < 0,5 mm após 1 h a temperatura** |
 
 **Limiar de aborto:** 60 °C no motor a qualquer momento.
+
+**Sobre a linha da bateria.** O bloqueador B roda na fase 3, e a fase 3 é
+explicitamente *sem LEDs e sem eletrônica de bordo* (portão G3; o plano de
+projeto §5 diz que "nada em G3 depende da eletrônica de bordo"). Nessa passagem
+não há bateria no rotor para medir. A linha vale como critério **na repetição do
+ensaio B em G4**, com a eletrônica montada — que é quando a bateria de fato gira
+a 30 mm do eixo, dentro de uma baia fechada, ao lado de um motor a 46 °C. Em G3,
+registre-a como "não aplicável" em vez de dar por atendida.
 
 **Meça a ponta do painel, não só a temperatura.** O ABS flui sob carga
 sustentada a quente: com 12–14 MPa e 40–50 °C, o módulo cai a cerca de metade em
@@ -90,12 +99,36 @@ estrutura**, que é consequência direta do balanceamento.
 bancada, MPU6050 colado junto à torre, dar um toque seco no topo da torre e
 registrar o decaimento. FFT dá a primeira frequência natural da parte fixa.
 
-O tubo Ø30 × 4 × 150 sozinho, com 322 g no topo, dá **k ≈ 50 N/mm e fn ≈ 63 Hz**
-— confortável contra os 30 Hz de excitação. O que essa conta não cobre é o
-**balanço da base sobre a mesa**: ela apoia, e é presa só pelas quatro abas de
-grampo nos cantos do anel. Medir grampeada e solta. Se a medição der **fn < 45 Hz**,
-reforce antes de montar o motor: piso 100 % sólido num raio de 40 mm em torno da
-torre e 4 a 8 gussets da torre para a parede da baia, que hoje não trabalha.
+**Ensaie com massa na ponta, ou o ensaio não mede nada.** A torre nua, batida
+sem massa no topo, ressoa em centenas de hertz: o gatilho de 45 Hz abaixo nunca
+dispararia e o ensaio passaria sempre. Fixe no eixo uma **massa fictícia de
+~280 g** na altura do plano dos painéis (um disco de aço na porca M6 serve), ou
+monte o rotor real parado, e só então bata na torre.
+
+O tubo Ø30 × 4 × 150 dá **k ≈ 50 N/mm**. Com a massa concentrada **no topo do
+tubo** isso daria fn ≈ 63 Hz, e é esse o número que os documentos vinham
+publicando — mas a massa não está no topo. O CG do conjunto (rotor 274 g +
+motor 52 + chapa 18 = **344 g**, e não os 322 g da base, que é outra peça) fica
+em Z ≈ 185, **31 mm acima do topo da torre** (Z = 154). Para massa deslocada de
+`a` por um trecho rígido:
+
+```
+k_eff = k / (1 + 3a/L + 3a²/L²) = 50 / (1 + 0,62 + 0,13) ≈ 29 N/mm
+fn    ≈ (1/2π)·√(29 000 / 0,344) ≈ 46 Hz
+```
+
+e isso ainda ignora a inércia de rotação do rotor de 208 mm, a flexibilidade da
+flange, da chapa e dos rolamentos do motor (todas abaixam) e o efeito
+giroscópico a 1800 RPM (sobe o modo direto). **O número honesto é ≈ 45 Hz** — em
+cima do próprio limiar de reforço, com transmissibilidade a 30 Hz de ~1,7 a 1,9
+em vez dos 1,3 que 63 Hz prometia. Meça antes de acreditar em qualquer um dos
+dois.
+
+O que a conta também não cobre é o **balanço da base sobre a mesa**: ela apoia, e
+é presa só pelas quatro abas de grampo nos cantos do anel. Medir grampeada e
+solta. Se a medição der **fn < 45 Hz**, reforce antes de montar o motor: piso
+100 % sólido num raio de 40 mm em torno da torre e 4 a 8 gussets da torre para a
+parede da baia, que hoje não trabalha.
 
 **C1 — varredura em rotação.** MPU6050 na base, junto à torre. Amostrar a 500 Hz
 e **varrer de 600 a 1800 RPM em degraus de 200**, registrando amplitude × rotação.
@@ -144,12 +177,14 @@ partidas consecutivas do repouso até 1800 RPM.
 
 **Critérios de aceite:**
 - 10 de 10 partidas bem-sucedidas, sem travamento nem ruído de dessincronismo;
-- pico de corrente na fonte durante a rampa ≤ **4,8 A a 7 V** (equivale a 8,0 A
+- pico de corrente na fonte durante a rampa ≤ **4,6 A a 7 V** (32,1 W / 7 V, a
+  mesma linha da tabela do bloqueador A; equivale a 8,0 A
   de fase);
 - nenhum evento de proteção do ESC.
 
 **Se falhar:**
-1. Alongar a rampa para 12 s (baixa o pico para 7,3 A de fase).
+1. Alongar a rampa para 12 s (baixa o pico para **6,8 A** de fase: o torque de
+   aceleração cai de 36,5 para 24,3 mN·m e (24,3 + 46,1)/10,38 = 6,8).
 2. Reduzir a potência de partida nas configurações do ESC.
 3. Ajustar a fonte para 6–7 V, o que faz o ESC operar em duty mais alto e melhora
    a resolução de comutação em baixa rotação.
@@ -233,7 +268,15 @@ Não são formalidade. O rotor guarda **26 J** e um painel solto sai a
 - **Nunca girar sem contenção integral.** Caixa fechada, chapa ou tela de aço em
   torno do rotor. Não há exceção para "só um teste rápido".
 - **Operação remota.** Ninguém no plano do rotor durante a subida de rotação.
-- **Parada de emergência** ao alcance, cortando a fonte.
+- **Parada de emergência** ao alcance, cortando a fonte. Ela corta a
+  alimentação, **não para o rotor**: com *brake on stop* desabilitado (decisão
+  correta para a fonte de bancada) o rotor entra em roda livre e o arrasto cai
+  com ω². A constante de tempo é `I·ω/T = 1,55e−3 × 188,5 / 0,046 ≈ 6 s` e a
+  rotação decai como `ω₀/(1 + t/τ)`: metade em 6 s, um décimo em ~1 min, com os
+  27,6 J ainda dentro da contenção nos primeiros segundos.
+- **Ninguém abre a contenção antes de o rotor parar — no mínimo 90 s após o
+  corte, e só com o rotor visivelmente imóvel.** Se for preciso frear de fato,
+  use um resistor de descarga no barramento do ESC; nunca a fonte.
 - **Subir em patamares** com inspeção entre eles. Nunca ir direto a 1800.
 - Após qualquer reimpressão ou remontagem, **refazer o balanceamento**.
 - **Grampear a base à bancada** pelas abas externas do anel (quatro, nos

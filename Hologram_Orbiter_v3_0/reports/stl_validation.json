@@ -3,11 +3,11 @@
   "files": [
     {
       "file": "01_aranha_ABS.stl",
-      "triangle_count": 11230,
+      "triangle_count": 11238,
       "dimensions_mm": [
         148.7631,
         171.7769,
-        32.0
+        35.0
       ],
       "bounds_min_mm": [
         -52.7631,
@@ -17,9 +17,9 @@
       "bounds_max_mm": [
         96.0,
         85.8884,
-        32.0
+        35.0
       ],
-      "signed_volume_cm3": 64.931,
+      "signed_volume_cm3": 68.2605,
       "degenerate_triangles": 0,
       "non_two_manifold_edges": 0,
       "connected_components": 1,
@@ -27,7 +27,7 @@
       "outward_orientation": true,
       "ray_winding": {
         "pitch_mm": 1.43,
-        "rays": 17903,
+        "rays": 18355,
         "bad_winding_segments": 0,
         "thin_solid_segments": 0,
         "examples": []
@@ -139,7 +139,7 @@
     },
     {
       "file": "04_05_base_torre_ABS_integradas.stl",
-      "triangle_count": 7690,
+      "triangle_count": 8080,
       "dimensions_mm": [
         280.0,
         280.0,
@@ -155,7 +155,7 @@
         140.0,
         153.9999
       ],
-      "signed_volume_cm3": 308.979,
+      "signed_volume_cm3": 307.4957,
       "degenerate_triangles": 0,
       "non_two_manifold_edges": 0,
       "connected_components": 1,

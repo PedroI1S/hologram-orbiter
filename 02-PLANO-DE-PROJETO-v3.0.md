@@ -23,7 +23,7 @@ Entregáveis finais:
 | Cadeia de acionamento | ✅ A2212 920KV · ESC LittleBee Spring 20A · fonte de bancada · gerador Arduino |
 | Cadeia óptica | ✅ HD107S 144/m · ESP32-C3 · A3144 nu no rotor |
 | Especificação CAD | ✅ escrita, corrigida e alinhada ao CAD em 03/09 |
-| Modelo CAD | ✅ regenerado em 03/09 (rev. 3.0.2): 51 de 51 critérios, medidos na malha; layout da baia verificado |
+| Modelo CAD | ✅ regenerado em 03/09 (rev. 3.0.3): 54 de 54 critérios, medidos na malha; revisão independente 08 aplicada |
 | Compras | 🔄 motor, ESC, fita, ESP32-C3, bateria LiFe e hall em mãos; faltam buck, shifter, ímã, ferragens, chapa e filamento |
 | Medições | ⚠️ colar e ponta do eixo a partir da face de apoio; massa real da eletrônica |
 | Isolamento de vibração | ⚠️ montagem rígida; o ensaio de impacto decide |
@@ -35,8 +35,9 @@ Como a potência aerodinâmica escala com **ω³r³**, isso exigia 9,76 A e leva
 motor a 101 °C — inviável com o A2212 920KV que temos, cujo limite prático é
 térmico, em torno de 5,5 A.
 
-Os mesmos 90 Hz, na **mesma** 1800 RPM, com o raio em 100 mm, custam **4,44 A e
-43 °C**. O alvo estava certo desde o começo; a alavanca estava errada.
+Os mesmos 90 Hz, na **mesma** 1800 RPM, com o raio em 100 mm, custam **4,95 A e
+46 °C** pela estimativa de arrasto do CAD (4,44 A e 43 °C no melhor caso). O
+alvo estava certo desde o começo; a alavanca estava errada.
 
 Três mudanças de método que vêm junto:
 
@@ -89,6 +90,13 @@ raio 100 ±0,1 mm · Δh ≤ ±0,5 mm. Peça fora de tolerância é reimpressa, 
 
 **Portão G2:** rotor montado, girando à mão sem rocamento perceptível,
 contenção de ensaio montada.
+
+> **Pesar os painéis é necessário, não suficiente.** Δm ≤ 0,084 g casa as
+> *massas*, não os *momentos*: dois painéis de massa idêntica com o CG em raios
+> diferentes — infill que caiu mais no boss num deles e mais na lâmina no outro
+> — continuam desbalanceando. 0,5 mm de diferença de CG em 42 g já vale
+> 21 g·mm, duas vezes e meia o admissível. A pesagem tria os casos grosseiros;
+> quem fecha a conta é o bloqueador C.
 
 ### Fase 3 — Bloqueadores de rotação
 

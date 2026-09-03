@@ -16,7 +16,7 @@ endereçáveis giram a 1800 RPM e formam uma imagem cilíndrica suspensa de
 | Acionamento | ✅ A2212 920KV · ESC LittleBee Spring 20A (BLHeli_S) · fonte de bancada |
 | Óptica | ✅ HD107S 144 LED/m (12 × 2 mm) · ESP32-C3 · A3144 nu no rotor |
 | Especificação CAD | ✅ escrita, corrigida e verificada |
-| Modelo CAD | ✅ **regenerado em 03/09 (rev. 3.0.2)** — A1/A2 e B1–B11 fechados, desvios ratificados, fixação do eixo refeita pelo desenho do motor, layout da baia verificado; 51 de 51 critérios |
+| Modelo CAD | ✅ **regenerado em 03/09 (rev. 3.0.3)** — revisão independente 08 aplicada: três colisões de montagem corrigidas (ponta do eixo × bateria, trilhos × arruela, cabeças dos M3 × flange), balanceamento somando os centróides do CAD; **54 de 54 critérios** |
 | Compras | 🔄 motor, ESC, fita, ESP32-C3, bateria LiFe e hall em mãos |
 | Isolamento de vibração | ⚠️ montagem rígida; o ensaio de impacto decide |
 
@@ -69,8 +69,8 @@ e o que é premissa.
 | Raio do plano médio do painel | 100 mm | define arrasto, força e imagem |
 | Rotação | 1800 RPM | 188,50 rad/s · 30 rps |
 | Taxa de imagem | 90 Hz | 3 painéis × 30 rps |
-| Corrente de fase prevista | 4,44 A | 14,4 W na fonte |
-| Temperatura do motor prevista | 43 °C | limite de aceite: 55 °C |
+| Corrente de fase prevista | **4,95 A** | 16,2 W na fonte (melhor caso 4,44 A / 14,4 W) |
+| Temperatura do motor prevista | **46 °C** | limite de aceite: 55 °C (melhor caso 43 °C) |
 | Força centrífuga por painel | 149,7 N (massa CAD) · 158,1 N (projeto, 44,5 g) | SF ≈ 2,5 na flexão |
 | Massa do painel montado | ~42,1 g | Δm entre os três ≤ **0,084 g** |
 | Massa do rotor | ~274,3 g (CAD + catálogo + contrapeso; folga de 5,7 g até 280) | desbalanceamento admissível 8,4 g·mm (conservador, com 252 g) |
@@ -84,8 +84,9 @@ A v2.1 perseguia 90 Hz subindo a rotação com o raio fixo em 130 mm. Como a
 potência aerodinâmica escala com **ω³r³**, esse é o caminho caro: exigia 9,76 A e
 levava o motor a 101 °C — inviável com o motor e o ESC que temos.
 
-Os mesmos 90 Hz, na **mesma** 1800 RPM, com o raio em 100 mm, custam **4,44 A e
-43 °C**. O alvo estava certo; a alavanca estava errada.
+Os mesmos 90 Hz, na **mesma** 1800 RPM, com o raio em 100 mm, custam **4,95 A e
+46 °C** pela estimativa de arrasto do próprio CAD (4,44 A e 43 °C no melhor
+caso). O alvo estava certo; a alavanca estava errada.
 
 Uma auditoria independente encontrou 24 não conformidades na v2.1, entre elas
 força centrífuga publicada 71× menor que a real, um caso térmico que reprovava
@@ -131,7 +132,7 @@ legado/                            v2.0, v2.1 e a auditoria da v2.1, arquivadas
 |---|---|---|
 | v2.0 | ago/2026 | 1200 RPM, 60 Hz, r = 130 mm. Flicker perceptível. |
 | v2.1 | ago/2026 | Subiu para 1800 RPM mantendo r = 130. Reprovada em auditoria. |
-| **v3.0** | **set/2026** | **1800 RPM com r = 100 mm. 90 Hz a 43 °C.** |
+| **v3.0** | **set/2026** | **1800 RPM com r = 100 mm. 90 Hz a 46 °C.** |
 
 Os documentos das versões anteriores e a auditoria que as reprovou estão em
 `legado/`, arquivados. Eles contêm números que a v3.0 substituiu — **não os use

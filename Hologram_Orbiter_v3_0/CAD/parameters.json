@@ -2,7 +2,7 @@
   "project": {
     "name": "Hologram Orbiter",
     "version": "3.0",
-    "revision": "3.0.2 — 03/09/2026: A1-A2 e B1-B11 fechados, desvios ratificados, fixacao do eixo refeita pelo desenho do motor (colar Ø8 x 5-7), layout da baia com contrapeso planejado",
+    "revision": "3.0.3 — 03/09/2026: revisao independente 08 aplicada (tres colisoes de montagem P0, balanceamento com os centroides do CAD, tres criterios novos = 54). Antes, 3.0.2: A1-A2 e B1-B11 fechados, desvios ratificados, fixacao do eixo refeita pelo desenho do motor (colar Ø8 x 5-7), layout da baia com contrapeso planejado",
     "units": "mm",
     "source_spec": "../../01-ESPECIFICACAO-CAD-v3.0.md",
     "generated_with": "Blender 5.2 LTS, gerador CAD/generate.py",
@@ -19,21 +19,26 @@
     "image_cylinder_diameter_mm": 208.0,
     "image_cylinder_height_mm": 201.0,
     "resolution": "29 px vertical x 180 colunas",
-    "phase_current_a": 4.44,
-    "motor_temperature_c": 43.0,
+    "phase_current_a": 4.95,
+    "motor_temperature_c": 46.0,
+    "phase_current_best_case_a": 4.44,
+    "motor_temperature_best_case_c": 43.0,
+    "operating_point_note": "REVISAO 03/09 item 7 (ver 06-PENDENCIAS-ABERTAS): o par publicado era 4,44 A / 43 C, que e a linha Cd_boss = 0,20 da tabela de sensibilidade da spec secao 10.1. O proprio CAD estima o boss em Cd 0,30-0,40 (drag_estimate.cd_range_frontal) e o relatorio da A x Cd = 238-317 mm2. O ponto de projeto passa a ser a linha Cd_boss = 0,35 da mesma tabela — 4,95 A / 46 C — e 4,44 A / 43 C fica registrado como MELHOR CASO. Nada muda no criterio P <= 20 W nem no limite de 55 C do Bloqueador B; muda a margem que os documentos anunciam.",
     "stretch_rpm_not_target": 2000.0,
     "rotation_sense": "anti-horario visto de +Z; bordo de ataque em +y"
   },
 
   "loads_from_spec": {
-    "note": "Consequencias do ponto de operacao, recalculadas para painel montado de 44,5 g (spec v3.0 secao 2.1 e 10). Energia do painel solto no par unico da spec secao 10 (velocidade no CG, r = 100).",
+    "note": "Consequencias do ponto de operacao, recalculadas para painel montado de 44,5 g (spec v3.0 secao 2.1 e 10). Energia do painel solto no par unico da spec secao 10 (velocidade no CG, r = 100). REVISAO 03/09 item 26 (ver 06-PENDENCIAS-ABERTAS): os 7,4 J publicados usavam 42,1 g (massa estimada) enquanto o resto das cargas usa o teto de 44,5 g; 0,5 x 0,0445 x 18,85^2 = 7,9 J.",
     "panel_assembled_mass_g": 44.5,
     "centrifugal_force_per_panel_n": 158.1,
     "tip_deflection_mm": 2.48,
+    "tip_deflection_range_mm": [2.5, 5.0],
+    "tip_deflection_note": "REVISAO 03/09 item 9 (ver 06-PENDENCIAS-ABERTAS): 2,48 mm sai de L = 86 mm (engaste na ponta das torres), I = 910 mm4 e E = 2,3 GPa — hipoteses que nao estavam publicadas. Com o engaste seguro na luva (L = 99) e E = 2,0 GPa do glossario dao 5,0 mm. A folga radial ate o cilindro e conferida pelo TOPO da faixa; a spec secao 10.0 traz a derivacao.",
     "bending_stress_mpa": 13.9,
     "safety_factor_bending": 2.5,
     "rotor_kinetic_energy_j": 27.6,
-    "loose_panel_energy_j": 7.4,
+    "loose_panel_energy_j": 7.9,
     "loose_panel_speed_m_s": 18.9,
     "rotor_inertia_g_m2": 1.55,
     "admissible_unbalance_g_mm": 8.4,
@@ -54,6 +59,8 @@
     "led_strip_per_panel": 6.2,
     "hardware_per_panel": 4.0,
     "m6_nut_and_washer": 3.0,
+    "hall_sensor_bare": 0.2,
+    "hall_sensor_bare_note": "A3144 em TO-92 dessoldado do modulo HW-477, colado no bolso da face inferior do cubo em r = 29. Entra no vetor de desbalanceamento (revisao 08 item 11): 0,2 g x 29 = 5,8 g.mm sozinho, contra 8,4 admissiveis.",
     "m6_nut_and_washer_note": "arruela Ø20 x Ø8,5 x 2 em aluminio (1,4 g) + porca M6 fina DIN 439B (1,2 g), arredondado",
     "onboard_electronics_allowance": 15.0,
     "battery_verified": true,
@@ -97,6 +104,9 @@
       "base_bolt_rectangle_x": 16.0,
       "base_bolt_rectangle_y": 19.0,
       "base_bolt_hole_diameter": 3.2,
+      "base_bolt_head_diameter": 5.5,
+      "base_bolt_head_height": 3.0,
+      "base_bolt_head_note": "Pior caso: M3 cilindrico ISO 4762 (cabeca O5,5 x 3,0). Um M3 panela (O5,6 x 2,4) tambem cabe no rebaixo O32 x 3,5 da flange. As cabecas ficam sob a chapa R01, em r = 12,42.",
       "base_pattern_verified": true,
       "base_pattern_source": "datasheet (4-M3 em retangulo 16 x 19)"
     },
@@ -158,7 +168,7 @@
       "leds_per_panel": 29,
       "strip_length": 201.4,
       "verified": true,
-      "source": "medida em 02/09/2026: 12,0 x 2,0 (PCB ~0,4 + encapsulamento 5050 de 1,6). Canal em degrau em panel.led_channel."
+      "source": "medida em 02/09/2026: 12,0 x 2,0 (PCB ~0,4 + encapsulamento 5050 de 1,6). Canal unico 12,4 x 2,0 em panel.led_channel; o canal em degrau foi abandonado em 03/09/2026 (ver a nota la)."
     },
     "battery": {
       "length": 58.0,
@@ -168,7 +178,7 @@
       "chemistry": "LiFe (LiFePO4) 2S, 800 mAh, 6,6 V nominal, 20C",
       "verified": true,
       "source": "comprada e medida, 02/09/2026 (glossario secao 2): 58 x 30 x 17 mm, 50 g",
-      "note": "Deitada ao longo de y no berco (spider.battery_cradle). Quimica LiFe: 3,3 V/celula nominal, 3,6 de carga, 2,5-2,8 de corte — o esquema eletrico (05) ainda descreve LiPo; ver 06-PENDENCIAS C5."
+      "note": "Deitada ao longo de y no berco (spider.battery_cradle). Quimica LiFe: 3,3 V/celula nominal, 3,6 de carga, 2,5-2,8 de corte. O esquema eletrico (05) ja foi convertido para LiFe (06-PENDENCIAS B'8)."
     },
     "hall_sensor": {
       "package": "HW-477: modulo de 18 x 15 mm com sensor 3144 em TO-92 vertical, LED e pull-up para VCC",
@@ -296,7 +306,7 @@
     "counterbore_note": "SEM rebaixo (profundidade 0 desativa o corte). O colar Ø8 do eixo sobe 5-7 mm acima da campanula e o cubo tem 6: qualquer rebaixo deixaria o fundo abaixo do topo do colar e a arruela assentaria no aco, nao no ABS. A arruela Ø20 x Ø8,5 (furo maior que o colar) assenta no topo do cubo. A spec secao 5.2 pedia Ø13 x 2 para arruela Ø20 — nem cabia nem passava pelo colar.",
     "electronics_bay_od": 82.0,
     "electronics_bay_id": 78.0,
-    "electronics_bay_height": 26.0,
+    "electronics_bay_height": 29.0,
     "lid_post_spacing": 70.0,
     "lid_post_axis": "y",
     "lid_post_spacing_note": "Postes encostados na parede interna da baia (r 30,7 a 39,3 com o transpasse), no eixo y (azimutes 90 e 270 graus), entre os bracos. A spec ainda diz 58 mm, que era o valor da baia Ø66; com 58 os postes ficariam soltos no meio da baia, 6 mm longe da parede. No eixo x o poste de +x caia sobre a raiz do braco 1 (r 38-39,3) e a tangencia gerava aresta nao-manifold.",
@@ -369,17 +379,17 @@
       "pack_width_x": 30.0,
       "pack_height": 17.0,
       "clearance": 0.25,
-      "rail_x_positions": [-11.0, 11.0],
+      "rail_x_positions": [-12.0, 12.0],
       "rail_width": 3.0,
       "rail_length_y": 52.0,
-      "rail_height": 6.0,
+      "rail_height": 9.0,
       "side_wall_thickness": 2.0,
       "side_wall_length_y": 30.0,
-      "side_wall_height": 18.0,
+      "side_wall_height": 21.0,
       "end_tab_thickness": 2.0,
       "end_tab_width_x": 16.0,
-      "end_tab_height": 16.0,
-      "note": "Pack LiFe 58 x 30 x 17 (medido) deitado ao longo de y, apoiado em dois trilhos a Z=6 que passam por cima da pilha arruela + porca fina (topo em Z=5,0). Topo do pack em Z=23, dentro dos 26 da baia. Paredes laterais e abas de topo centram o pack. Nao conta para o balanceamento."
+      "end_tab_height": 19.0,
+      "note": "Pack LiFe 58 x 30 x 17 (medido) deitado ao longo de y, apoiado em dois trilhos a Z=9. Topo do pack em Z=26, dentro dos 29 da baia. Paredes laterais e abas de topo centram o pack. Nao conta para o balanceamento. REVISAO 03/09 item 1 (ver 06-PENDENCIAS-ABERTAS): os trilhos estavam em Z=6 e a PONTA DO EIXO fica em Z=+8 acima do topo do cubo (protrusao de 14 sobre a campanula, cubo de 6) — o pack encostava 2 mm no eixo na leitura de 14 e com folga zero na de 12. Nenhum dos 51 criterios comparava o eixo com a bateria: um comparava trilho com porca e outro exigia rosca sobrando ACIMA da porca. Trilhos a 9 dao 1 mm de folga na leitura de 14 e 3 mm na de 12, valendo para as duas leituras sem depender da medicao pendente. Custo: +3 mm de baia e ~4 g. REVISAO 03/09 item 2 (ver 06-PENDENCIAS-ABERTAS): rail_x_positions era +-11 e com rail_width 3 punha a aresta interna em x = 9,5, dentro do raio 10 da arruela O20 — a arruela apoiava nos cantos dos trilhos e a porca apertava torto. +-12 poe a aresta em 10,5."
     },
     "bay_layout": {
       "note": "Esboco de layout da baia (06-PENDENCIAS D2) com os envelopes documentados na lista de componentes e no esquema eletrico. Massas ESTIMADAS, nao pesadas: o gerador confere envelope, interferencias, faixas livres para os feixes no piso, soma contra a folga de 15 g e calcula o desbalanceamento estatico nominal e o contrapeso que o corrige. Coordenadas do rotor: origem no eixo, Z = 0 no topo do cubo, braco 1 em +x. Componentes elevados em pilares de 6 mm deixam o piso livre para os feixes dos paineis (janelas da baia em Z 0,8-5,8).",
@@ -510,6 +520,12 @@
     "tower_bore_start_z": 6.0,
     "flange_diameter": 60.0,
     "flange_thickness": 8.0,
+    "flange_motor_recess": {
+      "enabled": true,
+      "diameter": 32.0,
+      "depth": 3.5,
+      "note": "REVISAO 03/09 item 3 (ver 06-PENDENCIAS-ABERTAS): rebaixo no TOPO da flange superior para as cabecas dos 4 x M3 que prendem o motor. Os M3 entram por baixo da chapa R01 (o motor tem furo roscado na base), logo as cabecas ficam ENTRE a chapa e a flange, em r = 12,42 (retangulo 16 x 19). A face superior da flange era um anel solido de r = 11 (furo da torre O22) a r = 30: as cabecas O5,5 (r 9,7 a 15,2) assentavam nela, a chapa nao encostava, o motor ficava 2-3 mm alto apoiado em quatro cabecas e o Datum B = 186 saia errado no mesmo valor. O rebaixo O32 x 3,5 abre r <= 16 (0,8 mm de folga radial sobre a cabeca) e 0,5 mm de folga sobre uma cabeca cilindrica de 3,0. Os 4 furos M4 em PCD 40 (r = 20) ficam FORA do rebaixo: a chapa continua assentando no anel r 16-30 da face original, que e o assento que define o Datum B. Nao cria balanco novo: o piso do rebaixo olha para cima. Alternativa descartada: M3 escareado na chapa de 2 mm (cabe, mas depende da chapa ser cortada e escareada certo e some do modelo)."
+    },
     "flange_hole_pcd": 40.0,
     "flange_hole_diameter": 4.0,
     "flange_hole_angle_offset_deg": 45.0,
