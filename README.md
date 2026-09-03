@@ -54,6 +54,7 @@ Nenhum bloqueador foi ensaiado ainda. **O conjunto não está liberado para gira
 | Saber de onde veio um número | §10 da especificação (memória de cálculo) e [`07-GLOSSARIO-E-PREMISSAS.md`](07-GLOSSARIO-E-PREMISSAS.md) §2; a auditoria da v2.1 está em [`legado/`](legado/LEIA-ME.md) |
 | Ver o que ainda falta | [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md) |
 | Entender um termo, ou saber se um número foi medido | [`07-GLOSSARIO-E-PREMISSAS.md`](07-GLOSSARIO-E-PREMISSAS.md) |
+| Saber o que já foi revisado, e como | [`revisoes/`](revisoes/LEIA-ME.md) |
 
 **Hierarquia de autoridade.** Em caso de conflito: o arquivo de parâmetros do CAD
 manda em cota; a especificação manda em requisito e, no §10, em grandeza física;
@@ -122,6 +123,7 @@ README.md                          este arquivo
 07-GLOSSARIO-E-PREMISSAS.md        vocabulário e o que é medido × assumido
 Hologram_Orbiter_v3_0/             CAD, STLs, montagem, relatórios
 legado/                            v2.0, v2.1 e a auditoria da v2.1, arquivadas
+revisoes/                          revisões independentes, arquivadas por data
 ```
 
 ---
