@@ -8,6 +8,10 @@ tudo girando a 1800 RPM.
 **Na parte fixa** (§8): fonte de bancada, ESC, motor e o gerador do sinal de
 acelerador. Mais o ímã, que é o único elemento fixo que o rotor "vê".
 
+**Revisado em 08/09/2026.** Este documento especifica um circuito e firmware
+planejados. Não há firmware implementado neste pacote nem ensaio elétrico
+aprovado. Buck, chicotes, medição térmica e temporização continuam pendentes.
+
 Diagrama visual: **https://claude.ai/code/artifact/e2f8094c-8807-4ece-806d-f606767c67ab**
 
 ---
@@ -62,15 +66,21 @@ A HD107S em 5 V pede `V_IH ≥ 0,7 × VDD = 3,5 V`; o ESP32-C3 entrega 3,3 V. A
 **Adotado:** `74AHCT125` nos dois sinais. A família AHCT tem entrada TTL
 (V_IH 2,0 V) e saída de 5 V — é exatamente o conversor 3,3 → 5 V.
 
-**Alternativa sem componente:** buck em 4,5 V baixa o limiar para ~3,15 V. Mas
-aí o regulador da placa ESP32 fica sem folga de dropout. Só use se abrir mão de
-alimentar a placa pelo mesmo trilho.
+Ligar os dois `/OE` usados ao GND, fixar as entradas dos canais não usados em
+nível definido e colocar 100 nF cerâmico junto a VCC/GND do CI. A pinagem depende
+do encapsulamento comprado. O capacitor bulk não substitui esse desacoplamento.
+[Datasheet Texas Instruments](https://www.ti.com/lit/ds/symlink/sn74ahct125.pdf).
+
+**Não usar buck em 4,5 V como substituto garantido do buffer.** O limiar de
+~3,15 V continua acima do V_OH mínimo de 0,8 × VDD = 2,64 V especificado para o
+ESP32-C3. O regulador da Super Mini e a fita reais também precisam ser
+identificados. [Datasheet ESP32-C3](https://documentation.espressif.com/esp32-c3_datasheet_en.html).
 
 ## 3. Pinos do ESP32-C3
 
 | Sinal | Pino | Vai para | Nota |
 |---|---|---|---|
-| SPI CLK | GPIO 4 | 74AHCT125 entrada A | 20 MHz (180 colunas) · 30 MHz para 256, DMA |
+| SPI CLK | GPIO 4 | 74AHCT125 entrada A | 20 MHz solicitados, 180 colunas, DMA; medir clock efetivo (§5) |
 | SPI MOSI | GPIO 6 | 74AHCT125 entrada B | dados da cadeia |
 | ÍNDICE | GPIO 3 | saída do A3144 | interrupção na borda de descida |
 | V_BAT | GPIO 0 (ADC) | divisor **150k / 47k** + **100 nF ao GND no pino** | 1,72 V a 7,2 V (LiFe cheia) · corte em 1,38 V (= 5,8 V) |
@@ -83,8 +93,11 @@ A numeração é sugestão. O que importa: CLK e MOSI saindo do periférico SPI,
 
 ## 4. Chicote por longarina
 
-O sulco tem 4,4 × 3 mm. Seis condutores cabem em duas camadas: 2 × AWG 24 mais
-1 × AWG 28 embaixo (3,7 mm), 3 × AWG 28 em cima — 2,35 mm de altura total.
+O sulco tem 4,4 × 3 mm. A topologia exige **seis condutores**: duas vias de
+potência, duas de entrada e duas de retorno da cadeia. A estimativa de duas
+camadas (3,7 × 2,35 mm) depende dos diâmetros **com isolação**, ainda não medidos.
+Conferir a rota inteira com o chicote real, incluindo janelas, diafragmas,
+dobras e saída da fita; não declarar cabimento só pela bitola do cobre.
 
 | Condutor | Bitola | Corrente | Cor | P1 | P2 | P3 |
 |---|---|---:|---|:--:|:--:|---|
@@ -106,34 +119,58 @@ passando pelos vãos dos diafragmas — e volta pelo bolso de fios da ponta
 inferior. **Prenda com kapton a cada 50 mm:** fio solto dentro do painel oscila
 e desbalanceia.
 
-## 5. Orçamento de energia
+## 5. Orçamento de energia e temporização
 
-| Cenário | Potência | Na bateria LiFePO4 2S (6,6 V) | Autonomia 800 mAh |
-|---|---:|---:|---:|
-| Branco pleno, 87 LEDs | 27,3 W | 4,1 A (5C) | 12 min |
-| Conteúdo claro (30 %) | 9,0 W | 1,4 A | 35 min |
-| **Típico POV (15 %)** | **5,1 W** | **0,93 A** | **~50 min** |
+Base de cálculo, **a confirmar na fita real**: 87 × 60 mA × 5 V = **26,1 W**
+de LEDs em branco pleno. Seja `f` a fração efetiva dessa corrente RGB, incluindo
+conteúdo e ajuste de brilho. 15% e 30% são cenários, não perfis medidos.
+O ESP32-C3 acrescenta **0,3 W na saída do buck**, uma única vez. Com eficiência
+assumida de 87,5%: `P_bat = (26,1·f + 0,3)/0,875`, `I_bat = P_bat/6,6` e
+`t = 0,8/I_bat` horas. Consumo adicional do Hall/buffer, rádio, perdas dos fios,
+capacidade útil e eficiência ao longo da descarga devem entrar após medição.
 
-Conteúdo POV é majoritariamente escuro, então 15 % é o caso realista. O branco
-pleno dimensiona o buck e os condutores, não a autonomia.
+| Cenário | P LEDs | P saída buck (LEDs + ESP) | P bateria | I bateria a 6,6 V | Autonomia teórica |
+|---|---:|---:|---:|---:|---:|
+| Branco 100%, referência de dimensionamento | 26,10 W | 26,40 W | 30,17 W | 4,57 A | 10,5 min |
+| Teto provisório de 80% | 20,88 W | 21,18 W | 24,21 W | 3,67 A | 13,1 min |
+| Conteúdo equivalente a 30% | 7,83 W | 8,13 W | 9,29 W | 1,41 A | 34,1 min |
+| Conteúdo equivalente a 15% | 3,915 W | 4,215 W | 4,82 W | 0,730 A | 65,8 min |
 
-A coluna "na bateria" inclui o **rendimento do buck (85–90 %)** e o consumo do
-**ESP32-C3 (~0,3 W)**, que a versão anterior omitia: 5,1 W de LED viram
-5,1/0,875 + 0,3 = 6,13 W na entrada, ou 0,93 A em 6,6 V, e 800 mAh dão ~50 min —
-não os 60 que saíam de dividir 5,1 W por 6,6 V direto. Conte 45 min úteis com o
-corte por tensão.
+**Buck de exatamente 5 A não cobre branco pleno:** são 5,22 A de LEDs mais
+0,06 A do ESP, antes dos demais consumos. Até qualificar o componente real,
+especificar limite de corrente global: **f ≤ 80% e corrente total medida na
+saída ≤ 4,25 A**, valendo o menor limite. Isso é um teto provisório para ensaio,
+não a aprovação de qualquer módulo anunciado como 5 A. Verificar regulação,
+ripple e temperatura com a tensão de entrada de 7,2 até 5,8 V e com a carga
+máxima autorizada. O firmware deverá implementar a limitação antes do primeiro
+acendimento; ainda não está implementado. Branco pleno exige redimensionamento
+ou comprovação de capacidade contínua superior a 5,28 A. A autonomia útil fica
+**pendente de ensaio**; não manter a promessa anterior de 45–50 min.
 
-| Taxa de dados | Quadros/s | Mbit/s | |
-|---|---:|---:|---|
-| 1800 RPM × 180 colunas | 5400 | 15,4 | folgado |
-| 2000 RPM × 180 colunas | 6000 | 17,2 | folgado |
-| 1800 RPM × 256 colunas | 7680 | 22,0 | **não cabe a 20 MHz** — ver abaixo |
+Um quadro planejado tem `32 + 87 × 32 + 44 = 2860 bits`. A quantidade de bits
+de fim deve ser conferida com o lote HD107S real; 44 é a provisão atual da
+cadeia. O buffer DMA pode ter 360 bytes alocados/alinhados, com comprimento de
+transmissão explicitamente definido; se transmitir os 2880 bits, recalcular.
 
-Cadeia única de 87 LEDs = 2859 bits por quadro. SPI a 20 MHz com DMA cobre os
-dois primeiros casos, **não o terceiro**: 22,0 Mbit/s exige clock acima de
-22 MHz. Para 256 colunas, suba o SPI para **30 MHz** — o ESP32-C3 faz, e é o
-limite da própria HD107S. Não há folga acima disso: 256 colunas a 2000 RPM
-pediriam 24,4 Mbit/s e o teto da fita já estaria à vista.
+| RPM × colunas | Quadros/s | Taxa útil | Janela por quadro | Transmissão a 20 MHz | Folga antes do overhead |
+|---|---:|---:|---:|---:|---:|
+| 1800 × 180 | 5400 | 15,444 Mbit/s | 185,19 µs | 143,00 µs | 42,19 µs |
+| 2000 × 180, não liberado | 6000 | 17,160 Mbit/s | 166,67 µs | 143,00 µs | 23,67 µs |
+| 1800 × 256, experimental | 7680 | 21,965 Mbit/s | 130,21 µs | 143,00 µs | −12,79 µs |
+
+Clock solicitado não é clock garantido: no ESP32-C3, pedir 30 MHz com fonte
+de 80 MHz e divisor inteiro resulta normalmente em **26,67 MHz**. Ler a
+frequência efetiva e medir no pino. Nesse clock, 2860 bits duram 107,25 µs;
+256 colunas a 1800 RPM deixam 22,96 µs antes do overhead. A documentação do
+driver dá ordem de **20 µs adicionais por transação de interrupção**: restariam
+~2,96 µs, sem garantia de pior caso. A 2000 RPM/256 colunas a janela é 117,19 µs
+e esse orçamento não fecha. A 2000 RPM/180 colunas em 20 MHz restariam só
+~3,67 µs após esse overhead. Nenhum desses modos é considerado validado.
+[Driver SPI ESP32-C3](https://docs.espressif.com/projects/esp-idf/en/v5.5/esp32c3/api-reference/peripherals/spi_master.html).
+
+Validar com analisador lógico/osciloscópio o clock real, o tempo máximo entre
+quadros e o atraso do índice até a saída, sob a carga de firmware prevista.
+DMA e buffer duplo são escolhas de implementação; não comprovam jitter.
 
 ## 6. Firmware — o mínimo
 
@@ -146,10 +183,15 @@ MAPEAMENTO um quadro = 87 LEDs, na ordem física da cadeia
              LED  0 – 28  → painel 1, ângulo θ
              LED 29 – 57  → painel 2, ângulo θ + 120°
              LED 58 – 86  → painel 3, ângulo θ + 240°
-           os três lêem colunas diferentes do mesmo instante
+           acrescentar a fase correspondente ao instante real de atualização
+           de cada LED, além da calibração de zero do Hall
 
-SPI        20 MHz p/ 180 colunas (30 MHz p/ 256), modo 0, DMA, buffer duplo
+SPI        20 MHz solicitado p/ 180 colunas, modo 0, DMA, buffer duplo
            quadro APA102: 32 bits de início + 87 × 32 + 44 de fim
+           confirmar protocolo do lote HD107S e clock efetivo; ver §5
+
+CORRENTE   limitar soma RGB a f <= 80% e I_saida medida <= 4,25 A
+           reduzir mais se a qualificação do buck real exigir
 
 BATERIA    LiFePO4 2S: 7,2 V cheia · 6,6 no platô · 5,0 vazia
            ATENÇÃO (pendência C7): confirme a ENTRADA MÍNIMA do buck real.
@@ -158,13 +200,21 @@ BATERIA    LiFePO4 2S: 7,2 V cheia · 6,6 no platô · 5,0 vazia
            entrega V_in menos a queda e cai abaixo dos 4,5 V que garantem o
            V_IH da fita. O corte "em 5,8 V pelo dropout do buck" é PREMISSA,
            não datasheet. Mínimo aceitável: <= 5,5 V, ou trocar por buck-boost.
-           ADC a cada 2 s; corte em 1,38 V (= 5,8 V), que é o limite
-           de entrada do buck, não o da química
-           apaga a imagem e pisca um LED de aviso
+           ADC a cada 2 s; aviso/apagamento em 1,38 V (= 5,8 V)
+           o limiar depende do buck real, não é proteção da química
+           apagar a imagem não desconecta ESP/buck/bateria: definir proteção
+           contra descarga profunda e estado de falha antes da integração
            divisor 150k/47k: 8,4 V lê 2,00 V. NÃO use 100k/56k — daria
            3,02 V, e o ADC do ESP32-C3 a 12 dB só é linear até ~2,5 V,
            então bateria cheia cairia na região não linear.
 ```
+
+A atualização óptica precisa ser verificada, pois a HD107S pode atualizar cada
+LED ao receber seu quadro de 32 bits. A 20 MHz, LEDs homólogos de painéis
+consecutivos chegam separados por 29 × 32 / 20 MHz = **46,4 µs**, ou **0,501°**
+a 1800 RPM; entre painéis 1 e 3 são **1,002°**, meia coluna de 180. O mapeamento
+deve compensar esse atraso se confirmado no lote real; não atribuir toda imagem
+tripla à montagem. [Descrição de atualização HD107S, Rose Lighting](https://www.rose-lighting.com/wp-content/uploads/sites/53/2020/05/HD107S-5050-Specificaion-V1.0.1.pdf).
 
 ## 7. Montagem na baia
 
@@ -187,9 +237,9 @@ pelas janelas da parede em Z 0,8–5,8.
 
 **A baia é intrinsecamente assimétrica**, e o esboço mostra quanto: com essas
 massas de catálogo, somados os centróides que o gerador mede na aranha e na
-tampa e o sensor hall, o desbalanceamento nominal é de **63 g·mm a 23°**, sete
+tampa e o sensor hall, o desbalanceamento nominal é de **63,2 g·mm a 23°**, sete
 vezes o admissível. A direção da correção não cai dentro de nenhum alívio, então
-ela é repartida: **2,19 g de tungstênio no alívio de 180° e 0,87 g no de 300°**,
+ela é repartida: **2,19 g de tungstênio no alívio de 180° e 0,86 g no de 300°**,
 na face inferior do cubo (r ≈ 33). O gerador refaz essa conta a cada mudança de
 posição ou massa: **pesar cada peça real e atualizar `mass_g`** antes de fixar.
 Tudo que entrar aqui precisa ficar onde o CAD diz: **1 mm de excentricidade em
@@ -213,7 +263,7 @@ Fonte de bancada ──── ESC LittleBee Spring 20A ──── motor A2212 
 
 Você tem os dois. O gerador de bancada produz o pulso de 1–2 ms sem dificuldade,
 mas **a rampa é a função que importa** — variar a largura de pulso de 1000 para o
-alvo ao longo de 8 segundos — e isso ele não faz bem.
+alvo ao longo de pelo menos 12 segundos — e isso ele não faz bem.
 
 E o ESC **não tem tempo de rampa**: o manual do BLHeli_S expõe *startup power*,
 não duração. A rampa é responsabilidade deste gerador, inteira.
@@ -225,12 +275,16 @@ ARMAÇÃO   ao ligar, manter 1000 µs por ~2 s antes de qualquer coisa.
           O BLHeli_S só arma vendo mínimo estável; sinal ausente ou
           alto na energização = ESC não arma, por segurança.
 
-RAMPA     de 1000 µs até o alvo em >= 8 s, linear.
-          8 s exigem 3,5 A só para acelerar; 12 s baixam para 2,3 A.
+RAMPA     de 1000 µs até o alvo em >= 12 s, linear no comando.
+          Confirmar a rampa de RPM: pulso linear não garante aceleração linear.
+          Com J=0,00155 kg.m² e T_arrasto=51,4 mN.m, 12 s dão 7,30 A
+          de fase e ~4,02 A na fonte de 7 V (eta_ESC=95%).
+          8 s dariam 8,47 A/~4,98 A e reprovam o teto de 8 A/4,6 A.
 
-PARADA    botão físico -> 1000 µs imediato. NÃO corte a alimentação
-          com o rotor girando: sem sinal o ESC entra em modo de falha
-          e o comportamento não é definido.
+PARADA    normal: botão físico -> 1000 µs; confirmar resposta do ESC na bancada.
+          emergência: corte físico da fonte acessível ao operador.
+          Nenhuma ação garante parada imediata; contenção fechada até rotor
+          visivelmente imóvel e pelo menos 90 s após corte (plano de ensaios).
 
 PATAMARES para o Bloqueador A: 600, 1000, 1400 e 1800 RPM, 2 min cada.
 ```
@@ -256,10 +310,13 @@ bancada já estiver ligada — escolha uma fonte só.
 
 ### 8.4 Opcional, mas provavelmente vale
 
-O LittleBee Spring usa um EFM8BB21, que o **Bluejay** suporta. Reflashar é
-gratuito e adiciona **telemetria de rotação por DShot bidirecional** — o Arduino
-passa a ler a rotação real, o que dispensa o tacômetro da lista de instrumentação
-e serve direto aos Bloqueadores A e D.
+O LittleBee Spring usa um EFM8BB21, suportado pelo **Bluejay**. A opção de
+reflash exige identificar o alvo exato e implementar/verificar **DShot
+bidirecional no gerador**, inclusive a conversão de RPM elétrica pelo número
+de pares de polos. Bluejay não aceita o sinal servo PWM de 1–2 ms deste plano;
+reflash isolado interrompe esse controle. Não retirar o tacômetro antes de
+qualificar a leitura de RPM. Ela também não substitui a referência angular
+1/rev necessária ao balanceamento. [FAQ oficial Bluejay](https://github.com/bird-sanctuary/bluejay/wiki/FAQ).
 
 Não adiciona governor. Se o Bloqueador E mostrar imagem instável, a malha se
 fecharia aqui, no Arduino — mas a conta de estabilidade indica que não será

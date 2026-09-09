@@ -1,7 +1,12 @@
 # Lista de componentes — Hologram Orbiter v3.0
 
-Estado em 03/09/2026. Preços em BRL são **estimativas de ordem de grandeza**
+Revisada em 08/09/2026. Preços em BRL são **estimativas de ordem de grandeza**
 para orçamento, não cotações.
+
+Componentes em mãos não significam montagem validada. O buck e a instrumentação
+de temperatura, fase e balanceamento continuam sem qualificação. As massas CAD
+da tabela são referências anteriores à revisão 3.0.4; conferir o relatório
+regenerado e pesar o conjunto com os seis condutores por painel.
 
 Legenda: ✅ já temos · 🛒 comprar · ⚠️ decisão pendente
 
@@ -13,7 +18,7 @@ Todas saem do gerador paramétrico. Ver [`01-ESPECIFICACAO-CAD-v3.0.md`](01-ESPE
 
 | # | Peça | Qtd | Volume (CAD) | Massa maciça (CAD) | Limite | Tempo |
 |---|---|---:|---:|---:|---|---|
-| 01 | Aranha (com pilares e guias da baia) | 1 | 68,3 cm³ | 71,0 g | ≤ 75 g (alvo) | 5–6 h |
+| 01 | Aranha (com pilares e guias da baia) | 1 | 68,3 cm³ | 71,06 g | ≤ 75 g (alvo) | 5–6 h |
 | 02 | Painel LED | 3 | 30,7 cm³ ea. | 31,9 g nu | ≤ 45 g montado | 8–10 h (lote) |
 | 03 | Tampa da baia Ø82 | 1 | 9,7 cm³ | 10,1 g | ≤ 12 g (alvo) | 30 min |
 | 04/05 | Base + torre integradas, 4 abas | 1 | 307 cm³ | 320 g | ≤ 330 g (alvo) | 12–18 h |
@@ -37,7 +42,7 @@ painéis de 208 mm por causa de folga na junta ou no canal.
 | Motor BLDC | **A2212 920KV**, 2–4S, 52 g, eixo M6, base 4×M3 em 16 × 19 mm | ✅ | — |
 | ESC | **LittleBee Spring 20A**, BLHeli_S, 25 × 13 mm | ✅ | — |
 | Fonte de bancada | ajustável; operar em **6–7 V**, ≥ 5 A | ✅ | — |
-| Gerador do sinal do ESC | **Arduino** com rampa e botão de parada — ver §8 do esquema | ✅ | — |
+| Gerador do sinal do ESC | **Arduino em mãos**; firmware de rampa nominal **≥ 12 s** e botão de parada ainda a implementar — ver §8 do esquema | ✅ | — |
 | **Arruela Ø20 × Ø8,5 × 2 mm, alumínio** | cortar da mesma chapa da R01 (a referência de corte traz o disco). O furo precisa passar pelo **colar Ø8 do eixo**, que sobe 5–7 mm acima da campânula: uma arruela M6 assentaria no colar e a porca não apertaria o cubo. Alternativa de prateleira: DIN 125 M8 em aço (Ø16; 3,4 MPa no ABS) | 🛒 | — |
 | **Porca M6 fina DIN 439B** (3 mm) + Loctite 243 | **não** a cônica de 14 mm que veio com o motor, **nem** a autotravante baixa de 6 mm: com o colar até 5–7 mm e a rosca acabando em 12–14, a de 6 mm terminaria no fim do eixo. Apertar a **0,6 N·m** | 🛒 | 2 |
 
@@ -57,13 +62,15 @@ Tudo isto gira junto com o rotor.
 |---|---|:--:|---:|
 | Fita LED | **HD107S 144 LED/m**, RGB, 1 m — medida em **12,0 × 2,0 mm** | ✅ | — |
 | Microcontrolador | **ESP32-C3 Super Mini** (~22 × 18 mm) | ✅ | — |
-| Regulador 5 V | buck **5 V / ≥ 5 A mini560** (22 × 17 × 6 mm, ~2 g), em pé numa ranhura na parede da baia. **Não** XL4015 (51 × 26 × 14, ~18 g): não cabe na baia nem no orçamento de 15 g | 🛒 | 15 |
+| Regulador 5 V | módulo exato **pendente de qualificação** de entrada, corrente contínua e térmica. Mini560 (envelope estimado 22 × 17 × 6 mm, ~2 g) é candidato; **não comprar antes de C7**. Exatamente 5 A não cobre branco pleno; ver limite provisório abaixo | ⚠️ | 15 |
 | Bateria | **LiFePO4 2S 800 mAh 20C**, 58 × 30 × 17 mm, 50 g, 6,6 V | ✅ | — |
-| Conector | XT30 ou JST-XH para carga e balanceamento | 🛒 | 8 |
-| Chave liga/desliga | slide ou toggle miniatura, acesso pela tampa; **curso tangencial** — ver nota | 🛒 | 5 |
+| Conectores | **XT30 para potência** e **JST-XH de 3 vias para balanceamento**; verificar peças e contatos reais | 🛒 | 8 |
+| Chave liga/desliga | componente miniatura com capacidade DC compatível com a corrente de entrada do buck; **curso tangencial** — confirmar datasheet e nota | ⚠️ | 5 |
 | Sensor de índice | **A3144 nu**, dessoldado do módulo HW-477 — **no rotor** | ✅ | — |
 | Resistor de pull-up | 10 kΩ, do sinal do hall para **3,3 V** | 🛒 | 1 |
-| Deslocador de nível | **74AHCT125** para CLK e DATA — ou buck em 4,5 V | 🛒 | 5 |
+| Deslocador de nível | **74AHCT125** para CLK e DATA, com `/OE` definidos e **100 nF cerâmico** junto ao CI; buck em 4,5 V não garante nível lógico | 🛒 | 5 |
+| Divisor da bateria | 150 kΩ / 47 kΩ + 100 nF no ADC; tolerâncias e calibração a verificar | 🛒 | a cotar |
+| Proteção da alimentação | fusível/polyfuse nominal 7,5 A do esquema: selecionar modelo, corrente de manutenção a quente e coordenação com fios/chave | ⚠️ | a cotar |
 | Capacitor de bulk | 1000 µF / 10 V na entrada da fita | 🛒 | 3 |
 | Ímã | neodímio Ø4 × 2 mm — **na parte fixa** | 🛒 | 2 |
 | Fio de potência | **AWG 24**, 2 cores, ~3 m | 🛒 | 12 |
@@ -98,9 +105,9 @@ Tudo isto gira junto com o rotor.
 > oscila de 0 a 3,3 V e a entrada do ESP32-C3, que não tolera 5 V, fica protegida.
 > Pull-up para 5 V queima a porta.
 >
-> **A fita quer V_IH ≥ 3,5 V** e o ESP32-C3 entrega 3,3 V. A 17 Mbit/s isso não é
-> margem. Ou entra o 74AHCT125, ou ajuste o buck para **4,5 V**, o que baixa o
-> limiar para ~3,15 V e resolve sem componente — ao custo de um pouco de brilho.
+> **A fita quer V_IH ≥ 3,5 V**. O 74AHCT125 é a solução adotada. Reduzir o buck
+> para 4,5 V não assegura compatibilidade: o limiar ~3,15 V ainda excede o
+> V_OH mínimo garantido de 2,64 V do ESP32-C3. Ver §2 do esquema e seu datasheet.
 
 > **O pack comprado cabe.** LiFePO4 2S de 58 × 30 × 17 mm deitado ao longo de
 > y, sobre trilhos em Z = 9 que passam por cima da arruela e da porca fina (topo
@@ -115,10 +122,18 @@ Tudo isto gira junto com o rotor.
 > balanceador não há carga célula a célula, e num pack que gira lacrado isso
 > não é aceitável. Carregar sempre em **modo LiFe**.
 
-**Por que 2S e não outra coisa:** a fita é 5 V e puxa **27 W em branco pleno**
-(87 LEDs × 60 mA), com 5,1 W típico em conteúdo POV. O pack LiFePO4 de 800 mAh
-a 6,6 V guarda ~5,3 Wh: ~50 min de conteúdo típico. 2S com buck é o arranjo
-padrão; 1S com boost seria pior em eficiência e corrente.
+**Base de energia:** a hipótese de 60 mA por LED dá **5,22 A / 26,1 W** em
+branco pleno. Com ESP de 0,3 W e buck a 87,5%, seriam 4,57 A na bateria e
+10,5 min teóricos. O cenário de conteúdo equivalente a 15% dá 0,730 A e
+65,8 min teóricos; a autonomia útil depende de medição, não há promessa de
+50 min. O pack guarda 6,6 × 0,8 = 5,28 Wh nominais.
+
+**Limite provisório para planejar a integração:** soma RGB equivalente a no
+máximo **80% do branco e corrente total medida na saída ≤ 4,25 A**, ou menos
+se o buck real exigir. O módulo deve manter regulação de 7,2 até 5,8 V sob a
+carga autorizada e passar em térmica. Esse teto não qualifica um mini560
+genérico; firmware de limitação e ensaio ainda precisam existir. Branco pleno
+requer capacidade contínua superior a 5,28 A. Ver esquema §5 e pendência C7.
 
 ---
 
@@ -154,10 +169,14 @@ padrão; 1S com boost seria pior em eficiência e corrente.
 | Item | Espec | Por quê | Sit. | ~R$ |
 |---|---|---|:--:|---:|
 | **Balança de precisão** | **resolução 0,01 g** | Δm entre painéis ≤ 0,084 g | 🛒 | 60–100 |
-| Termopar tipo K + leitor | sonda de 1,5 mm | bloqueador térmico | 🛒 | 40 |
-| Acelerômetro | MPU6050 | vibração e balanceamento | 🛒 | 15 |
+| Termopar tipo K + leitor | sonda de 1,5 mm, **só em pontos fixos** | chapa/base e referência estática; não ligar cabo à campânula girante | 🛒 | 40 |
+| Medição da temperatura do motor em giro | sistema sem contato qualificado ou sensor embarcado retido | método, emissividade/spot ou telemetria ainda pendentes — bloqueador B | ⚠️ | a cotar |
+| Medição da bateria em giro | sensor calibrado embarcado com telemetria ou registro local | temperatura máxima durante G4, com massa/retensão a incorporar | ⚠️ | a cotar |
+| Acelerometria | duas respostas independentes e aquisição sincronizada; MPU6050 é candidato | matriz de influência em dois planos, não apenas um pico na base | ⚠️ | a cotar |
+| Referência angular fixa 1/rev | sensor óptico ou equivalente, marca no rotor e mesma base de tempo da vibração | fase em G3, quando não há Hall embarcado | ⚠️ | a cotar |
 | Paquímetro digital | 0,01 mm | verificação dimensional | ⚠️ | 30–50 |
-| Tacômetro | dispensável se reflashar o ESC com Bluejay (telemetria DShot) | ⚠️ | 0–40 |
+| Tacômetro | necessário até qualificar leitura alternativa de RPM; Bluejay exige novo gerador DShot bidirecional e não fornece a referência fixa de fase | ⚠️ | 0–40 |
+| Analisador lógico / osciloscópio | resolução adequada a SPI de 20–26,67 MHz | verificar clock efetivo, transações e atraso óptico/índice | ⚠️ | a cotar |
 | Câmera | celular a 240 fps serve | validação visual de jitter | ✅ | — |
 
 > **A resolução da balança é requisito, não conforto.** As versões anteriores
@@ -186,15 +205,18 @@ padrão; 1S com boost seria pior em eficiência e corrente.
 | Estrutura e fixação | 83 |
 | Instrumentação | 75–155 |
 | Consumíveis | 140–180 |
-| **Total estimado** | **345–485** |
+| **Subtotal do orçamento anterior** | **345–485**, sem instrumentação e itens novos a cotar |
 
 Carregador **em modo LiFe** (R$ 60) e paquímetro (R$ 50) entram se ainda não
-houver no laboratório. O tacômetro sai da conta se o ESC for reflashado com
-Bluejay, que entrega a rotação por telemetria.
+houver no laboratório. A instrumentação adicional acima e as proteções impedem
+fechar um total atualizado. Bluejay só dispensa o tacômetro após implementar
+DShot bidirecional no gerador e validar RPM; o sinal servo existente não funciona
+com esse firmware. Nenhuma compra foi realizada por esta revisão.
 
 ### Prioridade de compra
 
-1. **Agora** — bateria, ESP32-C3, regulador, sensor hall, ímã, fio, filamento.
-   São o caminho crítico: sem eles não há como montar nem pesar de verdade.
-2. **Antes da Fase 3** — balança de 0,01 g, termopar, acelerômetro.
+1. **Antes de comprar** — qualificar buck, chave, proteções e instrumentação;
+   conferir os itens já em mãos e os seis fios isolados por painel.
+2. **Antes da Fase 3** — balança de 0,01 g, medição térmica qualificada,
+   duas respostas de vibração independentes e referência fixa 1/rev.
 3. **Depois de medir** — isolador de vibração, se o ensaio de vibração pedir.

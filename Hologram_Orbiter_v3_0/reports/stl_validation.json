@@ -1,5 +1,20 @@
 {
   "all_pass": true,
+  "inventory": {
+    "expected": [
+      "01_aranha_ABS.stl",
+      "02_painel_LED_ABS_1x.stl",
+      "02_painel_LED_ABS_3x_mesma_mesa.stl",
+      "03_tampa_baia_ABS.stl",
+      "04_05_base_torre_ABS_integradas.stl",
+      "06_suporte_ima_ABS.stl",
+      "C01_cupom_junta.stl",
+      "C02_cupom_canal_LED.stl",
+      "R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl"
+    ],
+    "missing": [],
+    "unexpected": []
+  },
   "files": [
     {
       "file": "01_aranha_ABS.stl",
@@ -19,7 +34,7 @@
         85.8884,
         35.0
       ],
-      "signed_volume_cm3": 68.2605,
+      "signed_volume_cm3": 68.3238,
       "degenerate_triangles": 0,
       "non_two_manifold_edges": 0,
       "connected_components": 1,
@@ -33,7 +48,9 @@
         "examples": []
       },
       "coincident_opposite_face_pairs": 0,
-      "winding_clean": true
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
     },
     {
       "file": "02_painel_LED_ABS_1x.stl",
@@ -67,7 +84,9 @@
         "examples": []
       },
       "coincident_opposite_face_pairs": 0,
-      "winding_clean": true
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
     },
     {
       "file": "02_painel_LED_ABS_3x_mesma_mesa.stl",
@@ -101,11 +120,13 @@
         "examples": []
       },
       "coincident_opposite_face_pairs": 0,
-      "winding_clean": true
+      "winding_clean": true,
+      "expected_connected_components": 3,
+      "component_count_ok": true
     },
     {
       "file": "03_tampa_baia_ABS.stl",
-      "triangle_count": 6538,
+      "triangle_count": 6552,
       "dimensions_mm": [
         82.0,
         82.0,
@@ -135,7 +156,9 @@
         "examples": []
       },
       "coincident_opposite_face_pairs": 0,
-      "winding_clean": true
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
     },
     {
       "file": "04_05_base_torre_ABS_integradas.stl",
@@ -169,7 +192,9 @@
         "examples": []
       },
       "coincident_opposite_face_pairs": 0,
-      "winding_clean": true
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
     },
     {
       "file": "06_suporte_ima_ABS.stl",
@@ -203,7 +228,9 @@
         "examples": []
       },
       "coincident_opposite_face_pairs": 0,
-      "winding_clean": true
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
     },
     {
       "file": "C01_cupom_junta.stl",
@@ -237,7 +264,9 @@
         "examples": []
       },
       "coincident_opposite_face_pairs": 0,
-      "winding_clean": true
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
     },
     {
       "file": "C02_cupom_canal_LED.stl",
@@ -271,7 +300,9 @@
         "examples": []
       },
       "coincident_opposite_face_pairs": 0,
-      "winding_clean": true
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
     },
     {
       "file": "R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl",
@@ -305,7 +336,9 @@
         "examples": []
       },
       "coincident_opposite_face_pairs": 0,
-      "winding_clean": true
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
     }
   ]
 }

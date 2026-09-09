@@ -2,14 +2,13 @@
   "project": {
     "name": "Hologram Orbiter",
     "version": "3.0",
-    "revision": "3.0.3 — 03/09/2026: revisao independente 08 aplicada (tres colisoes de montagem P0, balanceamento com os centroides do CAD, tres criterios novos = 54). Antes, 3.0.2: A1-A2 e B1-B11 fechados, desvios ratificados, fixacao do eixo refeita pelo desenho do motor (colar Ø8 x 5-7), layout da baia com contrapeso planejado",
+    "revision": "3.0.4 — 08/09/2026: correcoes locais da revisao completa; fisica recalculada, montagem e pipeline verificados; operacao e lote definitivo de paineis pendentes",
     "units": "mm",
     "source_spec": "../../01-ESPECIFICACAO-CAD-v3.0.md",
     "generated_with": "Blender 5.2 LTS, gerador CAD/generate.py",
     "note": "Toda cota nasce aqui. STL nunca e editado a mao. Valores com verified=false sao provisorios e estao listados em docs/MEDICOES_DE_ENTRADA.md."
   },
-  "status": "PROVISORIO_AGUARDANDO_MEDICOES",
-
+  "status": "PROVISORIO_REVISAO_ESTRUTURAL_E_ENSAIOS_PENDENTES",
   "operating_point": {
     "panel_mid_plane_radius_mm": 100.0,
     "rpm": 1800.0,
@@ -27,16 +26,18 @@
     "stretch_rpm_not_target": 2000.0,
     "rotation_sense": "anti-horario visto de +Z; bordo de ataque em +y"
   },
-
   "loads_from_spec": {
     "note": "Consequencias do ponto de operacao, recalculadas para painel montado de 44,5 g (spec v3.0 secao 2.1 e 10). Energia do painel solto no par unico da spec secao 10 (velocidade no CG, r = 100). REVISAO 03/09 item 26 (ver 06-PENDENCIAS-ABERTAS): os 7,4 J publicados usavam 42,1 g (massa estimada) enquanto o resto das cargas usa o teto de 44,5 g; 0,5 x 0,0445 x 18,85^2 = 7,9 J.",
     "panel_assembled_mass_g": 44.5,
     "centrifugal_force_per_panel_n": 158.1,
-    "tip_deflection_mm": 2.48,
-    "tip_deflection_range_mm": [2.5, 5.0],
-    "tip_deflection_note": "REVISAO 03/09 item 9 (ver 06-PENDENCIAS-ABERTAS): 2,48 mm sai de L = 86 mm (engaste na ponta das torres), I = 910 mm4 e E = 2,3 GPa — hipoteses que nao estavam publicadas. Com o engaste seguro na luva (L = 99) e E = 2,0 GPa do glossario dao 5,0 mm. A folga radial ate o cilindro e conferida pelo TOPO da faixa; a spec secao 10.0 traz a derivacao.",
-    "bending_stress_mpa": 13.9,
-    "safety_factor_bending": 2.5,
+    "tip_deflection_mm": 3.83,
+    "tip_deflection_range_mm": [
+      3.83,
+      7.83
+    ],
+    "tip_deflection_note": "Referencia recalculada em 08/09. Valores efetivos sao gerados por CAD/physics.py desde a secao da malha: Iyy589,8846mm4, cx-0,53095mm, casos L86/99 E2300/2000. Estimativa de viga simplificada, nao liberacao estrutural; a folga usa o maximo calculado em cada build. Folga radial usa teto de aceite45g:7,83mm. Referencia44,5g permanece para comparacao da auditoria.",
+    "bending_stress_mpa": 29.11,
+    "safety_factor_bending": 1.03,
     "rotor_kinetic_energy_j": 27.6,
     "loose_panel_energy_j": 7.9,
     "loose_panel_speed_m_s": 18.9,
@@ -44,15 +45,14 @@
     "admissible_unbalance_g_mm": 8.4,
     "delta_mass_between_panels_g": 0.084,
     "battery_eccentricity_limit_mm": 0.17,
-    "startup_ramp_s": 8.0,
-    "startup_peak_current_a": 8.0
+    "startup_ramp_s": 12.0,
+    "startup_peak_current_a": 7.3,
+    "startup_note": "Rampa LINEAR de RPM >=12s: ~7,30A de fase no caso51,4mNm. Rampa de sinal servo nao garante aceleracao linear. Ensaio limita fonte7V a4,6A; verificar RPM real."
   },
-
   "material": {
     "abs_density_g_cm3": 1.04,
-    "aluminium_density_g_cm3": 2.70
+    "aluminium_density_g_cm3": 2.7
   },
-
   "non_cad_masses_g": {
     "note": "Massas que giram e nao sao impressas. Entram no orcamento do rotor (criterio <= 280 g).",
     "battery_pack": 50.0,
@@ -66,9 +66,10 @@
     "battery_verified": true,
     "battery_source": "pack LiFe 2S 800 mAh comprado, 50 g (glossario secao 2, 02/09/2026)",
     "electronics_allowance_verified": false,
-    "electronics_allowance_note": "A folga de 15 g e conferida contra a soma dos componentes de spider.bay_layout (estimativas, nao pesados). O contrapeso planejado do layout entra a parte no orcamento do rotor."
+    "electronics_allowance_note": "A folga de 15 g e conferida contra a soma dos componentes de spider.bay_layout (estimativas, nao pesados). O contrapeso planejado do layout entra a parte no orcamento do rotor.",
+    "panel_hardware_and_wiring_verified": false,
+    "panel_mass_budget_note": "Ferragens por painel4g permanecem estimativa anterior. Chicote de seis condutores precisa ser pesado e reconciliado com estas ferragens antes de declarar massa total; o subtotal nominal nao garante o teto280g."
   },
-
   "quality": {
     "curve_segments": 96,
     "boolean_solver": "MANIFOLD",
@@ -80,7 +81,6 @@
     "fdm_bore_compensation_note": "Furo central do cubo modelado em 8,00 nominal (H8) para o trecho liso Ø8 do eixo. Se a impressora fechar o furo, alargar com broca/alargador de 8 mm ou ajustar aqui. Um furo maior que o eixo nao tem conserto e desloca 250 g do centro.",
     "winding_scan_pitch_mm": 1.0
   },
-
   "fdm_rules": {
     "nozzle_mm": 0.4,
     "layer_mm": 0.2,
@@ -89,10 +89,12 @@
     "min_hole_mm": 2.0,
     "max_bridge_mm": 15.0,
     "max_overhang_deg": 45.0,
-    "printer_bed_mm": [300.0, 300.0],
+    "printer_bed_mm": [
+      300.0,
+      300.0
+    ],
     "brim_mm": 8.0
   },
-
   "unverified_interfaces": {
     "motor": {
       "model": "A2212 920KV",
@@ -156,13 +158,16 @@
       "washer_material": "aluminio 2 mm, cortada da mesma chapa da R01 (referencia de corte inclui o disco); alternativa de prateleira: DIN 125 M8 em aco (16 x 8,4 x 1,6; 3,4 MPa)",
       "torque_nm": 0.6,
       "verified": false,
-      "note": "A arruela precisa de furo maior que o colar Ø8 do eixo (ver shaft.note) e assenta direto no topo do cubo, sem rebaixo: com o colar subindo ate 5-7 mm e o cubo com 6, qualquer rebaixo poria o colar acima do fundo. Pilha em relacao ao topo do cubo: arruela 0-2, porca 2-5, ponta do eixo em +8 (ou +6 na leitura de 12 mm): sobram 3 mm (ou 1) de rosca. Topo da porca em +5 fica 1 mm abaixo dos trilhos da bateria (Z = 6). A porca autotravante de 6 mm nao cabe em nenhuma leitura: terminaria em +8, no fim do eixo. Pressao no ABS: 500 N / 259 mm2 = 1,9 MPa, o valor da spec secao 5.2."
+      "note": "A arruela precisa de furo maior que o colar Ø8 do eixo (ver shaft.note) e assenta direto no topo do cubo, sem rebaixo: com o colar subindo ate 5-7 mm e o cubo com 6, qualquer rebaixo poria o colar acima do fundo. Pilha em relacao ao topo do cubo: arruela 0-2, porca 2-5, ponta do eixo em +8 (ou +6 na leitura de 12 mm): sobram 3 mm (ou 1) de rosca. Topo da porca em +5 fica 4 mm abaixo dos trilhos da bateria (Z = 9). A porca autotravante de 6 mm nao cabe em nenhuma leitura: terminaria em +8, no fim do eixo. Pressao no ABS: 500 N / 259 mm2 = 1,9 MPa, o valor da spec secao 5.2."
     },
     "led_strip": {
       "width": 12.0,
       "thickness": 2.0,
       "pcb_thickness": 0.4,
-      "led_package_xy": [5.0, 5.0],
+      "led_package_xy": [
+        5.0,
+        5.0
+      ],
       "led_package_height": 1.6,
       "pitch": 6.944,
       "leds_per_panel": 29,
@@ -182,14 +187,17 @@
     },
     "hall_sensor": {
       "package": "HW-477: modulo de 18 x 15 mm com sensor 3144 em TO-92 vertical, LED e pull-up para VCC",
-      "module_board_xy": [18.0, 15.0],
+      "module_board_xy": [
+        18.0,
+        15.0
+      ],
       "module_board_thickness": 1.6,
       "body_width": 4.0,
       "body_height": 3.0,
       "body_thickness": 1.5,
       "module_verified": true,
       "mounting_decided": true,
-      "note": "Decisao 06-PENDENCIAS C3: dessoldar o A3144 do modulo e montar o TO-92 nu no bolso da face inferior do cubo, com pull-up de 10 k para 3,3 V. O modulo inteiro nao sobe no rotor: o pull-up dele vai para VCC (5 V na saida queima o ESP32-C3) e 1,5-2,5 g em r = 29 valem 43-72 g.mm."
+      "note": "Decisao 06-PENDENCIAS C1: dessoldar o A3144 do modulo e montar o TO-92 nu no bolso da face inferior do cubo, com pull-up de 10 k para 3,3 V. O modulo inteiro nao sobe no rotor: o pull-up dele vai para VCC (5 V na saida queima o ESP32-C3) e 1,5-2,5 g em r = 29 valem 43-72 g.mm."
     },
     "magnet": {
       "diameter": 4.0,
@@ -198,17 +206,17 @@
       "polarity": "face positiva do ima aponta para o sensor (repulsao)",
       "polarity_decided_by": "Pedro, 03/09/2026 (pendencia C2)",
       "polarity_bench_confirmed": false,
-      "polarity_note": "ATENCAO antes de colar: o A3144 e unipolar e comuta com o polo SUL apresentado a face MARCADA do TO-92 (familia A314x). 'Face positiva' costuma designar o NORTE do ima. Se as duas convencoes valerem ao pe da letra, o ima fica invertido e nao ha pulso de indice — falha cujo sintoma parece firmware. A nomenclatura nao resolve porque 'positiva' e 'repulsao' dependem do ima de referencia usado no teste. RESOLVER NA BANCADA: A3144 com 3,3 V e pull-up de 10 k, aproximar a face escolhida da face marcada do TO-92 a ~3 mm; a saida tem de ir a nivel BAIXO. So entao colar. Ver 06-PENDENCIAS C2, C3 e C8.",
+      "polarity_note": "ATENCAO antes de colar: o A3144 e unipolar e comuta com o polo SUL apresentado a face MARCADA do TO-92 (familia A314x). 'Face positiva' costuma designar o NORTE do ima. Se as duas convencoes valerem ao pe da letra, o ima fica invertido e nao ha pulso de indice — falha cujo sintoma parece firmware. A nomenclatura nao resolve porque 'positiva' e 'repulsao' dependem do ima de referencia usado no teste. RESOLVER NA BANCADA: A3144 com VCC=5 V e pull-up de 10 k para 3,3 V, aproximar a face escolhida da face marcada do TO-92 a ~3 mm; a saida tem de ir a nivel BAIXO. So entao colar. Ver 06-PENDENCIAS C2, C3 e C8; B_OP maximo35mT a25C,45mT na faixa termica.",
       "verified": false
     },
     "panel_wiring": {
-      "conductors": 4,
+      "conductors": 6,
       "power_gauge": "AWG 24 (5 V e GND)",
-      "signal_gauge": "AWG 28 (DATA e CLK)",
-      "bundle_width_mm": 4.6,
-      "bundle_height_mm": 3.2,
-      "verified": true,
-      "source": "spec v3.0 secao 6.3"
+      "signal_gauge": "AWG 28: DATA/CLK entrada e retorno",
+      "bundle_width_mm": 3.7,
+      "bundle_height_mm": 2.35,
+      "verified": false,
+      "source": "Estimativa geometrica do esquema05; medir isolacao e chicote pronto de seis condutores, igual nos3paineis"
     },
     "containment": {
       "inner_diameter": 266.0,
@@ -228,21 +236,134 @@
       "note": "Janela na tampa (x 19-29, y +-12) sobre a placa de interface do layout (spider.bay_layout): chave slide e conector JST-XH montados no topo da placa dentro dessa faixa. Confirmar quando a placa existir."
     }
   },
-
   "panel": {
     "height": 208.0,
     "chord": 30.0,
     "max_thickness": 8.0,
     "shell_wall": 2.0,
     "end_skin": 2.0,
-    "profile_outer_xy": [[-1.0, -15.0], [1.0, -15.0], [4.0, -5.0], [4.0, 11.0], [3.696, 12.531], [2.828, 13.828], [1.531, 14.696], [0.0, 15.0], [-1.531, 14.696], [-2.828, 13.828], [-3.696, 12.531], [-4.0, 11.0], [-4.0, -5.0]],
-    "profile_cavity_xy": [[0.0, -11.0], [2.0, -5.0], [2.0, 11.0], [1.848, 11.765], [1.414, 12.414], [0.765, 12.848], [0.0, 13.0], [-0.765, 12.848], [-1.414, 12.414], [-1.848, 11.765], [-2.0, 11.0], [-2.0, -5.0]],
+    "profile_outer_xy": [
+      [
+        -1.0,
+        -15.0
+      ],
+      [
+        1.0,
+        -15.0
+      ],
+      [
+        4.0,
+        -5.0
+      ],
+      [
+        4.0,
+        11.0
+      ],
+      [
+        3.696,
+        12.531
+      ],
+      [
+        2.828,
+        13.828
+      ],
+      [
+        1.531,
+        14.696
+      ],
+      [
+        0.0,
+        15.0
+      ],
+      [
+        -1.531,
+        14.696
+      ],
+      [
+        -2.828,
+        13.828
+      ],
+      [
+        -3.696,
+        12.531
+      ],
+      [
+        -4.0,
+        11.0
+      ],
+      [
+        -4.0,
+        -5.0
+      ]
+    ],
+    "profile_cavity_xy": [
+      [
+        0.0,
+        -11.0
+      ],
+      [
+        2.0,
+        -5.0
+      ],
+      [
+        2.0,
+        11.0
+      ],
+      [
+        1.848,
+        11.765
+      ],
+      [
+        1.414,
+        12.414
+      ],
+      [
+        0.765,
+        12.848
+      ],
+      [
+        0.0,
+        13.0
+      ],
+      [
+        -0.765,
+        12.848
+      ],
+      [
+        -1.414,
+        12.414
+      ],
+      [
+        -1.848,
+        11.765
+      ],
+      [
+        -2.0,
+        11.0
+      ],
+      [
+        -2.0,
+        -5.0
+      ]
+    ],
     "profile_note": "Coordenadas validadas da spec secao 5.1. O gerador insere na cavidade o recuo da parede local do canal (led_channel.local_wall) na faixa |y| <= width/2 + local_wall_band_margin.",
     "ribs": {
       "thickness": 1.0,
-      "z_positions": [-70.0, -35.0, 0.0, 35.0, 70.0],
-      "scale_xy": [1.08, 1.015],
-      "wire_gap_y": [-1.5, 2.5],
+      "z_positions": [
+        -70.0,
+        -35.0,
+        0.0,
+        35.0,
+        70.0
+      ],
+      "scale_xy": [
+        1.08,
+        1.015
+      ],
+      "wire_gap_y": [
+        -1.5,
+        2.5
+      ],
       "wire_gap_note": "Cada diafragma e cortado em duas metades (dianteira e traseira) para deixar passar o feixe de fios pela cavidade. Cada metade continua travando as duas paredes."
     },
     "led_channel": {
@@ -261,36 +382,67 @@
       "sleeve_length": 24.0,
       "sleeve_width_y": 15.2,
       "sleeve_height_z": 10.2,
-      "socket_width": 11.2,
-      "socket_height": 6.2,
-      "socket_depth": 22.5,
-      "screw_x_positions": [-20.0, -10.0],
+      "screw_x_positions": [
+        -20.0,
+        -10.0
+      ],
       "screw_hole_diameter": 3.2,
       "tower_diameter": 10.0,
       "tower_height": 36.0,
       "nut_hex_circumradius": 3.35,
       "nut_pocket_depth": 2.8,
       "web_thickness": 2.4,
-      "web_x_range": [-26.0, -2.5],
-      "web_note": "Alma central em y=0 que liga flanco da carenagem, torres, luva e parede da lamina em toda a altura (faz o papel dos gussets Z=+-4,8..+-18 da spec)."
+      "web_x_range": [
+        -26.0,
+        -2.5
+      ],
+      "web_note": "Alma central em y=0 que liga flanco da carenagem, torres, luva e parede da lamina em toda a altura (faz o papel dos gussets Z=+-4,8..+-18 da spec).",
+      "socket_dimensions_note": "Derivadas por CAD/parameters.py: largura/altura=espiga+2*joint_xy_clearance_each_side; profundidade=tenon_tip_radius-shoulder_radius+joint_bottom_clearance. Nao duplicar cotas."
     },
     "fairing": {
       "wall": 0.8,
       "half_height": 18.0,
       "flat_flank_x": -26.0,
       "flat_flank_y_half": 7.6,
-      "nose_center_xy": [-14.9, 7.6],
-      "nose_semi_axes": [11.1, 6.4],
+      "nose_center_xy": [
+        -14.9,
+        7.6
+      ],
+      "nose_semi_axes": [
+        11.1,
+        6.4
+      ],
       "blade_overlap": 0.2,
       "blade_flat_face_x": -4.0,
-      "blade_flat_y_range": [-5.0, 11.0],
-      "blade_taper_end_xy": [-1.0, -15.0],
-      "tail_xy": [-13.5, -35.0],
+      "blade_flat_y_range": [
+        -5.0,
+        11.0
+      ],
+      "blade_taper_end_xy": [
+        -1.0,
+        -15.0
+      ],
+      "tail_xy": [
+        -13.5,
+        -35.0
+      ],
       "end_caps": false,
-      "wire_window_y": [-7.4, -2.6],
-      "wire_window_z": [5.4, 10.0],
-      "blade_wire_hole_y": [-6.2, -2.6],
-      "blade_wire_hole_z": [6.0, 9.5],
+      "wire_window_y": [
+        -7.4,
+        -2.6
+      ],
+      "wire_window_z": [
+        5.4,
+        10.0
+      ],
+      "blade_wire_hole_y": [
+        -6.2,
+        -2.6
+      ],
+      "blade_wire_hole_z": [
+        6.0,
+        9.5
+      ],
       "note": "Casca em gota, extrudada em Z, aberta em Z=+-18 para acesso aos parafusos. Flanco interno plano em x=-26 (face de contato), nariz eliptico em +y, cauda em y=-35. Lado da lamina e a propria parede interna da lamina."
     },
     "print": {
@@ -299,7 +451,6 @@
     },
     "mass_limit_assembled_g": 45.0
   },
-
   "spider": {
     "hub_diameter": 92.0,
     "hub_thickness": 6.0,
@@ -313,13 +464,54 @@
     "electronics_bay_height": 29.0,
     "lid_post_spacing": 70.0,
     "lid_post_axis": "y",
-    "lid_post_spacing_note": "Postes encostados na parede interna da baia (r 30,7 a 39,3 com o transpasse), no eixo y (azimutes 90 e 270 graus), entre os bracos. A spec ainda diz 58 mm, que era o valor da baia Ø66; com 58 os postes ficariam soltos no meio da baia, 6 mm longe da parede. No eixo x o poste de +x caia sobre a raiz do braco 1 (r 38-39,3) e a tangencia gerava aresta nao-manifold.",
+    "lid_post_spacing_note": "Postes encostados na parede interna da baia (r 30,7 a 39,3 com o transpasse), no eixo y (azimutes 90 e 270 graus), entre os bracos. Os58mm eram da baia66; com 58 os postes ficariam soltos no meio da baia, 6 mm longe da parede. No eixo x o poste de +x caia sobre a raiz do braco 1 (r 38-39,3) e a tangencia gerava aresta nao-manifold.",
     "lid_post_diameter": 8.0,
     "lid_post_hole_diameter": 2.8,
     "lid_post_hole_depth": 12.0,
     "lid_post_ring_overlap": 0.3,
     "arm": {
-      "airfoil_yz": [[-7.5, 3.0], [-4.5, 1.0], [2.5, 0.0], [4.6, 0.5], [6.3, 1.7], [7.5, 3.0], [6.3, 4.3], [4.6, 5.5], [2.5, 6.0], [-4.5, 5.0]],
+      "airfoil_yz": [
+        [
+          -7.5,
+          3.0
+        ],
+        [
+          -4.5,
+          1.0
+        ],
+        [
+          2.5,
+          0.0
+        ],
+        [
+          4.6,
+          0.5
+        ],
+        [
+          6.3,
+          1.7
+        ],
+        [
+          7.5,
+          3.0
+        ],
+        [
+          6.3,
+          4.3
+        ],
+        [
+          4.6,
+          5.5
+        ],
+        [
+          2.5,
+          6.0
+        ],
+        [
+          -4.5,
+          5.0
+        ]
+      ],
       "chord": 15.0,
       "height": 6.0,
       "root_radius": 38.0,
@@ -328,7 +520,32 @@
       "tenon_width": 11.0,
       "tenon_height": 6.0,
       "tenon_overlap_into_beam": 0.2,
-      "root_blend_xy": [[39.0, -14.0], [41.0, -13.5], [46.0, -7.5], [46.0, 7.5], [41.0, 13.5], [39.0, 14.0]],
+      "root_blend_xy": [
+        [
+          39.0,
+          -14.0
+        ],
+        [
+          41.0,
+          -13.5
+        ],
+        [
+          46.0,
+          -7.5
+        ],
+        [
+          46.0,
+          7.5
+        ],
+        [
+          41.0,
+          13.5
+        ],
+        [
+          39.0,
+          14.0
+        ]
+      ],
       "root_blend_note": "Alargamento da raiz em planta, sobre o disco, da parede da baia (r 39-41) ate a borda do cubo (r 46). Aumenta a area colada ao disco e a rigidez no plano. Fica fora dos rasgos de refrigeracao (que comecam em 30 graus).",
       "root_gusset": {
         "enabled": true,
@@ -337,7 +554,10 @@
         "width": 11.0,
         "note": "Cunha a 45 graus sob o braco, da borda inferior do disco (r = 46, Z = -6) ate a face inferior do braco em r = 52. E o fillet cubo->braco pedido em 06-PENDENCIAS B11: remove o canto reentrante onde o braco deixa o disco, no ponto que carrega 158 N. A 45 graus imprime sem suporte."
       },
-      "screw_radii": [80.0, 90.0],
+      "screw_radii": [
+        80.0,
+        90.0
+      ],
       "screw_hole_diameter": 3.2
     },
     "cooling_slots": {
@@ -368,13 +588,34 @@
       "note": "Bolso na face inferior do cubo para o TO-92 nu, face sensivel para baixo, terminais sobem por rasgo ate a baia, debaixo da placa de interface (onde esta o pull-up). Ima fixo no suporte 06 em r=29, mesmo azimute (20 graus) na base: pulso de indice quando o braco 1 esta em +x da base. Era 30 graus; 20 tira o rasgo de cima de um pilar da placa e fica a 17 graus do alivio de massa."
     },
     "wire_route": {
-      "bay_window_radial": [38.5, 42.0],
-      "bay_window_y": [-10.0, -5.5],
-      "bay_window_z": [0.8, 5.8],
-      "root_pocket_radial": [41.3, 48.0],
-      "root_pocket_y": [-10.0, 0.0],
-      "groove_radial": [48.0, 70.0],
-      "groove_y": [-4.4, 0.0],
+      "bay_window_radial": [
+        38.5,
+        42.0
+      ],
+      "bay_window_y": [
+        -10.0,
+        -5.5
+      ],
+      "bay_window_z": [
+        0.8,
+        5.8
+      ],
+      "root_pocket_radial": [
+        41.3,
+        48.0
+      ],
+      "root_pocket_y": [
+        -10.0,
+        0.0
+      ],
+      "groove_radial": [
+        48.0,
+        70.0
+      ],
+      "groove_y": [
+        -4.4,
+        0.0
+      ],
       "groove_floor_z": 2.3,
       "note": "Janela na parede da baia (r 39-41; 1,2 mm livre do poste da tampa), bolso largo no topo da raiz (r 41,3-48) e sulco 4,4 x ~3 mm na face superior do braco, lado de fuga, de r=48 a 70 (4 mm antes do ombro). A espiga nao e furada."
     },
@@ -383,7 +624,10 @@
       "pack_width_x": 30.0,
       "pack_height": 17.0,
       "clearance": 0.25,
-      "rail_x_positions": [-12.0, 12.0],
+      "rail_x_positions": [
+        -12.0,
+        12.0
+      ],
       "rail_width": 3.0,
       "rail_length_y": 52.0,
       "rail_height": 9.0,
@@ -409,8 +653,8 @@
         "guide_depth": 6.5,
         "guide_height": 22.0,
         "board_clearance": 0.4,
-        "wall_gap": 0.3,
-        "note": "Duas guias radiais fundidas a parede da baia formam uma ranhura em que a placa desce em pe; retencao por atrito e um ponto de cola ou abracadeira."
+        "wall_gap": 1.5,
+        "note": "Duas guias radiais fundidas a parede da baia formam uma ranhura em que a placa desce em pe; retencao por atrito e um ponto de cola ou abracadeira. Revisao3.0.4: folga radial1,5mm (era0,3), recua buck/guia1,2mm para dentro e elimina interferencia com a raiz sem aproximar do ESP32."
       },
       "ring_fence": {
         "wall": 1.0,
@@ -428,8 +672,15 @@
           "id": "interface",
           "label": "Placa de interface: 74AHCT125, pull-up 10 k, divisor 150k/47k, polyfuse 7,5 A, chave slide, JST-XH 3 vias (perfboard 20 x 15)",
           "mass_g": 5.5,
-          "size_xyz": [15.0, 20.0, 8.0],
-          "center_xy": [27.0, 5.0],
+          "size_xyz": [
+            15.0,
+            20.0,
+            8.0
+          ],
+          "center_xy": [
+            27.0,
+            5.0
+          ],
           "z_bottom": 6.0,
           "mount": "standoffs",
           "note": "Sob a janela da tampa (x 19-29, y +-12): chave e conector no topo da placa, dentro dessa faixa. Os terminais do hall sobem pelo rasgo em r=28,2, 20 graus (26,5, 9,6), debaixo desta placa, onde esta o pull-up. Deslocada +5 em y para o pilar nao invadir a faixa do feixe do braco 1."
@@ -438,8 +689,15 @@
           "id": "esp32c3",
           "label": "ESP32-C3 Super Mini (22,5 x 18 x 5)",
           "mass_g": 3.0,
-          "size_xyz": [18.0, 22.5, 5.0],
-          "center_xy": [-27.0, 0.0],
+          "size_xyz": [
+            18.0,
+            22.5,
+            5.0
+          ],
+          "center_xy": [
+            -27.0,
+            0.0
+          ],
           "z_bottom": 6.0,
           "mount": "standoffs",
           "note": "USB-C para -y; acesso com a tampa removida. Posicao praticamente unica: 0,75 mm da parede do berco e 1,3 mm da parede da baia."
@@ -448,11 +706,15 @@
           "id": "buck",
           "label": "Buck 5 V / 5 A mini560 (22 x 17 x 6), em pe numa ranhura na parede",
           "mass_g": 2.0,
-          "size_xyz": [6.0, 17.0, 22.0],
+          "size_xyz": [
+            6.0,
+            17.0,
+            22.0
+          ],
           "wall_azimuth_deg": 140.0,
           "z_bottom": 0.0,
           "mount": "wall_slot",
-          "note": "size_xyz = (espessura radial, largura tangencial, altura). Indutor para dentro. NAO usar XL4015 (51 x 26 x 14, ~18 g): estoura a folga de 15 g sozinho."
+          "note": "Indutor para dentro. Envelope e guias recuados1,2mm radialmente (wall_gap1,5) para livrar raiz do braco. Nao trocar por XL4015 sem refazer layout e massas; conferir modulo real."
         },
         {
           "id": "capacitor",
@@ -460,7 +722,10 @@
           "mass_g": 2.5,
           "diameter": 10.0,
           "height": 20.0,
-          "center_xy": [22.5, -22.0],
+          "center_xy": [
+            22.5,
+            -22.0
+          ],
           "z_bottom": 0.0,
           "mount": "ring_fence",
           "note": "Na saida do buck; posicionado no lado +x para reduzir o desbalanceamento do conjunto."
@@ -469,7 +734,10 @@
           "id": "wiring",
           "label": "Fios internos, solda, termorretratil",
           "mass_g": 2.0,
-          "center_xy": [0.0, 0.0],
+          "center_xy": [
+            0.0,
+            0.0
+          ],
           "mount": "none"
         }
       ],
@@ -480,9 +748,8 @@
       }
     },
     "mass_limit_g": 75.0,
-    "mass_limit_note": "Alvo. Os 55 g da spec secao 5.2 sao anteriores ao cubo Ø92 e a baia de 26 mm (+18 g, 06-PENDENCIAS B10); o limite que vale e o do rotor (280 g)."
+    "mass_limit_note": "Alvo75g para cubo92/baia29; teto do rotor280g permanece, massas reais pendentes."
   },
-
   "lid": {
     "diameter": 82.0,
     "height": 5.0,
@@ -499,13 +766,18 @@
       "note": "Copos para massa adesiva no topo da tampa: plano 2 de balanceamento (binario), a 0, 60, ... 300 graus (fora dos furos dos postes em 90/270). Volume 96 mm3 cada: ~1 g de massa de tungstenio (34 g.mm em r=34) ou ~0,14 g de massa adesiva comum."
     },
     "access_window": {
-      "x_range": [19.0, 29.0],
-      "y_range": [-12.0, 12.0]
+      "x_range": [
+        19.0,
+        29.0
+      ],
+      "y_range": [
+        -12.0,
+        12.0
+      ]
     },
     "mass_limit_g": 12.0,
     "mass_limit_note": "Alvo. Os 8 g da spec secao 5.3 sao anteriores ao Ø82: so a pele de 1,6 mm em Ø82 ja tem 8,8 g."
   },
-
   "base_tower": {
     "footprint_diameter": 280.0,
     "footprint_verified": false,
@@ -553,7 +825,18 @@
       "hole_radius": 149.0,
       "note": "Abas na face externa do anel, altura da pista (8 mm), furo Ø5 para grampo ou parafuso na bancada (spec secao 5.4, 06-PENDENCIAS B5). Sao 4 a 90 graus e nao 3 a 120 porque so os cantos da mesa de 300 x 300 tem lugar: uma aba a 165 graus chegaria a x = -151 e nao caberia nem sem brim. Nos cantos (45 graus) a aba termina em |x| = |y| = 110 e o brim de 8 mm fica em 118 << 150. Tres delas bastam para grampear."
     },
-    "wire_window": {"size_xyz": [20.0, 12.0, 12.0], "center_xyz": [10.0, 0.0, 20.0]},
+    "wire_window": {
+      "size_xyz": [
+        20.0,
+        12.0,
+        12.0
+      ],
+      "center_xyz": [
+        10.0,
+        0.0,
+        20.0
+      ]
+    },
     "lateral_vents": {
       "count": 8,
       "width": 12.0,
@@ -573,7 +856,6 @@
     "mass_limit_g": 330.0,
     "mass_note": "Alvo da spec secao 5.4 (<= 330 g). Peca estatica: massa ali nao prejudica; o custo e tempo de impressao."
   },
-
   "containment_cap": {
     "enabled": false,
     "outer_diameter": 280.0,
@@ -587,7 +869,6 @@
     "min_free_area_mm2": 600.0,
     "note": "DESATIVADA em 03/09/2026 (06-PENDENCIAS B7: involucro fora de escopo). A geometria fica aqui para o caso de o involucro voltar ao projeto: enabled=true gera de novo a peca 07 (placa Ø280 sobre anel de assento com a canaleta da base, 13 furos de ventilacao)."
   },
-
   "motor_plate": {
     "width": 60.0,
     "depth": 60.0,
@@ -602,14 +883,16 @@
       "note": "Disco da arruela do eixo (m6_nut.washer_*), cortado da mesma chapa de aluminio 2 mm; sai na referencia de corte DXF/SVG ao lado da chapa."
     }
   },
-
   "magnet_bracket": {
     "tab_thickness": 2.5,
     "arc_inner_radius": 18.5,
     "arc_outer_radius": 24.5,
     "arc_half_angle_deg": 58.0,
     "bolt_hole_diameter": 4.3,
-    "bolt_azimuths_deg": [-45.0, 45.0],
+    "bolt_azimuths_deg": [
+      -45.0,
+      45.0
+    ],
     "arm_width": 10.0,
     "post_diameter": 8.0,
     "post_radius": 29.0,
@@ -620,23 +903,53 @@
     "magnet_pocket_depth": 2.2,
     "note": "Suporte do ima (peca 06) preso sob DOIS parafusos M4 da flange (r=20, -45 e +45 graus): arco de r 18,5 a 24,5 com os furos abertos para dentro (garfo com boca de ~3 mm), mais um braco radial ate o poste em r=29, 20 graus (mesmo azimute do sensor no cubo). Dois pontos de fixacao impedem a rotacao da aba, que era presa por um unico parafuso e definia sozinha a fase da imagem (06-PENDENCIAS B4). O arco passa a 4,6 mm da campanula (Ø27,8). Os dois M4 sob a aba precisam de 20 mm em vez de 16 (chapa 2 + aba 2,5 + flange 8 + porca). Os fios de fase do motor devem sair pelo lado oposto ao arco (-x)."
   },
-
   "coupons": {
-    "joint_block": [34.0, 24.0, 12.0],
-    "led_slice_z_range": [-104.0, -74.0],
+    "joint_block": [
+      34.0,
+      24.0,
+      12.0
+    ],
+    "led_slice_z_range": [
+      -104.0,
+      -74.0
+    ],
     "led_note": "O cupom C02 e uma fatia real da ponta inferior do painel (30 mm): pele de ponta, bolso de fios, inicio do canal 12,4 x 2,0, piso de 0,8 e cavidade atras. Testa exatamente a ponte de 12,4 mm que o lote vai imprimir, com a fita real."
   },
-
   "assembly": {
     "panel_mid_plane_above_datum_b": 3.0,
     "panel_radius": 100.0,
     "note": "Datum B = piso 4 + torre 150 + chapa 2 + conjunto motor 30 (24 medidos + cubo 6) = 186 mm (calculado no gerador). Os paineis sao posicionados no raio MEDIDO na malha da aranha (ombro + 26), nao no valor nominal."
   },
-
   "drag_estimate": {
-    "cd_range_frontal": [0.30, 0.40],
+    "cd_range_frontal": [
+      0.3,
+      0.4
+    ],
     "target_a_cd_mm2": 350.0,
     "desirable_a_cd_mm2": 250.0,
     "note": "Estimativa por tabela de razao de finura (Hoerner), nao CFD. Area frontal = largura radial do boss x altura das torres."
+  },
+  "release": {
+    "operation_released": false,
+    "definitive_panel_manufacture_released": false,
+    "reason": "Secao resistente corrigida; transferencia de carga, ABS FDM, fluencia, massas reais e bloqueadores fisicos ainda nao validados."
+  },
+  "requirements": {
+    "panel_mass_max_g": 45.0,
+    "rotor_mass_max_g": 280.0,
+    "panel_radius_mm": 100.0,
+    "panel_radius_tolerance_mm": 0.1,
+    "datum_d_mm": 104.0,
+    "datum_d_tolerance_mm": 0.2
+  },
+  "physics_assumptions": {
+    "motor_kv": 920.0,
+    "effective_resistance_ohm": 0.221,
+    "extra_loss_w": 0.7,
+    "thermal_resistance_k_w": 3.5,
+    "ambient_c": 25.0,
+    "esc_efficiency": 0.95,
+    "source_voltage_v": 7.0,
+    "abs_strength_mpa": 30.0
   }
 }

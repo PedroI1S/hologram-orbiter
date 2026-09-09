@@ -1,5 +1,7 @@
 # Plano de projeto — Hologram Orbiter v3.0
 
+**Atualização local 08/09, revisão 3.0.4:** fabricação definitiva dos painéis e giro dependem de fechar a revisão estrutural e qualificar a instrumentação do plano 04. O CAD é provisório.
+
 ---
 
 ## 1. O que o projeto entrega
@@ -23,7 +25,7 @@ Entregáveis finais:
 | Cadeia de acionamento | ✅ A2212 920KV · ESC LittleBee Spring 20A · fonte de bancada · gerador Arduino |
 | Cadeia óptica | ✅ HD107S 144/m · ESP32-C3 · A3144 nu no rotor |
 | Especificação CAD | ✅ escrita, corrigida e alinhada ao CAD em 03/09 |
-| Modelo CAD | ✅ regenerado em 03/09 (rev. 3.0.3): 54 de 54 critérios, medidos na malha; revisão independente 08 aplicada |
+| Modelo CAD | ⚠️ rev. local 3.0.4: 56 critérios geométricos; resistência e ensaios continuam pendentes |
 | Compras | 🔄 motor, ESC, fita, ESP32-C3, bateria LiFe e hall em mãos; faltam buck, shifter, ímã, ferragens, chapa e filamento |
 | Medições | ⚠️ colar e ponta do eixo a partir da face de apoio; massa real da eletrônica |
 | Isolamento de vibração | ⚠️ montagem rígida; o ensaio de impacto decide |
@@ -160,7 +162,7 @@ da eletrônica de bordo.
 | Motor aquece além do previsto | média | alto | curva térmica sem estabilizar | ventilação da baia; é o fator que decide |
 | Partida sensorless falha | **média** | médio | travamento na rampa | rampa de 12 s; duty alto; ESC sensored |
 | Δm entre painéis fora | média | médio | pesagem em G1 | massa adesiva; reimpressão |
-| Eletrônica mais pesada que o catálogo | média | médio | pesagem das peças reais (folga do rotor: 1,4 g) | mini560 em vez de XL4015; polyfuse em vez de porta-fusível; alívios mais fundos |
+| Eletrônica mais pesada que o catálogo | média | médio | pesagem das peças reais (massa completa e chicotes ainda não reconciliados) | mini560 em vez de XL4015; polyfuse em vez de porta-fusível; alívios mais fundos |
 | Vibração acima do limite | baixa | médio | FFT em G3 | balanceamento em dois planos |
 | Fluência do painel em operação | **média** | alto | ponta afastando entre medições | limitar tempo contínuo; medir deflexão a quente |
 | Falha estrutural do painel | baixa | **crítico** | trinca na inspeção | SF 2,5 — inspecionar entre patamares |
@@ -176,11 +178,7 @@ centrífuga é estática**. Num rotor de eixo vertical, nem a força centrífuga
 peso mudam de direção em relação ao painel — nenhum dos dois cicla a 30 Hz. Os
 ciclos de fadiga reais são as **partidas e paradas**, que serão dezenas.
 
-O risco de verdade é **fluência**: ABS a 12–14 MPa e 40–50 °C perde cerca de
-metade do módulo em ~100 h de carga sustentada. A deflexão da ponta cresce de
-2,5 para 4–5 mm e a junta relaxa. Não há FEA no escopo — a mitigação é medir a
-posição da ponta antes e depois de uma hora a temperatura (Bloqueador B) e
-limitar o tempo de operação contínua.
+A **fluência** permanece um bloqueador: a seção revisada eleva a tensão do modelo uniforme a ~29,1 MPa no teto de 45 g. Não há lei medida deste ABS FDM que sustente a previsão anterior de perda de metade do módulo em 100 h. Primeiro fechar resistência e transferência de carga; depois executar o ensaio de crescimento sob carga do bloqueador B, sem presumir vida útil por extrapolação.
 
 O que **de fato** cicla a 30 Hz é a vibração de desbalanceamento, e é por isso
 que o Bloqueador C importa.
@@ -217,3 +215,7 @@ já está escrito no plano de ensaios.
 | [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md) | o que ainda falta |
 | [`07-GLOSSARIO-E-PREMISSAS.md`](07-GLOSSARIO-E-PREMISSAS.md) | vocabulário e origem de cada número |
 | [`legado/`](legado/LEIA-ME.md) | v2.0, v2.1 e a auditoria que as reprovou — histórico, não referência |
+
+## Condições atualizadas para os portões
+
+Antes de G1: fechar a seção resistente e a transferência de carga/FDM/fluência; cupons de calibração não liberam o lote de painéis. Em G3 usar lastro representativo da distribuição final e referência angular fixa sincronizada, pois o Hall embarcado só entra em G4. Qualificar a medição térmica sem cabos em superfícies girantes e o método de dois planos antes de registrar aprovação. Repetir os ensaios aplicáveis em G4 com bateria, chicotes, sensores e retenções finais; reconciliar a massa completa contra 280 g.

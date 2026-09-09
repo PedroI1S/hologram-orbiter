@@ -45,6 +45,8 @@ PROJECT_ROOT = HERE.parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 from probe import MeshProbe  # noqa: E402
+from parameters import load_parameters  # noqa: E402
+from physics import calculate_physics  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -53,13 +55,13 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--parameters", type=Path, default=HERE / "parameters.json")
     parser.add_argument("--output-dir", type=Path, default=PROJECT_ROOT / "exports")
+    parser.add_argument("--report-dir", type=Path, default=PROJECT_ROOT / "reports")
     parser.add_argument("--no-render", action="store_true")
     return parser.parse_args(argv)
 
 
 ARGS = parse_args()
-with ARGS.parameters.open("r", encoding="utf-8") as stream:
-    P = json.load(stream)
+P = load_parameters(ARGS.parameters)
 
 SEGMENTS = int(P["quality"]["curve_segments"])
 BOOL_SOLVER = P["quality"]["boolean_solver"]
@@ -793,6 +795,42 @@ def bay_layout_checks(components: list[dict]) -> dict:
     return {"ok": not problems, "problems": problems, "standoffs": pillars}
 
 
+def measure_bay_intersections(spider: bpy.types.Object) -> dict:
+    """Intersect component envelopes with the FINAL mesh, including arm roots.
+
+    Touching the support plane is allowed; positive overlap above numerical
+    tolerance is not. This complements, rather than replaces, envelope checks.
+    """
+    results = []
+    for c in bay_layout_components():
+        if not c.get("plan"):
+            continue
+        cx, cy = c["center_xy"]
+        z0, z1 = c["z_range"]
+        if "diameter" in c:
+            envelope = cylinder("audit_envelope", c["diameter"] / 2, z1 - z0,
+                                (cx, cy, (z0 + z1) / 2), vertices=32)
+        else:
+            envelope = cube("audit_envelope", tuple(c["size_xyz"]),
+                            (cx, cy, (z0 + z1) / 2),
+                            rotation_z_deg=c.get("wall_azimuth_deg", 0.0))
+        sample = duplicate(spider, "audit_intersection")
+        activate(sample)
+        modifier = sample.modifiers.new("audit_exact", "BOOLEAN")
+        modifier.operation = "INTERSECT"
+        modifier.solver = "EXACT"
+        modifier.object = envelope
+        bpy.ops.object.modifier_apply(modifier=modifier.name)
+        volume = mesh_volume_centroid(sample)[0] if sample.data.polygons else 0.0
+        results.append({"component": c["id"], "intersection_mm3": round(abs(volume), 6)})
+        delete_object(sample)
+        delete_object(envelope)
+    tolerance = 0.001
+    return {"ok": all(r["intersection_mm3"] <= tolerance for r in results),
+            "tolerance_mm3": tolerance, "components": results,
+            "method": "Boolean INTERSECT EXACT, final spider mesh versus component envelopes"}
+
+
 def bay_balance(components: list[dict], stats: dict | None = None) -> dict:
     """Desbalanceamento estático nominal do rotor e contrapeso que o corrige.
 
@@ -800,7 +838,8 @@ def bay_balance(components: list[dict], stats: dict | None = None) -> dict:
     ignorava tudo o que o próprio CAD já mede. As peças impressas não são
     axissimétricas — a aranha tem pilares, ranhura do buck, cerca, rasgo do
     hall; a tampa tem a janela de acesso — e o `geometry_report` publica os
-    centróides. Cada um deles sozinho passa do admissível de 8,4 g·mm:
+    centróides. Aranha e tampa passam individualmente de 8,4 g·mm;
+    o hall soma 5,8 g·mm e também precisa entrar no vetor:
 
         aranha  (−0,125, 0,085) × 67,5 g = 10,2 g·mm
         tampa   (−0,947, 0)     × 10,1 g =  9,6 g·mm
@@ -2040,7 +2079,7 @@ def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, rend
     }
 
 
-def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
+def compute_report(stats: dict, measured: dict, assembly: dict, physics: dict) -> dict:
     q = P["panel"]
     f = q["fairing"]
     b = q["boss"]
@@ -2059,6 +2098,7 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
         + ncm["battery_pack"]
         + ncm["m6_nut_and_washer"]
         + ncm["onboard_electronics_allowance"]
+        + ncm["hall_sensor_bare"]
     )
 
     frontal_width = f["blade_flat_face_x"] - f["flat_flank_x"]
@@ -2096,7 +2136,8 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
     shaft_tip_hi = sh["protrusion_above_bell"] - sp["hub_thickness"]
     shaft_tip_lo = sh.get("protrusion_alt_mm", sh["protrusion_above_bell"]) - sp["hub_thickness"]
 
-    deflection_worst = max(P["loads_from_spec"].get("tip_deflection_range_mm") or [P["loads_from_spec"]["tip_deflection_mm"]])
+    deflections = [case["tip_deflection_mm"] for case in physics["flexure"]["acceptance_limit_cases"]]
+    deflection_worst = max(deflections)
 
     layout = bay_layout_components()
     layout_checks = bay_layout_checks(layout)
@@ -2105,6 +2146,7 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
     rotor_total_with_cw = rotor_total + counterweight
 
     return {
+        "physics": physics,
         "panel": {
             "bare_mass_g": panel_mass_bare,
             "assembled_mass_g": round(panel_assembled, 2),
@@ -2112,7 +2154,7 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
             "datum_d_mm": round(0.0 - stats["panel_each"]["bounds_min_mm"][2], 3),
             "abs_centroid_z_mm": panel_cg_z,
             "assembled_centroid_z_estimate_mm": round(cg_assembled, 2),
-            "assembled_centroid_note": "Estimativa com fita (6,2 g) e ~1,2 g de fios descendo pela cavidade até a ponta inferior. Momento parasita na junta = F × deslocamento.",
+            "assembled_centroid_note": "Estimativa histórica com 1,2 g de fios: não validada para o chicote de seis condutores; pesar e recalcular CG e ferragens antes da montagem operacional.",
             "parasitic_moment_n_mm": round(force * abs(cg_assembled), 1),
             "centrifugal_force_n_with_cad_mass": round(force, 1),
             "led_floor_nominal_mm": round(cx["floor_thickness"], 3),
@@ -2197,13 +2239,11 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
         },
         "containment": {
             **containment_geometry(),
-            # Revisão 08, item 9: a folga é conferida pelo TOPO da faixa de
-            # deflexão, não pelo valor nominal de 2,48 mm, que supõe engaste na
-            # ponta das torres e E = 2,3 GPa.
+            # The envelope is recalculated from the actual section every build.
             "rotor_dynamic_radius_mm": round(P["operating_point"]["image_cylinder_diameter_mm"] / 2 + deflection_worst, 2),
             "radial_clearance_mm": round(containment_geometry()["cylinder_inner_radius"] - (P["operating_point"]["image_cylinder_diameter_mm"] / 2 + deflection_worst), 2),
             "tip_deflection_used_mm": deflection_worst,
-            "tip_deflection_range_mm": P["loads_from_spec"].get("tip_deflection_range_mm"),
+            "tip_deflection_range_mm": [round(min(deflections), 3), round(max(deflections), 3)],
             "peripheral_holes": "removidos (abas de grampo no lugar)" if not P["base_tower"]["peripheral_holes"]["enabled"] else "PCD %.0f" % P["base_tower"]["peripheral_holes"]["pcd"],
         },
         "containment_cap": {
@@ -2224,12 +2264,15 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
             ],
             **layout_checks,
             **balance,
+            "mesh_intersections": measured["bay_intersections"],
         },
         "rotor": {
             "cad_mass_g": round(rotor_cad, 2),
             "total_mass_estimate_g": round(rotor_total_with_cw, 2),
             "total_without_counterweight_g": round(rotor_total, 2),
-            "limit_g": 280.0,
+            "limit_g": P["requirements"]["rotor_mass_max_g"],
+            "mass_budget_complete": ncm["panel_hardware_and_wiring_verified"],
+            "mass_budget_note": ncm["panel_mass_budget_note"],
             "components": {
                 "spider": stats["spider"]["estimated_mass_g"],
                 "panels_bare_x3": round(3 * panel_mass_bare, 2),
@@ -2239,6 +2282,7 @@ def compute_report(stats: dict, measured: dict, assembly: dict) -> dict:
                 "battery": ncm["battery_pack"],
                 "nut_washer": ncm["m6_nut_and_washer"],
                 "electronics_allowance": ncm["onboard_electronics_allowance"],
+                "hall_sensor": ncm["hall_sensor_bare"],
                 "counterweight_planned": counterweight,
             },
         },
@@ -2294,7 +2338,7 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     add("Casca da carenagem", rp["fairing_wall_measured_mm"], "%.1f ±0,05 mm" % q["fairing"]["wall"], num_ok(rp["fairing_wall_measured_mm"], q["fairing"]["wall"] - 0.05, q["fairing"]["wall"] + 0.05), "medido no flanco plano")
     min_wall_candidates = [v for v in (rp["fairing_wall_measured_mm"], rp["led_floor_measured_mm"], rs["hub_rim_outside_slots_mm"], P["lid"]["skin_thickness"], q["ribs"]["thickness"]) if v is not None]
     min_wall = min(min_wall_candidates)
-    add("Menor parede estrutural do modelo", round(min_wall, 2), "≥ 0,8 mm", min_wall >= 0.8, "mínimo entre piso do canal, casca da carenagem, borda do disco fora dos rasgos, pele da tampa e nervuras (1,0 mm, conforme spec §5.1)")
+    add("Parede estrutural nas seções amostradas", round(min_wall, 2), "≥ %.2f mm" % P["fdm_rules"]["min_structural_wall_mm"], min_wall >= P["fdm_rules"]["min_structural_wall_mm"], "Amostras: piso do canal, flanco da carenagem, borda do disco, pele da tampa e nervuras; não certifica a espessura mínima global da malha")
 
     # -- enrolamento --
     for label, scan in (("painel", rp["winding_scan"]), ("aranha", rs["winding_scan"]), ("tampa", report["lid"]["winding_scan"]), ("base", rb["winding_scan"]), ("suporte do ímã", report["magnet_bracket"]["winding_scan"])):
@@ -2352,7 +2396,11 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
 
     # -- layout da baia (D2) --
     bay = report["bay_layout"]
-    add("Layout da baia: envelope, interferências e faixas dos feixes", "ok" if bay["ok"] else "; ".join(bay["problems"]), "tudo dentro de r = 38,5 e Z ≤ 25, sem interferência, piso livre nas faixas dos feixes", bay["ok"], "%d componentes; pilares em %s" % (len([c for c in bay["components"] if c["z_range_mm"]]), bay["standoffs"]))
+    add("Layout da baia: envelopes e faixas dos feixes", "ok" if bay["ok"] else "; ".join(bay["problems"]), "envelopes dentro da baia, Z ≤ %.1f; piso livre para feixes" % (sp["electronics_bay_height"] - 1), bay["ok"], "%d componentes; pilares em %s" % (len([c for c in bay["components"] if c["z_range_mm"]]), bay["standoffs"]))
+    collisions = bay["mesh_intersections"]
+    add("Eletrônica sem interseção com a malha final da aranha", [c["intersection_mm3"] for c in collisions["components"]], "≤ %.3f mm³ por envelope (tolerância numérica)" % collisions["tolerance_mm3"], collisions["ok"], "Inclui raízes dos braços e suportes; módulos reais ainda precisam de medição")
+    section_checks = report["physics"]["stl_section_checks"]
+    add("Seção de flexão confere com cortes da malha", [round(c["measured"]["Iyy_mm4"], 4) for c in section_checks], "integrais da seção iguais nos parâmetros e em três cortes", all(c["matches_parameters"] for c in section_checks), "Verifica o cálculo geométrico; não certifica resistência, fluência ou ABS FDM")
     add("Eletrônica embarcada (estimada) dentro da folga", bay["electronics_mass_g"], "≤ %.0f g" % bay["allowance_g"], bay["electronics_mass_g"] <= bay["allowance_g"] + 1e-9, "massas de catálogo, não pesadas; o XL4015 sozinho (~18 g) estouraria")
     # Revisão 08, item 11: o vetor agora soma os centróides das peças impressas
     # e o sensor hall, e o contrapeso é repartido entre os dois alívios que
@@ -2378,12 +2426,12 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     add("Área livre de ventilação do cubo", rs["cooling_free_area_mm2"], "≥ 300 mm², sem abrir a baia", rs["cooling_free_area_mm2"] >= 300.0 and rs["bay_wall_to_slot_mm"] >= 0.0, "3 rasgos de 60° fora da baia (r %.1f–%.1f)" % (sp["cooling_slots"]["inner_radius"], sp["cooling_slots"]["outer_radius"]))
     add("Área livre de ventilação da base", rb["lateral_vent_area_mm2"], "≥ 600 mm², na lateral", rb["lateral_vent_area_mm2"] >= 600.0, "8 janelas na parede lateral da baia")
     a_cd_hi = report["boss_drag"]["a_cd_range_mm2"][1]
-    add("A × Cd do boss carenado", report["boss_drag"]["a_cd_range_mm2"], "≤ 350 mm²", a_cd_hi <= 350.0, "estimativa por razão de finura, não CFD")
+    add("A × Cd do boss carenado", report["boss_drag"]["a_cd_range_mm2"], "≤ %.1f mm²" % P["drag_estimate"]["target_a_cd_mm2"], a_cd_hi <= P["drag_estimate"]["target_a_cd_mm2"], "estimativa por razão de finura, não CFD")
 
     # -- massas --
-    add("Massa por painel montado", rp["assembled_mass_g"], "≤ 45 g", rp["assembled_mass_g"] <= 45.0)
-    add("Massa do rotor completo", report["rotor"]["total_mass_estimate_g"], "≤ 280 g", report["rotor"]["total_mass_estimate_g"] <= 280.0, "inclui bateria (50 g medidos), fitas, ferragens, folga de eletrônica de 15 g e o contrapeso planejado de %.1f g" % report["rotor"]["components"]["counterweight_planned"])
-    add("Massa da aranha", rs["mass_g"], "≤ %.0f g (alvo)" % sp["mass_limit_g"], rs["mass_g"] <= sp["mass_limit_g"], "alvo revisto: os 55 g da spec são anteriores ao cubo Ø92 e à baia de 26")
+    add("Subtotal nominal por painel", rp["assembled_mass_g"], "≤ %.2f g" % q["mass_limit_assembled_g"], rp["assembled_mass_g"] <= q["mass_limit_assembled_g"], "Chicote de seis condutores e ferragens reais ainda não reconciliados; não é aceite de massa final")
+    add("Subtotal nominal do rotor", report["rotor"]["total_mass_estimate_g"], "≤ %.2f g" % report["rotor"]["limit_g"], report["rotor"]["total_mass_estimate_g"] <= report["rotor"]["limit_g"], "Inclui Hall e contrapeso; completar orçamento dos chicotes antes do aceite de massa")
+    add("Massa da aranha", rs["mass_g"], "≤ %.0f g (alvo)" % sp["mass_limit_g"], rs["mass_g"] <= sp["mass_limit_g"], "alvo para cubo Ø92 e baia de 29 mm")
     add("Massa da tampa", report["lid"]["mass_g"], "≤ %.0f g (alvo)" % P["lid"]["mass_limit_g"], report["lid"]["mass_g"] <= P["lid"]["mass_limit_g"], "alvo revisto para Ø82")
     if rb["mass_limit_g"]:
         add("Massa da base + torre", rb["mass_g"], "≤ %.0f g (alvo)" % rb["mass_limit_g"], rb["mass_g"] <= rb["mass_limit_g"], "peça estática; o custo é tempo de impressão")
@@ -2393,7 +2441,9 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     add("Contato da base", 0.0, "sem balanço; ≤ 0,2 mm em 3 pontos a 120°", True, "no CAD é plano; verificar na peça impressa")
     nm = sum(s["non_manifold_edges"] for s in stats.values())
     add("Malhas (arestas não-manifold no gerador)", nm, "0", nm == 0, "validação independente em reports/stl_validation.json")
-    add("Base + brim cabe na mesa", rb["footprint_with_brim_mm"], "≤ 300 mm", rb["footprint_with_brim_mm"] <= 300.0, "extensão medida na malha (com abas) %.1f + 2 × %.0f de brim" % (rb["footprint_extent_measured_mm"], P["fdm_rules"]["brim_mm"]))
+    bed = P["fdm_rules"]["printer_bed_mm"]
+    base_xy = [stats["base_tower"]["dimensions_mm"][i] + 2 * P["fdm_rules"]["brim_mm"] for i in (0, 1)]
+    add("Base + brim cabe na mesa", base_xy, "≤ %s mm (X e Y)" % bed, all(v <= limit for v, limit in zip(base_xy, bed)), "envelope medido em cada eixo, com o brim configurado")
     fl = rb["floor_under_flange_bolt_solid_mm"]
     add("Piso da baia íntegro sob os furos da flange", fl, "sólido de Z = 0 até a flange inferior (12)", fl is not None and abs(fl[0]) < 0.05 and fl[1] >= P["base_tower"]["central_floor_thickness"] + P["base_tower"]["flange_thickness"] - 0.05, "06-PENDENCIAS B3; furos só na flange superior: %s" % rb["upper_flange_hole_free"])
     # NOVO (revisão de 03/09, item 3). As cabeças dos M3 do motor ficam entre a chapa
@@ -2436,7 +2486,7 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
         qc = P["containment_cap"]
         add("Tampa: aberturas menores que a seção do painel", cap["max_opening_mm"], "≤ %.0f mm" % qc["max_opening_diameter"], cap["max_opening_mm"] <= qc["max_opening_diameter"], "%d furos" % len(cap["holes"]))
         add("Tampa: área livre de ventilação", cap["free_area_mm2"], "≥ %.0f mm²" % qc["min_free_area_mm2"], cap["free_area_mm2"] >= qc["min_free_area_mm2"])
-        add("Tampa + brim cabe na mesa", cap["footprint_with_brim_mm"], "≤ 300 mm", cap["footprint_with_brim_mm"] <= 300.0)
+        add("Tampa + brim cabe na mesa", cap["footprint_with_brim_mm"], "≤ %s mm" % bed, cap["footprint_with_brim_mm"] <= min(bed))
     return checks
 
 
@@ -2447,6 +2497,8 @@ def write_acceptance_md(checks: list[dict], path: Path) -> None:
         "Verificação automática a partir do modelo (spec §9). Gerado por `CAD/generate.py`.",
         "Valores marcados como medidos vêm de traçado de raios na malha final (`CAD/probe.py`),",
         "não dos parâmetros de entrada.",
+        "**CAD provisório: aprovação geométrica não libera giro nem fabricação definitiva dos painéis.**",
+        "Consulte `FISICA.json` e os bloqueadores de resistência, fluência, massa e instrumentação.",
         "",
         "| Critério | Valor no modelo | Requisito | Resultado | Nota |",
         "|---|---:|---|:---:|---|",
@@ -2467,7 +2519,7 @@ def write_acceptance_md(checks: list[dict], path: Path) -> None:
 def main() -> None:
     output_dir = ARGS.output_dir.resolve()
     stl_dir = output_dir / "stl"
-    report_dir = PROJECT_ROOT / "reports"
+    report_dir = ARGS.report_dir.resolve()
     stl_dir.mkdir(parents=True, exist_ok=True)
     report_dir.mkdir(parents=True, exist_ok=True)
 
@@ -2548,6 +2600,7 @@ def main() -> None:
         "lid": measure_simple(lid, 1.0),
         "base": measure_base(base_tower),
         "magnet_bracket": measure_simple(magnet_bracket, 0.5),
+        "bay_intersections": measure_bay_intersections(spider),
     }
     shoulders = [v for v in measured["spider"]["shoulder_radius_mm"] if v is not None]
     panel_radius = (sum(shoulders) / len(shoulders) - P["panel"]["boss"]["contact_face_x"]) if shoulders else P["assembly"]["panel_radius"]
@@ -2556,11 +2609,14 @@ def main() -> None:
     assembly = assemble_and_save(parts, output_dir, render_preview=not ARGS.no_render, panel_radius=panel_radius)
 
     print("[9/9] Escrevendo relatórios...")
-    derived = compute_report(stats, measured, assembly)
+    physics = calculate_physics(P, triangles_of(panel))
+    derived = compute_report(stats, measured, assembly, physics)
     checks = acceptance(derived, stats, measured)
     report = {
         "project": P["project"],
         "status": P["status"],
+        "release": P["release"],
+        "all_geometry_checks_pass": all(c["passa"] for c in checks),
         "operating_point": P["operating_point"],
         "geometry": stats,
         "derived": derived,
@@ -2571,13 +2627,61 @@ def main() -> None:
         json.dump(report, stream, indent=2, ensure_ascii=False)
         stream.write("\n")
     write_acceptance_md(checks, report_dir / "ACEITACAO.md")
+    (report_dir / "FISICA.json").write_text(json.dumps(physics, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    write_validation_summary(report, report_dir / "RELATORIO_VALIDACAO.md")
     for c in checks:
         print(f"  {'OK   ' if c['passa'] else 'FALHA'} {c['criterio']}: {c['valor']} ({c['requisito']})")
     print(f"Concluído: {output_dir}")
     sys.stdout.flush()
     sys.stderr.flush()
     if bpy.app.background:
-        os._exit(0)
+        os._exit(0 if all(c["passa"] for c in checks) else 1)
+
+
+def write_validation_summary(report: dict, path: Path) -> None:
+    """Generated from this build: the previous hand-maintained report drifted."""
+    d = report["derived"]
+    physics = d["physics"]
+    section = physics["section"]
+    checks = report["acceptance"]
+    rows = ["# Relatório de validação CAD — v3.0.4", "",
+            "Gerado por CAD/generate.py na mesma execução de geometry_report.json e FISICA.json.",
+            "**PROVISÓRIO: não libera operação nem fabricação definitiva dos painéis.**", "",
+            "## Geometria", "",
+            f"Critérios: {sum(c['passa'] for c in checks)}/{len(checks)}. Ver ACEITACAO.md para requisitos e cobertura.",
+            "A validação dos STL exportados aparece em stl_validation.json; o build só publica se ela também passar.", "",
+            "| Peça | Massa CAD (g) | Dimensões (mm) | Triângulos |", "|---|---:|---|---:|"]
+    for key, value in report["geometry"].items():
+        rows.append(f"| {key} | {value['estimated_mass_g']} | {value['dimensions_mm']} | {value['triangles']} |")
+    rows += ["", "## Física", "",
+             f"Iyy da seção = {section['Iyy_mm4']:.4f} mm⁴; centroide x = {section['centroid_x_mm']:.5f} mm.",
+             "As integrais são comparadas com três cortes da malha. Propriedades FDM e engaste não certificados.", "",
+             "| Massa usada | L (mm) | E (MPa) | Deflexão (mm) | Tensão máxima (MPa) |",
+             "|---:|---:|---:|---:|---:|"]
+    for mass, cases in ((physics['flexure']['design_panel_mass_g'], physics['flexure']['envelope_cases']),
+                        (physics['flexure']['acceptance_mass_limit_g'], physics['flexure']['acceptance_limit_cases'])):
+        for c in cases:
+            rows.append(f"| {mass} | {c['unsupported_length_mm']} | {c['modulus_mpa']} | {c['tip_deflection_mm']:.3f} | {c['max_bending_stress_mpa']:.3f} |")
+    rows += ["", f"Folga radial calculada com o teto de massa: {d['containment']['radial_clearance_mm']:.2f} mm.",
+             "Carga uniforme simplificada: não representa certificação de resistência ou fluência.", "",
+             "## Acionamento", "",
+             f"Regime: {physics['drive']['steady']['phase_current_a']:.2f} A de fase, {physics['drive']['steady']['input_power_w']:.2f} W / {physics['drive']['steady']['source_current_a']:.2f} A na fonte de 7 V.",
+             "Rampa nominal >= 12 s de RPM; conferir aceleração e corrente reais no bloqueador D."]
+    for c in physics['drive']['startup']:
+        rows.append(f"- {c['ramp_s']:.0f} s: {c['phase_current_a']:.2f} A de fase / {c['source_current_a']:.2f} A na fonte.")
+    rows += ["", "## Montagem e orçamento nominal", "",
+             f"Interseções da eletrônica com aranha: {d['bay_layout']['mesh_intersections']['components']}.",
+             f"Contrapesos nominais: {d['bay_layout']['counterweight_placement']}.",
+             f"Subtotal do rotor: {d['rotor']['total_mass_estimate_g']:.2f} g, limite {d['rotor']['limit_g']:.0f} g.",
+             d['rotor']['mass_budget_note'], "",
+             "| Referência global | Z (mm) |", "|---|---:|",
+             f"| Datum B, topo do cubo | {d['assembly']['datum_b_z_mm']} |",
+             f"| Trilhos/fundo da bateria | {d['assembly']['datum_b_z_mm']+d['spider']['battery_floor_z_mm']} |",
+             f"| Topo da bateria | {d['assembly']['datum_b_z_mm']+d['spider']['battery_top_z_mm']} |",
+             f"| Ponta do eixo | {d['assembly']['shaft_top_z_mm']} |", "",
+             "## Ainda não verificado", "",
+             "Resistência e fluência do painel impresso, caminho de carga, massas/chicotes reais, instrumento de fase e térmica, dropout do buck, polaridade/entreferro reais e contenção. Ver 06-PENDENCIAS-ABERTAS-v3.0.md."]
+    path.write_text("\n".join(rows)+"\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

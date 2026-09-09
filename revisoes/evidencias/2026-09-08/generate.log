@@ -1,0 +1,79 @@
+/tmp/hologram-orbiter-review-hBBGKZ/Hologram_Orbiter_v3_0/CAD/generate.py:1805: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat.use_nodes = True
+BlenderMCP: cannot start server in background mode (blender -b) - commands would never execute
+BlenderMCP: run Blender with a GUI, or use a virtual display: xvfb-run -a blender
+BlenderMCP addon registered
+[1/9] Modelando painel...
+[2/9] Modelando aranha...
+[3/9] Modelando tampa...
+[4/9] Modelando base + torre...
+[5/9] Modelando suporte do ímã, cupons e chapa de referência...
+[6/9] Exportando STL...
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+[7/9] Medindo a malha e calculando o relatório geométrico...
+[8/9] Salvando BLEND e renderizando prévia...
+Info: Saved as "Hologram_Orbiter_v3_0.blend"
+[9/9] Escrevendo relatórios...
+  OK    Raio do plano médio do painel: 100.0 (100 ±0,1 mm)
+  OK    Datum D: 104.0 (104 ±0,2 mm)
+  OK    Δh entre painéis: 0.0 (≤ ±0,5 mm)
+  OK    Ponta da espiga: [96.0, 96.0, 96.0] (96 ±0,1 mm)
+  OK    Profundidade do socket: 22.5 (22.5 ±0,1 mm)
+  OK    Parede entre o fundo do socket e a cavidade: 1.5 (≥ 1,2 mm)
+  OK    Piso sob o canal do LED: 0.8 (≥ 0,6 mm (nominal 0.80))
+  OK    Terra entre o piso e a parede de 2,0: 2.8 (≥ 2,0 mm (parede local 2,8 em 1 mm de cada lado do canal))
+  OK    Furos M3 livres em toda a torre: [True, True] (livres (sem pino de casca invertida))
+  OK    Bolso da porca M3 e torre: [2.8, 2.8] (bolso 2.8 ±0,1 mm; torre sólida de −15,2 a +18, só o socket (z ±3.1) a interrompe)
+  OK    Parede ao redor do bolso de porca: 1.65 (≥ 1,5 mm)
+  OK    Casca da carenagem: 0.8 (0.8 ±0,05 mm)
+  OK    Menor parede estrutural do modelo: 0.8 (≥ 0,8 mm)
+  OK    Enrolamento por raios — painel: [0, 0] (0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm)
+  OK    Enrolamento por raios — aranha: [0, 0] (0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm)
+  OK    Enrolamento por raios — tampa: [0, 0] (0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm)
+  OK    Enrolamento por raios — base: [0, 0] (0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm)
+  OK    Enrolamento por raios — suporte do ímã: [0, 0] (0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm)
+  OK    Furo do cubo livre: True (livre)
+  OK    Rebaixo da arruela: 0.0 (0.0 ±0,1 mm (zero: arruela no topo do cubo))
+  OK    Pele sobre os alívios do cubo: 2.0 (≥ 2,0 mm)
+  OK    Arruela passa pelo colar Ø8.0 do eixo: 0.5 (furo − colar ≥ 0,3 mm)
+  OK    Porca não toca o colar do eixo: 1.0 (topo da arruela ≥ topo do colar + 0,5 mm)
+  OK    Rosca sobrando acima da porca: 3.0 (≥ 1 mm)
+  OK    Trilhos do berço acima da porca: 9.0 (≥ 5.0 mm (topo da porca))
+  OK    Fundo da bateria acima da ponta do eixo: [1.0, 3.0] (≥ 1,0 mm nas duas leituras do eixo (14 e 12 mm sobre a campânula))
+  OK    Assento da arruela livre acima do cubo: 10.5 (menor raio sólido ≥ 10.3 mm (raio da arruela + 0,3))
+  OK    Bateria cabe na baia sobre a porca: 26.0 (≤ 29 mm)
+  OK    Berço da bateria dentro da baia (meia-diagonal): 32.26 (≤ 39 mm)
+  OK    Layout da baia: envelope, interferências e faixas dos feixes: ok (tudo dentro de r = 38,5 e Z ≤ 25, sem interferência, piso livre nas faixas dos feixes)
+  OK    Eletrônica embarcada (estimada) dentro da folga: 15.0 (≤ 15 g)
+  OK    Contrapeso planejado do layout: [2.19, 0.87] (cabe nos alívios (≤ 13.9 g cada) e deixa resíduo ≤ 8.4 g·mm)
+  OK    Área livre de ventilação do cubo: 475.6 (≥ 300 mm², sem abrir a baia)
+  OK    Área livre de ventilação da base: 1152.0 (≥ 600 mm², na lateral)
+  OK    A × Cd do boss carenado: [237.6, 316.8] (≤ 350 mm²)
+  OK    Massa por painel montado: 42.14 (≤ 45 g)
+  OK    Massa do rotor completo: 278.59 (≤ 280 g)
+  OK    Massa da aranha: 70.99 (≤ 75 g (alvo))
+  OK    Massa da tampa: 10.12 (≤ 12 g (alvo))
+  OK    Massa da base + torre: 319.8 (≤ 330 g (alvo))
+  OK    Perpendicularidade torre/base: 0.0 (≤ 1°)
+  OK    Contato da base: 0.0 (sem balanço; ≤ 0,2 mm em 3 pontos a 120°)
+  OK    Malhas (arestas não-manifold no gerador): 0 (0)
+  OK    Base + brim cabe na mesa: 296.0 (≤ 300 mm)
+  OK    Piso da baia íntegro sob os furos da flange: [0.0, 12.0] (sólido de Z = 0 até a flange inferior (12))
+  OK    Rebaixo da flange livra as cabeças dos M3 do motor: [3.5, 16.0] (profundidade ≥ 3.3 mm e raio livre ≥ 15.5 mm)
+  OK    Abas de grampo com furo livre: True (livre)
+  OK    Fita de 201,4 mm cabe no canal: 102.9 (≤ 104 mm (topo do painel))
+  OK    Suporte do ímã com dois pontos de fixação: 2 (≥ 2 parafusos)
+  OK    Folga do suporte do ímã à campânula: 4.6 (≥ 2 mm)
+  OK    Canaleta de assento dentro da pista: [2.8, 2.8] (lábios ≥ 1,2 mm)
+  OK    Cilindro encomendado cabe na canaleta: [0.2, 0.2] (folga ≥ 0 nos dois lados)
+  OK    Folga radial rotor → cilindro encomendado: 24.0 (≥ 10 mm após deflexão)
+  OK    Folga vertical topo do rotor → borda do cilindro encomendado: 17.0 (≥ 10 mm)
+Concluído: /tmp/hologram-orbiter-review-hBBGKZ/Hologram_Orbiter_v3_0/exports

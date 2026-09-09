@@ -1,9 +1,13 @@
-# Guia de impressão — v3.0 (revisão 3.0.3, 03/09/2026)
+# Guia de impressão — v3.0 (revisão 3.0.4, 08/09/2026)
 
 Bico 0,4 mm, camada 0,2 mm, ABS em câmara fechada (spec §7). Mesa de
 300 × 300 mm. Não altere a escala nem "conserte" os STL no fatiador: eles são
 estanques, orientados e passaram no teste de enrolamento por raios; qualquer
 cota muda em `CAD/parameters.json`.
+
+**Lote definitivo dos painéis suspenso:** a revisão da seção resistente aumentou
+a deflexão calculada. Os cupons podem ser usados para calibração; a geometria
+provisória e o perfil abaixo não certificam resistência/fluência do lote.
 
 ## Sequência
 
@@ -14,8 +18,7 @@ cota muda em `CAD/parameters.json`.
    aberto. O C02 é uma fatia real de 30 mm da ponta do painel, impressa na
    mesma orientação: se a ponte de 12,4 mm do piso sair boa aqui, sai boa no
    lote.
-2. Ajustar `quality.joint_xy_clearance_each_side` ou compensações se preciso e
-   regenerar.
+2. Ajustar `quality.joint_xy_clearance_each_side` e regenerar. O socket e o cupom usam a mesma folga derivada em `CAD/parameters.py`; conferir a dimensão após regenerar.
 3. `02_painel_LED_ABS_3x_mesma_mesa.stl` — os três painéis no mesmo lote, mesmo
    filamento, mesmo perfil. Pesar os três: Δm ≤ 0,084 g é o alvo depois de
    montados; anotar.
@@ -119,4 +122,4 @@ centro e não tem conserto.
 - todas as porcas capturadas; entreferro do hall 2–3 mm.
 
 Nunca ensaie o rotor sem contenção, parada de emergência e operação remota.
-Rampa de partida ≥ 8 s (pico previsto 8 A). Grampear a base pelas abas.
+Rampa nominal de RPM ≥ 12 s (pico calculado ~7,30 A de fase; verificar aceleração real). Grampear a base pelas abas.

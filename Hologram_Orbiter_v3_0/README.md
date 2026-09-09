@@ -1,29 +1,15 @@
-# Hologram Orbiter v3.0 — pacote CAD para fabricação
+# Hologram Orbiter v3.0 — pacote CAD, revisão 3.0.4
 
-CAD paramétrico, STL em milímetros, montagem Blender, cupons de calibração,
-referência de corte da chapa e relatórios de validação do Hologram Orbiter
-v3.0. A fonte de requisitos é
-[`../01-ESPECIFICACAO-CAD-v3.0.md`](../01-ESPECIFICACAO-CAD-v3.0.md).
-Ponto de operação congelado: raio 100 mm @ 1800 RPM = 90 Hz.
+**PROVISÓRIO — operação e fabricação definitiva dos painéis não liberadas.**
+Revisão local de 08/09/2026. Os cupons continuam úteis para calibração; lote
+estrutural depende de fechar seção resistente, transferência de carga, ABS FDM,
+fluência, massas/chicotes reais e os bloqueadores do plano de ensaios.
 
-A pasta `../legado/Hologram_Orbiter_v2_1/` é registro histórico e não foi alterada.
-
-## Estado da liberação
-
-**PROVISÓRIO — AGUARDANDO MEDIÇÕES. Não liberado para girar a 1800 RPM.**
-
-Regenerado em 03/09/2026 (revisão 3.0.3) com a lista `06-PENDENCIAS-ABERTAS`
-(A1, A2, B1 a B11), a revisão independente do mesmo dia, os desvios de spec
-ratificados pelo revisor, as medições do glossário e o desenho cotado do
-motor. Liberados para impressão: os dois cupons (`C01`, `C02`), os painéis, a
-aranha, a tampa da baia, o suporte do ímã e a base. Os 54 critérios
-automáticos passam.
-
-**Uma medição antes de comprar ferragem:** a partir da face da campânula em que
-o cubo assenta, a altura do topo do **colar Ø8** do eixo e da ponta da rosca. O
-desenho diz colar 5 + rosca 7 numa saliência total de 14; a fixação foi
-refeita para valer nas duas leituras (ver abaixo), mas o número real decide se
-sobram 3 mm ou 1 mm de rosca.
+A seção da lâmina é integrada desde os parâmetros e conferida em três cortes
+na malha. A folga radial usa a carga do teto de 45 g, com deflexão estimada
+máxima de 7,83 mm. Nenhuma alteração de perfil estrutural foi adotada sem validação.
+O buck permanece a 140°; o envelope e as guias recuaram 1,2 mm radialmente,
+com wall_gap=1,5 mm, para livrar a raiz da aranha.
 
 ## Arquivos
 
@@ -52,76 +38,37 @@ sobram 3 mm ou 1 mm de rosca.
 A tampa do cilindro de contenção (peça 07) saiu do pacote: o invólucro está
 fora de escopo (06-PENDENCIAS B7, confirmado em 03/09). `containment_cap.enabled = true` a devolve.
 
-## Como regenerar
+## Como regenerar e verificar
 
-Requer Blender 5.x (`brew install --cask blender`) e Python 3 com NumPy para a
-validação independente (`pip3 install --user numpy`).
+Requer Blender 5.x e Python 3 com NumPy. Na raiz deste pacote:
 
-```bash
+```sh
 ./scripts/build.sh
+python3 -m unittest discover -s tests -v
+python3 -m unittest discover -s scripts/tests -v
 ```
 
-Gera STL, `.blend`, prévias, renders de inspeção, DXF/SVG e relatórios. Para
-mudar qualquer cota, edite `CAD/parameters.json` e rode de novo. Nunca edite um
-STL à mão. `./scripts/build.sh --no-render` pula as prévias da montagem.
+O build usa staging, propaga erros Python/critério e valida o inventário completo
+de nove STLs (dez se a tampa de contenção for habilitada). Só publica depois de
+verificar geração, malhas, corte e renders. Falhas preservam os artefatos anteriores.
+`reports/build_manifest.json` registra hashes de parâmetros, código e artefatos.
 
-## O que mudou em 03/09/2026
+`./scripts/build.sh --no-render` omite todas as prévias e remove as antigas do
+pacote publicado, para não misturar revisões. Use `--parameters caminho.json`
+para uma configuração alternativa, ou `BLENDER=/caminho/blender`.
+As folgas do socket e do cupom são derivadas pela função `CAD/parameters.py` da
+espiga e de `quality.joint_xy_clearance_each_side` / `joint_bottom_clearance`.
 
-- **Booleanas um cortador por vez.** `subtract_all()` concatenava os cortadores
-  e fazia uma só diferença; onde dois se sobrepunham o resultado tinha
-  enrolamento −1 (pino sólido no bolso da porca e barra no socket, nos dois
-  furos M3 de cada painel — A1). Confirmado por traçado de raios antes da
-  correção; depois dela o eixo de cada parafuso é vazio de ponta a ponta.
-- **Canal do LED de 12,4 × 2,0** para a fita medida em 2,0 mm: o PCB cola no
-  fundo e os LEDs ficam rentes à face; a parede engrossa para 2,8 numa faixa
-  de 14,4 mm e o piso de **0,80 mm** (medido na malha) faz a mesma ponte de
-  12,4 mm do canal original. O "canal em degrau" da spec, com o PCB num canal
-  raso e os LEDs num rasgo mais fundo, foi abandonado: os LEDs ficam em cima
-  do PCB, e com a fita montada para fora eles sobressairiam 1,4 mm.
-- **Cubo Ø92, baia Ø82/Ø78 × 29** (B10), rasgos de refrigeração em r 41,5–45,
-  alívios r 17–36, postes da tampa em y = ±35, berço para o pack LiFe
-  58 × 30 × 17 (50 g).
-- **Fixação do eixo refeita pelo desenho do motor.** O colar Ø8 × 5 (ou 7) sob
-  a rosca sobe acima do fundo de qualquer rebaixo do cubo: uma arruela M6 Ø20
-  assentaria no colar e a porca não apertaria o cubo. Agora: **sem rebaixo,
-  arruela Ø20 × Ø8,5 × 2 em alumínio** (disco incluído na referência de corte
-  da chapa) e **porca M6 fina DIN 439B com Loctite 243**. Três critérios novos
-  conferem furo × colar, altura do colar × arruela e rosca sobrando (3 mm; 1 mm
-  na leitura de 12).
-- **Layout da baia (D1)** parametrizado e verificado: placa de interface em +x
-  sob a janela da tampa, ESP32-C3 em −x, buck mini560 em pé numa ranhura na
-  parede a 140°, capacitor em pé numa cerca, tudo elevado em pilares de 6 mm
-  para deixar o piso livre aos feixes. Massas de catálogo somam 15,0 g, a
-  folga exata. Desbalanceamento nominal 63 g·mm a 23° (com os centróides da
-  aranha, da tampa e do hall), corrigido com **2,19 g** de tungstênio no alívio
-  de 180° e **0,87 g** no de 300°.
-- **Fillet cubo→braço** (cunha a 45°), **ombro em 74,0** exato, **furos só na
-  flange superior**, **quatro abas de grampo**, **suporte do ímã sob dois
-  parafusos**, tampa 07 removida, cupom C02 como fatia real do painel.
-- **Sensor hall e ímã a 20°** (eram 30°): o rasgo dos terminais passa a sair
-  debaixo da placa de interface, onde está o pull-up, sem colidir com um pilar.
-- **Critérios medidos na malha** por traçado de raios; validador com teste de
-  enrolamento e faces coincidentes. O traçado achou e corrigiu uma lâmina de
-  ar de 0,05 mm sob a flange da torre, herdada da v3.0 original.
-- Datum B em **Z = 186** (chapa 156 + corpo do motor 24 mm **medido** + cubo 6).
+## Resultados e montagem
 
-## Resultado geométrico (densidade maciça de ABS 1,04 g/cm³)
+[RELATORIO_VALIDACAO.md](reports/RELATORIO_VALIDACAO.md) é gerado na execução;
+[ACEITACAO.md](reports/ACEITACAO.md) detalha os critérios e [FISICA.json](reports/FISICA.json)
+separa cálculo geométrico, cargas aproximadas e premissas não validadas.
+Consulte os relatórios para massas e contrapesos atuais: o subtotal nominal
+inclui o Hall, mas os chicotes de seis condutores ainda precisam ser reconciliados
+com ferragens reais. A aprovação do subtotal não é aceite da massa final.
 
-| Peça | Massa CAD | Limite/alvo |
-|---|---:|---|
-| Painel nu | 31,9 g | — |
-| Painel montado (fita 6,2 + ferragens 4,0) | 42,1 g | ≤ 45 g ✅ |
-| Aranha (Ø92, baia de 29, pilares e guias) | 71,0 g | ≤ 75 g ✅ |
-| Tampa da baia (Ø82) | 10,1 g | ≤ 12 g ✅ |
-| Rotor completo (bateria 50, eletrônica 15, ferragem do eixo 3, contrapeso 3,1) | **278,6 g** | ≤ 280 g ✅ — folga de 1,4 g |
-| Base + torre com abas | 319,8 g | ≤ 330 g ✅ |
-| Suporte do ímã | 1,7 g | peça estática |
-
-Os 54 critérios automáticos passam
-([`reports/ACEITACAO.md`](reports/ACEITACAO.md)). A folga do rotor é de 1,4 g
-com massas de catálogo para a eletrônica: **pesar cada componente** antes de
-fixar, e não trocar o mini560 por um XL4015. Consulte
-[`docs/GUIA_IMPRESSAO.md`](docs/GUIA_IMPRESSAO.md) antes de fatiar,
-[`docs/FIACAO_E_MONTAGEM.md`](docs/FIACAO_E_MONTAGEM.md) para a montagem e
-[`docs/MEDICOES_DE_ENTRADA.md`](docs/MEDICOES_DE_ENTRADA.md) para o que ainda
-precisa ser medido.
+A porca do eixo deve ser apertada antes de instalar a bateria e fechar a tampa.
+Use [FIACAO_E_MONTAGEM.md](docs/FIACAO_E_MONTAGEM.md),
+[GUIA_IMPRESSAO.md](docs/GUIA_IMPRESSAO.md) e
+[MEDICOES_DE_ENTRADA.md](docs/MEDICOES_DE_ENTRADA.md).

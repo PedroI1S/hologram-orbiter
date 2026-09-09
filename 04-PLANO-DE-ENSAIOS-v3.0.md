@@ -1,14 +1,16 @@
 # Plano de ensaios — Hologram Orbiter v3.0
 
-Cinco bloqueadores. Cada um tem critério numérico, método de medição, limiar de
-aborto e caminho de contingência. Nenhum é opcional e nenhum depende de arquivo
-que não exista.
+Cinco bloqueadores. **Revisados em 08/09/2026; nenhum ensaio físico consta como
+aprovado.** A instrumentação térmica, a referência angular e a identificação
+em dois planos precisam ser fechadas antes dos ensaios correspondentes. As
+correções digitais não liberam a estrutura para girar; resolver antes as
+pendências mecânicas da revisão completa.
 
 > **Por que este plano é diferente do da v2.1.** O critério antigo era
 > `I ≤ 5,8 A`, um número cuja derivação estava numa planilha que se perdeu, e que
-> além disso não é medível: corrente de fase exige alicate amperímetro numa das
-> três fases. Os critérios abaixo são todos lidos em instrumentos que já existem
-> na bancada.
+> além disso exige instrumentação apropriada à corrente comutada de fase. A
+> leitura na fonte é realizável, mas não comprova diretamente corrente de fase;
+> a conversão usada abaixo é uma estimativa com hipóteses explícitas.
 
 ---
 
@@ -25,16 +27,23 @@ na fonte de bancada** e calcular a potência de entrada.
 |---:|---:|---:|---:|---|
 | 3,0 A | 9,0 W | 1,29 A | 34 °C | |
 | 4,0 A | 12,7 W | 1,81 A | 40 °C | |
-| 4,44 A | 14,4 W | **2,06 A** | 43 °C | melhor caso (Cd do boss 0,20) |
-| **4,95 A** | **16,2 W** | **2,31 A** | **46 °C** | ← **ponto de projeto** (Cd do boss 0,35) |
-| 5,0 A | 16,8 W | 2,40 A | 47 °C | |
+| 4,44 A | 14,47 W | **2,07 A** | 43 °C | melhor caso (Cd do boss 0,20) |
+| **4,95 A** | **16,63 W** | **2,38 A** | **46 °C** | ← **ponto de projeto** (Cd do boss 0,35) |
+| 5,0 A | 16,85 W | 2,41 A | 47 °C | |
 | 5,5 A | 19,1 W | 2,73 A | 51 °C | limite aceitável |
-| 6,0 A | 21,4 W | 3,06 A | 55 °C | abortar |
+| 6,0 A | 21,47 W | 3,07 A | 55,3 °C | previsão acima do limite térmico |
 | 8,0 A | 32,1 W | 4,59 A | 77 °C | parar imediatamente |
 
 **Critério de aceite:** P_entrada **≤ 20 W** a 1800 RPM, em regime estável.
 
-**Limiar de aborto:** P_entrada > 30 W, ou T_motor > 55 °C, o que vier primeiro.
+Tabela derivada de `P_entrada = (Kt·ω·I + 0,221·I² + 0,7)/0,95`, com
+Kt=0,0103797 N·m/A, ω=188,496 rad/s e eficiência de ESC assumida de 95%.
+Temperatura prevista: `25 + 3,5·(0,221·I² + 0,7)` °C. R e Rth continuam
+hipóteses; medir potência não identifica sozinho torque ou perdas do motor.
+
+**Limiar de aborto:** P_entrada > 30 W, ou T_motor **≥ 55 °C**, o que vier
+primeiro. Este limite de potência é de regime; o pico de partida tem o critério
+próprio do bloqueador D.
 
 **Se falhar:**
 1. Verificar o **sentido de giro** — invertido, o arrasto sobe muito. Bordo de
@@ -47,32 +56,47 @@ na fonte de bancada** e calcular a potência de entrada.
 
 ## Bloqueador B — térmica em regime contínuo
 
-**Método.** Termopar tipo K preso ao corpo do motor com fita de kapton, na
-carcaça entre as aletas. Operar 10 min contínuos a 1800 RPM. Registrar a curva
-T × tempo a cada 30 s. Medir também a temperatura da baia da base e da chapa.
+**Instrumentação — pendente.** A campânula do A2212 gira. **Não prender nela
+um termopar com cabo ligado a leitor estacionário.** Para medir a superfície
+girante, selecionar medição sem contato com emissividade, tamanho do ponto e
+reflexões controlados, validada contra referência de contato com o motor parado,
+ou um sensor embarcado com retenção e transmissão de dados qualificadas.
+Termopar na chapa/assento fixo mede esse ponto, não automaticamente o motor;
+só usar como substituto após estabelecer uma correlação térmica conservadora.
+Registrar o ponto medido e a incerteza. Sem método qualificado, B permanece aberto.
+
+**Método, após fechar a instrumentação.** Operar 10 min contínuos a 1800 RPM.
+Registrar T × tempo a cada 30 s. Termopares estacionários podem medir a estrutura
+ABS, a baia da base e a chapa. Na decisão de aceite/aborto, considerar a
+incerteza da medição no sentido conservador.
 
 **Critérios de aceite:**
 
 | Ponto | Limite |
 |---|---|
-| Corpo do motor | **< 55 °C** e curva estabilizando, sem subida contínua |
+| Temperatura do motor pelo método qualificado | **< 55 °C** e curva estabilizando, sem subida contínua |
 | Estrutura ABS próxima ao motor | < 60 °C |
 | Bateria no rotor | < 45 °C — **só quando houver bateria embarcada**; ver nota |
 | **Deflexão da ponta do painel** | **crescimento < 0,5 mm após 1 h a temperatura** |
 
-**Limiar de aborto:** 60 °C no motor a qualquer momento.
+**Limiar de aborto:** motor **≥ 55 °C**, ABS próximo ao motor ≥ 60 °C ou
+bateria ≥ 45 °C, quando embarcada. Falha da medição também interrompe o ensaio.
 
 **Sobre a linha da bateria.** O bloqueador B roda na fase 3, e a fase 3 é
-explicitamente *sem LEDs e sem eletrônica de bordo* (portão G3; o plano de
-projeto §5 diz que "nada em G3 depende da eletrônica de bordo"). Nessa passagem
+explicitamente *sem LEDs e sem eletrônica de bordo* (portão G3). Nessa passagem
 não há bateria no rotor para medir. A linha vale como critério **na repetição do
 ensaio B em G4**, com a eletrônica montada — que é quando a bateria de fato gira
-a 30 mm do eixo, dentro de uma baia fechada, ao lado de um motor a 46 °C. Em G3,
-registre-a como "não aplicável" em vez de dar por atendida.
+em torno do eixo, dentro de uma baia fechada. A bateria exige sensor embarcado
+calibrado com telemetria ou registro local, cuja massa, retenção e montagem
+ainda precisam ser definidas. Medir depois de parar não demonstra o pico em
+operação. Em G3, registrar "não aplicável"; em G4, manter B aberto até existir
+medição realizável e evidência da temperatura.
 
 **Meça a ponta do painel, não só a temperatura.** O ABS flui sob carga
-sustentada a quente: com 12–14 MPa e 40–50 °C, o módulo cai a cerca de metade em
-~100 h. Marque a posição radial da ponta de um painel com o rotor parado, opere
+sustentada a quente. A revisão da seção elevou a tensão prevista para
+~21,7–28,8 MPa (44,5 g), chegando a ~29,1 MPa com o teto de 45 g no modelo simplificado; a lei de fluência do material impresso
+não foi medida. Antes do ensaio de 1 h é necessário liberar o caso estrutural
+revisto. Marque a posição radial da ponta de um painel com o rotor parado, opere
 1 h em regime, pare e meça de novo. Crescimento acima de 0,5 mm indica que a
 fluência vai comer a folga radial antes do fim do semestre.
 
@@ -95,7 +119,7 @@ estrutura**, que é consequência direta do balanceamento.
 
 **Método, em duas partes.**
 
-**C0 — ensaio de impacto, antes de montar o motor.** Com a base impressa na
+**C0 — ensaio de impacto, antes de energizar o motor.** Com a base impressa na
 bancada, MPU6050 colado junto à torre, dar um toque seco no topo da torre e
 registrar o decaimento. FFT dá a primeira frequência natural da parte fixa.
 
@@ -130,11 +154,13 @@ solta. Se a medição der **fn < 45 Hz**, reforce antes de montar o motor: piso
 100 % sólido num raio de 40 mm em torno da torre e 4 a 8 gussets da torre para a
 parede da baia, que hoje não trabalha.
 
-**C1 — varredura em rotação.** MPU6050 na base, junto à torre. Amostrar a 500 Hz
+**C1 — varredura em rotação.** Acelerômetro na base, junto à torre. Amostrar a 500 Hz
 e **varrer de 600 a 1800 RPM em degraus de 200**, registrando amplitude × rotação.
 Medir só a 1800 não distingue ressonância de desbalanceamento: desbalanceamento
 cresce com ω², ressonância aparece como pico numa rotação específica. FFT em cada
-patamar, lendo **30 Hz** (1× rotação) e 60 Hz (2×).
+patamar, lendo **1× e 2× a rotação efetiva** (30 e 60 Hz somente a 1800 RPM).
+Definir escala, filtro antialias, janela de FFT e calibração da amplitude;
+os limites abaixo são amplitudes de pico, não valores RMS.
 
 **Critérios de aceite:**
 
@@ -150,15 +176,34 @@ patamar, lendo **30 Hz** (1× rotação) e 60 Hz (2×).
 1. **Estático, na bancada** — pesar os três painéis numa balança de **0,01 g** e
    casar em **≤ 0,084 g**. Se não casar, corrigir com massa adesiva antes de
    montar.
-2. **Dinâmico, em rotação** — com o acelerômetro, método da massa de teste:
-   medir a fase e a amplitude do pico de 30 Hz, adicionar massa conhecida numa
-   posição angular conhecida, medir de novo, resolver o vetor de correção.
-   Resolução necessária: **~90 mg em r = 90 mm**. No CAD os planos são os três
-   alívios da face inferior do cubo (r 17–36, plano 1; até ~13 g de tungstênio
-   cada) e os seis copos da tampa (r = 34, plano 2; ~1 g de tungstênio por
-   copo = 34 g·mm). A correção grossa do layout da baia já está planejada:
-   2,19 g no alívio de 180° e 0,87 g no de 300°. O ajuste fino em r = 34 vale 3,4 g·mm por 0,1 g,
-   que é a mesma resolução de 90 mg em r = 90 — com balança de 0,01 g.
+2. **Dinâmico em dois planos — instrumentação pendente.** Instalar uma
+   referência **1 pulso/volta fixa**, observando uma marca no rotor e registrada
+   na mesma base de tempo dos sinais de vibração. O Hall embarcado de G4 e uma
+   leitura numérica de RPM não fornecem essa referência em G3. Usar duas
+   respostas complexas independentes, por exemplo dois pontos de medição em
+   alturas distintas da estrutura fixa; comprovar independência, não presumir
+   que dois eixos do mesmo MPU bastam.
+
+   Fazer três ensaios separados, na mesma rotação e condição de montagem:
+   baseline sem massa de teste; massa conhecida somente no plano 1, medindo
+   ambos os canais; retirar essa massa e testar somente o plano 2, novamente
+   medindo ambos. Para cada plano, registrar massa, raio e fase. Montar a matriz
+   complexa 2 × 2 de coeficientes de influência `A_ij = (V_ij − V_i0)/U_teste_j`
+   e resolver `A·U_correcao = −V_0`. Se a matriz for singular ou mal condicionada,
+   mudar os pontos/condições de medição; não emitir dois contrapesos de uma só
+   resposta. Aplicar a correção e repetir uma medição independente do resíduo.
+
+   Registrar o resíduo estimado em cada plano e a incerteza. Usar como teto
+   conservador provisório `|U_1| + |U_2| ≤ 8,4 g·mm`, recalculado para a massa
+   real conforme a spec §2.1; isso não substitui um limite qualificado de binário
+   nem a avaliação dos modos. Vibração baixa sozinha não comprova esse U.
+   [Método de balanceamento, Brüel & Kjær](https://www.bksv.com/media/doc/17-227.pdf).
+
+   No CAD: plano 1 nos alívios inferiores do cubo (r 17–36); plano 2 nos copos
+   da tampa (r = 34). A correção nominal de catálogo de 2,19 g a 180° e 0,86 g
+   a 300° é apenas a compensação inicial do layout e pode mudar ao regenerar.
+   Em r = 34, 0,1 g produz 3,4 g·mm; a balança de 0,01 g resolve incrementos
+   de 0,34 g·mm nesse raio. Verificar retenção e capacidade dos alojamentos reais.
 
 **Se falhar:** repetir o balanceamento em dois planos. Se persistir, procurar
 excentricidade da bateria (50 g deslocados 1 mm já dão 50 g·mm, seis vezes o
@@ -172,19 +217,26 @@ admissível) ou empeno de painel.
 de uma hélice 1045. ESCs sensorless são sintonizados para hélice, e partida com
 inércia alta é o modo de falha clássico: o motor perde sincronismo e trava.
 
-**Método.** Com o rotor completo, rampa configurada em **≥ 8 s**, executar 10
+**Método.** Com o rotor completo, rampa nominal configurada em **≥ 12 s**, executar 10
 partidas consecutivas do repouso até 1800 RPM.
+
+Confirmar a curva de RPM: uma rampa linear de pulso servo não garante uma
+rampa linear de velocidade. Com J=0,00155 kg·m² e arrasto de 51,4 mN·m, a
+aceleração linear em 12 s exige 24,35 mN·m e prevê **7,30 A de fase**,
+~28,17 W / **4,02 A na fonte de 7 V**, usando η_ESC=95%. Em 8 s seriam
+**8,47 A de fase / 4,98 A na fonte**, fora do limite. O mínimo matemático para
+8 A é ~9,23 s, sem margem; não é a rampa nominal.
 
 **Critérios de aceite:**
 - 10 de 10 partidas bem-sucedidas, sem travamento nem ruído de dessincronismo;
 - pico de corrente na fonte durante a rampa ≤ **4,6 A a 7 V** (32,1 W / 7 V, a
-  mesma linha da tabela do bloqueador A; equivale a 8,0 A
-  de fase);
+  mesma linha da tabela do bloqueador A; estimativa equivalente a 8,0 A
+  de fase nesse modelo, não uma medição de corrente de fase);
 - nenhum evento de proteção do ESC.
 
 **Se falhar:**
-1. Alongar a rampa para 12 s (baixa o pico para **6,8 A** de fase: o torque de
-   aceleração cai de 36,5 para 24,3 mN·m e (24,3 + 46,1)/10,38 = 6,8).
+1. Alongar a rampa além dos 12 s nominais, medir a aceleração e recalcular
+   `I_fase=(J·ω/t + 0,0514)/0,0103797`. Manter o teto de 4,6 A na fonte a 7 V.
 2. Reduzir a potência de partida nas configurações do ESC.
 3. Ajustar a fonte para 6–7 V, o que faz o ESC operar em duty mais alto e melhora
    a resolução de comutação em baixa rotação.
@@ -215,12 +267,17 @@ parado e com movimento rápido dos olhos (sacada). Registrar com celular a 240 f
 | Sintoma | Causa provável | Correção |
 |---|---|---|
 | Imagem tripla ou fantasma | Δh ou raio diferentes entre painéis | remedir Datum D e o raio; reimprimir o painel fora |
-| Deslocamento angular entre varreduras | folga na junta espiga/socket | apertar; verificar as porcas planas e a trava química |
+| Deslocamento angular entre varreduras | atraso de atualização serial ou folga na junta | medir temporização/compensação por LED; conferir junta e fase mecânica |
 | Borda vertical serrilhada | jitter de fase do sensor de índice | verificar entreferro e histerese do hall |
 | Imagem "respirando" ou cisalhada | rotação instável entre voltas | **o BLHeli_S não tem governor** — ver abaixo |
-| Cintilação periférica | 90 Hz insuficiente para o brilho usado | reduzir brilho, ou subir para 2000 RPM se A e B passarem |
+| Cintilação periférica | 90 Hz insuficiente para o brilho usado | reduzir brilho; 2000 RPM não liberados pelo cálculo atual |
 
 ---
+
+**2000 RPM não estão liberados.** No mesmo arrasto de projeto, a previsão é
+`4,95·(2000/1800)² = 6,11 A` e **56,3 °C**, acima do limite de 55 °C.
+Uma mudança de rotação exige novo caso mecânico/elétrico e repetição dos
+bloqueadores aplicáveis; passar a 1800 RPM não autoriza essa extensão.
 
 **Sobre a imagem "respirando".** O sensor de índice zera a fase a cada volta, então
 o erro não acumula — mas dentro de cada volta ele cresce proporcionalmente à
@@ -247,22 +304,27 @@ G2  Montagem mecânica e balanceamento estático
      └─ rotor montado sem LEDs · painéis casados em massa
 
 G3  Bloqueadores A, B, C, D   ← ensaios de rotação, sem LEDs
-     └─ P ≤ 20 W · T < 55 °C · vibração ≤ 0,20 g · 10/10 partidas
+     └─ instrumentação qualificada · P ≤ 20 W · T < 55 °C · C em dois planos · 10/10 partidas
 
 G4  Integração óptica
-     └─ fita, ESP32, sensor de índice, imagem de teste
+     └─ fita, ESP32, sensor de índice, imagem de teste; repetir A–D no rotor final
 
 G5  Bloqueador E e demonstração
 ```
 
 **Nada de LEDs antes de G3.** Os ensaios de rotação são os de maior risco físico;
 adicionar eletrônica de bordo antes deles só aumenta o que se perde numa falha.
+Usar lastro retido que represente massas, posições e inércia dos itens ausentes,
+inclusive fitas e chicotes; registrar a configuração de cada ensaio. Lastro
+central de massa total igual não reproduz automaticamente o rotor final.
+Após integrar os componentes reais em G4, repetir balanceamento e A–D; incluir
+a medição da bateria em B e a qualificação de corrente/temperatura do buck.
 
 ---
 
 ## Regras de segurança em ensaio de rotação
 
-Não são formalidade. O rotor guarda **26 J** e um painel solto sai a
+Não são formalidade. O rotor guarda **27,6 J** e um painel solto sai a
 **18,9 m/s** com 7,9 J.
 
 - **Nunca girar sem contenção integral.** Caixa fechada, chapa ou tela de aço em

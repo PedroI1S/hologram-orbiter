@@ -7,13 +7,14 @@ A chapa é alumínio 2 mm e NÃO deve ser impressa.
 
 from __future__ import annotations
 
+import argparse
 import json
 import math
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-P = json.loads((ROOT / "CAD" / "parameters.json").read_text(encoding="utf-8"))
+P: dict = {}
 
 
 def holes() -> list[tuple[float, float, float, str]]:
@@ -24,11 +25,11 @@ def holes() -> list[tuple[float, float, float, str]]:
     hx = motor["base_bolt_rectangle_x"] / 2
     hy = motor["base_bolt_rectangle_y"] / 2
     for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
-        out.append((sx * hx, sy * hy, motor["base_bolt_hole_diameter"], "motor M3 (retangulo 16 x 19)"))
+        out.append((sx * hx, sy * hy, motor["base_bolt_hole_diameter"], f"motor M3 (retangulo {2 * hx:g} x {2 * hy:g})"))
     for i in range(4):
         a = math.radians(bt["flange_hole_angle_offset_deg"] + i * 90.0)
         r = bt["flange_hole_pcd"] / 2
-        out.append((r * math.cos(a), r * math.sin(a), bt["flange_hole_diameter"], "flange da torre M4 (PCD 40)"))
+        out.append((r * math.cos(a), r * math.sin(a), bt["flange_hole_diameter"], f"flange da torre M4 (PCD {bt['flange_hole_pcd']:g})"))
     out.append((0.0, 0.0, q["center_clearance_diameter"], "alivio central (eixo/fios) - NAO VERIFICADO"))
     return out
 
@@ -82,7 +83,8 @@ def write_svg(path: Path) -> None:
         parts.append(f'<circle cx="{cx:.3f}" cy="{-cy:.3f}" r="{hole / 2:.3f}" fill="none" stroke="#000" stroke-width="0.3"><title>furo Ø{hole} (passa pelo colar Ø8 do eixo)</title></circle>')
         parts.append(f'<text x="{cx - od / 2:.3f}" y="{od / 2 + 5:.3f}" font-size="2.4" font-family="sans-serif">arruela Ø{od} × Ø{hole}</text>')
     parts.append(f'<text x="{-w / 2}" y="{d / 2 + 6}" font-size="3.2" font-family="sans-serif">R01 suporte do motor — alumínio {q["thickness"]} mm — escala 1:1 — NÃO IMPRIMIR EM 3D</text>')
-    parts.append(f'<text x="{-w / 2}" y="{d / 2 + 10.5}" font-size="2.6" font-family="sans-serif">4× Ø{P["unverified_interfaces"]["motor"]["base_bolt_hole_diameter"]} motor (16 × 19) · 4× Ø{P["base_tower"]["flange_hole_diameter"]} flange PCD {P["base_tower"]["flange_hole_pcd"]} · centro Ø{q["center_clearance_diameter"]} (verificar)</text>')
+    motor = P["unverified_interfaces"]["motor"]
+    parts.append(f'<text x="{-w / 2}" y="{d / 2 + 10.5}" font-size="2.6" font-family="sans-serif">4× Ø{motor["base_bolt_hole_diameter"]} motor ({motor["base_bolt_rectangle_x"]:g} × {motor["base_bolt_rectangle_y"]:g}) · 4× Ø{P["base_tower"]["flange_hole_diameter"]} flange PCD {P["base_tower"]["flange_hole_pcd"]} · centro Ø{q["center_clearance_diameter"]} (verificar)</text>')
     if wb:
         parts.append(f'<text x="{-w / 2}" y="{d / 2 + 14.5}" font-size="2.6" font-family="sans-serif">Disco à direita: arruela do eixo na mesma chapa — o furo Ø{wb[3]} passa pelo colar Ø8; uma arruela M6 não passa.</text>')
     parts.append("</svg>")
@@ -90,8 +92,14 @@ def write_svg(path: Path) -> None:
 
 
 def main() -> None:
-    out = ROOT / "fabricacao"
-    out.mkdir(exist_ok=True)
+    global P
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--parameters", type=Path, default=ROOT / "CAD" / "parameters.json")
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "fabricacao")
+    args = parser.parse_args()
+    P = json.loads(args.parameters.read_text(encoding="utf-8"))
+    out = args.output_dir
+    out.mkdir(parents=True, exist_ok=True)
     write_dxf(out / "R01_suporte_motor_60x60_aluminio_2mm.dxf")
     write_svg(out / "R01_suporte_motor_60x60_aluminio_2mm.svg")
     print("Referência de corte gerada em", out)
