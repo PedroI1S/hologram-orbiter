@@ -10,7 +10,7 @@ A revisão independente de 03/09 circulou como documento 08 solto; ela foi
 `parameters.json`, no gerador e nos documentos apontam para a tabela de
 disposição no fim deste arquivo.
 
-**Última atualização:** 03/09/2026
+**Última atualização:** 08/09/2026 — rev. local 3.0.4. As disposições de 03/09 no fim são históricas; os cálculos corrigidos em 08/09 prevalecem.
 
 ---
 
@@ -46,7 +46,7 @@ Como "positiva" e "repulsão" dependem de qual ímã de referência foi usado no
 teste, a nomenclatura não resolve sozinha. **O ensaio de bancada resolve, e leva
 um minuto:**
 
-1. Alimentar o A3144 nu com 3,3 V e o pull-up de 10 k.
+1. Alimentar o A3144 nu com **VCC=5 V**, GND comum local e **pull-up de 10 kΩ para 3,3 V**. A alimentação mínima garantida do A3144 original é 4,5 V.
 2. Aproximar a face escolhida do ímã da **face marcada** do TO-92, a ~3 mm
    (o entreferro efetivo do projeto — ver C8).
 3. A saída tem de ir a **nível baixo**. Se não for, é a outra face.
@@ -60,38 +60,19 @@ O sensor gira a ~15 mm do rotor de ímãs do motor. Esse campo é estático em
 relação ao sensor e pode mantê-lo permanentemente ligado ou desligado.
 **Verificar com o motor montado, antes de colar.**
 
-### D1 · Layout da baia — pesar as peças reais
+### D1 · Layout e massa real da eletrônica
 
-O esboço está em `spider.bay_layout` e o gerador o verifica: envelope,
-interferência com berço, postes, porca e rasgo do hall, faixas livres no piso
-para os feixes, soma de massas contra a folga de 15 g e desbalanceamento
-nominal. Placa de interface (5,5 g) em +x sob a janela da tampa, ESP32-C3 (3 g)
-em −x, buck mini560 (2 g) em pé na parede a 140°, capacitor (2,5 g) em pé numa
-cerca em (22,5, −22), 2 g de fios. Total 15,0 g, exatamente a folga.
-O vetor de desbalanceamento **não é mais só o da eletrônica** (revisão de 03/09,
-item 11). O gerador agora soma também os centróides que ele próprio mede nas
-malhas, cada um dos quais já passa sozinho dos 8,4 g·mm admissíveis:
+O buck permanece a 140° com envelope/guia recuados 1,2 mm radialmente (wall_gap=1,5 mm). A colisão com a raiz é verificada por interseção contra a malha final. Medir o módulo real, principalmente indutor, soldas, fios e retenção.
 
-| Fonte | U | Azimute |
-|---|---:|---:|
-| eletrônica da baia | 72,6 g·mm | 13,7° |
-| aranha (malha) | 10,2 g·mm | 145,8° |
-| tampa (malha) | 9,6 g·mm | 180,0° |
-| sensor hall nu (0,2 g em r = 29) | 5,8 g·mm | 20,0° |
-| **soma vetorial** | **63,0 g·mm** | **23,3°** |
+Os cinco componentes da baia continuam com 15 g estimados. Consultar `reports/geometry_report.json` para o vetor e os contrapesos desta execução. Pesar componentes e peças impressas, pois infill e distribuição dos chicotes mudam centróides. O Hall entra tanto no vetor quanto no subtotal de massa.
 
-A correção pedida cai a 203,3°, que **não está dentro de nenhum alívio** (eles
-ficam a 60/180/300° com ±18°). Por isso o contrapeso agora é **repartido entre
-os dois alívios que cercam a direção**: **2,19 g a 180° + 0,87 g a 300°**, em
-r = 33, deixando resíduo de **0,06 g·mm**. Pôr tudo no centro do alívio de 180°,
-como estava planejado, deixaria ~17 g·mm — o dobro do admissível. O rotor fecha
-em **278,6 g**, 1,4 g abaixo do limite.
+### R01 · Resistência e fluência dos painéis — bloqueia o lote definitivo
 
-**Falta:** pesar cada componente real e atualizar `mass_g`; as posições são
-parâmetros. Um XL4015 (~18 g) no lugar do mini560 não fecha. **Atenção à margem
-de massa:** 1,4 g é pouco. Ela é conservadora — os 177 g de CAD supõem ABS
-maciço e as peças saem com 35 % de infill —, mas pese a aranha e os painéis
-antes de acrescentar qualquer coisa ao rotor.
+A seção foi corrigida para Iyy=589,8846 mm⁴. O envelope de viga com 44,5 g dá 3,83–7,74 mm; com o teto de 45 g, chega a 7,83 mm / ~29,1 MPa. A aproximação não certifica engaste, transferência de carga, ABS FDM ou fluência. Fechar essas verificações e decidir eventuais mudanças de perfil antes de fabricar o lote definitivo. O cálculo distribuído parcial em `FISICA.json` não é um limite de aceite.
+
+### R04/R05 · Instrumentação e método de ensaio — ainda não executados
+
+Seguir o plano 04 corrigido: termopar somente em parte fixa com ponto validado, medição apropriada da campânula/bateria girantes e referência fixa 1/rev sincronizada. Balanceamento em dois planos exige observações independentes e massas de teste em cada plano. Equipamentos e métodos ainda precisam de qualificação; não registrar aprovação por ausência de medição.
 
 ### C7 · Buck mini560 — tensão mínima de entrada · **comprar só depois**
 
@@ -122,7 +103,7 @@ Campo axial de um disco N35 Ø4 × 2 (Br 1,2 T) no eixo:
 | 4,0 mm | 33 mT |
 | 4,5 mm | 25 mT |
 
-O A3144 tem **B_OP máximo de 35 mT**. A margem no nominal é de ~30 %, e **+1 mm
+O A3144 original tem **B_OP máximo de 35 mT a 25 °C e 45 mT na faixa térmica**. Portanto, 45 mT de campo nominal não dão margem térmica garantida; **+1 mm
 de erro no entreferro e o sensor pode não comutar** nas peças de pior caso. Pior:
 o entreferro é a única cota da máquina que depende da altura real do conjunto
 motor (`motor_stack.plate_top_to_bell_face`, medida mas com
@@ -141,7 +122,7 @@ que o esquema 05 §8 descrevia): ele fica na **parte fixa**, alimentado pela
 fita, o ESP32-C3 e o sensor. As duas linhas de energia não se encontram.
 
 Isso encerra a metade da pendência que dependia da origem da alimentação, e o
-**LVC também já estava encerrado**: o glossário §7 registra, do manual Rev16.x,
+**LVC também já estava encerrado**: o glossário §2–3 registra, do manual Rev16.x,
 que BLHeli_S **não tem corte por baixa tensão**. Sobra um resíduo estreito:
 
 - **Margem do ESC em 6 V.** O LittleBee Spring é especificado para **2–4S**, ou
@@ -160,23 +141,11 @@ que BLHeli_S **não tem corte por baixa tensão**. Sobra um resíduo estreito:
   mãos e anotar no DXF antes de cortar a chapa. Lembrar que o arco do suporte do
   ímã ocupa o lado +x: os fios saem por −x.
 
-### D3 · Margem de massa do rotor — 1,4 g
+### D3 · Orçamento completo de massa e chicotes
 
-A correção das três colisões de montagem subiu a baia de 26 para 29 mm e os
-trilhos de 6 para 9. A aranha passou de 67,5 para **71,0 g** e o rotor de 274,3
-para **278,6 g**, contra o limite de **280 g**: sobram **1,4 g**, onde antes
-sobravam 5,7.
+O teto do rotor permanece **280 g**. O relatório publica um subtotal nominal com eletrônica de catálogo, Hall e contrapesos; ainda é necessário reconciliar as ferragens de 4 g/painel com a massa real dos chicotes de seis condutores. A estimativa antiga de fios no CG não foi uma pesagem e não garante sua inclusão na soma.
 
-A margem é conservadora — os 177 g de CAD supõem ABS maciço e as peças saem com
-35 % de infill, então o rotor real deve ficar abaixo disso —, mas ela não
-suporta mais nenhum acréscimo às cegas.
-
-**Fechar assim:** pesar aranha, painéis e tampa impressos e substituir as
-estimativas. Enquanto isso, **nada entra no rotor sem sair outra coisa**. Se a
-pesagem confirmar folga, o caminho mais barato para recuperar altura é voltar a
-baia para 28 mm (o pack precisa de 26 e a tampa de 1 de folga). Ver também D1,
-que depende da mesma pesagem, e a §2.1 da spec: rotor mais leve **aperta** o
-desbalanceamento admissível, não afrouxa.
+Pesar todos os componentes e o rotor completo. Só então registrar margem, ajustar contrapesos e recalcular o desbalanceamento admissível. Não reduzir margens estruturais nem aumentar o teto para acomodar componentes não medidos.
 
 ### D2 · Ensaio de impacto na base
 
@@ -218,7 +187,9 @@ não é preciso: a inércia mantém a variação entre voltas em 0,03 a 0,11 %, 
 
 ---
 
-## Revisão independente de 03/09/2026 — disposição dos 30 achados
+## Histórico de 03/09/2026 — disposição dos 30 achados
+
+**Registro histórico, não instrução vigente.** Os itens 9, 14 e 22 abaixo foram corrigidos novamente na revisão de 08/09; consultar especificação §10, esquema §5 e plano de ensaios D.
 
 Revisão externa sobre os documentos 01 a 07, o README e o pacote
 `Hologram_Orbiter_v3_0/`, com recálculo independente do §10 da spec, sondagem

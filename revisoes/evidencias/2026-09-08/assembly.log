@@ -1,0 +1,12 @@
+00:00.243  blend            | Read blend: "/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/exports/fonte/Hologram_Orbiter_v3_0.blend"
+BlenderMCP: cannot start server in background mode (blender -b) - commands would never execute
+BlenderMCP: run Blender with a GUI, or use a virtual display: xvfb-run -a blender
+BlenderMCP addon registered
+INTERSECTION {"a": "MONTAGEM_aranha", "b": "MONTAGEM_baia_buck", "intersection_mm3": 0.9821064244966919, "bounds": [[-24.202255249023438, 29.90544319152832, 186.63096618652344], [-23.144399642944336, 30.784740447998047, 191.36903381347656]]}
+INTERSECTION {"a": "MONTAGEM_eixo_rosca_M6_ref", "b": "MONTAGEM_porca_fina_M6_ref", "intersection_mm3": 84.76245392996543, "bounds": [[-3.0, -3.0, 188.0], [3.0, 3.0, 191.0]]}
+ASSEMBLY_AUDIT_COMPLETE 20 2
+BlenderMCP server stopped
+BlenderMCP addon unregistered
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-09-01 00:24:57)
+
+Blender quit

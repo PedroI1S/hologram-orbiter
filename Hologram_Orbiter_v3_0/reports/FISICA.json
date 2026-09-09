@@ -1,0 +1,209 @@
+{
+  "status": "ESTIMATE_NOT_STRUCTURAL_OR_OPERATIONAL_APPROVAL",
+  "operation_released": false,
+  "section": {
+    "area_mm2": 106.49984933333334,
+    "centroid_x_mm": -0.5309497478364019,
+    "centroid_y_mm": 0.6380808781342415,
+    "Iyy_mm4": 589.884623205896,
+    "Ixx_mm4": 8659.781926738706,
+    "Ixy_mm4": 40.34430022641643,
+    "I_effective_radial_mm4": 589.6966666759823,
+    "method": "outer minus cavity plus local wall minus LED channel",
+    "scope": "continuous blade only; no structural credit for LED strip",
+    "extreme_outer_x_mm": 4.0,
+    "extreme_inner_x_mm": -4.0
+  },
+  "flexure": {
+    "design_panel_mass_g": 44.5,
+    "design_centrifugal_force_n": 158.11106250545146,
+    "envelope_cases": [
+      {
+        "unsupported_length_mm": 86.0,
+        "modulus_mpa": 2300.0,
+        "distributed_load_n_per_mm": 0.7601493389685167,
+        "tip_deflection_mm": 3.8321829230904267,
+        "max_bending_stress_mpa": 21.723851137986866,
+        "nominal_strength_ratio_at_30_mpa": 1.3809706119529264,
+        "strength_certified": false
+      },
+      {
+        "unsupported_length_mm": 86.0,
+        "modulus_mpa": 2000.0,
+        "distributed_load_n_per_mm": 0.7601493389685167,
+        "tip_deflection_mm": 4.407010361553991,
+        "max_bending_stress_mpa": 21.723851137986866,
+        "nominal_strength_ratio_at_30_mpa": 1.3809706119529264,
+        "strength_certified": false
+      },
+      {
+        "unsupported_length_mm": 99.0,
+        "modulus_mpa": 2000.0,
+        "distributed_load_n_per_mm": 0.7601493389685167,
+        "tip_deflection_mm": 7.739110453740618,
+        "max_bending_stress_mpa": 28.787921174068323,
+        "nominal_strength_ratio_at_30_mpa": 1.0421037288035753,
+        "strength_certified": false
+      }
+    ],
+    "acceptance_mass_limit_g": 45.0,
+    "acceptance_limit_cases": [
+      {
+        "unsupported_length_mm": 86.0,
+        "modulus_mpa": 2300.0,
+        "distributed_load_n_per_mm": 0.7686903427771516,
+        "tip_deflection_mm": 3.87524115818133,
+        "max_bending_stress_mpa": 21.967939353020427,
+        "nominal_strength_ratio_at_30_mpa": 1.3656264940423384,
+        "strength_certified": false
+      },
+      {
+        "unsupported_length_mm": 86.0,
+        "modulus_mpa": 2000.0,
+        "distributed_load_n_per_mm": 0.7686903427771516,
+        "tip_deflection_mm": 4.4565273319085295,
+        "max_bending_stress_mpa": 21.967939353020427,
+        "nominal_strength_ratio_at_30_mpa": 1.3656264940423384,
+        "strength_certified": false
+      },
+      {
+        "unsupported_length_mm": 99.0,
+        "modulus_mpa": 2000.0,
+        "distributed_load_n_per_mm": 0.7686903427771516,
+        "tip_deflection_mm": 7.826066750973658,
+        "max_bending_stress_mpa": 29.11138096254099,
+        "nominal_strength_ratio_at_30_mpa": 1.030524798483536,
+        "strength_certified": false
+      }
+    ],
+    "envelope_assumption": "whole panel mass uniformly distributed over height; ideal clamp",
+    "distributed_load_estimate": {
+      "shell_mass_g_per_mm": 0.11075984330666669,
+      "led_mass_g_per_mm": 0.030784508440913606,
+      "load_n_per_mm": 0.5041071275030122,
+      "cases": [
+        {
+          "unsupported_length_mm": 86.0,
+          "modulus_mpa": 2000.0,
+          "distributed_load_n_per_mm": 0.5041071275030122,
+          "tip_deflection_mm": 2.922590628380467,
+          "max_bending_stress_mpa": 14.406574647994491,
+          "nominal_strength_ratio_at_30_mpa": 2.08238257413786,
+          "strength_certified": false
+        },
+        {
+          "unsupported_length_mm": 99.0,
+          "modulus_mpa": 2000.0,
+          "distributed_load_n_per_mm": 0.5041071275030122,
+          "tip_deflection_mm": 5.132334582514581,
+          "max_bending_stress_mpa": 19.091243662113847,
+          "nominal_strength_ratio_at_30_mpa": 1.5714010323766565,
+          "strength_certified": false
+        }
+      ],
+      "limitations": "continuous solid ABS shell and uniform LED mass only; excludes ribs, end caps, wiring and boss compliance; not an acceptance bound"
+    },
+    "required_before_final_panel_print": [
+      "blade/boss load transfer",
+      "actual FDM section and modulus",
+      "loaded creep test"
+    ]
+  },
+  "drive": {
+    "inputs_unvalidated": {
+      "motor_kv": 920.0,
+      "effective_resistance_ohm": 0.221,
+      "extra_loss_w": 0.7,
+      "esc_efficiency": 0.95,
+      "ambient_c": 25.0,
+      "thermal_resistance_k_w": 3.5,
+      "source_voltage_v": 7.0,
+      "abs_strength_mpa": 30.0
+    },
+    "omega_rad_s": 188.49555921538757,
+    "torque_constant_nm_per_a": 0.010379670201645347,
+    "design_drag_torque_nm": 0.051379367498144465,
+    "inertia_g_m2": 1.55,
+    "inertia_status": "conservative unmeasured design premise",
+    "rotor_energy_j": 27.536196279039302,
+    "steady": {
+      "phase_current_a": 4.95,
+      "input_power_w": 16.63140537757437,
+      "source_current_a": 2.3759150539391958,
+      "source_voltage_v": 7.0,
+      "copper_loss_w": 5.415052500000001,
+      "steady_motor_temperature_c": 46.40268375
+    },
+    "startup": [
+      {
+        "phase_current_a": 8.468513968988356,
+        "input_power_w": 34.861060792365926,
+        "source_current_a": 4.980151541766561,
+        "source_voltage_v": 7.0,
+        "copper_loss_w": 15.849176074292155,
+        "ramp_s": 8.0,
+        "acceleration_torque_nm": 0.03652101459798134
+      },
+      {
+        "phase_current_a": 7.295675979325571,
+        "input_power_w": 28.144516739121368,
+        "source_current_a": 4.02064524844591,
+        "source_voltage_v": 7.0,
+        "copper_loss_w": 11.763142246963097,
+        "ramp_s": 12.0,
+        "acceleration_torque_nm": 0.024347343065320895
+      }
+    ],
+    "stretch": {
+      "phase_current_a": 6.1111111111111125,
+      "input_power_w": 23.408862332966073,
+      "source_current_a": 3.344123190423725,
+      "source_voltage_v": 7.0,
+      "copper_loss_w": 8.2533950617284,
+      "steady_motor_temperature_c": 56.336882716049395,
+      "rpm": 2000.0,
+      "released_for_operation": false
+    }
+  },
+  "stl_section_checks": [
+    {
+      "z_mm": 20.23,
+      "measured": {
+        "area_mm2": 106.49985306668927,
+        "centroid_x_mm": -0.5309496995671938,
+        "centroid_y_mm": 0.6380810455759593,
+        "Iyy_mm4": 589.8846462195523,
+        "Ixx_mm4": 8659.782294297409,
+        "Ixy_mm4": 40.34430658678935,
+        "I_effective_radial_mm4": 589.6966896383527
+      },
+      "matches_parameters": true
+    },
+    {
+      "z_mm": 50.23,
+      "measured": {
+        "area_mm2": 106.49985295277702,
+        "centroid_x_mm": -0.5309496988429356,
+        "centroid_y_mm": 0.63808105521378,
+        "Iyy_mm4": 589.8846461437822,
+        "Ixx_mm4": 8659.782284410967,
+        "Ixy_mm4": 40.344305923226855,
+        "I_effective_radial_mm4": 589.6966895685508
+      },
+      "matches_parameters": true
+    },
+    {
+      "z_mm": 90.23,
+      "measured": {
+        "area_mm2": 106.49985288542919,
+        "centroid_x_mm": -0.5309496978870115,
+        "centroid_y_mm": 0.6380810629052044,
+        "Iyy_mm4": 589.8846459666922,
+        "Ixx_mm4": 8659.782274190278,
+        "Ixy_mm4": 40.34430476230666,
+        "I_effective_radial_mm4": 589.6966894020561
+      },
+      "matches_parameters": true
+    }
+  ]
+}

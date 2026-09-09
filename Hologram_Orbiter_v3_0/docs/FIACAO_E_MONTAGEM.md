@@ -4,10 +4,9 @@ Complementa a especificação (§6.3) com a rota física que o CAD implementa.
 Cotas em mm; referenciais da spec §3. Atualizado para o cubo Ø92 e a baia
 Ø82/Ø78 × 29 (regeneração de 03/09/2026).
 
-## 1. Rota dos quatro condutores por painel
+## 1. Rota dos seis condutores por painel
 
-Condutores por painel: 5 V e GND em AWG 24, DATA e CLK em AWG 28 (feixe de
-~4,6 × 3,2 mm). A espiga **não é furada**: ela carrega os 158 N.
+Condutores por painel: 5 V e GND em AWG 24; DATA/CLK de entrada e de retorno em AWG 28. Chicote idêntico de seis condutores nos três painéis, com retorno do painel 3 sem conexão. Feixe estimado em 3,7 × 2,35 mm: medir a isolação e validar passagem real. A espiga **não é furada**: ela carrega os 158 N.
 
 | Trecho | Peça | Feature no CAD | Cota |
 |---|---|---|---|
@@ -28,21 +27,19 @@ Kapton. A força centrífuga puxa o feixe **ao longo** do sulco, não para fora 
 **Montagem da fita.** Inserir a fita pelo topo do canal (aberto) e deslizar
 até os ombros do bolso em Z = −98,5, com o adesivo do PCB colado no fundo do
 canal de 12,4 × 2,0; os LEDs ficam rentes à face externa. Os pads de
-entrada ficam na ponta inferior, para cima; soldar os quatro fios, dobrar sobre
+entrada ficam na ponta inferior, para cima; soldar as quatro entradas, dobrar sobre
 a ponta da fita e mergulhar no bolso. Passar o feixe pela cavidade com um guia
 rígido de 1 mm a partir do furo do item 7 (gravidade ajuda: o painel fica de pé).
 
-**Consequência no CG do painel.** A peça em ABS tem CG em z = −0,15 mm (regra 2
-da spec atendida). Com fita (6,2 g) e ~1,2 g de fios descendo até a ponta, o CG
-do conjunto cai ~1,2 mm abaixo do centro da junta, o que dá um momento
-parasita de ~0,18 N·m sobre os dois M3 (separados 10 mm): ~18 N de diferença
-entre eles. Aceitável; anotar.
+**CG e massa do painel.** A estimativa anterior usava 1,2 g de fios em uma rota de quatro condutores. Pesar os seis condutores, a fita e ferragens e medir a distribuição real antes de usar o momento parasita da junta. Os 42,1 g do relatório são um subtotal nominal, não confirmação da montagem completa.
+
+O retorno DATA/CLK é soldado à ponta superior da fita e retorna à baia pela cavidade e abertura da lâmina. Prender durante a passagem com o acesso disponível; validar o processo em cupom/peça antes de montar. Não confundir quatro terminais de entrada da fita com o chicote completo de seis vias.
 
 ## 2. Sensor de índice angular
 
 | Item | Onde | Cota |
 |---|---|---|
-| Sensor hall A3144 **nu** (TO-92, dessoldado do módulo HW-477 — 06-PENDENCIAS C1) | face inferior do cubo, face sensível para baixo | r = 29, azimute **20°** do rotor (braço 1 = 0°) |
+| Sensor hall A3144 **nu** (TO-92, dessoldado do módulo HW-477 — 06-PENDENCIAS C1) | face inferior do cubo, face marcada (serigrafada) para baixo | r = 29, azimute **20°** do rotor (braço 1 = 0°) |
 | Terminais | rasgo 4,8 × 1,4 subindo até a baia, debaixo da placa de interface (onde está o pull-up) | r ≈ 27,3–28,7, azimute 20° |
 | Ímã Ø4 × 2 | topo do poste do `06_suporte_ima_ABS` | r = 29, azimute **20°** da base (+x = 0°) |
 | Entreferro | | 2,5 mm (poste termina em Z = 177,5; Datum A em Z = 180) |
@@ -86,36 +83,11 @@ assenta: altura do topo do colar e da ponta do eixo.
 
 ## 4. Sequência de montagem do rotor
 
-1. Sensor hall nu no bolso inferior, terminais pelo rasgo; fixar com epóxi.
-   Conferir a polaridade do ímã antes de colar (06-PENDENCIAS C2).
-2. Fios dos três painéis: passar pelas janelas da baia, bolsos das raízes e
-   sulcos dos braços; deixar 60 mm de sobra na ponta do braço.
-3. Eletrônica conforme o layout `spider.bay_layout` (render
-   `exports/preview/montagem_baia.png`), tudo elevado em pilares de 6 mm para
-   deixar o piso livre aos feixes:
-   - **placa de interface** (74AHCT125, pull-up 10 k, divisor 150k/47k,
-     polyfuse, chave slide, JST-XH) em +x, x 19,5…34,5 · y −5…15, sob a janela
-     da tampa; os terminais do hall sobem debaixo dela;
-   - **ESP32-C3** em −x, x −36…−18 · y ±11,25, USB-C para −y;
-   - **buck mini560** em pé na ranhura da parede a 140°, indutor para dentro;
-   - **capacitor 1000 µF** em pé na cerca em (22,5, −22);
-   - bateria LiFe (58 × 30 × 17, 50 g) no berço, deitada ao longo de y, por
-     último.
-   Desbalanceamento nominal do conjunto: ~63 g·mm a ~23°. **Antes de fechar a
-   tampa**, colar 2,19 g de massa de tungstênio na ponta externa do alívio de
-   180° e 0,87 g na do alívio de 300° (face inferior do cubo, r ≈ 33) e refinar
-   na pesagem.
-4. Painéis: encaixar a espiga no socket (0,1 mm/lado, 0,5 mm de fundo), passar
-   os fios pela janela da carenagem, furo da lâmina e cavidade, soldar na fita.
-   Parafusar 2 × M3 × 40 com porca plana no bolso hexagonal da base da torre e
-   trava química.
-5. Pesar os três painéis montados: Δm ≤ 0,084 g. Corrigir com massa adesiva nos
-   alívios inferiores do cubo (plano 1, r 17–36) e nos copos da tampa (plano 2,
-   r = 34).
-6. Tampa: 2 × M3 autoatarraxantes nos postes Ø2,8, em y = ±35.
-7. Cubo no eixo com a arruela Ø20 × Ø8,5 e a porca fina com Loctite (§3);
-   conferir o giro livre e o entreferro do hall (2–3 mm) com o suporte do ímã
-   montado.
-8. **Contenção de ensaio** (caixa fechada, chapa ou tela) e base grampeada pelas
-   abas antes de girar. O invólucro definitivo está fora de escopo; o cilindro
-   encomendado, se usado, assenta na canaleta de provisão da base.
+1. Confirmar Hall em bancada: VCC=5 V, pull-up de 10 kΩ para 3,3 V, face marcada voltada ao ímã. Testar polaridade/entreferro/campo do motor antes de colar. Montar o sensor no bolso inferior e passar os terminais pelo rasgo.
+2. Preparar os chicotes idênticos de seis condutores e os painéis; validar continuidade, isolamento e massa. Passar entrada/retorno pelos canais, sem furar a espiga. Parafusar os painéis com 2 × M3 × 40 e porcas capturadas.
+3. Posicionar a eletrônica conforme `spider.bay_layout`: interface em +x, ESP32 em −x, capacitor em (22,5; −22), buck a 140° com folga de parede de 1,5 mm. O envelope/guia recua 1,2 mm em relação à revisão anterior. Conferir o módulo real e fixar; manter a bateria fora do berço por enquanto.
+4. Fazer a correção estática inicial enquanto os alívios inferiores estão acessíveis. Usar os contrapesos calculados no relatório atual como ponto inicial, ajustando às massas reais. Registrar posições; a correção em dois planos exige o método instrumentado do bloqueador C.
+5. Montar o cubo no eixo, assentar a arruela Ø20 × Ø8,5 × 2 e apertar a porca fina M6 conforme §3. **A bateria e a tampa ainda devem estar removidas**, para acesso axial à porca. Conferir eixo, rosca, giro livre e entreferro.
+6. Instalar, reter e conectar a bateria no berço em Z local 9…26 (global 195…212). Conferir proteção elétrica, chave, fios afastados do eixo e retenção de todos os componentes.
+7. Fechar a tampa com 2 × M3 autoatarraxantes nos postes y=±35. Pesar e reconciliar o conjunto completo; repetir o balanceamento após qualquer abertura, correção ou troca de componente.
+8. Operação somente após resolver as pendências estruturais e instrumentais. Ensaio com contenção, base grampeada e operação remota; rampa nominal de RPM ≥12 s, limites e bloqueadores conforme plano 04.

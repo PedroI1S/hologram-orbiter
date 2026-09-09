@@ -1,7 +1,10 @@
 # Especificação CAD — Hologram Orbiter v3.0
 
-**Documento de construção. Autossuficiente: contém tudo o que é preciso para
-modelar o projeto do zero, sem nenhum outro arquivo e sem contexto prévio.**
+**Documento de construção provisório. As cotas permitem reproduzir o CAD; a
+resistência do painel ainda depende de validar a transferência de carga, a
+seção impressa por FDM e a fluência (§10.0). Não liberar a impressão definitiva
+do painel nem a operação com base apenas na aprovação geométrica. Cupons e
+protótipos para qualificação continuam previstos.**
 
 Toda cota aqui é absoluta. Nenhuma é "a mesma de antes" nem "a que mudou".
 
@@ -29,8 +32,8 @@ painel três vezes por volta: o olho integra e vê uma imagem cilíndrica suspen
 ```
 
 O rotor carrega a própria energia e eletrônica: bateria LiFePO4 2S, ESP32 e as três
-fitas viajam com ele. A parte fixa tem o motor, o ESC, a fonte e o sensor de
-índice angular. Nada de anel coletor.
+fitas viajam com ele. A parte fixa tem o motor, o ESC, a fonte e o ímã de
+índice angular; o sensor Hall acompanha o rotor. Nada de anel coletor.
 
 **A grandeza que governa tudo é a taxa de imagem**: 3 painéis × 30 rps = 90 Hz.
 É por isso que a rotação existe. Todo o resto — estrutura, térmica, tolerâncias —
@@ -64,26 +67,30 @@ escolha geométrica os ameaçar, a escolha muda — não eles.
 > que muda é quanto de folga os documentos prometem. Uma carenagem que **passa**
 > no critério de 350 mm² dá 5,0 A e 47 °C, e 63 °C se o Rth vier em 6,0.
 
-**Esticada disponível, não alvo:** 2000 RPM = 100 Hz, a 5,49 A e 51 °C. Só é
-liberada depois que o arrasto real for medido. Não projete para ela; apenas não
-a impeça.
+**2000 RPM não está liberado.** Mantendo o Cd do ponto vigente, o torque
+escala com ω²: 4,95 × (2000/1800)² = **6,11 A**, e o modelo térmico dá
+**56,3 °C**, acima dos 55 °C de aceite. Os antigos 5,49 A / 51 °C usavam o
+melhor caso de arrasto. A esticada para 100 Hz exige nova aprovação dos ensaios
+A e B e da estrutura, sem afrouxar limites.
 
 ### 2.1 O que o ponto de operação impõe
 
 | Consequência | Valor | Onde aparece na geometria |
 |---|---:|---|
 | Força centrífuga por painel | 158,1 N | junta espiga/socket, longarina, parafusos |
-| Deflexão da ponta do painel | 2,48 mm | raio dinâmico do rotor: 106,5 mm |
-| Tensão de flexão no painel | 13,9 MPa (SF ≈ 2,5) | seção da lâmina, parede de 2 mm |
+| Deflexão da ponta do painel | 3,83–7,74 mm no modelo uniforme | estimativa de envelope; validar engaste e FDM (§10.0) |
+| Tensão de flexão no painel | 21,7–28,8 MPa no modelo uniforme | resistência não certificada; razão nominal a 30 MPa de 1,38–1,04 |
 | Energia cinética do rotor | 27,6 J | energia armazenada em operação |
 | Energia de um painel solto | 7,9 J a 18,9 m/s (velocidade no CG, r = 100) | idem |
-| Inércia do rotor | 1,55 g·m² | rampa de partida ≥ 8 s |
+| Inércia do rotor | 1,55 g·m², premissa conservadora | rampa de partida ≥ 12 s |
 | Desbalanceamento admissível | **8,4 g·mm** | contrapesos, berço da bateria, Δm |
 
 **Duas bases de massa, de propósito.**
 
-As **cargas estruturais** (força, deflexão, tensão) usam o **teto do limite,
-44,5 g por painel**. Dimensionar pelo pior caso é o certo, e o painel real fica
+As **cargas estruturais** (força, deflexão, tensão) usam a **massa de referência de
+44,5 g por painel**. O aceite de massa permite até 45 g: a qualificação
+estrutural deve recalcular pela massa medida ou pelo teto de 45 g, adotando a
+maior carga pertinente. O painel estimado fica
 em ~42,1 g — 31,9 g do modelo (canal de 12,4 × 2,0 com parede local), mais fita
 e ferragens.
 
@@ -282,7 +289,7 @@ painéis contra 158,1 N cada um, e abriga a eletrônica de bordo.
 | **Ponta da espiga** | **r = 96 mm** |
 | Espiga | 11,0 × 6,0 mm, 22 mm de comprimento |
 | Furos dos parafusos | 2 por braço, Ø3,2 em **r = 80 e r = 90** |
-| Baia de eletrônica | anel **Ø82 externo / Ø78 interno, 26 mm** de altura |
+| Baia de eletrônica | anel **Ø82 externo / Ø78 interno, 29 mm** de altura |
 | Postes da tampa | 2, espaçados **70 mm** no eixo y (encostados na parede da baia, entre os braços), furo Ø2,8 |
 
 **Perfil dos braços.** Espessura máxima a ~33% da corda a partir de +y, afilando
@@ -319,20 +326,23 @@ o Ø da baia e a borda do cubo.
 Não coincidir com a raiz dos braços nem com os rasgos de ventilação.
 
 **Aperto do eixo — decidido, sem medição pendente.** O torque vai da campânula
-ao cubo por atrito. Ele precisa de **46 mN·m**, e isso exige apenas ~22 N de
-aperto. O risco de fluência do ABS aparece só se alguém apertar demais:
+ao cubo por atrito. Em regime ele precisa de **51,4 mN·m**; durante a rampa de 12 s,
+o modelo chega a **75,7 mN·m**. Com a premissa de atrito usada anteriormente
+(μ ≈ 0,3 em raio efetivo de 7 mm), são ~24,5 N e ~36,1 N de aperto.
+O coeficiente de atrito e a retenção da pré-carga precisam de verificação. A tabela compara pressões médias estimadas:
 
 | Torque | Força | Arruela M6 padrão (Ø12) | **Arruela larga (Ø20)** |
 |---:|---:|---:|---:|
 | 0,6 N·m | 500 N | 8,0 MPa | **1,9 MPa** |
 | 3,0 N·m | 2500 N | 39,8 MPa — escoa | 9,5 MPa |
 
-**Especificado: arruela Ø20 e torque de 0,6 N·m.** Dá 23× de margem na
-transmissão de torque e 1,9 MPa no ABS, longe de qualquer fluência. O assento
+**Especificado: arruela Ø20 e torque de 0,6 N·m.** A estimativa de 500 N
+dá margem nominal de ~14× sobre a partida e pressão média de 1,9 MPa no ABS.
+Isso não certifica a retenção de pré-carga por um polímero sob carga e calor. O assento
 plano de Ø20 é o topo do cubo, sem rebaixo — ver abaixo.
 
 **Não use a porca cônica que acompanha o motor.** Ela tem 14 mm de altura e
-ocuparia 14 dos 20 mm internos da baia, sobrando 6 mm para uma bateria de 13 mm.
+invade o espaço reservado aos trilhos e à bateria de 17 mm.
 **O colar do eixo muda a fixação.** O desenho do motor (§6.1) mostra um colar
 Ø8 × 5 sob a rosca, dentro de uma saliência total cotada em 14: o colar sobe
 5 mm acima da campânula, ou 7 se os 2 mm que faltam na soma forem um ressalto
@@ -466,7 +476,7 @@ abas de topo. Ainda assim **não conte com ele** para fechar o balanceamento.
 > (~1 g de tungstênio por copo, 34 g·mm). Separação axial de ~30 mm contra
 > 208 mm de rotor: o binário se corrige mal, e a resolução fina fica em r = 34
 > (0,1 g = 3,4 g·mm, o equivalente aos 90 mg em r = 90), não em r = 90. O
-> layout da baia já pede 2,19 g no alívio de 180° e 0,87 g no de 300°; o
+> layout da baia já pede 2,19 g no alívio de 180° e 0,86 g no de 300°; o
 > Bloqueador C decide o resto.
 
 ### 5.7 Isolador de vibração — EM ABERTO
@@ -578,10 +588,12 @@ proporcional à variação de rotação entre voltas. Para ficar abaixo de 1/4 d
 coluna, a rotação precisa ser estável dentro de **~0,14 % de uma volta para a
 outra**.
 
-A inércia de 1,55 g·m² resolve isso sozinha: cogging de 3 mN·m dá 0,034 %,
-ripple de comutação de 10 mN·m dá 0,114 %, e só uma perda quase total do torque
-de arrasto por uma volta inteira sairia do orçamento. **Não é preciso controle de
-rotação em malha fechada** — e o BLHeli_S não o oferece.
+A inércia de 1,55 g·m² ajuda, mas é uma premissa conservadora ainda não medida.
+Aplicar 3 ou 10 mN·m durante uma volta inteira dá Δω/ω de 0,034 % ou 0,114 %;
+essa conta não caracteriza a frequência e a fase do cogging, da comutação nem a
+variação entre voltas. A qualidade visual deve ser ensaiada. O BLHeli_S não
+oferece governor; a dispensa de malha fechada não está demonstrada por esses
+dois números.
 
 #### Implantação
 
@@ -592,11 +604,13 @@ rotação em malha fechada** — e o BLHeli_S não o oferece.
   2–3 mm, em raio livre da campânula (r = 29 mm no CAD: 15 mm além da campânula
   de Ø27,8; azimute 20° nos dois, rotor e base). Posição angular cotada — é
   a referência de fase da imagem inteira.
-- **fiação dos painéis:** 4 condutores por painel (5 V, GND, DATA, CLK). Cada
-  painel puxa **1,74 A** em branco pleno, então **AWG 24 para 5 V e GND** e
-  AWG 28 para DATA e CLK. Os quatro lado a lado ocupam ~4,6 mm: um canal de
-  3 × 2 mm não serve. Prefira **rota pela cavidade da carenagem e por um sulco
-  no lado de fuga da longarina** a furar a espiga — a espiga carrega os 158 N.
+- **fiação dos painéis:** seis condutores por painel: 5 V e GND de potência,
+  DATA com seu retorno GND e CLK com seu retorno GND. Use AWG 24 para potência
+  e AWG 28 nos pares de sinal/retorno. O antigo envelope de quatro fios não
+  valida esse chicote: medir o feixe real, sua massa e os caminhos de passagem
+  antes de qualificar a montagem. A rota passa pela cavidade da carenagem e
+  pelo sulco da longarina; preservar a espiga, que transmite os 158 N. A corrente
+  de branco pleno e o brilho permitido dependem da qualificação da alimentação.
 
 ---
 
@@ -726,70 +740,102 @@ Massa do painel nu, medida no STL v3.0 = 31,67 g
                    + 0,3 (canal 12,4 × 2,0 com parede local de 2,8)     = 31,9 g
 Massa do painel montado = 31,9 + 6,2 (fita) + 4,0 (ferragens) ≈ 42,1 g
 
-CARGA DE PROJETO usa o teto do limite, 44,5 g — ver §2.1:
+REFERÊNCIA DE CÁLCULO de 44,5 g — não é o teto de aceite de 45 g; ver §2.1:
 Força centrífuga  F = m·ω²·r = 0,0445 · 188,50² · 0,100 = 158,1 N
-Deflexão 2,5 a 5,0 mm · Tensão 12 a 16 MPa · SF ≈ 2,0 a 2,8 — derivação abaixo
+Deflexão 3,83 a 7,74 mm · Tensão 21,7 a 28,8 MPa no envelope uniforme
+  — seção vigente integrada abaixo; resistência não aprovada
 Inércia 1,55 g·m² · Energia 27,6 J · um painel solto 7,9 J a 18,9 m/s
-  (0,5 × 0,0445 × 18,85² — pelo teto de 44,5 g, como as demais cargas; os
+  (0,5 × 0,0445 × 18,85² — pela referência de 44,5 g, como as demais cargas; os
    7,4 J publicados antes usavam os 42,1 g estimados)
-Rotor completo: ~278,6 g com a baia ampliada, o layout da eletrônica (15 g de
-  catálogo) e o contrapeso repartido de 3,1 g — pesar e recalcular
+Rotor completo: ~278,85 g (subtotal nominal) com a baia ampliada, o layout da eletrônica (15 g de
+  catálogo), Hall0,2g e contrapeso3,05g; reconciliar chicotes/ferragens e pesar antes do aceite de massa
 Balanceamento: e = 6,3/188,50 = 33,4 µm → U = 0,252 · 33,4 = 8,4 g·mm
-  (cargas pelo teto de 44,5 g; balanceamento pela massa real — ver §2.1)
-Partida: rampa de 8 s → 8,0 A de pico (inércia é 100× a de uma hélice)
+  (cargas pela referência de 44,5 g; balanceamento pela massa real — ver §2.1)
+Partida: rampa de 12 s → 7,30 A de fase, ~28,1 W / 4,02 A na fonte a 7 V
+  rampa de 8 s → 8,47 A de fase, ~34,9 W / 4,98 A na fonte: excede os 8 A
 ```
 
 **Corrente de fase ≠ corrente da fonte.** Os 4,95 A são de fase — é deles que
-sai o aquecimento. No ponto de projeto a fonte de bancada vê **16,2 W**, ou seja
-**~2,3 A em 7 V**; no melhor caso, **14,4 W** e **~2,1 A em 7 V**. Toda tabela
+sai o aquecimento. No ponto de projeto a fonte de bancada vê **16,63 W**, ou seja
+**2,38 A em 7 V**; no melhor caso, **14,47 W** e **2,07 A em 7 V**. Toda tabela
 de corrente na fonte neste pacote usa **7 V** como base: uma linha em 7,4 V dá
 um número 6 % menor e não é comparável.
-Ajustar a fonte para 6–7 V para o ESC operar em duty alto: a 1800 RPM o motor
+A eficiência do ESC assumida é 95 %, explícita na conta
+`P_fonte = (Kt·ω·I + I²R + 0,7)/0,95`. Ela também deve ser medida.
+Começar com a fonte em 7,0 V; só investigar 6–7 V conforme a pendência C9: a 1800 RPM o motor
 está a 26% da rotação a vazio em 2S, e duty baixo piora a comutação.
 
-### 10.0 Flexão do painel — hipóteses explícitas e faixa
+### 10.0 Flexão do painel — seção vigente e hipóteses ainda abertas
 
-Os números de flexão vinham publicados como um trio fechado (2,48 mm · 13,9 MPa
-· SF 2,5) sem as hipóteses que os produzem. Elas são:
+**A memória anterior não representava a seção atual.** A integração do perfil
+externo menos cavidade, somando a parede local e retirando o canal de 12,4 × 2,0,
+dá os valores abaixo. Cortes independentes do STL em Z = 20,23; 50,23 e 90,23 mm
+confirmam os resultados. O cálculo reproduzível está em
+`Hologram_Orbiter_v3_0/CAD/physics.py`, função `calculate_physics`.
+
+| Grandeza da seção contínua, fora do boss e das nervuras | Valor |
+|---|---:|
+| Área | 106,500 mm² |
+| Centroide radial x | −0,531 mm |
+| Centroide em y | +0,638 mm |
+| Iyy, flexão radial | 589,885 mm⁴ |
+| Ixx | 8659,782 mm⁴ |
+| Ixy | 40,344 mm⁴ |
+| I efetivo radial = Iyy − Ixy²/Ixx | 589,697 mm⁴ |
+
+Os 910 mm⁴ herdados e a correção de apenas 30 mm⁴ estavam incorretos. A seção
+é assimétrica: a fibra exterior em x = 4 está a 4,531 mm do centroide, e não 4.
+Nenhuma rigidez estrutural da fita foi creditada.
+
+**Envelope com as hipóteses de carga antigas.** Distribuir todos os 44,5 g do
+painel por 208 mm dá `w = 158,111/208 = 0,76015 N/mm`, inclusive a massa do boss
+que na realidade se concentra perto do apoio. Para um engaste ideal:
 
 ```
-carga distribuída  w = F/L = 158,1 N / 208 mm = 0,76 N/mm
-balanço            L = 86 mm      (engaste na ponta das torres, z = 18)
-segundo momento    I = 910 mm⁴    (seção da lâmina, herdada da v2.1)
-módulo             E = 2,3 GPa
-
-δ = wL⁴/(8EI)          σ = (wL²/2)·c/I,  c = 4 mm (meia espessura)
+δ = wL⁴ / (8E·I_efetivo)
+M = wL²/2
+σ(x,y) = M·[Ixx·(x−xc) − Ixy·(y−yc)] / (Ixx·Iyy − Ixy²)
 ```
 
-Reproduzindo, e variando só o que é legitimamente incerto:
+| L (mm) | E (GPa) | δ (mm) | σ máxima (MPa) | Razão nominal 30 MPa / σ |
+|---:|---:|---:|---:|---:|
+| 86, apoio ideal na torre | 2,3 | 3,83 | 21,72 | 1,38 |
+| 86 | 2,0 | 4,41 | 21,72 | 1,38 |
+| 99, apoio ideal na luva | 2,0 | 7,74 | 28,79 | 1,04 |
 
-| L (mm) | E (GPa) | δ (mm) | σ (MPa) | SF (35 MPa) | SF (ABS FDM ~30 MPa) |
-|---:|---:|---:|---:|---:|---:|
-| 86 (engaste na torre) | 2,3 | 2,5 | 12,3 | 2,8 | 2,4 |
-| 86 | 2,0 (glossário) | 2,9 | 12,3 | 2,8 | 2,4 |
-| 99 (engaste na luva, z = 5) | 2,0 | 5,0 | 16,4 | 2,1 | 1,8 |
+Essas razões **não são fatores de segurança certificados**. A carga uniforme
+superestima a parcela distribuída ao incluir o boss, enquanto o engaste ideal
+ignora a complacência da luva, da alma e da casca. Não se pode afirmar que o
+conjunto rompe nem que passa a partir dessa tabela.
 
-Quatro ressalvas que a faixa acima incorpora:
+**Estimativa separada da carga distribuída.** Só a casca maciça contínua tem
+0,11076 g/mm. Somando a fita de 6,2 g distribuída nos 201,4 mm, em raio médio
+103 mm, a carga é ~0,50411 N/mm. Para E = 2 GPa, o mesmo modelo ideal dá:
 
-1. O glossário lista **E = 2,0 GPa**; a conta original usava 2,3. A faixa cobre
-   os dois.
-2. O engaste em z = 18 supõe que as torres Ø10, ligadas à lâmina só pela alma de
-   2,4 mm e pela casca de 0,8, engastam a lâmina. O engaste **seguro** é a luva
-   (±5,1), o que alonga o balanço para 99 mm.
-3. O I = 910 mm⁴ é da v2.1, com canal de 1,2. Com o piso atual em x 1,2–2,0 ele
-   cai ~30 mm⁴.
-4. **35 MPa é ABS injetado.** ABS por FDM, no plano das camadas, fica em
-   25–30 MPa.
+| L (mm) | δ (mm) | σ máxima (MPa) |
+|---:|---:|---:|
+| 86 | 2,92 | 14,41 |
+| 99 | 5,13 | 19,09 |
 
-O painel não falha em nenhuma linha da tabela, mas o SF realista é **~2, não
-2,5**, e a deflexão é de **3 a 5 mm, não 2,5**. O raio dinâmico vai de 106,5 para
-~109 mm — ainda folgado contra o cilindro Ø266. A consequência que importa é a
-**fluência**, que o plano de projeto já chama de risco maior: ela é bem mais
-provável a 16 MPa do que a 12. É por isso que o bloqueador B mede o crescimento
-da ponta, e não só a temperatura.
+Para o teto de aceite de 45 g, o envelope uniforme cresce por 45/44,5:
+159,89 N, deflexão máxima 7,83 mm e tensão máxima 29,11 MPa. O gerador deve
+preservar a identificação da massa usada em cada resultado.
 
-A orientação de impressão está correta e deve ser mantida: a lâmina deitada põe
-a flexão no plano das camadas, que é onde o ABS FDM é forte.
+Essa segunda estimativa exclui nervuras, peles das pontas, fios e a flexibilidade
+do boss; **não é um limite de aceite**. A seção FDM real depende do fatiamento,
+da orientação, das ligações entre cordões e do material comprado.
+
+**Pendências para liberar o painel:** modelar ou medir a transferência de carga
+lâmina → alma/casca → luva/torres, verificar a seção e o módulo da impressão real
+e medir fluência sob carga e temperatura. Medir só depois de parar registra
+uma deformação residual após descarregar; não mede o crescimento da ponta em
+operação. A orientação deitada continua prevista, mas não substitui esses
+ensaios. Até fechar essas pendências, fabricar cupons e protótipos de
+qualificação; não liberar impressão definitiva nem operação.
+
+A folga radial deve usar o maior envelope de deflexão calculado, incluindo a
+geometria real da seção e as tolerâncias, e ser reavaliada quando a transferência
+de carga for validada. Uma folga geométrica positiva não aprova a resistência.
 
 ### 10.1 Sensibilidade — por que a ventilação é requisito
 
@@ -800,6 +846,6 @@ a flexão no plano das camadas, que é onde o ABS FDM é forte.
 | 0,35 | 0,35 | 4,95 A | 46 °C | 62 °C |
 | 0,50 | 0,50 | 7,26 A | 68 °C | **99 °C** |
 
-O projeto passa no caso central com folga e **depende de ventilação** no pior
-caso. Por isso os requisitos de área livre em §5.2 e §5.4 são critérios de
+O modelo térmico fica abaixo de 55 °C no caso central assumido. Isso ainda
+depende de medir arrasto e troca térmica; não constitui liberação operacional. Por isso os requisitos de área livre em §5.2 e §5.4 são critérios de
 aceitação, e não sugestões.

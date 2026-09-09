@@ -118,21 +118,46 @@ def passes(result: dict) -> bool:
     return bool(result.get("watertight")) and bool(result.get("outward_orientation", False)) and bool(result.get("winding_clean", False))
 
 
+def expected_stl_files(parameters: dict) -> set[str]:
+    names = {
+        "01_aranha_ABS.stl", "02_painel_LED_ABS_1x.stl",
+        "02_painel_LED_ABS_3x_mesma_mesa.stl", "03_tampa_baia_ABS.stl",
+        "04_05_base_torre_ABS_integradas.stl", "06_suporte_ima_ABS.stl",
+        "C01_cupom_junta.stl", "C02_cupom_canal_LED.stl",
+        "R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl",
+    }
+    if parameters["containment_cap"]["enabled"]:
+        names.add("07_tampa_contencao_ABS.stl")
+    return names
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("stl_dir", type=Path)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--parameters", type=Path, default=HERE.parent / "CAD" / "parameters.json")
     args = parser.parse_args()
+    parameters = json.loads(args.parameters.read_text(encoding="utf-8"))
     files = sorted(args.stl_dir.glob("*.stl"))
+    expected = expected_stl_files(parameters)
+    actual = {path.name for path in files}
+    missing, unexpected = sorted(expected - actual), sorted(actual - expected)
     results = []
-    failed = False
+    failed = bool(missing or unexpected)
+    if missing:
+        print("FALHA Inventário: STL ausentes: " + ", ".join(missing), file=sys.stderr)
+    if unexpected:
+        print("FALHA Inventário: STL inesperados: " + ", ".join(unexpected), file=sys.stderr)
     for path in files:
         try:
             result = analyse(path)
         except Exception as exc:
             result = {"file": path.name, "error": str(exc), "watertight": False}
         results.append(result)
-        ok = passes(result)
+        expected_components = 3 if path.name == "02_painel_LED_ABS_3x_mesma_mesa.stl" else 1
+        result["expected_connected_components"] = expected_components
+        result["component_count_ok"] = result.get("connected_components") == expected_components
+        ok = passes(result) and result["component_count_ok"]
         if not ok:
             failed = True
         state = "OK" if ok else "FALHA"
@@ -146,7 +171,11 @@ def main() -> int:
         for example in rw.get("examples", [])[:4]:
             print("      ", example)
 
-    payload = {"all_pass": not failed, "files": results}
+    payload = {
+        "all_pass": not failed,
+        "inventory": {"expected": sorted(expected), "missing": missing, "unexpected": unexpected},
+        "files": results,
+    }
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

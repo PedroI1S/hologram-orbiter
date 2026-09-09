@@ -1,0 +1,16 @@
+[
+  {
+    "quality_clearance": 0.1,
+    "triangle_hash": "cea73d5c4547f059e5034bbff1a68f3656e0c14d6b2b5793a298a58545f33bdb",
+    "triangles": 60,
+    "socket_width": 11.2,
+    "socket_height": 6.2
+  },
+  {
+    "quality_clearance": 0.5,
+    "triangle_hash": "cea73d5c4547f059e5034bbff1a68f3656e0c14d6b2b5793a298a58545f33bdb",
+    "triangles": 60,
+    "socket_width": 11.2,
+    "socket_height": 6.2
+  }
+]

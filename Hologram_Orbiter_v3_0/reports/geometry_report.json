@@ -2,13 +2,19 @@
   "project": {
     "name": "Hologram Orbiter",
     "version": "3.0",
-    "revision": "3.0.3 — 03/09/2026: revisao independente 08 aplicada (tres colisoes de montagem P0, balanceamento com os centroides do CAD, tres criterios novos = 54). Antes, 3.0.2: A1-A2 e B1-B11 fechados, desvios ratificados, fixacao do eixo refeita pelo desenho do motor (colar Ø8 x 5-7), layout da baia com contrapeso planejado",
+    "revision": "3.0.4 — 08/09/2026: correcoes locais da revisao completa; fisica recalculada, montagem e pipeline verificados; operacao e lote definitivo de paineis pendentes",
     "units": "mm",
     "source_spec": "../../01-ESPECIFICACAO-CAD-v3.0.md",
     "generated_with": "Blender 5.2 LTS, gerador CAD/generate.py",
     "note": "Toda cota nasce aqui. STL nunca e editado a mao. Valores com verified=false sao provisorios e estao listados em docs/MEDICOES_DE_ENTRADA.md."
   },
-  "status": "PROVISORIO_AGUARDANDO_MEDICOES",
+  "status": "PROVISORIO_REVISAO_ESTRUTURAL_E_ENSAIOS_PENDENTES",
+  "release": {
+    "operation_released": false,
+    "definitive_panel_manufacture_released": false,
+    "reason": "Secao resistente corrigida; transferencia de carga, ABS FDM, fluencia, massas reais e bloqueadores fisicos ainda nao validados."
+  },
+  "all_geometry_checks_pass": true,
   "operating_point": {
     "panel_mid_plane_radius_mm": 100.0,
     "rpm": 1800.0,
@@ -43,12 +49,12 @@
         85.888,
         29.0
       ],
-      "volume_cm3": 68.26,
-      "estimated_mass_g": 70.99,
+      "volume_cm3": 68.324,
+      "estimated_mass_g": 71.06,
       "centroid_mm": [
-        -0.119,
-        0.081,
-        3.581
+        -0.141,
+        0.099,
+        3.588
       ],
       "triangles": 11238,
       "non_manifold_edges": 0
@@ -102,7 +108,7 @@
         0.0,
         1.229
       ],
-      "triangles": 6538,
+      "triangles": 6552,
       "non_manifold_edges": 0
     },
     "base_tower": {
@@ -237,6 +243,215 @@
     }
   },
   "derived": {
+    "physics": {
+      "status": "ESTIMATE_NOT_STRUCTURAL_OR_OPERATIONAL_APPROVAL",
+      "operation_released": false,
+      "section": {
+        "area_mm2": 106.49984933333334,
+        "centroid_x_mm": -0.5309497478364019,
+        "centroid_y_mm": 0.6380808781342415,
+        "Iyy_mm4": 589.884623205896,
+        "Ixx_mm4": 8659.781926738706,
+        "Ixy_mm4": 40.34430022641643,
+        "I_effective_radial_mm4": 589.6966666759823,
+        "method": "outer minus cavity plus local wall minus LED channel",
+        "scope": "continuous blade only; no structural credit for LED strip",
+        "extreme_outer_x_mm": 4.0,
+        "extreme_inner_x_mm": -4.0
+      },
+      "flexure": {
+        "design_panel_mass_g": 44.5,
+        "design_centrifugal_force_n": 158.11106250545146,
+        "envelope_cases": [
+          {
+            "unsupported_length_mm": 86.0,
+            "modulus_mpa": 2300.0,
+            "distributed_load_n_per_mm": 0.7601493389685167,
+            "tip_deflection_mm": 3.8321829230904267,
+            "max_bending_stress_mpa": 21.723851137986866,
+            "nominal_strength_ratio_at_30_mpa": 1.3809706119529264,
+            "strength_certified": false
+          },
+          {
+            "unsupported_length_mm": 86.0,
+            "modulus_mpa": 2000.0,
+            "distributed_load_n_per_mm": 0.7601493389685167,
+            "tip_deflection_mm": 4.407010361553991,
+            "max_bending_stress_mpa": 21.723851137986866,
+            "nominal_strength_ratio_at_30_mpa": 1.3809706119529264,
+            "strength_certified": false
+          },
+          {
+            "unsupported_length_mm": 99.0,
+            "modulus_mpa": 2000.0,
+            "distributed_load_n_per_mm": 0.7601493389685167,
+            "tip_deflection_mm": 7.739110453740618,
+            "max_bending_stress_mpa": 28.787921174068323,
+            "nominal_strength_ratio_at_30_mpa": 1.0421037288035753,
+            "strength_certified": false
+          }
+        ],
+        "acceptance_mass_limit_g": 45.0,
+        "acceptance_limit_cases": [
+          {
+            "unsupported_length_mm": 86.0,
+            "modulus_mpa": 2300.0,
+            "distributed_load_n_per_mm": 0.7686903427771516,
+            "tip_deflection_mm": 3.87524115818133,
+            "max_bending_stress_mpa": 21.967939353020427,
+            "nominal_strength_ratio_at_30_mpa": 1.3656264940423384,
+            "strength_certified": false
+          },
+          {
+            "unsupported_length_mm": 86.0,
+            "modulus_mpa": 2000.0,
+            "distributed_load_n_per_mm": 0.7686903427771516,
+            "tip_deflection_mm": 4.4565273319085295,
+            "max_bending_stress_mpa": 21.967939353020427,
+            "nominal_strength_ratio_at_30_mpa": 1.3656264940423384,
+            "strength_certified": false
+          },
+          {
+            "unsupported_length_mm": 99.0,
+            "modulus_mpa": 2000.0,
+            "distributed_load_n_per_mm": 0.7686903427771516,
+            "tip_deflection_mm": 7.826066750973658,
+            "max_bending_stress_mpa": 29.11138096254099,
+            "nominal_strength_ratio_at_30_mpa": 1.030524798483536,
+            "strength_certified": false
+          }
+        ],
+        "envelope_assumption": "whole panel mass uniformly distributed over height; ideal clamp",
+        "distributed_load_estimate": {
+          "shell_mass_g_per_mm": 0.11075984330666669,
+          "led_mass_g_per_mm": 0.030784508440913606,
+          "load_n_per_mm": 0.5041071275030122,
+          "cases": [
+            {
+              "unsupported_length_mm": 86.0,
+              "modulus_mpa": 2000.0,
+              "distributed_load_n_per_mm": 0.5041071275030122,
+              "tip_deflection_mm": 2.922590628380467,
+              "max_bending_stress_mpa": 14.406574647994491,
+              "nominal_strength_ratio_at_30_mpa": 2.08238257413786,
+              "strength_certified": false
+            },
+            {
+              "unsupported_length_mm": 99.0,
+              "modulus_mpa": 2000.0,
+              "distributed_load_n_per_mm": 0.5041071275030122,
+              "tip_deflection_mm": 5.132334582514581,
+              "max_bending_stress_mpa": 19.091243662113847,
+              "nominal_strength_ratio_at_30_mpa": 1.5714010323766565,
+              "strength_certified": false
+            }
+          ],
+          "limitations": "continuous solid ABS shell and uniform LED mass only; excludes ribs, end caps, wiring and boss compliance; not an acceptance bound"
+        },
+        "required_before_final_panel_print": [
+          "blade/boss load transfer",
+          "actual FDM section and modulus",
+          "loaded creep test"
+        ]
+      },
+      "drive": {
+        "inputs_unvalidated": {
+          "motor_kv": 920.0,
+          "effective_resistance_ohm": 0.221,
+          "extra_loss_w": 0.7,
+          "esc_efficiency": 0.95,
+          "ambient_c": 25.0,
+          "thermal_resistance_k_w": 3.5,
+          "source_voltage_v": 7.0,
+          "abs_strength_mpa": 30.0
+        },
+        "omega_rad_s": 188.49555921538757,
+        "torque_constant_nm_per_a": 0.010379670201645347,
+        "design_drag_torque_nm": 0.051379367498144465,
+        "inertia_g_m2": 1.55,
+        "inertia_status": "conservative unmeasured design premise",
+        "rotor_energy_j": 27.536196279039302,
+        "steady": {
+          "phase_current_a": 4.95,
+          "input_power_w": 16.63140537757437,
+          "source_current_a": 2.3759150539391958,
+          "source_voltage_v": 7.0,
+          "copper_loss_w": 5.415052500000001,
+          "steady_motor_temperature_c": 46.40268375
+        },
+        "startup": [
+          {
+            "phase_current_a": 8.468513968988356,
+            "input_power_w": 34.861060792365926,
+            "source_current_a": 4.980151541766561,
+            "source_voltage_v": 7.0,
+            "copper_loss_w": 15.849176074292155,
+            "ramp_s": 8.0,
+            "acceleration_torque_nm": 0.03652101459798134
+          },
+          {
+            "phase_current_a": 7.295675979325571,
+            "input_power_w": 28.144516739121368,
+            "source_current_a": 4.02064524844591,
+            "source_voltage_v": 7.0,
+            "copper_loss_w": 11.763142246963097,
+            "ramp_s": 12.0,
+            "acceleration_torque_nm": 0.024347343065320895
+          }
+        ],
+        "stretch": {
+          "phase_current_a": 6.1111111111111125,
+          "input_power_w": 23.408862332966073,
+          "source_current_a": 3.344123190423725,
+          "source_voltage_v": 7.0,
+          "copper_loss_w": 8.2533950617284,
+          "steady_motor_temperature_c": 56.336882716049395,
+          "rpm": 2000.0,
+          "released_for_operation": false
+        }
+      },
+      "stl_section_checks": [
+        {
+          "z_mm": 20.23,
+          "measured": {
+            "area_mm2": 106.49985306668927,
+            "centroid_x_mm": -0.5309496995671938,
+            "centroid_y_mm": 0.6380810455759593,
+            "Iyy_mm4": 589.8846462195523,
+            "Ixx_mm4": 8659.782294297409,
+            "Ixy_mm4": 40.34430658678935,
+            "I_effective_radial_mm4": 589.6966896383527
+          },
+          "matches_parameters": true
+        },
+        {
+          "z_mm": 50.23,
+          "measured": {
+            "area_mm2": 106.49985295277702,
+            "centroid_x_mm": -0.5309496988429356,
+            "centroid_y_mm": 0.63808105521378,
+            "Iyy_mm4": 589.8846461437822,
+            "Ixx_mm4": 8659.782284410967,
+            "Ixy_mm4": 40.344305923226855,
+            "I_effective_radial_mm4": 589.6966895685508
+          },
+          "matches_parameters": true
+        },
+        {
+          "z_mm": 90.23,
+          "measured": {
+            "area_mm2": 106.49985288542919,
+            "centroid_x_mm": -0.5309496978870115,
+            "centroid_y_mm": 0.6380810629052044,
+            "Iyy_mm4": 589.8846459666922,
+            "Ixx_mm4": 8659.782274190278,
+            "Ixy_mm4": 40.34430476230666,
+            "I_effective_radial_mm4": 589.6966894020561
+          },
+          "matches_parameters": true
+        }
+      ]
+    },
     "panel": {
       "bare_mass_g": 31.94,
       "assembled_mass_g": 42.14,
@@ -244,7 +459,7 @@
       "datum_d_mm": 104.0,
       "abs_centroid_z_mm": -0.147,
       "assembled_centroid_z_estimate_mm": -1.18,
-      "assembled_centroid_note": "Estimativa com fita (6,2 g) e ~1,2 g de fios descendo pela cavidade até a ponta inferior. Momento parasita na junta = F × deslocamento.",
+      "assembled_centroid_note": "Estimativa histórica com 1,2 g de fios: não validada para o chicote de seis condutores; pesar e recalcular CG e ferragens antes da montagem operacional.",
       "parasitic_moment_n_mm": 177.2,
       "centrifugal_force_n_with_cad_mass": 149.7,
       "led_floor_nominal_mm": 0.8,
@@ -311,7 +526,7 @@
       "method": "Estimativa por tabela de razao de finura (Hoerner), nao CFD. Area frontal = largura radial do boss x altura das torres."
     },
     "spider": {
-      "mass_g": 70.99,
+      "mass_g": 71.06,
       "mass_limit_g": 75.0,
       "shoulder_radius_measured_mm": [
         74.0,
@@ -427,12 +642,12 @@
       "rest_z_mm": 5.0,
       "top_z_mm": 310.0,
       "measured": true,
-      "rotor_dynamic_radius_mm": 109.0,
-      "radial_clearance_mm": 24.0,
-      "tip_deflection_used_mm": 5.0,
+      "rotor_dynamic_radius_mm": 111.83,
+      "radial_clearance_mm": 21.17,
+      "tip_deflection_used_mm": 7.826066750973658,
       "tip_deflection_range_mm": [
-        2.5,
-        5.0
+        3.875,
+        7.826
       ],
       "peripheral_holes": "removidos (abas de grampo no lugar)"
     },
@@ -469,7 +684,7 @@
           22.0
         ],
         [
-          -24.999999999999993,
+          -24.99999999999999,
           43.30127018922194,
           22.0
         ],
@@ -553,8 +768,8 @@
           "label": "Buck 5 V / 5 A mini560 (22 x 17 x 6), em pe numa ranhura na parede",
           "mass_g_estimate": 2.0,
           "center_xy_mm": [
-            -26.63,
-            22.345
+            -25.71,
+            21.574
           ],
           "z_range_mm": [
             0.0,
@@ -630,18 +845,18 @@
         {
           "id": "eletrônica da baia",
           "mass_g": 15.0,
-          "u_g_mm": 72.6,
-          "azimuth_deg": 13.7
+          "u_g_mm": 74.0,
+          "azimuth_deg": 12.2
         },
         {
           "id": "aranha (malha)",
-          "mass_g": 70.99,
+          "mass_g": 71.06,
           "centroid_xy_mm": [
-            -0.119,
-            0.081
+            -0.141,
+            0.099
           ],
-          "u_g_mm": 10.2,
-          "azimuth_deg": 145.8
+          "u_g_mm": 12.2,
+          "azimuth_deg": 144.9
         },
         {
           "id": "tampa (malha)",
@@ -661,13 +876,13 @@
         }
       ],
       "unbalance_vector_g_mm": [
-        57.9,
-        24.9
+        58.2,
+        24.7
       ],
-      "unbalance_g_mm": 63.0,
-      "unbalance_azimuth_deg": 23.3,
+      "unbalance_g_mm": 63.2,
+      "unbalance_azimuth_deg": 23.0,
       "admissible_g_mm": 8.4,
-      "counterweight_azimuth_deg": 203.3,
+      "counterweight_azimuth_deg": 203.0,
       "counterweight_placement": [
         {
           "pocket_center_deg": 180.0,
@@ -676,26 +891,51 @@
         },
         {
           "pocket_center_deg": 300.0,
-          "mass_g": 0.87,
+          "mass_g": 0.86,
           "radius_mm": 33.0
         }
       ],
-      "counterweight_mass_g": 3.06,
+      "counterweight_mass_g": 3.05,
       "counterweight_split": true,
       "counterweight_radius_mm": 33.0,
-      "residual_g_mm": 0.06,
+      "residual_g_mm": 0.13,
       "residual_within_admissible": true,
       "pocket_capacity_g": 13.9,
       "counterweight_fits_pockets": true,
-      "note": "Estimativa: centróides de sólido maciço, massas de eletrônica de catálogo. Dimensiona o contrapeso do plano 1; não substitui o bloqueador C com o rotor real."
+      "note": "Estimativa: centróides de sólido maciço, massas de eletrônica de catálogo. Dimensiona o contrapeso do plano 1; não substitui o bloqueador C com o rotor real.",
+      "mesh_intersections": {
+        "ok": true,
+        "tolerance_mm3": 0.001,
+        "components": [
+          {
+            "component": "interface",
+            "intersection_mm3": 0.0
+          },
+          {
+            "component": "esp32c3",
+            "intersection_mm3": 0.0
+          },
+          {
+            "component": "buck",
+            "intersection_mm3": 0.0
+          },
+          {
+            "component": "capacitor",
+            "intersection_mm3": 0.0
+          }
+        ],
+        "method": "Boolean INTERSECT EXACT, final spider mesh versus component envelopes"
+      }
     },
     "rotor": {
-      "cad_mass_g": 176.93,
-      "total_mass_estimate_g": 278.59,
-      "total_without_counterweight_g": 275.53,
+      "cad_mass_g": 177.0,
+      "total_mass_estimate_g": 278.85,
+      "total_without_counterweight_g": 275.8,
       "limit_g": 280.0,
+      "mass_budget_complete": false,
+      "mass_budget_note": "Ferragens por painel4g permanecem estimativa anterior. Chicote de seis condutores precisa ser pesado e reconciliado com estas ferragens antes de declarar massa total; o subtotal nominal nao garante o teto280g.",
       "components": {
-        "spider": 70.99,
+        "spider": 71.06,
         "panels_bare_x3": 95.82,
         "lid": 10.12,
         "strips_x3": 18.6,
@@ -703,7 +943,8 @@
         "battery": 50.0,
         "nut_washer": 3.0,
         "electronics_allowance": 15.0,
-        "counterweight_planned": 3.06
+        "hall_sensor": 0.2,
+        "counterweight_planned": 3.05
       }
     },
     "assembly": {
@@ -827,11 +1068,11 @@
       "nota": "medido no flanco plano"
     },
     {
-      "criterio": "Menor parede estrutural do modelo",
+      "criterio": "Parede estrutural nas seções amostradas",
       "valor": 0.8,
-      "requisito": "≥ 0,8 mm",
+      "requisito": "≥ 0.80 mm",
       "passa": true,
-      "nota": "mínimo entre piso do canal, casca da carenagem, borda do disco fora dos rasgos, pele da tampa e nervuras (1,0 mm, conforme spec §5.1)"
+      "nota": "Amostras: piso do canal, flanco da carenagem, borda do disco, pele da tampa e nervuras; não certifica a espessura mínima global da malha"
     },
     {
       "criterio": "Enrolamento por raios — painel",
@@ -964,11 +1205,34 @@
       "nota": "abas de topo inclusas"
     },
     {
-      "criterio": "Layout da baia: envelope, interferências e faixas dos feixes",
+      "criterio": "Layout da baia: envelopes e faixas dos feixes",
       "valor": "ok",
-      "requisito": "tudo dentro de r = 38,5 e Z ≤ 25, sem interferência, piso livre nas faixas dos feixes",
+      "requisito": "envelopes dentro da baia, Z ≤ 28.0; piso livre para feixes",
       "passa": true,
       "nota": "4 componentes; pilares em [[21.5, -3.0], [32.5, -3.0], [32.5, 13.0], [21.5, 13.0], [-34.0, -9.25], [-20.0, -9.25], [-20.0, 9.25], [-34.0, 9.25]]"
+    },
+    {
+      "criterio": "Eletrônica sem interseção com a malha final da aranha",
+      "valor": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "requisito": "≤ 0.001 mm³ por envelope (tolerância numérica)",
+      "passa": true,
+      "nota": "Inclui raízes dos braços e suportes; módulos reais ainda precisam de medição"
+    },
+    {
+      "criterio": "Seção de flexão confere com cortes da malha",
+      "valor": [
+        589.8846,
+        589.8846,
+        589.8846
+      ],
+      "requisito": "integrais da seção iguais nos parâmetros e em três cortes",
+      "passa": true,
+      "nota": "Verifica o cálculo geométrico; não certifica resistência, fluência ou ABS FDM"
     },
     {
       "criterio": "Eletrônica embarcada (estimada) dentro da folga",
@@ -981,11 +1245,11 @@
       "criterio": "Contrapeso planejado do layout",
       "valor": [
         2.19,
-        0.87
+        0.86
       ],
       "requisito": "cabe nos alívios (≤ 13.9 g cada) e deixa resíduo ≤ 8.4 g·mm",
       "passa": true,
-      "nota": "desbalanceamento nominal 63.0 g·mm a 23.3° (admissível 8.4); correção a 203.3° repartida em 2.19 g no alívio de 180°, 0.87 g no alívio de 300°; resíduo 0.06 g·mm. Fontes: eletrônica da baia 72.6 g·mm a 14°; aranha (malha) 10.2 g·mm a 146°; tampa (malha) 9.6 g·mm a 180°; sensor hall nu 5.8 g·mm a 20°"
+      "nota": "desbalanceamento nominal 63.2 g·mm a 23.0° (admissível 8.4); correção a 203.0° repartida em 2.19 g no alívio de 180°, 0.86 g no alívio de 300°; resíduo 0.13 g·mm. Fontes: eletrônica da baia 74.0 g·mm a 12°; aranha (malha) 12.2 g·mm a 145°; tampa (malha) 9.6 g·mm a 180°; sensor hall nu 5.8 g·mm a 20°"
     },
     {
       "criterio": "Área livre de ventilação do cubo",
@@ -1007,30 +1271,30 @@
         237.6,
         316.8
       ],
-      "requisito": "≤ 350 mm²",
+      "requisito": "≤ 350.0 mm²",
       "passa": true,
       "nota": "estimativa por razão de finura, não CFD"
     },
     {
-      "criterio": "Massa por painel montado",
+      "criterio": "Subtotal nominal por painel",
       "valor": 42.14,
-      "requisito": "≤ 45 g",
+      "requisito": "≤ 45.00 g",
       "passa": true,
-      "nota": ""
+      "nota": "Chicote de seis condutores e ferragens reais ainda não reconciliados; não é aceite de massa final"
     },
     {
-      "criterio": "Massa do rotor completo",
-      "valor": 278.59,
-      "requisito": "≤ 280 g",
+      "criterio": "Subtotal nominal do rotor",
+      "valor": 278.85,
+      "requisito": "≤ 280.00 g",
       "passa": true,
-      "nota": "inclui bateria (50 g medidos), fitas, ferragens, folga de eletrônica de 15 g e o contrapeso planejado de 3.1 g"
+      "nota": "Inclui Hall e contrapeso; completar orçamento dos chicotes antes do aceite de massa"
     },
     {
       "criterio": "Massa da aranha",
-      "valor": 70.99,
+      "valor": 71.06,
       "requisito": "≤ 75 g (alvo)",
       "passa": true,
-      "nota": "alvo revisto: os 55 g da spec são anteriores ao cubo Ø92 e à baia de 26"
+      "nota": "alvo para cubo Ø92 e baia de 29 mm"
     },
     {
       "criterio": "Massa da tampa",
@@ -1069,10 +1333,13 @@
     },
     {
       "criterio": "Base + brim cabe na mesa",
-      "valor": 296.0,
-      "requisito": "≤ 300 mm",
+      "valor": [
+        296.0,
+        296.0
+      ],
+      "requisito": "≤ [300.0, 300.0] mm (X e Y)",
       "passa": true,
-      "nota": "extensão medida na malha (com abas) 280.0 + 2 × 8 de brim"
+      "nota": "envelope medido em cada eixo, com o brim configurado"
     },
     {
       "criterio": "Piso da baia íntegro sob os furos da flange",
@@ -1144,10 +1411,10 @@
     },
     {
       "criterio": "Folga radial rotor → cilindro encomendado",
-      "valor": 24.0,
+      "valor": 21.17,
       "requisito": "≥ 10 mm após deflexão",
       "passa": true,
-      "nota": "informativo: raio dinâmico 109.0 contra Ø int 266"
+      "nota": "informativo: raio dinâmico 111.8 contra Ø int 266"
     },
     {
       "criterio": "Folga vertical topo do rotor → borda do cilindro encomendado",
@@ -1220,7 +1487,7 @@
       "washer_material": "aluminio 2 mm, cortada da mesma chapa da R01 (referencia de corte inclui o disco); alternativa de prateleira: DIN 125 M8 em aco (16 x 8,4 x 1,6; 3,4 MPa)",
       "torque_nm": 0.6,
       "verified": false,
-      "note": "A arruela precisa de furo maior que o colar Ø8 do eixo (ver shaft.note) e assenta direto no topo do cubo, sem rebaixo: com o colar subindo ate 5-7 mm e o cubo com 6, qualquer rebaixo poria o colar acima do fundo. Pilha em relacao ao topo do cubo: arruela 0-2, porca 2-5, ponta do eixo em +8 (ou +6 na leitura de 12 mm): sobram 3 mm (ou 1) de rosca. Topo da porca em +5 fica 1 mm abaixo dos trilhos da bateria (Z = 6). A porca autotravante de 6 mm nao cabe em nenhuma leitura: terminaria em +8, no fim do eixo. Pressao no ABS: 500 N / 259 mm2 = 1,9 MPa, o valor da spec secao 5.2."
+      "note": "A arruela precisa de furo maior que o colar Ø8 do eixo (ver shaft.note) e assenta direto no topo do cubo, sem rebaixo: com o colar subindo ate 5-7 mm e o cubo com 6, qualquer rebaixo poria o colar acima do fundo. Pilha em relacao ao topo do cubo: arruela 0-2, porca 2-5, ponta do eixo em +8 (ou +6 na leitura de 12 mm): sobram 3 mm (ou 1) de rosca. Topo da porca em +5 fica 4 mm abaixo dos trilhos da bateria (Z = 9). A porca autotravante de 6 mm nao cabe em nenhuma leitura: terminaria em +8, no fim do eixo. Pressao no ABS: 500 N / 259 mm2 = 1,9 MPa, o valor da spec secao 5.2."
     },
     "led_strip": {
       "width": 12.0,
@@ -1259,7 +1526,7 @@
       "body_thickness": 1.5,
       "module_verified": true,
       "mounting_decided": true,
-      "note": "Decisao 06-PENDENCIAS C3: dessoldar o A3144 do modulo e montar o TO-92 nu no bolso da face inferior do cubo, com pull-up de 10 k para 3,3 V. O modulo inteiro nao sobe no rotor: o pull-up dele vai para VCC (5 V na saida queima o ESP32-C3) e 1,5-2,5 g em r = 29 valem 43-72 g.mm."
+      "note": "Decisao 06-PENDENCIAS C1: dessoldar o A3144 do modulo e montar o TO-92 nu no bolso da face inferior do cubo, com pull-up de 10 k para 3,3 V. O modulo inteiro nao sobe no rotor: o pull-up dele vai para VCC (5 V na saida queima o ESP32-C3) e 1,5-2,5 g em r = 29 valem 43-72 g.mm."
     },
     "magnet": {
       "diameter": 4.0,
@@ -1268,17 +1535,17 @@
       "polarity": "face positiva do ima aponta para o sensor (repulsao)",
       "polarity_decided_by": "Pedro, 03/09/2026 (pendencia C2)",
       "polarity_bench_confirmed": false,
-      "polarity_note": "ATENCAO antes de colar: o A3144 e unipolar e comuta com o polo SUL apresentado a face MARCADA do TO-92 (familia A314x). 'Face positiva' costuma designar o NORTE do ima. Se as duas convencoes valerem ao pe da letra, o ima fica invertido e nao ha pulso de indice — falha cujo sintoma parece firmware. A nomenclatura nao resolve porque 'positiva' e 'repulsao' dependem do ima de referencia usado no teste. RESOLVER NA BANCADA: A3144 com 3,3 V e pull-up de 10 k, aproximar a face escolhida da face marcada do TO-92 a ~3 mm; a saida tem de ir a nivel BAIXO. So entao colar. Ver 06-PENDENCIAS C2, C3 e C8.",
+      "polarity_note": "ATENCAO antes de colar: o A3144 e unipolar e comuta com o polo SUL apresentado a face MARCADA do TO-92 (familia A314x). 'Face positiva' costuma designar o NORTE do ima. Se as duas convencoes valerem ao pe da letra, o ima fica invertido e nao ha pulso de indice — falha cujo sintoma parece firmware. A nomenclatura nao resolve porque 'positiva' e 'repulsao' dependem do ima de referencia usado no teste. RESOLVER NA BANCADA: A3144 com VCC=5 V e pull-up de 10 k para 3,3 V, aproximar a face escolhida da face marcada do TO-92 a ~3 mm; a saida tem de ir a nivel BAIXO. So entao colar. Ver 06-PENDENCIAS C2, C3 e C8; B_OP maximo35mT a25C,45mT na faixa termica.",
       "verified": false
     },
     "panel_wiring": {
-      "conductors": 4,
+      "conductors": 6,
       "power_gauge": "AWG 24 (5 V e GND)",
-      "signal_gauge": "AWG 28 (DATA e CLK)",
-      "bundle_width_mm": 4.6,
-      "bundle_height_mm": 3.2,
-      "verified": true,
-      "source": "spec v3.0 secao 6.3"
+      "signal_gauge": "AWG 28: DATA/CLK entrada e retorno",
+      "bundle_width_mm": 3.7,
+      "bundle_height_mm": 2.35,
+      "verified": false,
+      "source": "Estimativa geometrica do esquema05; medir isolacao e chicote pronto de seis condutores, igual nos3paineis"
     },
     "containment": {
       "inner_diameter": 266.0,

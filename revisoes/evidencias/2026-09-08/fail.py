@@ -1,0 +1,1 @@
+raise RuntimeError('ORBITER_AUDIT_EXPECTED_FAILURE')

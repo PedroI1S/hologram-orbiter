@@ -22,7 +22,7 @@ parafusa na chapa de alumínio, pelo padrão de 4 × M3 em retângulo 16 × 19 m
 Ø8,5: uma arruela M6 assentaria no colar e a porca não apertaria o cubo.
 
 **kv** — rotação por volt sem carga. 920 kv em 7 V dá 6440 RPM a vazio; a
-1800 RPM o motor está a 26 % disso (base 7,4 V, como no resto do pacote; a 7 V daria 28 %).
+1800 RPM o motor está a aproximadamente 28 % disso. A base das tabelas de fonte é 7 V.
 
 **Kt** — constante de torque, `9,5493 / kv`. Diz quanto torque sai por ampère.
 
@@ -65,8 +65,7 @@ A montagem é rígida.
 
 **Contrapeso** — massa de correção do balanceamento, em dois planos: os
 alívios da face inferior do cubo (r 17–36) e os copos da tampa (r = 34). O
-layout da baia já pede 2,19 g de tungstênio no alívio de 180° e 0,87 g no
-de 300°.
+layout define os valores em `reports/geometry_report.json`; usar a execução atual e refinar com as massas reais.
 
 **Canal do LED** — o rebaixo de 12,4 × 2,0 mm na face externa do painel onde a
 fita cola: PCB no fundo, LEDs rentes à face. Sob ele a parede engrossa de 2,0
@@ -114,7 +113,7 @@ admissível em função da rotação.
 encolher a área vale tanto quanto alisar a forma.
 
 **Fluência** *(creep)* — deformação lenta sob carga **constante**. É o risco real
-do painel: ABS a 12–14 MPa e 40–50 °C perde metade do módulo em ~100 h.
+do painel. Sua evolução depende do ABS, impressão, tensão e temperatura; não há ensaio deste filamento que sustente uma lei quantitativa de 100 h. O plano 04 exige medição sob carga.
 
 **Fadiga** — dano por carga **cíclica**. Aqui os ciclos são as partidas e paradas,
 dezenas — não os 30 Hz de rotação. Num rotor de eixo vertical nem a força
@@ -128,7 +127,7 @@ numérico, método de medição e caminho de contingência.
 **Buck** — conversor abaixador. 6,6 V da bateria LiFePO4 para 5 V da fita.
 
 **LiFePO4** *(LiFe)* — química de lítio-ferro-fosfato. 3,3 V por célula em vez
-dos 3,7 do LiPo, curva de descarga plana, e não incha nem queima como LiPo.
+dos 3,7 do LiPo, curva de descarga plana, com características distintas da LiPo; não é imune a sobrecarga, curto ou dano térmico.
 **Carrega em modo LiFe, a 3,6 V/célula** — modo LiPo, a 4,2, destrói o pack.
 
 **Nyloc** — porca com anel de nylon que trava por atrito. **Não cabe** no bolso
@@ -172,7 +171,7 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | **A·Cd do boss** | **≤ 350 mm²** | estimativa por finura | ❌ |
 | Módulo do ABS | 2 GPa | catálogo genérico | ❌ |
 | Massa do painel montado | ~42,1 g | CAD (31,9 nu) + fita + ferragens | ⚠️ pesar |
-| Massa do rotor | ~278,6 g | CAD + bateria medida + eletrônica de catálogo (15 g) + contrapeso planejado (3,1 g) | ⚠️ pesar; folga de 1,4 g |
+| Subtotal do rotor | ver relatório gerado da revisão atual | CAD + componentes declarados + Hall + contrapeso | ⚠️ reconciliar chicotes/ferragens e pesar; não é massa completa certificada |
 | Eletrônica da baia | 5,5 + 3,0 + 2,0 + 2,5 + 2,0 g | catálogo | ❌ **pesar cada peça** |
 | Sensor de índice | **A3144 nu**, TO-92, 0,2 g | dessoldado do módulo | ✅ |
 | Gerador de sinal do ESC | Arduino ou gerador de bancada | em mãos | ✅ |
@@ -199,7 +198,7 @@ vale 43 a 72 g·mm, contra os **8,4** admissíveis: **5 a 9 vezes fora**. O A314
 em TO-92, pesa 0,2 g e vale 5,8 g·mm.
 
 O bolso do CAD tem 4,8 × 3,6 × 1,7 mm, dimensionado para o TO-92. Dessolde o
-sensor e monte-o nu, com o pull-up de 10 kΩ para **3,3 V** do esquema.
+sensor e monte-o nu, com **VCC=5 V** e pull-up de 10 kΩ para **3,3 V** do esquema. BOP máximo: 35 mT a 25 °C e 45 mT na faixa térmica do A3144 original.
 
 ### A rampa e o governor não vêm do ESC
 
@@ -214,7 +213,7 @@ Três consequências:
 
 1. O corte por baixa tensão que estava como pendência **não existe** — item
    encerrado.
-2. A **rampa de ≥ 8 s vem do gerador de sinal**, não do ESC. Isso torna o gerador
+2. A **rampa nominal de RPM ≥ 12 s vem do gerador de sinal**, não do ESC. Isso torna o gerador
    ainda mais obrigatório.
 3. Se a imagem "respirar", a correção **não** é modo governor — e provavelmente
    não será preciso: a inércia mantém a variação entre voltas em 0,03 a 0,11 %,
@@ -233,14 +232,14 @@ Dois ajustes que valem para o nosso caso, e que o manual descreve:
 
 ---
 
-## 4. Dúvidas que ficaram, e por que não travam
+## 4. Verificações físicas ainda pendentes
 
-| Dúvida | Por que não bloqueia |
+| Interface | Verificação |
 |---|---|
-| Assento útil da campânula | O aperto está decidido: arruela Ø20 × Ø8,5 a 0,6 N·m dá 500 N contra os 22 N necessários. Mesmo assentando só nos raios, sobra atrito. O desenho mostra a face plana. |
-| Altura do conjunto motor | Corpo medido em 24 mm; Datum B = chapa + 30. Um erro de ±2 mm desloca o rotor em Z **sem afetar nada estrutural — mas leva junto o entreferro do hall**, que é nominalmente 2,5 mm e tem só ~30 % de margem de campo. ±2 mm ali põem o entreferro entre 0,5 e 4,5 mm, e a 4,5 o A3144 não comuta. **Meça o entreferro montado antes de colar o ímã** (pendência C8). |
+| Assento útil da campânula | A geometria usa arruela Ø20 × Ø8,5 e porca fina. Pré-carga por torque e atrito são estimativas; confirmar o assento, aperto e retenção reais antes do giro. |
+| Altura do conjunto motor | Corpo medido em 24 mm; Datum B = chapa + 30. Um erro de ±2 mm desloca o rotor em Z **sem afetar nada estrutural — mas leva junto o entreferro do hall**, que é nominalmente 2,5 mm e não tem margem térmica garantida pelo cálculo nominal: 45 mT de campo contra BOP máximo de 45 mT na faixa térmica. ±2 mm ali põem o entreferro entre 0,5 e 4,5 mm, e a 4,5 o A3144 não comuta. **Meça o entreferro montado antes de colar o ímã** (pendência C8). |
 | Colar e rosca do eixo | O desenho não fecha a soma (5 + 7 ≠ 14). A fixação vale nas duas leituras: porca fina de 3 mm sobre arruela de 2, sobram 3 mm de rosca com a ponta em 14 e 1 mm com 12. Medir antes de comprar a porca. |
-| Polaridade do ímã | O A3144 é unipolar. Se não pulsar, inverta o ímã antes de suspeitar do firmware. |
+| Polaridade do ímã | O A3144 é unipolar. Validar em bancada com VCC=5 V e pull-up para 3,3 V; só interpretar polaridade depois de confirmar alimentação e componente. |
 | Campo do motor no sensor hall | Estático em relação ao sensor. Verificar com o motor montado, antes de colar. |
 | Frequência natural da parte fixa | Com a massa no topo do tubo daria 63 Hz, mas o CG fica 31 mm acima dele: a conta corrigida dá **≈ 46 Hz** (plano de ensaios, C0). O que não se sabe é o balanço da base sobre a mesa, e o ensaio de impacto resolve em uma tarde. |
 
