@@ -4,7 +4,7 @@ Display por persistência de visão com três painéis de LEDs. Ponto de projeto
 raio médio 100 mm, 1800 RPM, 29 LEDs por painel e 180 colunas angulares.
 A cinemática prevê 90 passagens por segundo; desempenho óptico ainda depende de firmware e ensaio.
 
-**Versão vigente: v3.0, revisão local 3.0.4 de 08/09/2026.**
+**Versão vigente: v3.0, revisão local 3.0.5 de 14/09/2026.**
 
 ## Estado
 
@@ -13,6 +13,10 @@ A revisão corrigiu a memória de flexão, as contas de partida e energia, os
 procedimentos de instrumentação, a parametrização das folgas e as falhas do build.
 O buck e suas guias foram recuados radialmente 1,2 mm para eliminar a colisão
 com a aranha; o novo teste verifica os envelopes contra a malha final.
+
+A revisão 3.0.5 remove a saliência dos braços dentro da baia e desobstrui
+as três entradas de fios. Os critérios geométricos passam a verificar
+também essas regiões na malha final.
 
 A seção do painel tem Iyy = **589,8846 mm⁴**, abaixo dos 910 usados antes.
 O modelo uniforme dá **3,83–7,74 mm** de deflexão com 44,5 g; no teto de aceite

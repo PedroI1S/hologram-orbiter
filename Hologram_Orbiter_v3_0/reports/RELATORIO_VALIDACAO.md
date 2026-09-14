@@ -1,16 +1,16 @@
-# Relatório de validação CAD — v3.0.4
+# Relatório de validação CAD — v3.0.5
 
 Gerado por CAD/generate.py na mesma execução de geometry_report.json e FISICA.json.
 **PROVISÓRIO: não libera operação nem fabricação definitiva dos painéis.**
 
 ## Geometria
 
-Critérios: 56/56. Ver ACEITACAO.md para requisitos e cobertura.
+Critérios: 58/58. Ver ACEITACAO.md para requisitos e cobertura.
 A validação dos STL exportados aparece em stl_validation.json; o build só publica se ela também passar.
 
 | Peça | Massa CAD (g) | Dimensões (mm) | Triângulos |
 |---|---:|---|---:|
-| spider | 71.06 | [148.763, 171.777, 35.0] | 11238 |
+| spider | 70.88 | [148.763, 171.777, 35.0] | 10988 |
 | panel_each | 31.94 | [30.0, 50.0, 208.0] | 3988 |
 | lid | 10.12 | [82.0, 82.0, 5.0] | 6552 |
 | base_tower | 319.8 | [280.0, 280.0, 154.0] | 8080 |
@@ -46,8 +46,8 @@ Rampa nominal >= 12 s de RPM; conferir aceleração e corrente reais no bloquead
 ## Montagem e orçamento nominal
 
 Interseções da eletrônica com aranha: [{'component': 'interface', 'intersection_mm3': 0.0}, {'component': 'esp32c3', 'intersection_mm3': 0.0}, {'component': 'buck', 'intersection_mm3': 0.0}, {'component': 'capacitor', 'intersection_mm3': 0.0}].
-Contrapesos nominais: [{'pocket_center_deg': 180.0, 'mass_g': 2.19, 'radius_mm': 33.0}, {'pocket_center_deg': 300.0, 'mass_g': 0.86, 'radius_mm': 33.0}].
-Subtotal do rotor: 278.85 g, limite 280 g.
+Contrapesos nominais: [{'pocket_center_deg': 180.0, 'mass_g': 2.19, 'radius_mm': 33.0}, {'pocket_center_deg': 300.0, 'mass_g': 0.87, 'radius_mm': 33.0}].
+Subtotal do rotor: 278.68 g, limite 280 g.
 Ferragens por painel4g permanecem estimativa anterior. Chicote de seis condutores precisa ser pesado e reconciliado com estas ferragens antes de declarar massa total; o subtotal nominal nao garante o teto280g.
 
 | Referência global | Z (mm) |

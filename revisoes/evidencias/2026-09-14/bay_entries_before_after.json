@@ -1,0 +1,56 @@
+{
+  "before": {
+    "arms": [
+      {
+        "arm": 1,
+        "root_rays": 81,
+        "root_blocked_rays": 67,
+        "window_rays": 121,
+        "window_blocked_rays": 108
+      },
+      {
+        "arm": 2,
+        "root_rays": 81,
+        "root_blocked_rays": 67,
+        "window_rays": 121,
+        "window_blocked_rays": 108
+      },
+      {
+        "arm": 3,
+        "root_rays": 81,
+        "root_blocked_rays": 67,
+        "window_rays": 121,
+        "window_blocked_rays": 108
+      }
+    ],
+    "roots_clear": false,
+    "windows_clear": false
+  },
+  "fixed": {
+    "arms": [
+      {
+        "arm": 1,
+        "root_rays": 81,
+        "root_blocked_rays": 0,
+        "window_rays": 121,
+        "window_blocked_rays": 0
+      },
+      {
+        "arm": 2,
+        "root_rays": 81,
+        "root_blocked_rays": 0,
+        "window_rays": 121,
+        "window_blocked_rays": 0
+      },
+      {
+        "arm": 3,
+        "root_rays": 81,
+        "root_blocked_rays": 0,
+        "window_rays": 121,
+        "window_blocked_rays": 0
+      }
+    ],
+    "roots_clear": true,
+    "windows_clear": true
+  }
+}

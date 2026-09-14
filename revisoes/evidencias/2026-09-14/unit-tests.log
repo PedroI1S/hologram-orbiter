@@ -1,0 +1,15 @@
+test_bottom_clearance_tracks_tenon_and_conflicting_legacy_values_fail (test_parameters.ParameterTests.test_bottom_clearance_tracks_tenon_and_conflicting_legacy_values_fail) ... ok
+test_clearance_changes_socket_width_and_height (test_parameters.ParameterTests.test_clearance_changes_socket_width_and_height) ... ok
+test_invalid_dimensions_and_relaxed_safety_limit_are_rejected (test_parameters.ParameterTests.test_invalid_dimensions_and_relaxed_safety_limit_are_rejected) ... ok
+test_old_intruding_root_and_partial_wire_cut_are_rejected (test_parameters.ParameterTests.test_old_intruding_root_and_partial_wire_cut_are_rejected) ... ok
+test_smaller_bed_rejects_current_geometry (test_parameters.ParameterTests.test_smaller_bed_rejects_current_geometry) ... ok
+test_stricter_panel_mass_limit_rejects_current_geometry (test_parameters.ParameterTests.test_stricter_panel_mass_limit_rejects_current_geometry) ... ok
+test_drive_energy_balance_and_ramp (test_physics.PhysicsTests.test_drive_energy_balance_and_ramp) ... ok
+test_flexure_envelope_and_actual_load_estimate_are_separate (test_physics.PhysicsTests.test_flexure_envelope_and_actual_load_estimate_are_separate) ... ok
+test_parameter_section_matches_independent_exported_geometry (test_physics.PhysicsTests.test_parameter_section_matches_independent_exported_geometry) ... ok
+test_rectangle_known_analytical_solution (test_physics.PhysicsTests.test_rectangle_known_analytical_solution) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.135s
+
+OK

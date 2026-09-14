@@ -284,7 +284,7 @@ painéis contra 158,1 N cada um, e abriga a eletrônica de bordo.
 | **Furo central** | **Ø8 H8**, para o colar Ø8 do eixo — ver §6.1 |
 | Rebaixo sob a porca | **nenhum** — a arruela assenta no topo do cubo; ver a nota sobre o colar do eixo |
 | Braços | 3 a 120°, seção aerodinâmica 15 (corda, Y) × 6 (altura, Z) |
-| Raiz do braço | r = 38 mm (dentro do cubo); alargamento em planta de r 39 a 46 e cunha a 45° sob o braço de r 46 a 53 (fillet cubo→braço) |
+| Raiz do braço | r = 39 mm (na parede interna da baia, sem saliência para dentro); alargamento em planta de r 39 a 46 e cunha a 45° sob o braço de r 46 a 53 (fillet cubo→braço) |
 | **Ombro (Datum C)** | **r = 74 mm** |
 | **Ponta da espiga** | **r = 96 mm** |
 | Espiga | 11,0 × 6,0 mm, 22 mm de comprimento |
@@ -293,13 +293,19 @@ painéis contra 158,1 N cada um, e abriga a eletrônica de bordo.
 | Postes da tampa | 2, espaçados **70 mm** no eixo y (encostados na parede da baia, entre os braços), furo Ø2,8 |
 
 **Perfil dos braços.** Espessura máxima a ~33% da corda a partir de +y, afilando
-para a fuga em −y. Mesma lógica da lâmina. O braço útil tem só 58 mm (de r = 38
+para a fuga em −y. Mesma lógica da lâmina. O braço útil tem só 57 mm (de r = 39
 a r = 96), dos quais 22 são espiga — reproporcione a concordância da raiz para
 não engolir o trecho aerodinâmico.
 
 **Sulco de fiação.** O sulco de 4,4 × ~3 mm no lado de fuga (r 48–70, §6.3)
 reduz a seção do braço de ~63 para ~47 mm² e desloca o centróide ~2 mm: sob
 158 N dá ~9 MPa e SF ≈ 3 em tração. Aceitável; fica registrado.
+
+A entrada pela parede da baia é cortada em x local = 37–42 mm,
+y = −10 a −5,5 mm, z = 0,8–5,8 mm acima do cubo. O início em 37 mm
+atravessa toda a parede curva; a janela encontra o bolso externo a partir
+de x = 41,3 mm, acima do piso em z = 2,3 mm. Revisão 3.0.5: o braço
+começava em 38 mm e o corte em 38,5 mm, deixando material na entrada.
 
 **Folga da junta:** espiga 11,0 × 6,0 contra socket 11,2 × 6,2 = **0,1 mm por
 lado**. Comprimento 22,0 contra 22,5 = **0,5 mm de fundo**. A espiga não encosta

@@ -2,7 +2,7 @@
   "project": {
     "name": "Hologram Orbiter",
     "version": "3.0",
-    "revision": "3.0.4 — 08/09/2026: correcoes locais da revisao completa; fisica recalculada, montagem e pipeline verificados; operacao e lote definitivo de paineis pendentes",
+    "revision": "3.0.5 — 14/09/2026: raízes dos braços sem saliência interna e entradas de fios desobstruídas; operação e lote definitivo de painéis pendentes",
     "units": "mm",
     "source_spec": "../../01-ESPECIFICACAO-CAD-v3.0.md",
     "generated_with": "Blender 5.2 LTS, gerador CAD/generate.py",
@@ -514,7 +514,8 @@
       ],
       "chord": 15.0,
       "height": 6.0,
-      "root_radius": 38.0,
+      "root_radius": 39.0,
+      "root_radius_note": "Raiz tangente ao raio interno da baia (39 mm), ainda fundida à parede até r=41 e ao alargamento da raiz. Remove o aerofólio que sobressaía dentro da baia em r=38.",
       "shoulder_radius": 74.0,
       "tenon_tip_radius": 96.0,
       "tenon_width": 11.0,
@@ -589,7 +590,7 @@
     },
     "wire_route": {
       "bay_window_radial": [
-        38.5,
+        37.0,
         42.0
       ],
       "bay_window_y": [
@@ -617,7 +618,7 @@
         0.0
       ],
       "groove_floor_z": 2.3,
-      "note": "Janela na parede da baia (r 39-41; 1,2 mm livre do poste da tampa), bolso largo no topo da raiz (r 41,3-48) e sulco 4,4 x ~3 mm na face superior do braco, lado de fuga, de r=48 a 70 (4 mm antes do ombro). A espiga nao e furada."
+      "note": "Janela na parede da baia: corte local x=37..42, y=-10..-5,5, z=0,8..5,8. Começa antes da face interna curva em toda a largura, eliminando a película que restava com x=38,5. Bolso largo no topo da raiz (r 41,3-48) e sulco 4,4 x ~3 mm na face superior do braço, lado de fuga, de r=48 a 70 (4 mm antes do ombro). A espiga não é furada."
     },
     "battery_cradle": {
       "pack_length_y": 58.0,

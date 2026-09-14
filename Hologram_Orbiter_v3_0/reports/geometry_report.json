@@ -2,7 +2,7 @@
   "project": {
     "name": "Hologram Orbiter",
     "version": "3.0",
-    "revision": "3.0.4 — 08/09/2026: correcoes locais da revisao completa; fisica recalculada, montagem e pipeline verificados; operacao e lote definitivo de paineis pendentes",
+    "revision": "3.0.5 — 14/09/2026: raízes dos braços sem saliência interna e entradas de fios desobstruídas; operação e lote definitivo de painéis pendentes",
     "units": "mm",
     "source_spec": "../../01-ESPECIFICACAO-CAD-v3.0.md",
     "generated_with": "Blender 5.2 LTS, gerador CAD/generate.py",
@@ -49,14 +49,14 @@
         85.888,
         29.0
       ],
-      "volume_cm3": 68.324,
-      "estimated_mass_g": 71.06,
+      "volume_cm3": 68.157,
+      "estimated_mass_g": 70.88,
       "centroid_mm": [
-        -0.141,
-        0.099,
-        3.588
+        -0.143,
+        0.102,
+        3.589
       ],
-      "triangles": 11238,
+      "triangles": 10988,
       "non_manifold_edges": 0
     },
     "panel_each": {
@@ -526,7 +526,7 @@
       "method": "Estimativa por tabela de razao de finura (Hoerner), nao CFD. Area frontal = largura radial do boss x altura das torres."
     },
     "spider": {
-      "mass_g": 71.06,
+      "mass_g": 70.88,
       "mass_limit_g": 75.0,
       "shoulder_radius_measured_mm": [
         74.0,
@@ -538,6 +538,33 @@
         96.0,
         96.0
       ],
+      "bay_entries": {
+        "arms": [
+          {
+            "arm": 1,
+            "root_rays": 81,
+            "root_blocked_rays": 0,
+            "window_rays": 121,
+            "window_blocked_rays": 0
+          },
+          {
+            "arm": 2,
+            "root_rays": 81,
+            "root_blocked_rays": 0,
+            "window_rays": 121,
+            "window_blocked_rays": 0
+          },
+          {
+            "arm": 3,
+            "root_rays": 81,
+            "root_blocked_rays": 0,
+            "window_rays": 121,
+            "window_blocked_rays": 0
+          }
+        ],
+        "roots_clear": true,
+        "windows_clear": true
+      },
       "panel_mid_plane_radius_from_mesh_mm": 100.0,
       "bore_free": true,
       "counterbore_depth_measured_mm": 0.0,
@@ -850,13 +877,13 @@
         },
         {
           "id": "aranha (malha)",
-          "mass_g": 71.06,
+          "mass_g": 70.88,
           "centroid_xy_mm": [
-            -0.141,
-            0.099
+            -0.143,
+            0.102
           ],
-          "u_g_mm": 12.2,
-          "azimuth_deg": 144.9
+          "u_g_mm": 12.5,
+          "azimuth_deg": 144.5
         },
         {
           "id": "tampa (malha)",
@@ -876,13 +903,13 @@
         }
       ],
       "unbalance_vector_g_mm": [
-        58.2,
-        24.7
+        58.1,
+        24.9
       ],
       "unbalance_g_mm": 63.2,
-      "unbalance_azimuth_deg": 23.0,
+      "unbalance_azimuth_deg": 23.2,
       "admissible_g_mm": 8.4,
-      "counterweight_azimuth_deg": 203.0,
+      "counterweight_azimuth_deg": 203.2,
       "counterweight_placement": [
         {
           "pocket_center_deg": 180.0,
@@ -891,14 +918,14 @@
         },
         {
           "pocket_center_deg": 300.0,
-          "mass_g": 0.86,
+          "mass_g": 0.87,
           "radius_mm": 33.0
         }
       ],
-      "counterweight_mass_g": 3.05,
+      "counterweight_mass_g": 3.06,
       "counterweight_split": true,
       "counterweight_radius_mm": 33.0,
-      "residual_g_mm": 0.13,
+      "residual_g_mm": 0.15,
       "residual_within_admissible": true,
       "pocket_capacity_g": 13.9,
       "counterweight_fits_pockets": true,
@@ -928,14 +955,14 @@
       }
     },
     "rotor": {
-      "cad_mass_g": 177.0,
-      "total_mass_estimate_g": 278.85,
-      "total_without_counterweight_g": 275.8,
+      "cad_mass_g": 176.82,
+      "total_mass_estimate_g": 278.68,
+      "total_without_counterweight_g": 275.62,
       "limit_g": 280.0,
       "mass_budget_complete": false,
       "mass_budget_note": "Ferragens por painel4g permanecem estimativa anterior. Chicote de seis condutores precisa ser pesado e reconciliado com estas ferragens antes de declarar massa total; o subtotal nominal nao garante o teto280g.",
       "components": {
-        "spider": 71.06,
+        "spider": 70.88,
         "panels_bare_x3": 95.82,
         "lid": 10.12,
         "strips_x3": 18.6,
@@ -944,7 +971,7 @@
         "nut_washer": 3.0,
         "electronics_allowance": 15.0,
         "hall_sensor": 0.2,
-        "counterweight_planned": 3.05
+        "counterweight_planned": 3.06
       }
     },
     "assembly": {
@@ -1205,6 +1232,28 @@
       "nota": "abas de topo inclusas"
     },
     {
+      "criterio": "Raízes sem saliência dentro da baia",
+      "valor": [
+        0,
+        0,
+        0
+      ],
+      "requisito": "zero raios obstruídos nos três braços",
+      "passa": true,
+      "nota": "Sondagem da faixa central de cada raiz (y ±2 mm), junto à face interna da parede e acima do piso; guias laterais fora da amostra"
+    },
+    {
+      "criterio": "Entradas de fios atravessam a parede da baia",
+      "valor": [
+        0,
+        0,
+        0
+      ],
+      "requisito": "zero raios obstruídos nas três janelas e na transição ao bolso",
+      "passa": true,
+      "nota": "Sondagem da abertura completa e da ligação ao bolso externo, na malha final"
+    },
+    {
       "criterio": "Layout da baia: envelopes e faixas dos feixes",
       "valor": "ok",
       "requisito": "envelopes dentro da baia, Z ≤ 28.0; piso livre para feixes",
@@ -1245,11 +1294,11 @@
       "criterio": "Contrapeso planejado do layout",
       "valor": [
         2.19,
-        0.86
+        0.87
       ],
       "requisito": "cabe nos alívios (≤ 13.9 g cada) e deixa resíduo ≤ 8.4 g·mm",
       "passa": true,
-      "nota": "desbalanceamento nominal 63.2 g·mm a 23.0° (admissível 8.4); correção a 203.0° repartida em 2.19 g no alívio de 180°, 0.86 g no alívio de 300°; resíduo 0.13 g·mm. Fontes: eletrônica da baia 74.0 g·mm a 12°; aranha (malha) 12.2 g·mm a 145°; tampa (malha) 9.6 g·mm a 180°; sensor hall nu 5.8 g·mm a 20°"
+      "nota": "desbalanceamento nominal 63.2 g·mm a 23.2° (admissível 8.4); correção a 203.2° repartida em 2.19 g no alívio de 180°, 0.87 g no alívio de 300°; resíduo 0.15 g·mm. Fontes: eletrônica da baia 74.0 g·mm a 12°; aranha (malha) 12.5 g·mm a 144°; tampa (malha) 9.6 g·mm a 180°; sensor hall nu 5.8 g·mm a 20°"
     },
     {
       "criterio": "Área livre de ventilação do cubo",
@@ -1284,14 +1333,14 @@
     },
     {
       "criterio": "Subtotal nominal do rotor",
-      "valor": 278.85,
+      "valor": 278.68,
       "requisito": "≤ 280.00 g",
       "passa": true,
       "nota": "Inclui Hall e contrapeso; completar orçamento dos chicotes antes do aceite de massa"
     },
     {
       "criterio": "Massa da aranha",
-      "valor": 71.06,
+      "valor": 70.88,
       "requisito": "≤ 75 g (alvo)",
       "passa": true,
       "nota": "alvo para cubo Ø92 e baia de 29 mm"

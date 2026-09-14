@@ -37,17 +37,19 @@ Consulte `FISICA.json` e os bloqueadores de resistência, fluência, massa e ins
 | Assento da arruela livre acima do cubo | 10.5 | menor raio sólido ≥ 10.3 mm (raio da arruela + 0,3) | ✅ | varredura de 360 raios na espessura da arruela; os trilhos do berço são o material mais interno |
 | Bateria cabe na baia sobre a porca | 26.0 | ≤ 29 mm | ✅ | pack de 17 mm sobre trilhos em Z=9 |
 | Berço da bateria dentro da baia (meia-diagonal) | 32.26 | ≤ 39 mm | ✅ | abas de topo inclusas |
+| Raízes sem saliência dentro da baia | 0 – 0 – 0 | zero raios obstruídos nos três braços | ✅ | Sondagem da faixa central de cada raiz (y ±2 mm), junto à face interna da parede e acima do piso; guias laterais fora da amostra |
+| Entradas de fios atravessam a parede da baia | 0 – 0 – 0 | zero raios obstruídos nas três janelas e na transição ao bolso | ✅ | Sondagem da abertura completa e da ligação ao bolso externo, na malha final |
 | Layout da baia: envelopes e faixas dos feixes | ok | envelopes dentro da baia, Z ≤ 28.0; piso livre para feixes | ✅ | 4 componentes; pilares em [[21.5, -3.0], [32.5, -3.0], [32.5, 13.0], [21.5, 13.0], [-34.0, -9.25], [-20.0, -9.25], [-20.0, 9.25], [-34.0, 9.25]] |
 | Eletrônica sem interseção com a malha final da aranha | 0.0 – 0.0 – 0.0 – 0.0 | ≤ 0.001 mm³ por envelope (tolerância numérica) | ✅ | Inclui raízes dos braços e suportes; módulos reais ainda precisam de medição |
 | Seção de flexão confere com cortes da malha | 589.8846 – 589.8846 – 589.8846 | integrais da seção iguais nos parâmetros e em três cortes | ✅ | Verifica o cálculo geométrico; não certifica resistência, fluência ou ABS FDM |
 | Eletrônica embarcada (estimada) dentro da folga | 15.0 | ≤ 15 g | ✅ | massas de catálogo, não pesadas; o XL4015 sozinho (~18 g) estouraria |
-| Contrapeso planejado do layout | 2.19 – 0.86 | cabe nos alívios (≤ 13.9 g cada) e deixa resíduo ≤ 8.4 g·mm | ✅ | desbalanceamento nominal 63.2 g·mm a 23.0° (admissível 8.4); correção a 203.0° repartida em 2.19 g no alívio de 180°, 0.86 g no alívio de 300°; resíduo 0.13 g·mm. Fontes: eletrônica da baia 74.0 g·mm a 12°; aranha (malha) 12.2 g·mm a 145°; tampa (malha) 9.6 g·mm a 180°; sensor hall nu 5.8 g·mm a 20° |
+| Contrapeso planejado do layout | 2.19 – 0.87 | cabe nos alívios (≤ 13.9 g cada) e deixa resíduo ≤ 8.4 g·mm | ✅ | desbalanceamento nominal 63.2 g·mm a 23.2° (admissível 8.4); correção a 203.2° repartida em 2.19 g no alívio de 180°, 0.87 g no alívio de 300°; resíduo 0.15 g·mm. Fontes: eletrônica da baia 74.0 g·mm a 12°; aranha (malha) 12.5 g·mm a 144°; tampa (malha) 9.6 g·mm a 180°; sensor hall nu 5.8 g·mm a 20° |
 | Área livre de ventilação do cubo | 475.6 | ≥ 300 mm², sem abrir a baia | ✅ | 3 rasgos de 60° fora da baia (r 41.5–45.0) |
 | Área livre de ventilação da base | 1152.0 | ≥ 600 mm², na lateral | ✅ | 8 janelas na parede lateral da baia |
 | A × Cd do boss carenado | 237.6 – 316.8 | ≤ 350.0 mm² | ✅ | estimativa por razão de finura, não CFD |
 | Subtotal nominal por painel | 42.14 | ≤ 45.00 g | ✅ | Chicote de seis condutores e ferragens reais ainda não reconciliados; não é aceite de massa final |
-| Subtotal nominal do rotor | 278.85 | ≤ 280.00 g | ✅ | Inclui Hall e contrapeso; completar orçamento dos chicotes antes do aceite de massa |
-| Massa da aranha | 71.06 | ≤ 75 g (alvo) | ✅ | alvo para cubo Ø92 e baia de 29 mm |
+| Subtotal nominal do rotor | 278.68 | ≤ 280.00 g | ✅ | Inclui Hall e contrapeso; completar orçamento dos chicotes antes do aceite de massa |
+| Massa da aranha | 70.88 | ≤ 75 g (alvo) | ✅ | alvo para cubo Ø92 e baia de 29 mm |
 | Massa da tampa | 10.12 | ≤ 12 g (alvo) | ✅ | alvo revisto para Ø82 |
 | Massa da base + torre | 319.8 | ≤ 330 g (alvo) | ✅ | peça estática; o custo é tempo de impressão |
 | Perpendicularidade torre/base | 0.0 | ≤ 1° | ✅ | no CAD é zero; verificar na peça impressa |
@@ -65,4 +67,4 @@ Consulte `FISICA.json` e os bloqueadores de resistência, fluência, massa e ins
 | Folga radial rotor → cilindro encomendado | 21.17 | ≥ 10 mm após deflexão | ✅ | informativo: raio dinâmico 111.8 contra Ø int 266 |
 | Folga vertical topo do rotor → borda do cilindro encomendado | 17.0 | ≥ 10 mm | ✅ | informativo: cilindro de 305 mm apoiado em Z=5 |
 
-**Resultado:** 56 de 56 critérios atendidos.
+**Resultado:** 58 de 58 critérios atendidos.

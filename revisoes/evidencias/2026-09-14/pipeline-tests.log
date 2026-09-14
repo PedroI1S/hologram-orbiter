@@ -1,0 +1,12 @@
+test_empty_inventory_is_not_a_success (test_build_pipeline.PipelineTests.test_empty_inventory_is_not_a_success) ... ok
+test_failed_acceptance_with_zero_exit_preserves_previous_artifacts (test_build_pipeline.PipelineTests.test_failed_acceptance_with_zero_exit_preserves_previous_artifacts) ... ok
+test_missing_stl_preserves_previous_artifacts (test_build_pipeline.PipelineTests.test_missing_stl_preserves_previous_artifacts) ... ok
+test_promotion_rolls_back_if_second_rename_fails (test_build_pipeline.PipelineTests.test_promotion_rolls_back_if_second_rename_fails) ... ok
+test_python_exception_preserves_all_previous_artifacts (test_build_pipeline.PipelineTests.test_python_exception_preserves_all_previous_artifacts) ... ok
+test_render_failure_preserves_previous_artifacts (test_build_pipeline.PipelineTests.test_render_failure_preserves_previous_artifacts) ... ok
+test_success_propagates_parameters_preserves_manual_and_hashes_outputs (test_build_pipeline.PipelineTests.test_success_propagates_parameters_preserves_manual_and_hashes_outputs) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.102s
+
+OK

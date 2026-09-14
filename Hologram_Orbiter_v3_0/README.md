@@ -1,7 +1,7 @@
-# Hologram Orbiter v3.0 — pacote CAD, revisão 3.0.4
+# Hologram Orbiter v3.0 — pacote CAD, revisão 3.0.5
 
 **PROVISÓRIO — operação e fabricação definitiva dos painéis não liberadas.**
-Revisão local de 08/09/2026. Os cupons continuam úteis para calibração; lote
+Revisão local de 14/09/2026. Os cupons continuam úteis para calibração; lote
 estrutural depende de fechar seção resistente, transferência de carga, ABS FDM,
 fluência, massas/chicotes reais e os bloqueadores do plano de ensaios.
 
@@ -10,6 +10,11 @@ na malha. A folga radial usa a carga do teto de 45 g, com deflexão estimada
 máxima de 7,83 mm. Nenhuma alteração de perfil estrutural foi adotada sem validação.
 O buck permanece a 140°; o envelope e as guias recuaram 1,2 mm radialmente,
 com wall_gap=1,5 mm, para livrar a raiz da aranha.
+
+As raízes dos braços começam em r=39 mm, sem a saliência interna na baia.
+O corte de entrada dos fios começa em x local=37 mm e atravessa toda a parede.
+A prévia `aranha_entrada_fios.png` mostra o detalhe corrigido; dois critérios
+novos sondam as raízes e as janelas na malha final dos três braços.
 
 ## Arquivos
 
@@ -46,6 +51,7 @@ Requer Blender 5.x e Python 3 com NumPy. Na raiz deste pacote:
 ./scripts/build.sh
 python3 -m unittest discover -s tests -v
 python3 -m unittest discover -s scripts/tests -v
+blender -b --python-exit-code 1 --python tests/blender_bay_entries.py
 ```
 
 O build usa staging, propaga erros Python/critério e valida o inventário completo

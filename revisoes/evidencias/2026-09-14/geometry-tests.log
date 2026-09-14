@@ -1,0 +1,14 @@
+test_fixed_and_regressed_geometry (__main__.BayEntryGeometryTests.test_fixed_and_regressed_geometry) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 6.000s
+
+OK
+BlenderMCP: cannot start server in background mode (blender -b) - commands would never execute
+BlenderMCP: run Blender with a GUI, or use a virtual display: xvfb-run -a blender
+BlenderMCP addon registered
+BlenderMCP server stopped
+BlenderMCP addon unregistered
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-09-01 00:24:57)
+
+Blender quit

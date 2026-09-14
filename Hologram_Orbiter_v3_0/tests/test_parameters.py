@@ -22,6 +22,14 @@ class ParameterTests(unittest.TestCase):
         self.assertAlmostEqual(changed['socket_width'] - original['socket_width'], .8)
         self.assertAlmostEqual(changed['socket_height'] - original['socket_height'], .8)
 
+    def test_old_intruding_root_and_partial_wire_cut_are_rejected(self):
+        for key, value in [('root_radius', 38.0), ('bay_window_radial', [38.5, 42.0])]:
+            p = deepcopy(self.raw)
+            group = 'arm' if key == 'root_radius' else 'wire_route'
+            p['spider'][group][key] = value
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                resolve_parameters(p)
+
     def test_bottom_clearance_tracks_tenon_and_conflicting_legacy_values_fail(self):
         self.raw['quality']['joint_bottom_clearance'] = 1.0
         self.assertEqual(resolve_parameters(self.raw)['panel']['boss']['socket_depth'], 23.0)

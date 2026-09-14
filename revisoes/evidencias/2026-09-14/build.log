@@ -1,0 +1,136 @@
+/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/CAD/generate.py:1847: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat.use_nodes = True
+00:32.783  image.write      | ERROR OpenImageIO write failed: Could not open file "/home/rodrigo/.cache/thumbnails/large/blender_3_cd6ea99a3cd5da64f44106f925a6f5b4.png.png"
+00:34.131  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/montagem.png'
+00:35.608  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/montagem_baia.png'
+BlenderMCP: cannot start server in background mode (blender -b) - commands would never execute
+BlenderMCP: run Blender with a GUI, or use a virtual display: xvfb-run -a blender
+BlenderMCP addon registered
+[1/9] Modelando painel...
+[2/9] Modelando aranha...
+[3/9] Modelando tampa...
+[4/9] Modelando base + torre...
+[5/9] Modelando suporte do ímã, cupons e chapa de referência...
+[6/9] Exportando STL...
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+Info: File exported successfully
+[7/9] Medindo a malha e calculando o relatório geométrico...
+[8/9] Salvando BLEND e renderizando prévia...
+Info: Saved as "Hologram_Orbiter_v3_0.blend"
+[9/9] Escrevendo relatórios...
+  OK    Raio do plano médio do painel: 100.0 (100 ±0,1 mm)
+  OK    Datum D: 104.0 (104 ±0,2 mm)
+  OK    Δh entre painéis: 0.0 (≤ ±0,5 mm)
+  OK    Ponta da espiga: [96.0, 96.0, 96.0] (96 ±0,1 mm)
+  OK    Profundidade do socket: 22.5 (22.5 ±0,1 mm)
+  OK    Parede entre o fundo do socket e a cavidade: 1.5 (≥ 1,2 mm)
+  OK    Piso sob o canal do LED: 0.8 (≥ 0,6 mm (nominal 0.80))
+  OK    Terra entre o piso e a parede de 2,0: 2.8 (≥ 2,0 mm (parede local 2,8 em 1 mm de cada lado do canal))
+  OK    Furos M3 livres em toda a torre: [True, True] (livres (sem pino de casca invertida))
+  OK    Bolso da porca M3 e torre: [2.8, 2.8] (bolso 2.8 ±0,1 mm; torre sólida de −15,2 a +18, só o socket (z ±3.1) a interrompe)
+  OK    Parede ao redor do bolso de porca: 1.65 (≥ 1,5 mm)
+  OK    Casca da carenagem: 0.8 (0.8 ±0,05 mm)
+  OK    Parede estrutural nas seções amostradas: 0.8 (≥ 0.80 mm)
+  OK    Enrolamento por raios — painel: [0, 0] (0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm)
+  OK    Enrolamento por raios — aranha: [0, 0] (0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm)
+  OK    Enrolamento por raios — tampa: [0, 0] (0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm)
+  OK    Enrolamento por raios — base: [0, 0] (0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm)
+  OK    Enrolamento por raios — suporte do ímã: [0, 0] (0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm)
+  OK    Furo do cubo livre: True (livre)
+  OK    Rebaixo da arruela: 0.0 (0.0 ±0,1 mm (zero: arruela no topo do cubo))
+  OK    Pele sobre os alívios do cubo: 2.0 (≥ 2,0 mm)
+  OK    Arruela passa pelo colar Ø8.0 do eixo: 0.5 (furo − colar ≥ 0,3 mm)
+  OK    Porca não toca o colar do eixo: 1.0 (topo da arruela ≥ topo do colar + 0,5 mm)
+  OK    Rosca sobrando acima da porca: 3.0 (≥ 1 mm)
+  OK    Trilhos do berço acima da porca: 9.0 (≥ 5.0 mm (topo da porca))
+  OK    Fundo da bateria acima da ponta do eixo: [1.0, 3.0] (≥ 1,0 mm nas duas leituras do eixo (14 e 12 mm sobre a campânula))
+  OK    Assento da arruela livre acima do cubo: 10.5 (menor raio sólido ≥ 10.3 mm (raio da arruela + 0,3))
+  OK    Bateria cabe na baia sobre a porca: 26.0 (≤ 29 mm)
+  OK    Berço da bateria dentro da baia (meia-diagonal): 32.26 (≤ 39 mm)
+  OK    Raízes sem saliência dentro da baia: [0, 0, 0] (zero raios obstruídos nos três braços)
+  OK    Entradas de fios atravessam a parede da baia: [0, 0, 0] (zero raios obstruídos nas três janelas e na transição ao bolso)
+  OK    Layout da baia: envelopes e faixas dos feixes: ok (envelopes dentro da baia, Z ≤ 28.0; piso livre para feixes)
+  OK    Eletrônica sem interseção com a malha final da aranha: [0.0, 0.0, 0.0, 0.0] (≤ 0.001 mm³ por envelope (tolerância numérica))
+  OK    Seção de flexão confere com cortes da malha: [589.8846, 589.8846, 589.8846] (integrais da seção iguais nos parâmetros e em três cortes)
+  OK    Eletrônica embarcada (estimada) dentro da folga: 15.0 (≤ 15 g)
+  OK    Contrapeso planejado do layout: [2.19, 0.87] (cabe nos alívios (≤ 13.9 g cada) e deixa resíduo ≤ 8.4 g·mm)
+  OK    Área livre de ventilação do cubo: 475.6 (≥ 300 mm², sem abrir a baia)
+  OK    Área livre de ventilação da base: 1152.0 (≥ 600 mm², na lateral)
+  OK    A × Cd do boss carenado: [237.6, 316.8] (≤ 350.0 mm²)
+  OK    Subtotal nominal por painel: 42.14 (≤ 45.00 g)
+  OK    Subtotal nominal do rotor: 278.68 (≤ 280.00 g)
+  OK    Massa da aranha: 70.88 (≤ 75 g (alvo))
+  OK    Massa da tampa: 10.12 (≤ 12 g (alvo))
+  OK    Massa da base + torre: 319.8 (≤ 330 g (alvo))
+  OK    Perpendicularidade torre/base: 0.0 (≤ 1°)
+  OK    Contato da base: 0.0 (sem balanço; ≤ 0,2 mm em 3 pontos a 120°)
+  OK    Malhas (arestas não-manifold no gerador): 0 (0)
+  OK    Base + brim cabe na mesa: [296.0, 296.0] (≤ [300.0, 300.0] mm (X e Y))
+  OK    Piso da baia íntegro sob os furos da flange: [0.0, 12.0] (sólido de Z = 0 até a flange inferior (12))
+  OK    Rebaixo da flange livra as cabeças dos M3 do motor: [3.5, 16.0] (profundidade ≥ 3.3 mm e raio livre ≥ 15.5 mm)
+  OK    Abas de grampo com furo livre: True (livre)
+  OK    Fita de 201,4 mm cabe no canal: 102.9 (≤ 104 mm (topo do painel))
+  OK    Suporte do ímã com dois pontos de fixação: 2 (≥ 2 parafusos)
+  OK    Folga do suporte do ímã à campânula: 4.6 (≥ 2 mm)
+  OK    Canaleta de assento dentro da pista: [2.8, 2.8] (lábios ≥ 1,2 mm)
+  OK    Cilindro encomendado cabe na canaleta: [0.2, 0.2] (folga ≥ 0 nos dois lados)
+  OK    Folga radial rotor → cilindro encomendado: 21.17 (≥ 10 mm após deflexão)
+  OK    Folga vertical topo do rotor → borda do cilindro encomendado: 17.0 (≥ 10 mm)
+Concluído: /home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports
+OK    01_aranha_ABS.stl: tri 10988, vol 68.1574 cm³, comp 1, arestas ruins 0, enrolamento ruim 0, lâminas 0, faces coincidentes 0 (18355 raios @ 1.43 mm)
+OK    02_painel_LED_ABS_1x.stl: tri 3988, vol 30.7132 cm³, comp 1, arestas ruins 0, enrolamento ruim 0, lâminas 0, faces coincidentes 0 (6227 raios @ 1.73 mm)
+OK    02_painel_LED_ABS_3x_mesma_mesa.stl: tri 11964, vol 92.1397 cm³, comp 3, arestas ruins 0, enrolamento ruim 0, lâminas 0, faces coincidentes 0 (15939 raios @ 1.73 mm)
+OK    03_tampa_baia_ABS.stl: tri 6552, vol 9.7356 cm³, comp 1, arestas ruins 0, enrolamento ruim 0, lâminas 0, faces coincidentes 0 (17080 raios @ 0.68 mm)
+OK    04_05_base_torre_ABS_integradas.stl: tri 8080, vol 307.4957 cm³, comp 1, arestas ruins 0, enrolamento ruim 0, lâminas 0, faces coincidentes 0 (30492 raios @ 2.33 mm)
+OK    06_suporte_ima_ABS.stl: tri 1726, vol 1.7385 cm³, comp 1, arestas ruins 0, enrolamento ruim 0, lâminas 0, faces coincidentes 0 (10195 raios @ 0.5 mm)
+OK    C01_cupom_junta.stl: tri 60, vol 9.6852 cm³, comp 1, arestas ruins 0, enrolamento ruim 0, lâminas 0, faces coincidentes 0 (10268 raios @ 0.5 mm)
+OK    C02_cupom_canal_LED.stl: tri 154, vol 3.3978 cm³, comp 1, arestas ruins 0, enrolamento ruim 0, lâminas 0, faces coincidentes 0 (6076 raios @ 0.5 mm)
+OK    R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl: tri 3536, vol 6.8092 cm³, comp 1, arestas ruins 0, enrolamento ruim 0, lâminas 0, faces coincidentes 0 (16348 raios @ 0.5 mm)
+Referência de corte gerada em /home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/fabricacao
+00:01.538  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/painel_boss_nariz.png'
+00:02.044  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/painel_boss_cauda.png'
+00:02.576  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/painel_boss_face_contato.png'
+00:03.014  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/painel_boss_lado.png'
+00:03.336  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/painel_completo.png'
+00:03.808  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/painel_ponta_inferior_canal.png'
+00:04.336  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/aranha_topo.png'
+00:04.735  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/aranha_perspectiva.png'
+00:05.239  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/aranha_raiz_fiacao.png'
+00:05.972  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/aranha_berco.png'
+00:06.596  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/aranha_entrada_fios.png'
+00:07.193  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/aranha_raiz_gusset.png'
+00:07.725  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/aranha_baixo.png'
+00:08.169  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/aranha_baixo_perspectiva.png'
+00:08.543  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/base_perspectiva.png'
+00:09.054  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/base_topo.png'
+00:09.605  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/base_baia_torre.png'
+00:10.167  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/base_aba_grampo.png'
+00:10.655  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/base_flange_superior.png'
+00:11.298  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/tampa_topo.png'
+00:11.641  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/suporte_ima.png'
+00:11.939  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/suporte_ima_topo.png'
+00:12.357  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/cupom_canal_led.png'
+00:12.795  render           | Saved: '/home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview/cupom_canal_led_secao.png'
+BlenderMCP: cannot start server in background mode (blender -b) - commands would never execute
+BlenderMCP: run Blender with a GUI, or use a virtual display: xvfb-run -a blender
+BlenderMCP addon registered
+Renders em /home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/.build-staging-lyzgp6kv/exports/preview
+BlenderMCP server stopped
+BlenderMCP addon unregistered
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-09-01 00:24:57)
+Timer 'STL Import' took 1.06 ms
+Timer 'STL Import' took 2.20 ms
+Timer 'STL Import' took 1.76 ms
+Timer 'STL Import' took 1.42 ms
+Timer 'STL Import' took 0.41 ms
+Timer 'STL Import' took 88114 ns
+
+Blender quit
+Build validado e publicado: /home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/exports, /home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/reports, /home/rodrigo/hologram-orbiter/Hologram_Orbiter_v3_0/fabricacao

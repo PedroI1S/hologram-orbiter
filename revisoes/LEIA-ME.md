@@ -17,6 +17,7 @@ aqui.
 
 | Arquivo | Escopo | Estado |
 |---|---|---|
+| [`2026-09-14-CORRECAO-RAIZES-E-FIACAO.md`](2026-09-14-CORRECAO-RAIZES-E-FIACAO.md) | saliências internas e entradas de fios da aranha, revisão CAD 3.0.5 | corrigidas; sondagem da malha e regressão com os defeitos antigos |
 | [`2026-09-03-REVISAO-DAS-RATIFICACOES.md`](2026-09-03-REVISAO-DAS-RATIFICACOES.md) | pacote na revisão de CAD 3.0.3, depois das ratificações B'3, C2 e C9 | aplicada; o que sobrou está na §7 |
 
 A revisão independente anterior, de 03/09/2026, circulou como documento 08

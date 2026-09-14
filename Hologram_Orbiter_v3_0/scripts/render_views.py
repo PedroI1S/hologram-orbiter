@@ -146,6 +146,7 @@ def main() -> None:
     render("aranha_perspectiva", (150, -200, 160), (0, 0, 10), lens=45)
     render("aranha_raiz_fiacao", (80, -75, 60), (52, -4, 10), lens=85)
     render("aranha_berco", (45, -90, 80), (0, 0, 12), lens=60)
+    render("aranha_entrada_fios", (22, -8, 20), (39, -4, 9), lens=45)
     render("aranha_raiz_gusset", (115, -70, 24), (52, 0, 5), lens=70)
     spider.rotation_euler[0] = math.pi
     render("aranha_baixo", (0, 0, 400), (0, 0, 0), ortho_scale=215)

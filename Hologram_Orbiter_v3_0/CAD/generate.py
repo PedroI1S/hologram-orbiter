@@ -47,6 +47,7 @@ if str(HERE) not in sys.path:
 from probe import MeshProbe  # noqa: E402
 from parameters import load_parameters  # noqa: E402
 from physics import calculate_physics  # noqa: E402
+from spider_checks import measure_bay_entries  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -561,6 +562,7 @@ def build_arm(index: int) -> bpy.types.Object:
     a = P["spider"]["arm"]
     q = P["spider"]
     airfoil = [tuple(p) for p in a["airfoil_yz"]]
+    # A raiz começa na parede da baia, sem avançar no seu espaço interno.
     # O aerofólio termina EXATAMENTE no ombro (r = 74,0): é a face em que o
     # painel encosta. A espiga entra 0,2 no aerofólio para fundir (B1).
     beam = mesh_prism_x(f"arm_{index}_airfoil", airfoil, a["root_radius"], a["shoulder_radius"])
@@ -1721,6 +1723,7 @@ def measure_spider(spider: bpy.types.Object) -> dict:
         runs = pr.solid_runs((ox, oy, 3.41), (dx, dy, 0.0), 70.0)
         tenons.append(round(30.0 + runs[-1][1], 3) if runs else None)
     out["tenon_tip_radius_mm"] = tenons
+    out["bay_entries"] = measure_bay_entries(triangles_of(spider), P)
     out["bore_free"] = pr.is_void((0.37, 0.41, -q["hub_thickness"] - 1.0), (0, 0, 1), q["hub_thickness"] + 2.0)
     runs = pr.solid_runs((9.0, 0.41, -q["hub_thickness"] - 1.0), (0, 0, 1), q["hub_thickness"] + 2.0)
     first = _first_run(runs)
@@ -2189,6 +2192,7 @@ def compute_report(stats: dict, measured: dict, assembly: dict, physics: dict) -
             "mass_limit_g": sp["mass_limit_g"],
             "shoulder_radius_measured_mm": measured["spider"]["shoulder_radius_mm"],
             "tenon_tip_radius_measured_mm": measured["spider"]["tenon_tip_radius_mm"],
+            "bay_entries": measured["spider"]["bay_entries"],
             "panel_mid_plane_radius_from_mesh_mm": round(mean_shoulder - b["contact_face_x"], 3) if mean_shoulder is not None else None,
             "bore_free": measured["spider"]["bore_free"],
             "counterbore_depth_measured_mm": measured["spider"]["counterbore_depth_mm"],
@@ -2395,6 +2399,9 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     add("Berço da bateria dentro da baia (meia-diagonal)", rs["battery_half_diagonal_mm"], "≤ %.0f mm" % rs["bay_inner_radius_mm"], rs["battery_half_diagonal_mm"] <= rs["bay_inner_radius_mm"], "abas de topo inclusas")
 
     # -- layout da baia (D2) --
+    entries = rs["bay_entries"]
+    add("Raízes sem saliência dentro da baia", [r["root_blocked_rays"] for r in entries["arms"]], "zero raios obstruídos nos três braços", entries["roots_clear"], "Sondagem da faixa central de cada raiz (y ±2 mm), junto à face interna da parede e acima do piso; guias laterais fora da amostra")
+    add("Entradas de fios atravessam a parede da baia", [r["window_blocked_rays"] for r in entries["arms"]], "zero raios obstruídos nas três janelas e na transição ao bolso", entries["windows_clear"], "Sondagem da abertura completa e da ligação ao bolso externo, na malha final")
     bay = report["bay_layout"]
     add("Layout da baia: envelopes e faixas dos feixes", "ok" if bay["ok"] else "; ".join(bay["problems"]), "envelopes dentro da baia, Z ≤ %.1f; piso livre para feixes" % (sp["electronics_bay_height"] - 1), bay["ok"], "%d componentes; pilares em %s" % (len([c for c in bay["components"] if c["z_range_mm"]]), bay["standoffs"]))
     collisions = bay["mesh_intersections"]
@@ -2644,7 +2651,7 @@ def write_validation_summary(report: dict, path: Path) -> None:
     physics = d["physics"]
     section = physics["section"]
     checks = report["acceptance"]
-    rows = ["# Relatório de validação CAD — v3.0.4", "",
+    rows = ["# Relatório de validação CAD — v3.0.5", "",
             "Gerado por CAD/generate.py na mesma execução de geometry_report.json e FISICA.json.",
             "**PROVISÓRIO: não libera operação nem fabricação definitiva dos painéis.**", "",
             "## Geometria", "",
