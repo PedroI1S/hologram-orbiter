@@ -1,0 +1,1518 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pré-projeto Hologram Orbiter</title>
+<meta name="description" content="Slides da apresentação do pré-projeto Hologram Orbiter (Oficina de Integração, UTFPR Pato Branco).">
+<link rel="stylesheet" href="fontes/fontes.css">
+<style>
+/* Slides 1280 × 720 px. Na tela, cada slide é escalado para caber;
+   na impressão (PDF) sai um slide por página, em tamanho real.
+   F entra e sai do modo apresentação; setas navegam. */
+:root {
+  --mesa: #DCE2EA;
+  --papel: #F6F8FB;
+  --superficie: #FFFFFF;
+  --tinta: #0E1A2B;
+  --tinta-2: #3F4E63;
+  --tinta-3: #6A788C;
+  --linha: #CFD8E3;
+  --linha-2: #E3E9F0;
+  --azul: #1F4E79;
+  --azul-2: #4C80B5;
+  --azul-1: #8DB1D6;
+  --azul-lav: #E8EFF7;
+  --laranja: #C55A11;
+  --laranja-lav: #F9ECE3;
+  --verde: #2E7D32;
+  --portao: #A3162B;
+  --portao-lav: #F8E6E9;
+  --led-quente-lav: #FBF1DD;
+  --led-quente-tinta: #7A5200;
+  --f-disp: "HO Archivo", "Archivo", "Noto Sans", sans-serif;
+  --f-text: "HO Fira Sans", "Fira Sans", "HO Math", "Noto Sans", sans-serif;
+  --f-mono: "HO Fira Mono", "Fira Mono", "HO Math", "Noto Sans Mono", monospace;
+  --f-math: "HO Math", "Noto Sans Math", math;
+  --s: 1;
+  color-scheme: light;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; background: var(--mesa); color: var(--tinta); }
+body {
+  font-family: var(--f-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+math { font-family: var(--f-math); }
+math.d { math-style: normal; }
+
+/* ---------- mesa de slides ---------- */
+.deck {
+  display: flex; flex-direction: column; align-items: center; gap: 28px;
+  padding-block: 28px 96px; padding-inline: 16px;
+}
+.quadro {
+  position: relative; flex: none; overflow: hidden;
+  width: calc(1280px * var(--s)); height: calc(720px * var(--s));
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(14, 26, 43, .08), 0 10px 30px rgba(14, 26, 43, .14);
+}
+.slide {
+  position: absolute; top: 0; left: 0;
+  width: 1280px; height: 720px;
+  transform: scale(var(--s)); transform-origin: 0 0;
+  display: flex; flex-direction: column;
+  padding: 42px 64px 0;
+  background: var(--papel); color: var(--tinta);
+  font-size: 20px; line-height: 1.42;
+  overflow: hidden;
+}
+.slide p, .slide h2, .slide h3, .slide h4, .slide figure, .slide dl, .slide dd { margin: 0; }
+.slide ul, .slide ol { margin: 0; padding: 0; list-style: none; }
+.slide b, .slide strong { font-weight: 600; color: var(--tinta); }
+
+.cab { flex: none; margin-bottom: 24px; }
+.sobre {
+  display: flex; gap: 14px; align-items: baseline;
+  font: 500 14px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--azul);
+}
+.sobre span { color: var(--tinta-3); letter-spacing: .03em; text-transform: none; }
+.titulo {
+  margin-top: 12px;
+  font-family: var(--f-disp); font-weight: 720; font-stretch: 104%;
+  font-size: 40px; line-height: 1.08; letter-spacing: -.015em;
+  color: var(--tinta); text-wrap: balance; max-width: 1110px;
+}
+.corpo { flex: 1; min-height: 0; margin-bottom: 22px; position: relative; }
+
+.rod {
+  flex: none; height: 42px; margin: 0 -64px; padding: 0 64px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  border-top: 1px solid var(--linha-2);
+  font: 500 12.5px/1 var(--f-mono); letter-spacing: .04em; color: var(--tinta-3);
+}
+.leds { display: flex; gap: 5px; }
+.leds i { width: 6px; height: 6px; border-radius: 50%; background: var(--linha); }
+.leds i.feito { background: var(--azul-1); }
+.leds i.agora { background: var(--azul); box-shadow: 0 0 0 3px var(--azul-lav); }
+.pag { font-variant-numeric: tabular-nums; }
+.pag b { color: var(--tinta); font-weight: 500; }
+
+/* ---------- peças comuns ---------- */
+.lead { font-size: 23px; line-height: 1.42; color: var(--tinta-2); max-width: 62ch; text-wrap: pretty; }
+.lista { display: grid; gap: 14px; }
+.lista li { position: relative; padding-left: 26px; text-wrap: pretty; }
+.lista li::before {
+  content: ""; position: absolute; left: 3px; top: .5em;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--azul-2); box-shadow: 0 0 0 3px var(--azul-lav);
+}
+.rot { font: 500 13px/1.2 var(--f-mono); letter-spacing: .09em; text-transform: uppercase; color: var(--tinta-3); }
+.nota { font-size: 16px; line-height: 1.4; color: var(--tinta-3); }
+.cit { color: var(--tinta-3); white-space: nowrap; }
+.nb { white-space: nowrap; }
+.chip-g {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 36px; height: 26px; padding: 0 7px; border-radius: 5px;
+  font: 600 14px/1 var(--f-mono); letter-spacing: .02em;
+  color: var(--portao); background: var(--portao-lav); box-shadow: inset 0 0 0 1px #E6B3BC;
+}
+.eq {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 10px 0; border-top: 1px solid var(--linha-2);
+  font-size: 26px; color: var(--tinta);
+}
+.eq-n { font: 500 14px/1 var(--f-mono); color: var(--tinta-3); }
+.noite {
+  background: radial-gradient(120% 95% at 50% 42%, #132844 0%, #0B1728 55%, #070F1B 100%);
+  color: #CFE3F7;
+}
+.ic { width: 20px; height: 20px; flex: none; }
+.ic circle { fill: var(--tinta-3); }
+.ic path { fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.ic.ok circle { fill: var(--verde); }
+.ic.al circle { fill: var(--laranja); }
+.ic.pr circle { fill: var(--azul); }
+.ic.meta circle { fill: none; stroke: var(--azul); stroke-width: 2.2; }
+.ic.meta circle.c2 { fill: var(--azul); stroke: none; }
+.eq-pilha { display: grid; gap: 2px; }
+
+/* ---------- gráficos ---------- */
+.grafico { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.g-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.g-tit { font: 500 13px/1.2 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-2); }
+.legenda { display: flex; gap: 18px; font-size: 15px; color: var(--tinta-2); }
+.legenda span { display: inline-flex; align-items: center; gap: 8px; }
+.chave { display: inline-block; width: 28px; height: 0; border-top: 3px solid var(--azul); }
+.chave.n1 { border-top-style: dotted; border-top-color: var(--azul-1); }
+.chave.n2 { border-top-style: dashed; border-top-color: var(--azul-2); }
+.chave.co { width: 22px; height: 6px; border: 0; border-radius: 3px; background: var(--laranja); }
+svg.g { display: block; width: 100%; height: auto; overflow: visible; }
+.g text { font-family: var(--f-text); font-size: 15px; fill: var(--tinta-2); }
+.g .tick { font-family: var(--f-mono); font-size: 13px; fill: var(--tinta-3); }
+.g .eixo { font-family: var(--f-mono); font-size: 13px; letter-spacing: .06em; fill: var(--tinta-2); }
+.g .forte { fill: var(--tinta); font-weight: 600; }
+.g .fraco { fill: var(--tinta-3); }
+.g .grade { stroke: var(--linha-2); stroke-width: 1; }
+.g .base { stroke: var(--linha); stroke-width: 1.2; }
+.g .cur { pointer-events: none; }
+.g .cur-caixa { fill: var(--superficie); stroke: var(--linha); }
+.g .cur-linha { stroke: var(--tinta-2); stroke-width: 1; }
+.g .alvo { cursor: crosshair; }
+
+/* ---------- capa e encerramento ---------- */
+.capa { padding: 0; flex-direction: row; }
+.capa-texto { width: 700px; padding: 54px 36px 50px 72px; display: flex; flex-direction: column; }
+.capa-inst { font: 500 13px/1.6 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); }
+.capa-meio { margin-block: auto; }
+.capa-sobre { font: 500 15px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--azul); }
+.capa-titulo {
+  margin: 18px 0 22px;
+  font-family: var(--f-disp); font-weight: 800; font-stretch: 112%;
+  font-size: 104px; line-height: .9; letter-spacing: -.03em; color: var(--tinta);
+}
+.capa-sub { font-size: 27px; line-height: 1.28; color: var(--tinta-2); max-width: 21em; text-wrap: balance; }
+.capa-pe { display: grid; gap: 14px; padding-top: 22px; border-top: 1px solid var(--linha); }
+.capa-autores { display: grid; gap: 2px; font-size: 21px; line-height: 1.35; color: var(--tinta); }
+.capa-orient { font-size: 18px; color: var(--tinta-2); }
+.capa-data { font: 500 13px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); }
+.capa-painel { flex: 1; position: relative; display: grid; grid-template-rows: 1fr auto; }
+.capa-painel svg { width: 100%; height: 100%; display: block; }
+.capa-specs {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 0 40px 34px;
+  font: 500 13px/1.3 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: #8FA9C6;
+}
+.capa-specs b { display: block; font: 600 26px/1.1 var(--f-disp); font-stretch: 100%; letter-spacing: -.01em; color: #EAF3FC; text-transform: none; }
+.fim-titulo {
+  font-family: var(--f-disp); font-weight: 800; font-stretch: 112%;
+  font-size: 84px; line-height: 1; letter-spacing: -.03em; color: var(--tinta);
+  font-stretch: 104%; margin: 14px 0 22px;
+}
+
+/* ---------- conteúdo específico ---------- */
+.princ { display: grid; grid-template-rows: auto 1fr auto; gap: 20px; }
+.tripla { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; min-height: 0; }
+.etapa { display: grid; grid-template-rows: 1fr auto; gap: 12px; min-height: 0; }
+.etapa .noite { border-radius: 10px; overflow: hidden; min-height: 0; }
+.etapa svg { display: block; width: 100%; height: 100%; }
+.etapa figcaption { font-size: 18px; line-height: 1.35; color: var(--tinta-2); }
+.etapa figcaption b { display: block; margin-bottom: 3px; font: 600 14px/1.3 var(--f-mono); letter-spacing: .04em; color: var(--azul); }
+.eq-linha { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; padding-top: 12px; border-top: 1px solid var(--linha-2); font-size: 18px; color: var(--tinta-2); }
+.eq-linha math { font-size: 27px; color: var(--tinta); }
+
+.duas { display: grid; grid-template-columns: 500px 1fr; gap: 56px; align-items: start; }
+.duas .lista { font-size: 20px; color: var(--tinta-2); margin-top: 22px; }
+
+.numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--linha); }
+.num {
+  display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px;
+  font-family: var(--f-disp); font-weight: 700; font-stretch: 100%;
+  font-size: 66px; line-height: 1; letter-spacing: -.02em; color: var(--azul);
+}
+.num small { font-size: 28px; font-weight: 600; letter-spacing: 0; color: var(--tinta-2); }
+.num math { font-size: 52px; color: var(--azul); }
+.numero > p:last-child { font-size: 19px; line-height: 1.38; color: var(--tinta-2); }
+.porques { padding-top: 22px; display: grid; gap: 12px; }
+.tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.tres h4, .coluna h3, .f-nome {
+  font-family: var(--f-disp); font-weight: 680; font-stretch: 100%; color: var(--tinta);
+}
+.tres h4 { font-size: 22px; line-height: 1.15; margin-bottom: 6px; }
+.tres p { font-size: 18px; line-height: 1.42; color: var(--tinta-2); }
+
+.graf-lado { display: grid; grid-template-columns: 690px 1fr; gap: 44px; align-items: start; }
+.lado { display: grid; gap: 12px; font-size: 18.5px; line-height: 1.42; color: var(--tinta-2); }
+.lado .eq { font-size: 25px; }
+.raio { display: grid; grid-template-columns: 650px 1fr; grid-template-rows: auto auto; gap: 16px 44px; align-content: start; }
+.versoes { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--linha); }
+.versao { display: grid; gap: 4px; align-content: start; padding: 12px 20px 0 0; }
+.versao + .versao { padding-left: 20px; border-left: 1px solid var(--linha-2); }
+.versao h4 { display: flex; align-items: center; gap: 10px; font: 600 16px/1.2 var(--f-mono); color: var(--tinta); }
+.versao h4 span { font-weight: 500; color: var(--tinta-3); }
+.versao p { font-size: 17px; line-height: 1.35; color: var(--tinta-2); }
+
+.quatro { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 52px; align-content: start; }
+.bloco { display: grid; gap: 6px; align-content: start; padding-top: 10px; border-top: 1.5px solid var(--tinta); }
+.bloco .eq { border: 0; padding: 2px 0; font-size: 24px; }
+.bloco p { font-size: 17.5px; line-height: 1.4; color: var(--tinta-2); }
+.regua { display: block; width: 100%; height: auto; margin-top: 2px; }
+
+.ficha { display: grid; grid-template-columns: 1fr 1fr; gap: 0 64px; align-content: start; }
+.ficha .lead { grid-column: 1 / -1; margin-bottom: 18px; font-size: 20px; }
+.grupo { margin-bottom: 18px; }
+.grupo h3 { padding-bottom: 8px; border-bottom: 1.5px solid var(--tinta); }
+.grupo dl > div {
+  display: grid; grid-template-columns: 1fr auto 96px; align-items: baseline; gap: 18px;
+  padding: 6px 0; border-bottom: 1px solid var(--linha-2);
+}
+.grupo dt { font-size: 18.5px; color: var(--tinta-2); }
+.grupo dd { font: 500 19px/1.3 var(--f-mono); color: var(--tinta); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.grupo dd.ori { font: 400 14px/1.3 var(--f-mono); color: var(--tinta-3); text-align: left; }
+
+.objetivos { display: grid; grid-template-columns: 430px 1fr; gap: 56px; align-items: start; }
+.geral .rot, .especificos .rot { margin-bottom: 12px; }
+.geral p { font-size: 23px; line-height: 1.46; color: var(--tinta); text-wrap: pretty; }
+.especificos li {
+  display: grid; grid-template-columns: 46px 1fr; gap: 14px; align-items: baseline;
+  padding: 8px 0; border-bottom: 1px solid var(--linha-2);
+  font-size: 18.5px; line-height: 1.36; color: var(--tinta-2);
+}
+.especificos li:first-child { border-top: 1.5px solid var(--tinta); }
+
+.arq { display: grid; grid-template-columns: 560px 1fr; gap: 44px; align-items: start; }
+.foto { display: grid; gap: 8px; }
+.foto-img { position: relative; }
+.foto-img img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.foto-img svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.marca circle { fill: var(--tinta); stroke: #fff; stroke-width: 4; }
+.marca text { font: 600 30px var(--f-mono); fill: #fff; }
+.marca.ref circle { fill: #fff; stroke: var(--tinta-2); }
+.marca.ref text { fill: var(--tinta-2); }
+.itens { display: grid; gap: 16px; }
+.itens ol { display: grid; gap: 9px; margin-top: 8px; }
+.itens li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; font-size: 17px; line-height: 1.34; color: var(--tinta-2); }
+.itens li b { display: block; font-size: 18px; }
+.n { width: 28px; height: 28px; border-radius: 50%; background: var(--tinta); color: #fff; font: 600 14px/28px var(--f-mono); text-align: center; }
+.n.ref { background: #fff; color: var(--tinta-2); box-shadow: inset 0 0 0 1.5px var(--tinta-2); }
+
+.trilha { display: grid; gap: 14px; align-content: start; }
+.trilha .lead { font-size: 21px; max-width: none; margin-bottom: 6px; }
+.faixas, .fases { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+.faixa { padding: 8px 12px; border-radius: 6px; font: 500 12.5px/1.2 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; }
+.faixa.sem { grid-column: 1 / span 4; background: var(--azul-lav); color: var(--azul); }
+.faixa.com { grid-column: 5 / span 2; background: var(--led-quente-lav); color: var(--led-quente-tinta); }
+.fase { display: grid; grid-template-rows: auto auto auto 1fr; }
+.f-id { font: 600 15px/1 var(--f-mono); color: var(--azul); }
+.f-nome { margin-top: 6px; min-height: 50px; font-size: 21px; line-height: 1.15; }
+.f-trilho { position: relative; height: 34px; margin: 8px 0 12px; }
+.f-trilho::before { content: ""; position: absolute; left: 0; right: -18px; top: 15px; height: 4px; border-radius: 2px; background: var(--azul-1); }
+.fase:last-child .f-trilho::before { right: 10px; }
+.f-trilho::after { content: ""; position: absolute; right: 2px; top: 0; width: 5px; height: 34px; border-radius: 2px; background: var(--portao); }
+.criterio .chip-g { justify-self: start; }
+.criterio { display: grid; gap: 8px; align-content: start; font-size: 16.5px; line-height: 1.38; color: var(--tinta-2); }
+.aviso {
+  display: flex; align-items: baseline; gap: 18px; margin-top: 8px;
+  padding: 14px 20px; border-radius: 8px;
+  background: var(--superficie); box-shadow: inset 0 0 0 1px var(--linha);
+  font-size: 19px; color: var(--tinta-2);
+}
+.aviso b { white-space: nowrap; }
+
+.colunas3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.coluna { display: grid; grid-template-rows: auto 1fr auto; gap: 14px; }
+.coluna header { display: flex; align-items: center; gap: 12px; padding-bottom: 10px; border-bottom: 1.5px solid var(--tinta); }
+.coluna h3 { font-size: 21px; line-height: 1.15; }
+.coluna .lista { align-content: start; gap: 10px; font-size: 16.5px; line-height: 1.38; color: var(--tinta-2); }
+.coluna .lista li { padding-left: 22px; }
+.coluna .lista li::before { width: 7px; height: 7px; left: 2px; top: .56em; box-shadow: 0 0 0 2px var(--azul-lav); }
+.crit { display: grid; gap: 4px; padding-top: 8px; border-top: 2px solid var(--portao); font-size: 16px; line-height: 1.35; color: var(--tinta); }
+.crit .rot { color: var(--portao); }
+
+.tab { width: 100%; border-collapse: collapse; font-size: 17px; }
+.tab th {
+  padding: 0 14px 9px 0; text-align: left; border-bottom: 1.5px solid var(--tinta);
+  font: 500 12.5px/1.2 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-3);
+}
+.tab td { padding: 8px 14px 8px 0; border-bottom: 1px solid var(--linha-2); vertical-align: baseline; line-height: 1.32; color: var(--tinta-2); }
+.tab td.let { width: 46px; vertical-align: top; padding-top: 6px; font: 700 24px/1 var(--f-disp); color: var(--azul); }
+.tab td.gm { color: var(--tinta); font-weight: 500; }
+.tab td.cr { font: 500 17px/1.3 var(--f-mono); color: var(--tinta); white-space: nowrap; }
+.tab tr.fim-grupo td, .tab td.let { border-bottom-color: var(--linha); }
+.bloq .lead { font-size: 20px; margin-bottom: 16px; max-width: none; }
+.bloq .tab th:nth-child(2) { width: 340px; }
+.bloq .tab th:nth-child(3) { width: 200px; }
+
+.integ { display: grid; grid-template-columns: 632px 1fr; gap: 40px; align-items: start; }
+.diag { display: block; width: 100%; height: auto; }
+.diag .reg-r { fill: var(--azul-lav); }
+.diag .reg-f { fill: #EBEFF4; }
+.diag .rr { font: 500 12px var(--f-mono); letter-spacing: .08em; fill: var(--azul); }
+.diag .rf { font: 500 12px var(--f-mono); letter-spacing: .08em; fill: var(--tinta-3); }
+.diag .bx rect { fill: var(--superficie); stroke: var(--linha); stroke-width: 1; }
+.diag .t1 { font: 600 15px var(--f-text); fill: var(--tinta); }
+.diag .t2 { font: 400 12.5px var(--f-mono); fill: var(--tinta-3); }
+.diag .fio { fill: none; stroke: var(--tinta-2); stroke-width: 1.5; }
+.diag .fio.pot { stroke: var(--laranja); }
+.diag .fio.mag { stroke-dasharray: 4 4; }
+.diag .sl { font: 500 12px var(--f-mono); fill: var(--tinta-2); }
+.diag .sl.pot { fill: var(--laranja); }
+.integ .nota { margin-top: 10px; font-size: 15.5px; color: var(--tinta-2); }
+.integ-lado { display: grid; gap: 14px; }
+.integ-lado section { display: grid; gap: 8px; }
+.metodo { font-size: 16px; line-height: 1.38; color: var(--tinta-2); }
+.integ-lado header { display: flex; align-items: center; gap: 10px; }
+.integ-lado h3 { font: 680 20px/1.15 var(--f-disp); font-stretch: 100%; }
+.integ-lado .lista { gap: 7px; font-size: 16.5px; line-height: 1.36; color: var(--tinta-2); }
+.integ-lado .lista li { padding-left: 22px; }
+.integ-lado .lista li::before { width: 7px; height: 7px; left: 2px; top: .56em; box-shadow: 0 0 0 2px var(--azul-lav); }
+.integ-lado .crit { font-size: 15.5px; }
+.sint { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+.sint td { padding: 5px 10px 5px 0; border-bottom: 1px solid var(--linha-2); line-height: 1.3; color: var(--tinta-2); vertical-align: baseline; }
+.sint td:first-child { color: var(--tinta); font-weight: 500; white-space: nowrap; }
+.sint td:nth-child(2) { color: var(--tinta-3); padding-right: 8px; }
+
+.crono { display: grid; grid-template-rows: auto auto; gap: 14px; align-content: start; }
+.notas2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; font-size: 16.5px; line-height: 1.4; color: var(--tinta-2); padding-top: 12px; border-top: 1px solid var(--linha-2); }
+
+.result { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 52px; align-items: start; align-content: start; }
+.riscos th:first-child { width: 34%; }
+.result h3 { margin-bottom: 10px; }
+.checks li {
+  display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start;
+  padding: 9px 0; border-bottom: 1px solid var(--linha-2);
+  font-size: 19px; line-height: 1.36; color: var(--tinta-2);
+}
+.checks li:first-child { border-top: 1.5px solid var(--tinta); }
+.checks .ic { margin-top: 3px; }
+.riscos td:first-child { color: var(--tinta); font-weight: 500; }
+.riscos td { font-size: 16.5px; }
+.fecho {
+  grid-column: 1 / -1; display: flex; gap: 14px; align-items: baseline; margin-top: 14px;
+  padding: 14px 20px; border-radius: 8px;
+  background: var(--superficie); box-shadow: inset 0 0 0 1px var(--linha);
+  font-size: 19px; color: var(--tinta-2);
+}
+
+.refs { columns: 2; column-gap: 48px; font-size: 17px; line-height: 1.42; color: var(--tinta-2); counter-reset: r; }
+.refs li { break-inside: avoid; display: grid; grid-template-columns: 38px 1fr; margin-bottom: 11px; }
+.refs li::before { content: "[" counter(r) "]"; counter-increment: r; font: 500 14px/1.55 var(--f-mono); color: var(--tinta-3); }
+.refs i { color: var(--tinta); }
+
+/* ---------- barra de controle (só na tela) ---------- */
+.hud {
+  position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 8px 8px 14px; border-radius: 10px;
+  background: rgba(14, 26, 43, .92); color: #DCE7F3;
+  font: 500 13px/1.2 var(--f-mono);
+  box-shadow: 0 6px 20px rgba(14, 26, 43, .25);
+}
+.hud button {
+  font: inherit; color: var(--tinta); background: #fff;
+  border: 0; border-radius: 7px; padding: 8px 12px; cursor: pointer;
+}
+.hud button:hover { background: var(--azul-lav); }
+.hud button:focus-visible { outline: 2px solid #8FCBFF; outline-offset: 2px; }
+
+/* ---------- modo apresentação ---------- */
+html.apresentando, html.apresentando body { background: #04070C; height: 100%; overflow: hidden; }
+html.apresentando .deck { height: 100%; padding: 0; gap: 0; justify-content: center; }
+html.apresentando .quadro { display: none; border-radius: 0; box-shadow: none; }
+html.apresentando .quadro.atual { display: block; }
+html.apresentando .hud { display: none; }
+
+/* ---------- impressão / PDF ---------- */
+@page { size: 1280px 720px; margin: 0; }
+@media print {
+  html, body { background: #fff; }
+  .deck { display: block; padding: 0; }
+  .quadro { width: 1280px; height: 720px; border-radius: 0; box-shadow: none; break-after: page; }
+  .quadro:last-child { break-after: auto; }
+  .slide { transform: none; }
+  .hud, .g .cur { display: none !important; }
+}
+</style>
+</head>
+<body>
+<main class="deck">
+
+<!-- 1 · capa -->
+<section class="quadro"><div class="slide capa">
+  <div class="capa-texto">
+    <p class="capa-inst">Universidade Tecnológica Federal do Paraná · Câmpus Pato Branco<br>Engenharia de Computação · Oficina de Integração</p>
+    <div class="capa-meio">
+      <p class="capa-sobre">Apresentação do pré-projeto</p>
+      <h1 class="capa-titulo">Hologram<br>Orbiter</h1>
+      <p class="capa-sub">Display volumétrico por persistência de visão com validação por portões de ensaio</p>
+    </div>
+    <div class="capa-pe">
+      <ul class="capa-autores">
+        <li>Pedro Mariano dos Santos</li>
+        <li>Marlon Mezomo Gotardo</li>
+        <li>Rodrigo Rodriguez Tato Gama da Silva</li>
+      </ul>
+      <p class="capa-orient">Orientador: Prof. Gustavo Weber Denardin</p>
+      <p class="capa-data">Pato Branco · setembro de 2026</p>
+    </div>
+  </div>
+  <figure class="capa-painel noite">
+    <svg data-cilindro="capa" viewBox="0 0 580 600" role="img" aria-label="Cilindro de 180 colunas por 29 linhas de LEDs formando a imagem de um planeta com anel; três colunas claras marcam os painéis que escrevem a imagem."></svg>
+    <figcaption class="capa-specs">
+      <span><b>29 × 180</b>pixels</span>
+      <span><b>3</b>painéis</span>
+      <span><b>1800</b>rpm</span>
+      <span><b>90&nbsp;Hz</b>taxa de imagem</span>
+    </figcaption>
+  </figure>
+</div></section>
+
+<!-- 2 · princípio -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Introdução<span>§ 1 e 2.1</span></p>
+    <h2 class="titulo">A imagem é escrita no ar, uma coluna por vez</h2>
+  </header>
+  <div class="corpo princ">
+    <p class="lead">O olho integra a luz por dezenas de milissegundos. Uma coluna de LEDs deslocada depressa deixa de ser vista como coluna: girando, ela varre um cilindro e escreve a imagem — um <i>swept-volume display</i> <span class="cit">[1, 2]</span>.</p>
+    <div class="tripla">
+      <figure class="etapa">
+        <div class="noite"><svg data-cilindro="instante" viewBox="0 0 368 290" role="img" aria-label="Num instante, só as três colunas de 29 LEDs dos painéis estão acesas."></svg></div>
+        <figcaption><b>t = 0</b>Um instante: três colunas de 29 LEDs, a 120° uma da outra.</figcaption>
+      </figure>
+      <figure class="etapa">
+        <div class="noite"><svg data-cilindro="varredura" viewBox="0 0 368 290" role="img" aria-label="Rastros de 120 graus deixados por cada painel, mais fracos quanto mais antigos."></svg></div>
+        <figcaption><b>t = 1/90 s = 11,1 ms</b>Cada painel varreu 120°: juntos, reescreveram o cilindro inteiro.</figcaption>
+      </figure>
+      <figure class="etapa">
+        <div class="noite"><svg data-cilindro="imagem" viewBox="0 0 368 290" role="img" aria-label="A imagem contínua que o observador percebe."></svg></div>
+        <figcaption><b>Percepção</b>O olho soma as passagens e enxerga uma imagem contínua.</figcaption>
+      </figure>
+    </div>
+    <p class="eq-linha"><span>Cada ponto do cilindro é reescrito</span><math class="d"><msub><mi>f</mi><mtext>img</mtext></msub><mo>=</mo><msub><mi>N</mi><mi>p</mi></msub><mspace width="0.17em"></mspace><mi>n</mi><mo>=</mo><mn>3</mn><mo>×</mo><mn>30</mn><mspace width="0.2em"></mspace><msup><mtext>s</mtext><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>=</mo><mn>90</mn><mspace width="0.2em"></mspace><mtext>Hz</mtext></math><span class="eq-n">(1)</span></p>
+  </div>
+</div></section>
+
+<!-- 3 · problema -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Introdução<span>§ 1</span></p>
+    <h2 class="titulo">Os “ventiladores holográficos” cintilam</h2>
+  </header>
+  <div class="corpo duas">
+    <div>
+      <p class="lead">A versão comercial do princípio é vendida como “ventilador holográfico”, embora não haja holografia envolvida.</p>
+      <ul class="lista">
+        <li>São produtos fechados: não publicam rotação, corrente, massa das pás nem critério de contenção.</li>
+        <li>Os modelos mais baratos giram uma ou duas hélices entre 450 e 900&nbsp;rpm e entregam de 15 a 30 imagens por segundo.</li>
+        <li>Essa faixa fica abaixo do limiar de fusão de cintilação da visão periférica <span class="cit">[3, 4]</span>: a imagem pisca quando o observador não olha diretamente para o aparelho.</li>
+      </ul>
+    </div>
+    <figure class="grafico">
+      <div class="g-cab"><p class="g-tit">Taxa de imagem, em hertz</p></div>
+      <svg class="g" id="g-faixas" viewBox="0 0 596 372" role="img" aria-label="Comparação de taxas de imagem: ventiladores comerciais de 15 a 30 Hz; limiar de fusão de 40 a 60 Hz na fóvea e perto de 90 Hz na periferia; protótipo v2.0 com 60 Hz; Hologram Orbiter v3.0 com 90 Hz."></svg>
+    </figure>
+  </div>
+</div></section>
+
+<!-- 4 · desafio e justificativa -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Introdução<span>§ 1</span></p>
+    <h2 class="titulo">O desafio não é a eletrônica</h2>
+  </header>
+  <div class="corpo">
+    <div class="numeros">
+      <div class="numero">
+        <p class="num">150<small>N</small></p>
+        <p>de força centrífuga em cada painel de 42&nbsp;g a 1800&nbsp;rpm — como pendurar 15&nbsp;kg na ponta de uma peça impressa em ABS.</p>
+      </div>
+      <div class="numero">
+        <p class="num">27,6<small>J</small></p>
+        <p>de energia cinética armazenada no rotor, com os painéis passando a 18,9&nbsp;m/s.</p>
+      </div>
+      <div class="numero">
+        <p class="num"><math><msub><mi>P</mi><mtext>aero</mtext></msub><mo>∝</mo><msup><mi>ω</mi><mn>3</mn></msup><msup><mi>r</mi><mn>3</mn></msup></math></p>
+        <p>a potência aerodinâmica cresce com o cubo da rotação e do raio: mais taxa de imagem custa, de forma não linear, corrente e temperatura.</p>
+      </div>
+    </div>
+    <div class="porques">
+      <h3 class="rot">Por que este projeto</h3>
+      <div class="tres">
+        <div><h4>Formativo</h4><p>Integra CAD paramétrico e projeto mecânico, acionamento e eletrônica de potência, firmware de tempo real e metodologia de ensaio. A escolha do raio é, ao mesmo tempo, óptica, térmica e estrutural.</p></div>
+        <div><h4>Mensurável</h4><p>Os erros de projeto se manifestam fisicamente: 0,1&nbsp;g de desbalanceamento aparece na FFT do acelerômetro; 0,5&nbsp;mm de erro no raio de um painel vira imagem tripla.</p></div>
+        <div><h4>Aberto</h4><p>Cotas, memória de cálculo, critérios de aceite e o gerador paramétrico do CAD ficam publicados — reprodução e continuidade que os equivalentes comerciais não oferecem.</p></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 5 · taxa de imagem -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Fundamentação teórica<span>§ 2.1 e 2.2</span></p>
+    <h2 class="titulo">Três painéis a 1800 rpm entregam 90 Hz</h2>
+  </header>
+  <div class="corpo graf-lado">
+    <figure class="grafico">
+      <div class="g-cab">
+        <p class="g-tit">Taxa de imagem × rotação</p>
+        <p class="legenda"><span><i class="chave n1"></i>1 painel</span><span><i class="chave n2"></i>2 painéis</span><span><i class="chave"></i>3 painéis</span><span><i class="chave co"></i>comerciais</span></p>
+      </div>
+      <svg class="g" id="g-taxa" viewBox="0 0 690 440" role="img" aria-label="Taxa de imagem em função da rotação para 1, 2 e 3 painéis. Com 3 painéis, 1800 rpm dão 90 Hz; a v2.0 operava a 1200 rpm e 60 Hz; os ventiladores comerciais ficam entre 15 e 30 Hz."></svg>
+    </figure>
+    <div class="lado">
+      <p class="eq"><math class="d"><msub><mi>f</mi><mtext>img</mtext></msub><mo>=</mo><msub><mi>N</mi><mi>p</mi></msub><mspace width="0.17em"></mspace><mi>n</mi></math><span class="eq-n">(1)</span></p>
+      <p>A fusão de cintilação ocorre entre 40 e 60&nbsp;Hz na fóvea <span class="cit">[3]</span> e se aproxima de 90&nbsp;Hz na retina periférica <span class="cit">[4]</span>. O display é visto de relance e fora do eixo: o alvo fica no limite superior.</p>
+      <p><b>3 painéis × 30&nbsp;voltas/s = 90&nbsp;Hz.</b> Com um só painel, seriam necessários 5400&nbsp;rpm.</p>
+      <p class="eq"><span class="eq-pilha"><math class="d"><mi mathvariant="normal">Δ</mi><mi>θ</mi><mo>=</mo><mfrac><mrow><mn>2</mn><mi>π</mi></mrow><msub><mi>N</mi><mi>c</mi></msub></mfrac><mo>=</mo><mn>2</mn><mtext>°</mtext></math><math class="d"><mi>s</mi><mo>=</mo><mi>r</mi><mspace width="0.17em"></mspace><mi mathvariant="normal">Δ</mi><mi>θ</mi><mo>≈</mo><mn>3,5</mn><mspace width="0.2em"></mspace><mtext>mm</mtext></math></span><span class="eq-n">(2)</span></p>
+      <p>São 180 colunas a 90&nbsp;Hz: o firmware sustenta <b>16,2 mil</b> atualizações de coluna por segundo, cada uma com 29 pixels RGB da fita HD107S (144&nbsp;LED/m, 201&nbsp;mm de altura).</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- 6 · custo do raio -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Fundamentação teórica<span>§ 2.3 e 2.4</span></p>
+    <h2 class="titulo">Com a taxa fixa, a corrente cresce com r³</h2>
+  </header>
+  <div class="corpo raio">
+    <figure class="grafico">
+      <div class="g-cab"><p class="g-tit">Corrente de fase × raio, a 1800 rpm</p></div>
+      <svg class="g" id="g-raio" viewBox="0 0 650 330" role="img" aria-label="Corrente de fase em função do raio a 1800 rpm, proporcional ao cubo do raio: 4,95 A em 100 mm na v3.0 e 10,9 A em 130 mm na v2.1; o limite térmico de 5,5 A é cruzado perto de 104 mm."></svg>
+    </figure>
+    <div class="lado">
+      <p class="eq"><math class="d"><msub><mi>P</mi><mtext>aero</mtext></msub><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi>ρ</mi><mspace width="0.1em"></mspace><msub><mi>C</mi><mi>d</mi></msub><mspace width="0.1em"></mspace><mi>A</mi><mspace width="0.1em"></mspace><msup><mi>ω</mi><mn>3</mn></msup><msup><mi>r</mi><mn>3</mn></msup></math><span class="eq-n">(3)</span></p>
+      <p class="eq"><math class="d"><msub><mi>K</mi><mi>t</mi></msub><mo>=</mo><mfrac><mn>60</mn><mrow><mn>2</mn><mi>π</mi><msub><mi>K</mi><mi>v</mi></msub></mrow></mfrac><mo>=</mo><mn>10,38</mn><mspace width="0.2em"></mspace><mtext>mN·m/A</mtext></math><span class="eq-n">(5)</span></p>
+      <p>Com <math><mi>ω</mi></math> fixo, <math><mi>T</mi><mo>=</mo><msub><mi>P</mi><mtext>aero</mtext></msub><mo>/</mo><mi>ω</mi></math> e <math><mi>I</mi><mo>=</mo><mi>T</mi><mo>/</mo><msub><mi>K</mi><mi>t</mi></msub></math>; logo:</p>
+      <p class="eq"><math class="d"><mi>I</mi><mo>∝</mo><msup><mi>r</mi><mn>3</mn></msup></math><span class="eq-n">(6)</span></p>
+      <p>As perdas crescem com <math><msup><mi>I</mi><mn>2</mn></msup></math> (7): a temperatura sobe ≈ com <math><msup><mi>r</mi><mn>6</mn></msup></math>. De 130 para 100&nbsp;mm, a potência cai para <b class="nb">(100/130)³ = 0,455</b> — a diferença entre v2.1 e v3.0 está no raio, não no motor.</p>
+    </div>
+    <div class="versoes">
+      <div class="versao">
+        <h4><svg class="ic al" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10"/><path d="M6.6 6.6l6.8 6.8M13.4 6.6l-6.8 6.8"/></svg>v2.0 <span>1200 rpm · r = 130 mm</span></h4>
+        <p>60&nbsp;Hz, com cintilação perceptível.</p>
+      </div>
+      <div class="versao">
+        <h4><svg class="ic al" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10"/><path d="M6.6 6.6l6.8 6.8M13.4 6.6l-6.8 6.8"/></svg>v2.1 <span>1800 rpm · r = 130 mm</span></h4>
+        <p>90&nbsp;Hz, mas ~10&nbsp;A e 101&nbsp;°C no motor: inviável; reprovada em 24 pontos.</p>
+      </div>
+      <div class="versao">
+        <h4><svg class="ic pr" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10"/><path d="M5.5 10h8.5M10.8 6.6 14.2 10l-3.4 3.4"/></svg>v3.0 <span>1800 rpm · r = 100 mm</span></h4>
+        <p>90&nbsp;Hz com 4,95&nbsp;A e 46&nbsp;°C previstos.</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 7 · esforços, energia e vibração -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Fundamentação teórica<span>§ 2.5 e 2.6</span></p>
+    <h2 class="titulo">A 1800 rpm, o rotor é um problema mecânico</h2>
+  </header>
+  <div class="corpo quatro">
+    <div class="bloco">
+      <h3 class="rot">Força centrífuga</h3>
+      <p class="eq"><math class="d"><msub><mi>F</mi><mi>c</mi></msub><mo>=</mo><mi>m</mi><msup><mi>ω</mi><mn>2</mn></msup><mi>r</mi><mo>=</mo><mn>0,0421</mn><mo>×</mo><msup><mn>188,5</mn><mn>2</mn></msup><mo>×</mo><mn>0,100</mn><mo>≈</mo><mn>150</mn><mspace width="0.2em"></mspace><mtext>N</mtext></math><span class="eq-n">(8)</span></p>
+      <p>A carga é <b>estática</b> no referencial do painel: com eixo vertical, nem ela nem o peso mudam de direção, e não há ciclagem a 30&nbsp;Hz. O risco é a <b>fluência do ABS</b> sob carga e calor <span class="cit">[10]</span>, não a fadiga.</p>
+    </div>
+    <div class="bloco">
+      <h3 class="rot">Energia e contenção</h3>
+      <p class="eq"><math class="d"><mi>E</mi><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi>J</mi><msup><mi>ω</mi><mn>2</mn></msup><mo>≈</mo><mn>27,6</mn><mspace width="0.2em"></mspace><mtext>J</mtext></math><span class="eq-n">(9)</span></p>
+      <p>Com <math><mi>J</mi></math> = 1,55&nbsp;g·m² e <math><mi>v</mi><mo>=</mo><mi>ω</mi><mi>r</mi></math> = 18,9&nbsp;m/s, um painel que se solte carrega ≈&nbsp;7,9&nbsp;J. Por isso a contenção física é montada antes de qualquer ensaio de rotação.</p>
+    </div>
+    <div class="bloco">
+      <h3 class="rot">Balanceamento</h3>
+      <p class="eq"><math class="d"><mi>U</mi><mo>=</mo><mi>m</mi><mspace width="0.17em"></mspace><mi>e</mi><mo>≤</mo><mn>8,4</mn><mspace width="0.2em"></mspace><mtext>g·mm</mtext></math><span class="eq-n">[8]</span></p>
+      <p>Desbalanceamento residual admissível pelos procedimentos da ISO&nbsp;21940-11. Na prática, as massas dos três painéis precisam casar dentro de <b>0,084&nbsp;g</b>.</p>
+    </div>
+    <div class="bloco">
+      <h3 class="rot">Dinâmica da torre</h3>
+      <p class="eq"><math class="d"><msub><mi>f</mi><mi>n</mi></msub><mo>=</mo><mfrac><mn>1</mn><mrow><mn>2</mn><mi>π</mi></mrow></mfrac><msqrt><mfrac><msub><mi>k</mi><mtext>ef</mtext></msub><mi>m</mi></mfrac></msqrt><mo>≈</mo><mn>46</mn><mspace width="0.2em"></mspace><mtext>Hz</mtext></math><span class="eq-n">(10, 11)</span></p>
+      <svg class="regua g" id="g-regua" viewBox="0 0 540 70" role="img" aria-label="Régua de frequências: excitação síncrona em 30 Hz e frequência natural estimada da torre em 46 Hz; razão 0,65."></svg>
+      <p>O CG do conjunto girante fica 31&nbsp;mm acima do tubo e a rigidez cai de ≈&nbsp;50 para <math><msub><mi>k</mi><mtext>ef</mtext></msub></math> ≈&nbsp;29&nbsp;N/mm. Fora da ressonância, mas a margem precisa ser medida: daí o ensaio de impacto.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- 8 · ponto de operação -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Fundamentação teórica<span>Tabela 1</span></p>
+    <h2 class="titulo">Ponto de operação</h2>
+  </header>
+  <div class="corpo ficha">
+    <p class="lead">Grandezas de projeto e derivadas. Cada valor aponta para a sua origem: decisão de projeto, equação, CAD ou norma.</p>
+    <div>
+      <section class="grupo">
+        <h3 class="rot">Cinemática</h3>
+        <dl>
+          <div><dt>Raio do plano médio, <math><mi>r</mi></math></dt><dd>100 mm</dd><dd class="ori">projeto</dd></div>
+          <div><dt>Rotação</dt><dd>1800 rpm</dd><dd class="ori">projeto</dd></div>
+          <div><dt>Velocidade angular, <math><mi>ω</mi></math></dt><dd>188,5 rad/s</dd><dd class="ori">2πn</dd></div>
+          <div><dt>Painéis, <math><msub><mi>N</mi><mi>p</mi></msub></math></dt><dd>3</dd><dd class="ori">projeto</dd></div>
+        </dl>
+      </section>
+      <section class="grupo">
+        <h3 class="rot">Imagem</h3>
+        <dl>
+          <div><dt>Taxa de imagem</dt><dd>90 Hz</dd><dd class="ori">Eq. (1)</dd></div>
+          <div><dt>Resolução</dt><dd>29 × 180</dd><dd class="ori">Eq. (2)</dd></div>
+          <div><dt>Envelope da imagem</dt><dd>Ø208 × 201 mm</dd><dd class="ori">CAD</dd></div>
+        </dl>
+      </section>
+    </div>
+    <div>
+      <section class="grupo">
+        <h3 class="rot">Acionamento · previsto</h3>
+        <dl>
+          <div><dt>Corrente de fase</dt><dd>4,95 A</dd><dd class="ori">Eq. (6)</dd></div>
+          <div><dt>Potência de entrada</dt><dd>16,2 W</dd><dd class="ori">fonte</dd></div>
+          <div><dt>Temperatura do motor</dt><dd>46 °C</dd><dd class="ori">Eq. (7)</dd></div>
+        </dl>
+      </section>
+      <section class="grupo">
+        <h3 class="rot">Mecânica</h3>
+        <dl>
+          <div><dt>Força centrífuga por painel</dt><dd>150 N</dd><dd class="ori">Eq. (8)</dd></div>
+          <div><dt>Energia do rotor</dt><dd>27,6 J</dd><dd class="ori">Eq. (9)</dd></div>
+          <div><dt>Massa do rotor</dt><dd>278,6 g</dd><dd class="ori">CAD</dd></div>
+          <div><dt>Desbalanceamento admissível</dt><dd>8,4 g·mm</dd><dd class="ori">ISO [8]</dd></div>
+          <div><dt>Frequência natural da torre</dt><dd>46 Hz</dd><dd class="ori">Eq. (11)</dd></div>
+        </dl>
+      </section>
+    </div>
+  </div>
+</div></section>
+
+<!-- 9 · objetivos -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Objetivos<span>§ 3</span></p>
+    <h2 class="titulo">Objetivos</h2>
+  </header>
+  <div class="corpo objetivos">
+    <div class="geral">
+      <h3 class="rot">Objetivo geral</h3>
+      <p>Projetar, construir e validar experimentalmente um display volumétrico por persistência de visão — três painéis de LEDs endereçáveis a 1800&nbsp;rpm, imagem cilíndrica de Ø208&nbsp;×&nbsp;201&nbsp;mm com 29&nbsp;×&nbsp;180 pixels a 90&nbsp;Hz — operando de forma estável e contida nos limites térmicos, elétricos e de vibração, com toda cota e grandeza rastreável a um <i>datasheet</i>, a uma medição de bancada ou a uma linha de cálculo publicada.</p>
+    </div>
+    <div class="especificos">
+      <h3 class="rot">Objetivos específicos e o portão de cada um</h3>
+      <ol>
+        <li><span class="chip-g">G0</span><span>Congelar o ponto de operação pelo balanço entre taxa de imagem (1), arrasto (3) e limite térmico (7).</span></li>
+        <li><span class="chip-g">G0</span><span>Entregar o CAD paramétrico com verificação automatizada da malha exportada contra a especificação.</span></li>
+        <li><span class="chip-g">G1</span><span>Fabricar e qualificar as peças: massa ≤ 45&nbsp;g por painel, Δm ≤ 0,084&nbsp;g e raio de 100 ± 0,1&nbsp;mm.</span></li>
+        <li><span class="chip-g">G2</span><span>Montar e balancear o rotor, com a contenção física montada antes de qualquer giro.</span></li>
+        <li><span class="chip-g">G3</span><span>Aprovar os quatro bloqueadores de rotação, medidos com instrumentação de bancada.</span></li>
+        <li><span class="chip-g">G4</span><span>Integrar a cadeia óptica e o firmware: 16,2 mil colunas por segundo sem acúmulo de erro de fase.</span></li>
+        <li><span class="chip-g">G5</span><span>Validar a qualidade visual e documentar operação, ensaios e limitações conhecidas.</span></li>
+      </ol>
+    </div>
+  </div>
+</div></section>
+
+<!-- 10 · arquitetura -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Metodologia<span>§ 4.1 e 4.5</span></p>
+    <h2 class="titulo">Arquitetura do protótipo</h2>
+  </header>
+  <div class="corpo arq">
+    <figure class="foto">
+      <div class="foto-img">
+        <img src="img/montagem.jpg" width="1100" height="940" alt="Montagem completa no modelo paramétrico: base com baia, torre, chapa com motor, aranha com baia de eletrônica, três painéis azuis e o invólucro de referência translúcido.">
+        <svg viewBox="0 0 1100 940" aria-hidden="true">
+          <g class="marca"><circle cx="548" cy="702" r="30"/><text x="548" y="713" text-anchor="middle">1</text></g>
+          <g class="marca"><circle cx="548" cy="532" r="30"/><text x="548" y="543" text-anchor="middle">2</text></g>
+          <g class="marca"><circle cx="460" cy="432" r="30"/><text x="460" y="443" text-anchor="middle">3</text></g>
+          <g class="marca"><circle cx="548" cy="336" r="30"/><text x="548" y="347" text-anchor="middle">4</text></g>
+          <g class="marca"><circle cx="752" cy="540" r="30"/><text x="752" y="551" text-anchor="middle">5</text></g>
+          <g class="marca ref"><circle cx="870" cy="222" r="30"/><text x="870" y="233" text-anchor="middle">6</text></g>
+        </svg>
+      </div>
+      <figcaption class="nota">Modelo paramétrico, montagem completa (rev. 3.0.5), com os painéis em r = 100&nbsp;mm.</figcaption>
+    </figure>
+    <div class="itens">
+      <section>
+        <h3 class="rot">Estrutura fixa</h3>
+        <ol>
+          <li><span class="n">1</span><span><b>Base com baia e abas de grampo</b>Impressa numa peça única com a torre, em 12 a 18&nbsp;h.</span></li>
+          <li><span class="n">2</span><span><b>Torre</b>Tubo engastado, com rigidez k ≈ 50&nbsp;N/mm.</span></li>
+          <li><span class="n">3</span><span><b>Chapa de alumínio e motor A2212 920KV</b>Acionado por ESC BLHeli_S; o ímã do sensor de índice também fica na parte fixa.</span></li>
+        </ol>
+      </section>
+      <section>
+        <h3 class="rot">Rotor</h3>
+        <ol>
+          <li><span class="n">4</span><span><b>Aranha com baia de eletrônica</b>ESP32-C3, regulador de 5&nbsp;V, deslocador de nível, capacitor de desacoplamento, bateria LiFePO4 e sensor Hall A3144.</span></li>
+          <li><span class="n">5</span><span><b>Três painéis a 120°</b>Fita HD107S de 144&nbsp;LED/m alojada no canal: 29 LEDs por painel.</span></li>
+        </ol>
+      </section>
+      <section>
+        <h3 class="rot">Referência</h3>
+        <ol>
+          <li><span class="n ref">6</span><span><b>Invólucro encomendado, Ø266&nbsp;mm</b>Aparece só como referência de encaixe; está fora do escopo.</span></li>
+        </ol>
+      </section>
+    </div>
+  </div>
+</div></section>
+
+<!-- 11 · fases e portões -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Metodologia<span>§ 4</span></p>
+    <h2 class="titulo">Seis fases separadas por portões numéricos</h2>
+  </header>
+  <div class="corpo trilha">
+    <p class="lead">Um portão é uma condição numérica: a fase seguinte só começa quando ele é atendido. As falhas relevantes aparecem primeiro como número fora da faixa, e só depois como peça quebrada.</p>
+    <div class="faixas">
+      <span class="faixa sem">Sem LEDs e sem eletrônica de bordo</span>
+      <span class="faixa com">Com LEDs e eletrônica</span>
+    </div>
+    <ol class="fases">
+      <li class="fase"><p class="f-id">F0</p><p class="f-nome">Projeto e aquisição</p><div class="f-trilho"></div><div class="criterio"><span class="chip-g">G0</span><p>CAD verificado: 54 critérios da especificação; cupons conferidos na fita LED real.</p></div></li>
+      <li class="fase"><p class="f-id">F1</p><p class="f-nome">Fabricação</p><div class="f-trilho"></div><div class="criterio"><span class="chip-g">G1</span><p>Massa ≤ 45&nbsp;g por painel, Δm ≤ 0,084&nbsp;g, raio de 100 ± 0,1&nbsp;mm e altura na tolerância.</p></div></li>
+      <li class="fase"><p class="f-id">F2</p><p class="f-nome">Montagem</p><div class="f-trilho"></div><div class="criterio"><span class="chip-g">G2</span><p>Rotor gira à mão sem rocamento; contenção montada.</p></div></li>
+      <li class="fase"><p class="f-id">F3</p><p class="f-nome">Ensaios de rotação</p><div class="f-trilho"></div><div class="criterio"><span class="chip-g">G3</span><p>Bloqueadores A a D: ≤ 20&nbsp;W, &lt; 55&nbsp;°C, ≤ 0,20&nbsp;g a 30&nbsp;Hz e 10 partidas em 10.</p></div></li>
+      <li class="fase"><p class="f-id">F4</p><p class="f-nome">Integração óptica</p><div class="f-trilho"></div><div class="criterio"><span class="chip-g">G4</span><p>Imagem de teste estável a 1800&nbsp;rpm.</p></div></li>
+      <li class="fase"><p class="f-id">F5</p><p class="f-nome">Validação visual</p><div class="f-trilho"></div><div class="criterio"><span class="chip-g">G5</span><p>90&nbsp;Hz sem tremulação em sacada e operação contínua estável.</p></div></li>
+    </ol>
+    <p class="aviso"><b>Nenhum LED antes de G3.</b><span>Os ensaios de maior risco físico, com 27,6&nbsp;J no rotor, rodam com o mínimo de material embarcado.</span></p>
+  </div>
+</div></section>
+
+<!-- 12 · G0, G1 e G2 -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Metodologia<span>§ 4.1 a 4.3</span></p>
+    <h2 class="titulo">Do modelo paramétrico ao rotor balanceado</h2>
+  </header>
+  <div class="corpo colunas3">
+    <section class="coluna">
+      <header><span class="chip-g">G0</span><h3>Projeto paramétrico e verificação do CAD</h3></header>
+      <ul class="lista">
+        <li>Um programa lê um único arquivo de parâmetros e gera base, torre, aranha, painéis, tampa, suporte do ímã e cupons de folga: mudar o raio propaga para todas as interfaces.</li>
+        <li>A malha exportada é medida contra os critérios da especificação, e uma checagem de colisões cobre a montagem.</li>
+        <li>Traçado de raios confirma furos vazados e canais sem membranas — falha silenciosa da geração booleana, que já fechou furos de parafuso e deixou 0,05&nbsp;mm de material sob a flange da torre.</li>
+      </ul>
+      <p class="crit"><span class="rot">Critério</span>54 critérios atendidos e cupons conferidos contra a fita LED real.</p>
+    </section>
+    <section class="coluna">
+      <header><span class="chip-g">G1</span><h3>Fabricação e qualificação dimensional</h3></header>
+      <ul class="lista">
+        <li>Dois cupons, da junta painel/longarina e de uma fatia do canal da fita, custam 25&nbsp;min e evitam refazer peças de 208&nbsp;mm por folga errada.</li>
+        <li>Os três painéis saem da mesma mesa, do mesmo lote de filamento e com os mesmos parâmetros.</li>
+        <li>Paquímetro de 0,01&nbsp;mm e balança de 0,01&nbsp;g: uma de 0,1&nbsp;g mediria exatamente o erro que deveria detectar.</li>
+        <li>Peça fora de tolerância é reimpressa, não ajustada.</li>
+      </ul>
+      <p class="crit"><span class="rot">Critério</span>Massa, Δm, raio e altura dentro das tolerâncias.</p>
+    </section>
+    <section class="coluna">
+      <header><span class="chip-g">G2</span><h3>Montagem e balanceamento</h3></header>
+      <ul class="lista">
+        <li>Ordem: motor na chapa, chapa na flange, aranha no eixo e painéis nas longarinas.</li>
+        <li>O colar Ø8 do eixo impede a arruela M6 comum: arruela Ø20 × Ø8,5 cortada da chapa, porca M6 fina e trava química a 0,6&nbsp;N·m — 500&nbsp;N de aperto para os 22&nbsp;N necessários, com 1,9&nbsp;MPa no ABS.</li>
+        <li>Casar massas não casa momentos: 0,5&nbsp;mm de diferença de CG em 42&nbsp;g vale 21&nbsp;g·mm, 2,5 vezes o admissível. O bloqueador C fecha essa conta.</li>
+      </ul>
+      <p class="crit"><span class="rot">Critério</span>Rotor gira à mão sem rocamento; contenção montada.</p>
+    </section>
+  </div>
+</div></section>
+
+<!-- 13 · bloqueadores (G3) -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Metodologia<span>§ 4.4 · Tabela 2</span></p>
+    <h2 class="titulo">Bloqueadores de rotação, sem LEDs a bordo</h2>
+  </header>
+  <div class="corpo bloq">
+    <p class="lead">Cada bloqueador tem critério numérico, método, limiar de aborto e contingência definidos antes do ensaio. Juntos, os quatro formam o portão G3.</p>
+    <table class="tab">
+      <thead><tr><th></th><th>Grandeza medida</th><th>Critério</th><th>Como se mede e por quê</th></tr></thead>
+      <tbody>
+        <tr class="fim-grupo"><td class="let">A</td><td class="gm">Potência de entrada a 1800 rpm</td><td class="cr">≤ 20 W</td><td>Patamares de 600, 1000, 1400 e 1800&nbsp;rpm, 2&nbsp;min cada, lendo tensão e corrente na fonte. Confere o arrasto da Eq. (3), a maior incerteza do projeto.</td></tr>
+        <tr><td class="let" rowspan="2">B</td><td class="gm">Temperatura do motor, 10 min</td><td class="cr">&lt; 55 °C</td><td>Termopar tipo K na carcaça, em regime contínuo.</td></tr>
+        <tr class="fim-grupo"><td class="gm">Crescimento da ponta, 1 h</td><td class="cr">&lt; 0,5 mm</td><td>Deflexão da ponta do painel após uma hora: teste direto da fluência.</td></tr>
+        <tr><td class="let" rowspan="2">C</td><td class="gm">Vibração residual a 30 Hz</td><td class="cr">≤ 0,20 g</td><td>Acelerômetro e FFT, com o rotor em operação.</td></tr>
+        <tr class="fim-grupo"><td class="gm">Separação entre <math><msub><mi>f</mi><mi>n</mi></msub></math> e 30 Hz</td><td class="cr">confirmada por FFT</td><td>Ensaio de impacto com massa fictícia de 280&nbsp;g na altura dos painéis, para medir a Eq. (11).</td></tr>
+        <tr><td class="let" rowspan="2">D</td><td class="gm">Partidas bem-sucedidas</td><td class="cr">10 de 10</td><td>O rotor tem <math><mi>J</mi></math> = 1,55&nbsp;g·m², cerca de cem vezes a inércia de uma hélice,</td></tr>
+        <tr class="fim-grupo"><td class="gm">Pico de corrente na fonte, na rampa</td><td class="cr">≤ 4,6 A</td><td>regime para o qual controladores sem sensor não são sintonizados.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></section>
+
+<!-- 14 · integração óptica e validação visual (G4, G5) -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Metodologia<span>§ 4.5 e 4.6</span></p>
+    <h2 class="titulo">Integração óptica, firmware e validação visual</h2>
+  </header>
+  <div class="corpo integ">
+    <div>
+      <svg class="diag" viewBox="0 0 632 318" role="img" aria-label="Diagrama de blocos. No rotor: bateria LiFePO4, regulador de 5 V, ESP32-C3, deslocador de nível e fita HD107S, com o sensor Hall A3144 enviando o pulso de índice ao ESP32. Na estrutura fixa: fonte de bancada, ESC BLHeli_S, motor A2212 e o ímã que gera um pulso por volta.">
+        <defs>
+          <marker id="pt" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 .5L8 4L0 7.5z" fill="#3F4E63"/></marker>
+          <marker id="pt-pot" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 .5L8 4L0 7.5z" fill="#C55A11"/></marker>
+        </defs>
+        <rect class="reg-r" x="0" y="0" width="632" height="204" rx="10"/>
+        <text class="rr" x="16" y="24">ROTOR · GIRA A 1800 RPM</text>
+        <rect class="reg-f" x="0" y="214" width="632" height="104" rx="10"/>
+        <text class="rf" x="16" y="238">ESTRUTURA FIXA</text>
+
+        <path class="fio pot" d="M191 58V42H566V58M316 42V58M441 42V58"/>
+        <path class="fio pot" d="M530 42V34M522 34H538M522 29H538"/>
+        <text class="sl pot" x="378" y="36" text-anchor="middle">5 V</text>
+        <text class="sl pot" x="544" y="33">C</text>
+
+        <g class="bx"><rect x="16" y="58" width="100" height="56" rx="6"/><text class="t1" x="66" y="82" text-anchor="middle">Bateria</text><text class="t2" x="66" y="101" text-anchor="middle">LiFePO4 2S</text></g>
+        <g class="bx"><rect x="141" y="58" width="100" height="56" rx="6"/><text class="t1" x="191" y="82" text-anchor="middle">Regulador</text><text class="t2" x="191" y="101" text-anchor="middle">5 V</text></g>
+        <g class="bx"><rect x="266" y="58" width="100" height="56" rx="6"/><text class="t1" x="316" y="82" text-anchor="middle">ESP32-C3</text><text class="t2" x="316" y="101" text-anchor="middle">firmware</text></g>
+        <g class="bx"><rect x="391" y="58" width="100" height="56" rx="6"/><text class="t1" x="441" y="82" text-anchor="middle">Deslocador</text><text class="t2" x="441" y="101" text-anchor="middle">3,3 → 5 V</text></g>
+        <g class="bx"><rect x="516" y="58" width="100" height="56" rx="6"/><text class="t1" x="566" y="82" text-anchor="middle">Fita HD107S</text><text class="t2" x="566" y="101" text-anchor="middle">3 × 29 LEDs</text></g>
+        <path class="fio pot" d="M116 86H139" marker-end="url(#pt-pot)"/>
+        <path class="fio" d="M366 86H389" marker-end="url(#pt)"/>
+        <text class="sl" x="378" y="78" text-anchor="middle">SPI</text>
+        <path class="fio" d="M491 86H514" marker-end="url(#pt)"/>
+
+        <g class="bx"><rect x="391" y="138" width="100" height="48" rx="6"/><text class="t1" x="441" y="158" text-anchor="middle">Hall A3144</text><text class="t2" x="441" y="176" text-anchor="middle">em 5 V</text></g>
+        <path class="fio" d="M391 162H316V116" marker-end="url(#pt)"/>
+        <text class="sl" x="353" y="155" text-anchor="middle">índice</text>
+
+        <g class="bx"><rect x="16" y="250" width="100" height="52" rx="6"/><text class="t1" x="66" y="272" text-anchor="middle">Fonte</text><text class="t2" x="66" y="290" text-anchor="middle">bancada 7 V</text></g>
+        <g class="bx"><rect x="141" y="250" width="100" height="52" rx="6"/><text class="t1" x="191" y="272" text-anchor="middle">ESC</text><text class="t2" x="191" y="290" text-anchor="middle">BLHeli_S</text></g>
+        <g class="bx"><rect x="266" y="250" width="100" height="52" rx="6"/><text class="t1" x="316" y="272" text-anchor="middle">Motor</text><text class="t2" x="316" y="290" text-anchor="middle">A2212 920KV</text></g>
+        <g class="bx"><rect x="391" y="250" width="100" height="52" rx="6"/><text class="t1" x="441" y="272" text-anchor="middle">Ímã</text><text class="t2" x="441" y="290" text-anchor="middle">parte fixa</text></g>
+        <path class="fio pot" d="M116 276H139" marker-end="url(#pt-pot)"/>
+        <path class="fio pot" d="M241 276H264" marker-end="url(#pt-pot)"/>
+        <path class="fio" d="M316 250V209" marker-end="url(#pt)"/>
+        <text class="sl" x="324" y="236">eixo</text>
+        <path class="fio mag" d="M441 250V188"/>
+        <text class="sl" x="449" y="236">1 pulso por volta</text>
+      </svg>
+      <p class="nota">Duas armadilhas elétricas tratadas: o A3144 não opera de forma confiável em 3,3&nbsp;V <span class="cit">[11]</span>, e 3,3&nbsp;V não aciona com margem as entradas de relógio e dados da fita — daí o deslocador de nível. Ao fim, o rotor é rebalanceado com a massa real da eletrônica.</p>
+    </div>
+    <div class="integ-lado">
+      <section>
+        <header><span class="chip-g">G4</span><h3>Firmware de varredura</h3></header>
+        <ul class="lista">
+          <li>Zera a fase a cada pulso de índice: o erro não se acumula.</li>
+          <li>Interpola a posição angular pelo tempo decorrido na volta.</li>
+          <li>O BLHeli_S não fecha malha de rotação: a variação entre voltas precisa ficar em ≈&nbsp;0,14&nbsp;% para errar menos de ¼ de coluna.</li>
+        </ul>
+        <p class="crit"><span class="rot">Critério</span>Imagem de teste estável a 1800&nbsp;rpm.</p>
+      </section>
+      <section>
+        <header><span class="chip-g">G5</span><h3>Validação visual</h3></header>
+        <p class="metodo">Sala escura; grade fina, texto pequeno e bordas verticais; a 1, 2 e 3&nbsp;m, com olhar fixo e em sacada; câmera a 240&nbsp;quadros/s.</p>
+        <table class="sint">
+          <tr><td>Imagem tripla</td><td>→</td><td>raio ou altura diferentes entre painéis</td></tr>
+          <tr><td>Deslocamento angular</td><td>→</td><td>folga na junta</td></tr>
+          <tr><td>Borda serrilhada</td><td>→</td><td>jitter de fase no sensor de índice</td></tr>
+        </table>
+        <p class="crit"><span class="rot">Critério</span>Imagem estável, três varreduras coincidentes e sem cintilação periférica.</p>
+      </section>
+    </div>
+  </div>
+</div></section>
+
+<!-- 15 · cronograma -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Cronograma<span>§ 5 · Figura 3</span></p>
+    <h2 class="titulo">Nove semanas, de 08/09 a 09/11/2026</h2>
+  </header>
+  <div class="corpo crono">
+    <svg class="g" id="g-gantt" viewBox="0 0 1152 408" role="img" aria-label="Cronograma de nove semanas com 17 tarefas em seis fases; os portões G1 a G5 fecham as semanas 3, 4, 6, 8 e 9."></svg>
+    <div class="notas2">
+      <p><b>Caminho crítico:</b> base e torre integradas — 12 a 18&nbsp;h numa peça única, não paralelizável, que só começa depois de G1, porque uma correção de raio mudaria a base junto.</p>
+      <p><b>Folga:</b> as compras (semana 1) correm em paralelo à impressão (semanas 2 e 3). Se bateria ou regulador atrasarem, as fases 1 a 3 seguem: nada em G3 depende da eletrônica de bordo.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- 16 · resultados esperados e riscos -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Resultados esperados<span>§ 6</span></p>
+    <h2 class="titulo">Sucesso é atender a todos os critérios juntos</h2>
+  </header>
+  <div class="corpo result">
+    <section>
+      <h3 class="rot">O projeto terá êxito quando, ao mesmo tempo</h3>
+      <ul class="checks">
+        <li><svg class="ic meta" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5"/><circle class="c2" cx="10" cy="10" r="3.5"/></svg><span>a imagem se formar a <b>90&nbsp;Hz</b> sem tremulação perceptível em sacada;</span></li>
+        <li><svg class="ic meta" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5"/><circle class="c2" cx="10" cy="10" r="3.5"/></svg><span>a potência de entrada ficar em <b>até 20&nbsp;W</b>, com o motor estabilizando <b>abaixo de 55&nbsp;°C</b>;</span></li>
+        <li><svg class="ic meta" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5"/><circle class="c2" cx="10" cy="10" r="3.5"/></svg><span>a vibração a 30&nbsp;Hz ficar em <b>até 0,20&nbsp;g</b>, sem crescimento;</span></li>
+        <li><svg class="ic meta" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5"/><circle class="c2" cx="10" cy="10" r="3.5"/></svg><span>o rotor partir <b>10 vezes em 10</b>;</span></li>
+        <li><svg class="ic meta" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5"/><circle class="c2" cx="10" cy="10" r="3.5"/></svg><span>toda grandeza for <b>rastreável</b> a um <i>datasheet</i>, a uma medição ou a uma linha de cálculo publicada.</span></li>
+      </ul>
+    </section>
+    <section>
+      <h3 class="rot">Riscos de maior impacto</h3>
+      <table class="tab riscos">
+        <thead><tr><th>Risco</th><th>Onde aparece</th><th>Resposta prevista</th></tr></thead>
+        <tbody>
+          <tr><td>Arrasto real acima do estimado</td><td>Potência acima de 20&nbsp;W no bloqueador A</td><td>Carenagem do cubo antes de qualquer redução de rotação</td></tr>
+          <tr><td>Fluência do ABS</td><td>Crescimento da ponta no bloqueador B</td><td>Medida diretamente, antes de fechar G3</td></tr>
+          <tr><td>Falha de partida do controlador sem sensor</td><td>Bloqueador D</td><td>Rampa mais longa e ajuste das proteções do BLHeli_S</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <p class="fecho"><svg class="ic al" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10"/><path d="M10 5.2v6.2M10 14.4v.3"/></svg><span>Se um critério não for atendido, a resposta não é forçar a operação: reduzir a rotação, substituir o componente crítico ou revisar a geometria, na ordem de tentativa descrita no plano de ensaios.</span></p>
+  </div>
+</div></section>
+
+<!-- 17 · referências -->
+<section class="quadro"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Referências</p>
+    <h2 class="titulo">Obras citadas na proposta</h2>
+  </header>
+  <div class="corpo">
+    <ol class="refs">
+      <li><span>BLUNDELL, B. G.; SCHWARZ, A. J. <i>Volumetric Three-Dimensional Display Systems</i>. New York: Wiley, 2000.</span></li>
+      <li><span>FAVALORA, G. E. Volumetric 3D displays and application infrastructure. <i>Computer</i>, IEEE, v. 38, n. 8, p. 37–44, 2005.</span></li>
+      <li><span>KELLY, D. H. Visual responses to time-dependent stimuli. I. Amplitude sensitivity measurements. <i>Journal of the Optical Society of America</i>, v. 51, n. 4, p. 422–429, 1961.</span></li>
+      <li><span>TYLER, C. W. Analysis of visual modulation sensitivity. II. Peripheral retina and the role of photoreceptor dimensions. <i>Journal of the Optical Society of America A</i>, v. 2, n. 3, p. 393–398, 1985.</span></li>
+      <li><span>WHITE, F. M. <i>Fluid Mechanics</i>. 7. ed. New York: McGraw-Hill, 2011.</span></li>
+      <li><span>HOERNER, S. F. <i>Fluid-Dynamic Drag</i>. Bakersfield: edição do autor, 1965.</span></li>
+      <li><span>HENDERSHOT, J. R.; MILLER, T. J. E. <i>Design of Brushless Permanent-Magnet Machines</i>. Oxford: Motor Design Books, 2010.</span></li>
+      <li><span>INTERNATIONAL ORGANIZATION FOR STANDARDIZATION. <i>ISO 21940-11: Mechanical vibration — Rotor balancing — Part 11: Procedures and tolerances for rotors with rigid behaviour</i>. Genebra, 2016.</span></li>
+      <li><span>RAO, S. S. <i>Mechanical Vibrations</i>. 6. ed. Harlow: Pearson, 2018.</span></li>
+      <li><span>ASHBY, M. F. <i>Materials Selection in Mechanical Design</i>. 5. ed. Oxford: Butterworth-Heinemann, 2016.</span></li>
+      <li><span>ALLEGRO MICROSYSTEMS. <i>A3141/2/3/4 Sensitive Hall-Effect Switches for High-Temperature Operation — Datasheet</i>. Manchester, NH, 2019.</span></li>
+    </ol>
+  </div>
+</div></section>
+
+<!-- 18 · encerramento -->
+<section class="quadro"><div class="slide capa">
+  <div class="capa-texto">
+    <p class="capa-inst">Hologram Orbiter · apresentação do pré-projeto<br>Oficina de Integração · UTFPR Câmpus Pato Branco</p>
+    <div class="capa-meio">
+      <p class="capa-sobre">Obrigado pela atenção</p>
+      <h2 class="fim-titulo">Perguntas?</h2>
+      <p class="capa-sub">Projeto, construção e validação por portões numéricos: nenhuma fase avança sem o seu critério.</p>
+    </div>
+    <div class="capa-pe">
+      <ul class="capa-autores">
+        <li>Pedro Mariano dos Santos</li>
+        <li>Marlon Mezomo Gotardo</li>
+        <li>Rodrigo Rodriguez Tato Gama da Silva</li>
+      </ul>
+      <p class="capa-orient">Orientador: Prof. Gustavo Weber Denardin</p>
+    </div>
+  </div>
+  <figure class="capa-painel noite">
+    <svg data-cilindro="fim" viewBox="0 0 580 600" role="img" aria-label="O mesmo cilindro de LEDs durante a varredura, com os rastros dos três painéis."></svg>
+    <figcaption class="capa-specs">
+      <span><b>G0–G5</b>portões</span>
+      <span><b>9</b>semanas</span>
+      <span><b>08/09–09/11</b>2026</span>
+    </figcaption>
+  </figure>
+</div></section>
+</main>
+
+<div class="hud" role="toolbar" aria-label="Controles da apresentação">
+  <span>F apresenta · ← → navegam · Esc sai</span>
+  <button type="button" id="bt-apresentar">Apresentar</button>
+</div>
+
+<script>
+'use strict';
+const NS = 'http://www.w3.org/2000/svg';
+function el(pai, tag, at, txt) {
+  const e = document.createElementNS(NS, tag);
+  if (at) for (const k in at) if (at[k] != null) e.setAttribute(k, at[k]);
+  if (txt != null) e.textContent = txt;
+  if (pai) pai.appendChild(e);
+  return e;
+}
+const r1 = v => Math.round(v * 10) / 10;
+const num = (v, d = 0) => v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false });
+function escala(d0, d1, p0, p1) {
+  const f = v => p0 + (v - d0) * (p1 - p0) / (d1 - d0);
+  f.inv = p => d0 + (p - p0) * (d1 - d0) / (p1 - p0);
+  return f;
+}
+// Texto com subscrito: sub(pai, attrs, [['f'], ['n', true], [' ≈ 46 Hz']])
+function sub(pai, at, partes) {
+  const t = el(pai, 'text', at);
+  for (const [s, baixo] of partes) {
+    el(t, 'tspan', baixo ? { 'baseline-shift': 'sub', style: 'font-size:.72em' } : null, s);
+  }
+  return t;
+}
+
+/* ---------- cilindro de LEDs ----------
+   180 colunas (2° cada) × 29 linhas, como no display real. A imagem de teste é um
+   planeta com anel, definida em milímetros sobre o cilindro de r = 100 mm:
+   x = arco a partir da frente, y = altura (positiva para baixo); pixel 3,49 × 6,94 mm. */
+function pixel(thetaGraus, linha) {
+  const x = 100 * thetaGraus * Math.PI / 180;
+  const y = (linha - 14) * 6.944;
+  const noDisco = x * x + y * y <= 60 * 60;
+  const a = -14 * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+  const xr = x * ca + y * sa, yr = -x * sa + y * ca;
+  const q = (xr / 118) ** 2 + (yr / 30) ** 2;
+  const frente = yr > 0;                        // metade do anel que passa na frente
+  if (q >= 0.55 && q <= 1 && (frente || !noDisco)) return 2;
+  if (!noDisco) return 0;
+  if (frente && q > 1 && q < 1.5) return 0;     // sombra do anel sobre o planeta
+  const faixa = Math.round(y / 6.944);
+  if (faixa === -4 || faixa === 3) return 0;    // faixas do planeta
+  return 1;
+}
+
+let nSeta = 0;
+function cilindro(svg, cfg) {
+  const { modo, cx, R, topo, altura, e, rp, fases, seta = false, cabecas = false } = cfg;
+  const L = 29, C = 180, py = altura / (L - 1), k = R / 200;
+  const rad = g => g * Math.PI / 180;
+  const P = new Map();
+  const junta = (grupo, d) => P.set(grupo, (P.get(grupo) || '') + d);
+  // LED aceso (encapsulamento 2020, quadrado) e o halo de brilho em volta (círculo)
+  const ponto = (grupo, x, y, rx, ry) =>
+    junta(grupo, `M${r1(x - rx)} ${r1(y - ry)}h${r1(2 * rx)}v${r1(2 * ry)}h${r1(-2 * rx)}z`);
+  const halo = (grupo, x, y, rx, ry) =>
+    junta(grupo, `M${r1(x - rx)} ${r1(y)}a${r1(rx)} ${r1(ry)} 0 1 0 ${r1(2 * rx)} 0a${r1(rx)} ${r1(ry)} 0 1 0 ${r1(-2 * rx)} 0`);
+  // LEDs apagados: uma linha tracejada por coluna, agrupada pela largura aparente
+  const COL = new Map();
+  const coluna = (grupo, x, y0, rx, ry) => {
+    const chave = grupo + '|' + r1(rx);
+    const c = COL.get(chave) || { grupo, rx, ry, d: '' };
+    c.d += `M${r1(x)} ${r1(y0 - ry)}V${r1(y0 + altura + ry)}`;
+    COL.set(chave, c);
+  };
+  const desenhaColunas = (grupo, cor, opac) => {
+    for (const c of COL.values()) {
+      if (c.grupo !== grupo) continue;
+      el(svg, 'path', {
+        d: c.d, fill: 'none', stroke: cor, 'stroke-opacity': opac, 'stroke-width': r1(2 * c.rx),
+        'stroke-dasharray': `${r1(2 * c.ry)} ${r1(py - 2 * c.ry)}`,
+      });
+    }
+  };
+  const desenha = (grupo, cor, opac) => {
+    if (P.has(grupo)) el(svg, 'path', { d: P.get(grupo), fill: cor, 'fill-opacity': opac });
+  };
+  // giro anti-horário visto de cima: a face da frente anda da esquerda para a direita (θ crescente)
+  const idade = th => Math.min(...fases.map(f => (((f - th) % 360) + 360) % 360));
+  const nivel = a => (a < 30 ? 0 : a < 60 ? 1 : a < 90 ? 2 : 3);
+  const OP = [1, .7, .46, .26], OPB = [.2, .13, .08, .05];
+
+  const arco = (y, g0, g1, raio = R) => {
+    let d = '';
+    for (let g = g0; g <= g1 + 1e-6; g += 3) {
+      d += (g === g0 ? 'M' : 'L') + r1(cx + raio * Math.sin(rad(g))) + ' ' + r1(y + e * raio * Math.cos(rad(g)));
+    }
+    return d;
+  };
+  const yA = topo - py * 0.9, yB = topo + altura + py * 0.9;
+  const contorno = frente => el(svg, 'path', {
+    d: frente ? arco(yA, -90, 90) + arco(yB, -90, 90) : arco(yA, 90, 270) + arco(yB, 90, 270),
+    fill: 'none', stroke: frente ? '#3B5779' : '#22364F', 'stroke-width': r1(Math.max(1.1, 1.4 * k)),
+  });
+
+  // pontos da malha
+  if (modo !== 'instante') {
+    for (let j = 0; j < C; j++) {
+      const th = (j + 0.5) * 2 - 180;
+      const c = Math.cos(rad(th)), x = cx + R * Math.sin(rad(th));
+      const frente = c >= 0;
+      const rx = rp * Math.max(0.3, Math.abs(c)) * (frente ? 1 : 0.75), ry = rp * (frente ? 1 : 0.75);
+      const n = modo === 'varredura' ? nivel(idade(th)) : 0;
+      const y0 = topo + e * R * c;
+      coluna(frente ? 'apagado' : 'tras', x, y0, rx, ry);
+      if (!frente) continue;
+      for (let i = 0; i < L; i++) {
+        const v = pixel(th, i);
+        if (!v) continue;
+        const y = y0 + i * py, t = v === 1 ? 'p' : 'a';
+        halo(t + 'b' + n, x, y, rx * 2.5, ry * 2.5);
+        ponto(t + n, x, y, rx, ry);
+      }
+    }
+  }
+
+  // painéis: barra e os 29 LEDs da coluna que está sendo escrita
+  const painel = (phi, camada) => {
+    const c = Math.cos(rad(phi)), frente = c >= 0;
+    if ((camada === 'frente') !== frente) return;
+    const x = cx + R * Math.sin(rad(phi)), dy = e * R * c;
+    const mostraBarra = modo !== 'imagem' || cabecas;
+    if (mostraBarra) {
+      const w = Math.max(2, 7 * k * Math.max(0.35, Math.abs(c)));
+      el(svg, 'rect', {
+        x: r1(x - w / 2), y: r1(topo - py * 0.8 + dy), width: r1(w), height: r1(altura + py * 1.6), rx: r1(w / 2),
+        fill: '#2B557F', 'fill-opacity': frente ? .75 : .5,
+      });
+    }
+    if (modo === 'imagem' && !cabecas) return;
+    const rx = rp * Math.max(0.35, Math.abs(c)) * 1.1, ry = rp * 1.1;
+    for (let i = 0; i < L; i++) {
+      const y = topo + i * py + dy;
+      const v = frente ? pixel(phi, i) : 0;
+      if (!v) { if (modo !== 'imagem') ponto(camada + '-off', x, y, rx, ry); continue; }
+      const cor = modo === 'instante' ? (v === 1 ? 'p' : 'a') : 'w';
+      halo(camada + '-g' + cor, x, y, rx * 3, ry * 3);
+      ponto(camada + '-' + cor, x, y, rx, ry);
+    }
+  };
+
+  contorno(false);
+  desenhaColunas('tras', '#1B2B40', .8);
+  fases.forEach(f => painel(f, 'tras'));
+  desenha('tras-off', '#4C6C92', .6);
+  desenhaColunas('apagado', '#223752', 1);
+  fases.forEach(f => painel(f, 'frente'));
+  desenha('frente-off', '#5A7DA6', 1);
+  for (let n = 3; n >= 0; n--) { desenha('pb' + n, '#6FB8FF', OPB[n]); desenha('ab' + n, '#FFD28A', OPB[n]); }
+  for (let n = 3; n >= 0; n--) { desenha('p' + n, '#A3D5FF', OP[n]); desenha('a' + n, '#FFE3AE', OP[n]); }
+  desenha('frente-gp', '#8CCBFF', .3);
+  desenha('frente-ga', '#FFD28A', .3);
+  desenha('frente-gw', '#FFFFFF', .22);
+  desenha('frente-p', '#C9E7FF', 1);
+  desenha('frente-a', '#FFF0D2', 1);
+  desenha('frente-w', '#FFFFFF', 1);
+  contorno(true);
+
+  if (seta) {
+    const id = 'giro' + (++nSeta);
+    const m = el(el(svg, 'defs'), 'marker', { id, viewBox: '0 0 8 8', refX: 6, refY: 4, markerWidth: 7, markerHeight: 7, orient: 'auto' });
+    el(m, 'path', { d: 'M0 .5L8 4L0 7.5z', fill: '#8FA9C6' });
+    const yS = yB + 20 * k;
+    el(svg, 'path', { d: arco(yS, -34, 34, R * 0.9), fill: 'none', stroke: '#8FA9C6', 'stroke-width': 1.6, 'marker-end': `url(#${id})` });
+    el(svg, 'text', {
+      x: cx, y: r1(yS + e * R * 0.9 + 26), 'text-anchor': 'middle',
+      style: 'font: 500 12.5px var(--f-mono); letter-spacing: .06em; fill: #8FA9C6',
+    }, 'GIRO ANTI-HORÁRIO VISTO DE CIMA');
+  }
+}
+
+const CIL = {
+  capa: { modo: 'imagem', cabecas: true, seta: true, cx: 290, R: 200, topo: 92, altura: 388, e: 0.17, rp: 2.6, fases: [-38, 82, 202] },
+  fim: { modo: 'varredura', seta: true, cx: 290, R: 200, topo: 92, altura: 388, e: 0.17, rp: 2.6, fases: [16, 136, 256] },
+  instante: { modo: 'instante', cx: 184, R: 118, topo: 32, altura: 228, e: 0.17, rp: 1.6, fases: [0, 120, 240] },
+  varredura: { modo: 'varredura', cx: 184, R: 118, topo: 32, altura: 228, e: 0.17, rp: 1.6, fases: [0, 120, 240] },
+  imagem: { modo: 'imagem', cx: 184, R: 118, topo: 32, altura: 228, e: 0.17, rp: 1.6, fases: [0, 120, 240] },
+};
+document.querySelectorAll('svg[data-cilindro]').forEach(s => cilindro(s, CIL[s.dataset.cilindro]));
+
+/* ---------- gráficos ---------- */
+function interativo(svg, a, mover) {
+  const alvo = el(svg, 'rect', { x: a.x, y: a.y, width: a.w, height: a.h, fill: 'transparent', class: 'alvo' });
+  const local = ev => new DOMPoint(ev.clientX, ev.clientY).matrixTransform(svg.getScreenCTM().inverse());
+  alvo.addEventListener('pointermove', ev => mover(local(ev)));
+  alvo.addEventListener('pointerleave', () => mover(null));
+}
+function leitura(svg, largura, nLinhas) {
+  const g = el(svg, 'g', { class: 'cur', visibility: 'hidden' });
+  const linha = el(g, 'line', { class: 'cur-linha' });
+  const caixa = el(g, 'rect', { class: 'cur-caixa', rx: 6, width: largura, height: 14 + nLinhas * 21 });
+  const textos = Array.from({ length: nLinhas }, (_, i) => el(g, 'text', { class: i ? null : 'forte', style: 'font-size:14px' }));
+  return {
+    g, linha,
+    mostra(bx, by, linhas) {
+      g.setAttribute('visibility', 'visible');
+      caixa.setAttribute('x', bx); caixa.setAttribute('y', by);
+      textos.forEach((t, i) => { t.textContent = linhas[i]; t.setAttribute('x', bx + 12); t.setAttribute('y', by + 23 + i * 21); });
+    },
+    esconde() { g.setAttribute('visibility', 'hidden'); },
+  };
+}
+
+// Slide 3: onde cada caso cai na escala de taxa de imagem
+function graficoFaixas(svg) {
+  const X = escala(0, 100, 256, 580);
+  const y0 = 38, passo = 62, yFim = y0 + passo * 4 + 24;
+  for (const v of [0, 30, 60, 90]) {
+    el(svg, 'line', { x1: X(v), x2: X(v), y1: 12, y2: yFim, class: v ? 'grade' : 'base' });
+    el(svg, 'text', { x: X(v), y: yFim + 22, class: 'tick', 'text-anchor': 'middle' }, v);
+  }
+  el(svg, 'line', { x1: X(90), x2: X(90), y1: 12, y2: yFim, stroke: 'var(--azul)', 'stroke-width': 1.2, 'stroke-dasharray': '5 4' });
+  const linhas = [
+    { rot: 'Ventiladores comerciais', sub: '1–2 hélices, 450–900 rpm', de: 15, ate: 30, cor: 'var(--laranja)', val: '15–30 Hz' },
+    { rot: 'Limiar de fusão, fóvea', sub: 'luminância moderada [3]', de: 40, ate: 60, cor: 'var(--tinta-3)', val: '40–60 Hz' },
+    { rot: 'Limiar de fusão, periferia', sub: 'fora do eixo [4]', de: 90, ref: true, val: '≈ 90 Hz' },
+    { rot: 'Protótipo v2.0', sub: '3 painéis a 1200 rpm', de: 60, cor: 'var(--tinta-3)', val: '60 Hz' },
+    { rot: 'Hologram Orbiter v3.0', sub: '3 painéis a 1800 rpm', de: 90, cor: 'var(--azul)', val: '90 Hz', forte: true },
+  ];
+  linhas.forEach((l, k) => {
+    const y = y0 + k * passo;
+    el(svg, 'text', { x: 0, y: y + 5, class: l.forte ? 'forte' : null, style: 'font-size:16.5px' + (l.forte ? '' : ';fill:var(--tinta)') }, l.rot);
+    el(svg, 'text', { x: 0, y: y + 25, class: 'tick' }, l.sub);
+    let xv, ancora = 'start';
+    if (l.ate != null) {
+      el(svg, 'rect', { x: X(l.de), y: y - 6, width: X(l.ate) - X(l.de), height: 12, rx: 4, fill: l.cor });
+      xv = X(l.ate) + 10;
+    } else if (l.ref) {
+      const c = X(l.de);
+      el(svg, 'path', { d: `M${c} ${y - 8}L${c + 8} ${y}L${c} ${y + 8}L${c - 8} ${y}Z`, fill: 'var(--superficie)', stroke: 'var(--tinta-2)', 'stroke-width': 1.6 });
+      xv = c - 14; ancora = 'end';
+    } else {
+      const c = X(l.de);
+      el(svg, 'circle', { cx: c, cy: y, r: 7, fill: l.cor, stroke: 'var(--papel)', 'stroke-width': 2.5 });
+      if (l.de >= 80) { xv = c - 14; ancora = 'end'; } else xv = c + 14;
+    }
+    el(svg, 'text', { x: xv, y: y + 5, 'text-anchor': ancora, class: 'forte', style: 'font-family:var(--f-mono);font-size:14px;font-weight:500' }, l.val);
+  });
+}
+
+// Slide 5: f_img = Np · n  (Eq. 1)
+function graficoTaxa(svg) {
+  const W = 690, H = 440, m = { l: 50, r: 92, t: 30, b: 50 };
+  const X = escala(300, 2400, m.l, W - m.r), Y = escala(0, 125, H - m.b, m.t);
+  const COR = { 1: 'var(--azul-1)', 2: 'var(--azul-2)', 3: 'var(--azul)' };
+  const TRACO = { 1: '1.5 6', 2: '9 6', 3: null };
+  el(svg, 'rect', { x: m.l, y: Y(90), width: W - m.r - m.l, height: Y(60) - Y(90), fill: 'var(--tinta)', 'fill-opacity': .05 });
+  for (const v of [0, 30, 60, 90, 120]) {
+    if (v) el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), class: 'grade' });
+    el(svg, 'text', { x: m.l - 10, y: Y(v) + 4.5, class: 'tick', 'text-anchor': 'end' }, v);
+  }
+  el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), class: 'base' });
+  for (let v = 300; v <= 2400; v += 300) {
+    el(svg, 'line', { x1: X(v), x2: X(v), y1: Y(0), y2: Y(0) + 5, class: 'base' });
+    el(svg, 'text', { x: X(v), y: Y(0) + 22, class: 'tick', 'text-anchor': 'middle' }, v);
+  }
+  el(svg, 'text', { x: W - m.r, y: H - 4, class: 'eixo', 'text-anchor': 'end' }, 'rotação (rpm)');
+  el(svg, 'text', { x: m.l - 10, y: m.t - 14, class: 'eixo' }, 'Hz');
+
+  el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(90), y2: Y(90), stroke: 'var(--tinta-2)', 'stroke-width': 1.2, 'stroke-dasharray': '6 5' });
+  el(svg, 'text', { x: X(330), y: Y(90) + 22, class: 'forte', style: 'font-size:14px' }, 'faixa do limiar de fusão de cintilação');
+  el(svg, 'text', { x: X(330), y: Y(90) + 40, style: 'font-size:14px' }, 'chega a ≈ 90 Hz na visão periférica');
+
+  for (const n of [1, 2, 3]) {
+    el(svg, 'line', { x1: X(300), y1: Y(n * 5), x2: X(2400), y2: Y(n * 40), stroke: COR[n], 'stroke-width': 2.5, 'stroke-linecap': 'round', 'stroke-dasharray': TRACO[n] });
+    el(svg, 'text', { x: W - m.r + 10, y: Y(n * 40) + 5, class: n === 3 ? 'forte' : null }, n === 1 ? '1 painel' : `${n} painéis`);
+  }
+  // ventiladores comerciais: dois braços entre 450 e 900 rpm, sobre a reta de 2 painéis
+  el(svg, 'line', { x1: X(450), y1: Y(15), x2: X(900), y2: Y(30), stroke: 'var(--laranja)', 'stroke-width': 7, 'stroke-linecap': 'round', 'stroke-opacity': .9 });
+
+  el(svg, 'circle', { cx: X(1200), cy: Y(60), r: 6, fill: 'var(--tinta-3)', stroke: 'var(--papel)', 'stroke-width': 2.5 });
+  el(svg, 'text', { x: X(1180), y: Y(60) - 10, 'text-anchor': 'end', style: 'font-size:14px' }, 'v2.0: 60 Hz a 1200 rpm');
+  el(svg, 'circle', { cx: X(1800), cy: Y(90), r: 7.5, fill: 'var(--azul)', stroke: 'var(--papel)', 'stroke-width': 2.5 });
+  el(svg, 'text', { x: X(1780), y: Y(90) - 12, 'text-anchor': 'end', class: 'forte' }, 'ponto de projeto: 3 painéis a 1800 rpm');
+
+  const cur = leitura(svg, 172, 4);
+  cur.linha.setAttribute('y1', m.t); cur.linha.setAttribute('y2', Y(0));
+  const pts = [1, 2, 3].map(n => el(cur.g, 'circle', { r: 5, fill: COR[n], stroke: 'var(--superficie)', 'stroke-width': 2 }));
+  interativo(svg, { x: m.l, y: m.t, w: W - m.r - m.l, h: Y(0) - m.t }, p => {
+    if (!p) return cur.esconde();
+    const rpm = Math.round(Math.min(2400, Math.max(300, X.inv(p.x))) / 10) * 10, x = X(rpm);
+    cur.linha.setAttribute('x1', x); cur.linha.setAttribute('x2', x);
+    pts.forEach((c, i) => { c.setAttribute('cx', x); c.setAttribute('cy', Y((i + 1) * rpm / 60)); });
+    const bx = x > (m.l + W - m.r) / 2 ? x - 184 : x + 12;
+    cur.mostra(bx, m.t + 4, [`${rpm} rpm`, `1 painel: ${num(rpm / 60, 1)} Hz`, `2 painéis: ${num(rpm / 30, 1)} Hz`, `3 painéis: ${num(rpm / 20, 1)} Hz`]);
+  });
+}
+
+// Slide 6: I ∝ r³ a rotação fixa (Eq. 6), ancorada em 4,95 A a 100 mm
+function graficoRaio(svg) {
+  const W = 650, H = 330, m = { l: 46, r: 18, t: 24, b: 46 };
+  const X = escala(60, 145, m.l, W - m.r), Y = escala(0, 14, H - m.b, m.t);
+  const I = r => 4.95 * (r / 100) ** 3;
+  const rLim = 100 * Math.cbrt(5.5 / 4.95);
+  el(svg, 'rect', { x: m.l, y: Y(14), width: W - m.r - m.l, height: Y(5.5) - Y(14), fill: 'var(--laranja)', 'fill-opacity': .08 });
+  for (let v = 0; v <= 14; v += 2) {
+    if (v) el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), class: 'grade' });
+    el(svg, 'text', { x: m.l - 10, y: Y(v) + 4.5, class: 'tick', 'text-anchor': 'end' }, v);
+  }
+  el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), class: 'base' });
+  for (let v = 60; v <= 140; v += 10) {
+    el(svg, 'line', { x1: X(v), x2: X(v), y1: Y(0), y2: Y(0) + 5, class: 'base' });
+    if (v % 20 === 0) el(svg, 'text', { x: X(v), y: Y(0) + 22, class: 'tick', 'text-anchor': 'middle' }, v);
+  }
+  el(svg, 'text', { x: W - m.r, y: H - 4, class: 'eixo', 'text-anchor': 'end' }, 'raio do plano médio, r (mm)');
+  el(svg, 'text', { x: m.l - 10, y: m.t - 10, class: 'eixo' }, 'A');
+
+  el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(5.5), y2: Y(5.5), stroke: 'var(--laranja)', 'stroke-width': 1.5, 'stroke-dasharray': '7 5' });
+  el(svg, 'text', { x: X(61.5), y: Y(5.5) - 30, class: 'forte', style: 'font-size:14px' }, 'limite térmico do A2212');
+  el(svg, 'text', { x: X(61.5), y: Y(5.5) - 12, style: 'font-size:14px' }, 'sem ventilação forçada: ≈ 5,5 A');
+
+  const recorte = 'recorte-raio';
+  el(el(el(svg, 'defs'), 'clipPath', { id: recorte }), 'rect', { x: m.l, y: m.t, width: W - m.r - m.l, height: Y(0) - m.t });
+  let d = '';
+  for (let r = 60; r <= 145; r += 0.5) d += (r === 60 ? 'M' : 'L') + r1(X(r)) + ' ' + r1(Y(I(r)));
+  el(svg, 'path', { d, fill: 'none', stroke: 'var(--azul)', 'stroke-width': 2.5, 'stroke-linejoin': 'round', 'clip-path': `url(#${recorte})` });
+
+  el(svg, 'circle', { cx: X(rLim), cy: Y(5.5), r: 4.5, fill: 'var(--papel)', stroke: 'var(--laranja)', 'stroke-width': 2 });
+  el(svg, 'circle', { cx: X(100), cy: Y(4.95), r: 7, fill: 'var(--azul)', stroke: 'var(--papel)', 'stroke-width': 2.5 });
+  const lx = X(100) + 14, ly = Y(4.95) + 24;
+  el(svg, 'text', { x: lx, y: ly, class: 'forte' }, 'v3.0: r = 100 mm');
+  el(svg, 'text', { x: lx, y: ly + 18, style: 'font-size:14px' }, '4,95 A · 46 °C previstos');
+  el(svg, 'text', { x: lx, y: ly + 36, style: 'font-size:14px' }, `5,5 A já em r ≈ ${num(rLim)} mm`);
+
+  const vx = X(130), vy = Y(I(130));
+  el(svg, 'path', { d: `M${vx - 7} ${vy - 7}L${vx + 7} ${vy + 7}M${vx + 7} ${vy - 7}L${vx - 7} ${vy + 7}`, stroke: 'var(--laranja)', 'stroke-width': 3, 'stroke-linecap': 'round' });
+  el(svg, 'text', { x: X(128), y: Y(12.9), 'text-anchor': 'end', class: 'forte' }, 'v2.1: r = 130 mm');
+  el(svg, 'text', { x: X(128), y: Y(12.9) + 18, 'text-anchor': 'end', style: 'font-size:14px' }, '9,8–10,9 A · 101 °C');
+
+  const cur = leitura(svg, 156, 3);
+  cur.linha.setAttribute('y1', m.t); cur.linha.setAttribute('y2', Y(0));
+  const pt = el(cur.g, 'circle', { r: 5, fill: 'var(--azul)', stroke: 'var(--superficie)', 'stroke-width': 2 });
+  interativo(svg, { x: m.l, y: m.t, w: W - m.r - m.l, h: Y(0) - m.t }, p => {
+    if (!p) return cur.esconde();
+    const r = Math.round(Math.min(145, Math.max(60, X.inv(p.x)))), x = X(r), i = I(r);
+    cur.linha.setAttribute('x1', x); cur.linha.setAttribute('x2', x);
+    pt.setAttribute('cx', x); pt.setAttribute('cy', Y(Math.min(i, 14)));
+    const bx = x > (m.l + W - m.r) / 2 ? x - 168 : x + 12;
+    cur.mostra(bx, Y(0) - 90, [`r = ${r} mm`, `I = ${num(i, 2)} A`, `(r/100)³ = ${num((r / 100) ** 3, 2)}`]);
+  });
+}
+
+// Slide 7: excitação síncrona × frequência natural da torre (Eq. 11)
+function regua(svg) {
+  const X = escala(0, 60, 16, 524), y = 40;
+  el(svg, 'rect', { x: X(30), y: y - 5, width: X(46) - X(30), height: 10, rx: 2, fill: 'var(--azul-lav)' });
+  el(svg, 'line', { x1: X(0), x2: X(60), y1: y, y2: y, class: 'base' });
+  for (let v = 0; v <= 60; v += 10) {
+    el(svg, 'line', { x1: X(v), x2: X(v), y1: y, y2: y + 5, class: 'base' });
+    el(svg, 'text', { x: X(v), y: y + 22, class: 'tick', 'text-anchor': 'middle' }, v);
+  }
+  el(svg, 'circle', { cx: X(30), cy: y, r: 6.5, fill: 'var(--tinta)', stroke: 'var(--papel)', 'stroke-width': 2.5 });
+  const d = X(46);
+  el(svg, 'path', { d: `M${d} ${y - 8}L${d + 8} ${y}L${d} ${y + 8}L${d - 8} ${y}Z`, fill: 'var(--laranja)', stroke: 'var(--papel)', 'stroke-width': 2 });
+  el(svg, 'text', { x: X(30) + 4, y: y - 14, 'text-anchor': 'end', style: 'font-size:14px' }, 'excitação síncrona: 30 Hz');
+  sub(svg, { x: (X(30) + d) / 2, y: y - 14, 'text-anchor': 'middle', class: 'forte', style: 'font-size:14px' }, [['f/f'], ['n', true], [' = 0,65']]);
+  sub(svg, { x: d - 4, y: y - 14, style: 'font-size:14px' }, [['f'], ['n', true], [' ≈ 46 Hz']]);
+}
+
+graficoFaixas(document.getElementById('g-faixas'));
+graficoTaxa(document.getElementById('g-taxa'));
+graficoRaio(document.getElementById('g-raio'));
+regua(document.getElementById('g-regua'));
+
+// Slide 15: cronograma (Figura 3 da proposta)
+function gantt(svg) {
+  const W = 1152, x0 = 500, x1 = 1144, wk = (x1 - x0) / 9, yH = 56, hL = 20.5;
+  const inicio = new Date(2026, 8, 8);
+  const data = (sem, dia = 0) => {
+    const d = new Date(inicio);
+    d.setDate(d.getDate() + (sem - 1) * 7 + dia);
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  };
+  const T = [
+    ['F0', 'Compras do caminho crítico', 1, 2],
+    ['F1', 'Cupons C01 e C02', 1, 1],
+    ['F1', 'Lote dos três painéis', 2, 1],
+    ['F1', 'Aranha, tampa e suporte do ímã', 2, 1],
+    ['F1', 'Base e torre integradas (12–18 h)', 3, 1],
+    ['F1', 'Corte e furação da chapa R01', 3, 1],
+    ['F1', 'Verificação dimensional e pesagem', 3, 1, 'G1'],
+    ['F2', 'Montagem e balanceamento estático', 4, 1, 'G2'],
+    ['F2', 'Ensaio de impacto C0 e contenção', 4, 1],
+    ['F3', 'Bloqueador A: potência e arrasto', 5, 1],
+    ['F3', 'Bloqueador B: térmica em regime contínuo', 5, 1],
+    ['F3', 'Bloqueadores C e D: vibração e partida', 6, 1, 'G3'],
+    ['F4', 'Fiação e eletrônica de bordo', 7, 1],
+    ['F4', 'Firmware: SPI, índice angular, colunas', 7, 1],
+    ['F4', 'Imagem de teste e rebalanceamento', 8, 1, 'G4'],
+    ['F5', 'Bloqueador E, ajustes e demonstração', 9, 1, 'G5'],
+    ['F5', 'Documentação e relatório final', 9, 1],
+  ];
+  const FASE = { F0: 'Aquisição', F1: 'Fabricação', F2: 'Montagem', F3: 'Ensaios de rotação', F4: 'Integração óptica', F5: 'Validação' };
+  const yFim = yH + T.length * hL;
+
+  const grupos = [];
+  T.forEach((t, i) => {
+    const g = grupos[grupos.length - 1];
+    if (g && g.f === t[0]) g.n++; else grupos.push({ f: t[0], i, n: 1 });
+  });
+  grupos.forEach((g, k) => {
+    const y = yH + g.i * hL, h = g.n * hL;
+    if (k % 2 === 1) el(svg, 'rect', { x: 0, y, width: W, height: h, fill: '#EDF1F6' });
+    const rotulo = 'font:600 13px var(--f-mono);fill:var(--azul)';
+    if (g.n === 1) {
+      el(svg, 'text', { x: 8, y: y + hL / 2 + 5, style: rotulo }, `${g.f} · ${FASE[g.f]}`);
+    } else {
+      el(svg, 'text', { x: 8, y: y + h / 2 - 3, style: rotulo }, g.f);
+      el(svg, 'text', { x: 8, y: y + h / 2 + 15, style: 'font-size:14px' }, FASE[g.f]);
+    }
+  });
+
+  el(svg, 'text', { x: 8, y: 44, style: 'font-size:14px;font-style:italic;fill:var(--tinta-3)' }, 'Concluídos em 05/09: projeto CAD, memória de cálculo e verificação');
+  for (let s = 1; s <= 9; s++) {
+    const xc = x0 + (s - 0.5) * wk;
+    el(svg, 'text', { x: xc, y: 36, 'text-anchor': 'middle', style: 'font:600 13px var(--f-mono);fill:var(--tinta)' }, `S${s}`);
+    el(svg, 'text', { x: xc, y: 51, 'text-anchor': 'middle', class: 'tick', style: 'font-size:11.5px' }, data(s));
+  }
+  for (let s = 0; s <= 9; s++) el(svg, 'line', { x1: x0 + s * wk, x2: x0 + s * wk, y1: 24, y2: yFim, class: 'grade' });
+
+  T.forEach(([f, nome, ini, dur, g], i) => {
+    const yc = yH + i * hL + hL / 2;
+    el(svg, 'text', { x: 150, y: yc + 5, style: 'font-size:14.5px;fill:var(--tinta)' }, nome);
+    if (g) el(svg, 'text', { x: 488, y: yc + 5, 'text-anchor': 'end', style: 'font:600 12.5px var(--f-mono);fill:var(--portao)' }, g);
+    const b = el(svg, 'rect', {
+      x: r1(x0 + (ini - 1) * wk + 4), y: r1(yc - 7), width: r1(dur * wk - 8), height: 14, rx: 3,
+      fill: g ? 'var(--azul)' : 'var(--azul-2)',
+    });
+    el(b, 'title', null, `${nome} · ${FASE[f].toLowerCase()} · ${data(ini)} a ${data(ini + dur - 1, 6)}`);
+  });
+
+  for (const [s, g] of [[3, 'G1'], [4, 'G2'], [6, 'G3'], [8, 'G4'], [9, 'G5']]) {
+    const x = x0 + s * wk, c = Math.min(x, W - 17);
+    el(svg, 'line', { x1: x, x2: x, y1: 20, y2: yFim + 2, stroke: 'var(--portao)', 'stroke-width': 1.5, 'stroke-dasharray': '5 4' });
+    el(svg, 'rect', { x: c - 16, y: 0, width: 32, height: 19, rx: 4, fill: 'var(--portao-lav)', stroke: '#E6B3BC' });
+    el(svg, 'text', { x: c, y: 14, 'text-anchor': 'middle', style: 'font:600 12.5px var(--f-mono);fill:var(--portao)' }, g);
+  }
+}
+gantt(document.getElementById('g-gantt'));
+
+/* ---------- rodapés: um LED por slide ---------- */
+const slides = [...document.querySelectorAll('.slide')];
+slides.forEach((s, k) => {
+  if (s.classList.contains('capa')) return;
+  const leds = slides.map((_, i) => `<i class="${i < k ? 'feito' : i === k ? 'agora' : ''}"></i>`).join('');
+  const rod = document.createElement('footer');
+  rod.className = 'rod';
+  rod.innerHTML = `<span>Hologram Orbiter · pré-projeto · Oficina de Integração · UTFPR-PB</span>` +
+    `<span class="leds" aria-hidden="true">${leds}</span>` +
+    `<span class="pag"><b>${String(k + 1).padStart(2, '0')}</b> / ${slides.length}</span>`;
+  s.appendChild(rod);
+});
+
+/* ---------- escala na tela e modo apresentação ---------- */
+const raiz = document.documentElement;
+const quadros = [...document.querySelectorAll('.quadro')];
+let atual = 0;
+function ajusta() {
+  const ap = raiz.classList.contains('apresentando');
+  const w = raiz.clientWidth, h = window.innerHeight;
+  const s = ap ? Math.min(w / 1280, h / 720) : Math.min(1, (w - 32) / 1280);
+  raiz.style.setProperty('--s', Math.max(0.1, s).toFixed(4));
+}
+function mostra(k) {
+  atual = Math.max(0, Math.min(quadros.length - 1, k));
+  quadros.forEach((q, i) => q.classList.toggle('atual', i === atual));
+}
+function entra() {
+  const i = quadros.findIndex(q => q.getBoundingClientRect().bottom > window.innerHeight * 0.4);
+  raiz.classList.add('apresentando');
+  mostra(i < 0 ? 0 : i);
+  ajusta();
+  if (raiz.requestFullscreen && !document.fullscreenElement) raiz.requestFullscreen().catch(() => {});
+}
+function sai() {
+  raiz.classList.remove('apresentando');
+  ajusta();
+  quadros[atual].scrollIntoView({ block: 'center' });
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+}
+document.addEventListener('keydown', ev => {
+  if (ev.altKey || ev.ctrlKey || ev.metaKey) return;
+  const ap = raiz.classList.contains('apresentando');
+  if (ev.key === 'f' || ev.key === 'F') { ap ? sai() : entra(); ev.preventDefault(); return; }
+  if (!ap) return;
+  const k = ev.key;
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(k)) mostra(atual + 1);
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) mostra(atual - 1);
+  else if (k === 'Home') mostra(0);
+  else if (k === 'End') mostra(quadros.length - 1);
+  else if (k === 'Escape') sai();
+  else return;
+  ev.preventDefault();
+});
+document.addEventListener('click', ev => {
+  if (!raiz.classList.contains('apresentando') || ev.target.closest('.alvo')) return;
+  mostra(atual + (ev.clientX < window.innerWidth / 3 ? -1 : 1));
+});
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && raiz.classList.contains('apresentando')) sai();
+  else ajusta();
+});
+document.getElementById('bt-apresentar').addEventListener('click', ev => { ev.stopPropagation(); entra(); });
+window.addEventListener('resize', ajusta);
+ajusta();
+</script>
+</body>
+</html>

@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pré-projeto Hologram Orbiter</title>
+<meta name="description" content="Slides da apresentação do pré-projeto Hologram Orbiter (Oficina de Integração, UTFPR Pato Branco).">
+<link rel="stylesheet" href="fontes/fontes.css">
+<style>
+/* Slides 1280 × 720 px. Na tela, cada slide é escalado para caber;
+   na impressão (PDF) sai um slide por página, em tamanho real.
+   F entra e sai do modo apresentação; setas navegam. */
+:root {
+  --mesa: #DCE2EA;
+  --papel: #F6F8FB;
+  --superficie: #FFFFFF;
+  --tinta: #0E1A2B;
+  --tinta-2: #3F4E63;
+  --tinta-3: #6A788C;
+  --linha: #CFD8E3;
+  --linha-2: #E3E9F0;
+  --azul: #1F4E79;
+  --azul-2: #4C80B5;
+  --azul-1: #8DB1D6;
+  --azul-lav: #E8EFF7;
+  --laranja: #C55A11;
+  --laranja-lav: #F9ECE3;
+  --verde: #2E7D32;
+  --portao: #A3162B;
+  --portao-lav: #F8E6E9;
+  --led-quente-lav: #FBF1DD;
+  --led-quente-tinta: #7A5200;
+  --f-disp: "HO Archivo", "Archivo", "Noto Sans", sans-serif;
+  --f-text: "HO Fira Sans", "Fira Sans", "HO Math", "Noto Sans", sans-serif;
+  --f-mono: "HO Fira Mono", "Fira Mono", "HO Math", "Noto Sans Mono", monospace;
+  --f-math: "HO Math", "Noto Sans Math", math;
+  --s: 1;
+  color-scheme: light;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; background: var(--mesa); color: var(--tinta); }
+body {
+  font-family: var(--f-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+math { font-family: var(--f-math); }
+math.d { math-style: normal; }
+
+/* ---------- mesa de slides ---------- */
+.deck {
+  display: flex; flex-direction: column; align-items: center; gap: 28px;
+  padding-block: 28px 96px; padding-inline: 16px;
+}
+.quadro {
+  position: relative; flex: none; overflow: hidden;
+  width: calc(1280px * var(--s)); height: calc(720px * var(--s));
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(14, 26, 43, .08), 0 10px 30px rgba(14, 26, 43, .14);
+}
+.slide {
+  position: absolute; top: 0; left: 0;
+  width: 1280px; height: 720px;
+  transform: scale(var(--s)); transform-origin: 0 0;
+  display: flex; flex-direction: column;
+  padding: 42px 64px 0;
+  background: var(--papel); color: var(--tinta);
+  font-size: 20px; line-height: 1.42;
+  overflow: hidden;
+}
+.slide p, .slide h2, .slide h3, .slide h4, .slide figure, .slide dl, .slide dd { margin: 0; }
+.slide ul, .slide ol { margin: 0; padding: 0; list-style: none; }
+.slide b, .slide strong { font-weight: 600; color: var(--tinta); }
+
+.cab { flex: none; margin-bottom: 24px; }
+.sobre {
+  display: flex; gap: 14px; align-items: baseline;
+  font: 500 14px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--azul);
+}
+.sobre span { color: var(--tinta-3); letter-spacing: .03em; text-transform: none; }
+.titulo {
+  margin-top: 12px;
+  font-family: var(--f-disp); font-weight: 720; font-stretch: 104%;
+  font-size: 40px; line-height: 1.08; letter-spacing: -.015em;
+  color: var(--tinta); text-wrap: balance; max-width: 1110px;
+}
+.corpo { flex: 1; min-height: 0; margin-bottom: 22px; position: relative; }
+
+.rod {
+  flex: none; height: 42px; margin: 0 -64px; padding: 0 64px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  border-top: 1px solid var(--linha-2);
+  font: 500 12.5px/1 var(--f-mono); letter-spacing: .04em; color: var(--tinta-3);
+}
+.leds { display: flex; gap: 5px; }
+.leds i { width: 6px; height: 6px; border-radius: 50%; background: var(--linha); }
+.leds i.feito { background: var(--azul-1); }
+.leds i.agora { background: var(--azul); box-shadow: 0 0 0 3px var(--azul-lav); }
+.pag { font-variant-numeric: tabular-nums; }
+.pag b { color: var(--tinta); font-weight: 500; }
+
+/* ---------- peças comuns ---------- */
+.lead { font-size: 23px; line-height: 1.42; color: var(--tinta-2); max-width: 62ch; text-wrap: pretty; }
+.lista { display: grid; gap: 14px; }
+.lista li { position: relative; padding-left: 26px; text-wrap: pretty; }
+.lista li::before {
+  content: ""; position: absolute; left: 3px; top: .5em;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--azul-2); box-shadow: 0 0 0 3px var(--azul-lav);
+}
+.rot { font: 500 13px/1.2 var(--f-mono); letter-spacing: .09em; text-transform: uppercase; color: var(--tinta-3); }
+.nota { font-size: 16px; line-height: 1.4; color: var(--tinta-3); }
+.cit { color: var(--tinta-3); white-space: nowrap; }
+.nb { white-space: nowrap; }
+.chip-g {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 36px; height: 26px; padding: 0 7px; border-radius: 5px;
+  font: 600 14px/1 var(--f-mono); letter-spacing: .02em;
+  color: var(--portao); background: var(--portao-lav); box-shadow: inset 0 0 0 1px #E6B3BC;
+}
+.eq {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 10px 0; border-top: 1px solid var(--linha-2);
+  font-size: 26px; color: var(--tinta);
+}
+.eq-n { font: 500 14px/1 var(--f-mono); color: var(--tinta-3); }
+.noite {
+  background: radial-gradient(120% 95% at 50% 42%, #132844 0%, #0B1728 55%, #070F1B 100%);
+  color: #CFE3F7;
+}
+.ic { width: 20px; height: 20px; flex: none; }
+.ic circle { fill: var(--tinta-3); }
+.ic path { fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.ic.ok circle { fill: var(--verde); }
+.ic.al circle { fill: var(--laranja); }
+.ic.pr circle { fill: var(--azul); }
+.ic.meta circle { fill: none; stroke: var(--azul); stroke-width: 2.2; }
+.ic.meta circle.c2 { fill: var(--azul); stroke: none; }
+.eq-pilha { display: grid; gap: 2px; }
+
+/* ---------- gráficos ---------- */
+.grafico { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.g-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.g-tit { font: 500 13px/1.2 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-2); }
+.legenda { display: flex; gap: 18px; font-size: 15px; color: var(--tinta-2); }
+.legenda span { display: inline-flex; align-items: center; gap: 8px; }
+.chave { display: inline-block; width: 28px; height: 0; border-top: 3px solid var(--azul); }
+.chave.n1 { border-top-style: dotted; border-top-color: var(--azul-1); }
+.chave.n2 { border-top-style: dashed; border-top-color: var(--azul-2); }
+.chave.co { width: 22px; height: 6px; border: 0; border-radius: 3px; background: var(--laranja); }
+svg.g { display: block; width: 100%; height: auto; overflow: visible; }
+.g text { font-family: var(--f-text); font-size: 15px; fill: var(--tinta-2); }
+.g .tick { font-family: var(--f-mono); font-size: 13px; fill: var(--tinta-3); }
+.g .eixo { font-family: var(--f-mono); font-size: 13px; letter-spacing: .06em; fill: var(--tinta-2); }
+.g .forte { fill: var(--tinta); font-weight: 600; }
+.g .fraco { fill: var(--tinta-3); }
+.g .grade { stroke: var(--linha-2); stroke-width: 1; }
+.g .base { stroke: var(--linha); stroke-width: 1.2; }
+.g .cur { pointer-events: none; }
+.g .cur-caixa { fill: var(--superficie); stroke: var(--linha); }
+.g .cur-linha { stroke: var(--tinta-2); stroke-width: 1; }
+.g .alvo { cursor: crosshair; }
+
+/* ---------- capa e encerramento ---------- */
+.capa { padding: 0; flex-direction: row; }
+.capa-texto { width: 700px; padding: 54px 36px 50px 72px; display: flex; flex-direction: column; }
+.capa-inst { font: 500 13px/1.6 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); }
+.capa-meio { margin-block: auto; }
+.capa-sobre { font: 500 15px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--azul); }
+.capa-titulo {
+  margin: 18px 0 22px;
+  font-family: var(--f-disp); font-weight: 800; font-stretch: 112%;
+  font-size: 104px; line-height: .9; letter-spacing: -.03em; color: var(--tinta);
+}
+.capa-sub { font-size: 27px; line-height: 1.28; color: var(--tinta-2); max-width: 21em; text-wrap: balance; }
+.capa-pe { display: grid; gap: 14px; padding-top: 22px; border-top: 1px solid var(--linha); }
+.capa-autores { display: grid; gap: 2px; font-size: 21px; line-height: 1.35; color: var(--tinta); }
+.capa-orient { font-size: 18px; color: var(--tinta-2); }
+.capa-data { font: 500 13px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); }
+.capa-painel { flex: 1; position: relative; display: grid; grid-template-rows: 1fr auto; }
+.capa-painel svg { width: 100%; height: 100%; display: block; }
+.capa-specs {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 0 40px 34px;
+  font: 500 13px/1.3 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: #8FA9C6;
+}
+.capa-specs b { display: block; font: 600 26px/1.1 var(--f-disp); font-stretch: 100%; letter-spacing: -.01em; color: #EAF3FC; text-transform: none; }
+.fim-titulo {
+  font-family: var(--f-disp); font-weight: 800; font-stretch: 112%;
+  font-size: 84px; line-height: 1; letter-spacing: -.03em; color: var(--tinta);
+  font-stretch: 104%; margin: 14px 0 22px;
+}
+
+/* ---------- conteúdo específico ---------- */
+.princ { display: grid; grid-template-rows: auto 1fr auto; gap: 20px; }
+.tripla { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; min-height: 0; }
+.etapa { display: grid; grid-template-rows: 1fr auto; gap: 12px; min-height: 0; }
+.etapa .noite { border-radius: 10px; overflow: hidden; min-height: 0; }
+.etapa svg { display: block; width: 100%; height: 100%; }
+.etapa figcaption { font-size: 18px; line-height: 1.35; color: var(--tinta-2); }
+.etapa figcaption b { display: block; margin-bottom: 3px; font: 600 14px/1.3 var(--f-mono); letter-spacing: .04em; color: var(--azul); }
+.eq-linha { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; padding-top: 12px; border-top: 1px solid var(--linha-2); font-size: 18px; color: var(--tinta-2); }
+.eq-linha math { font-size: 27px; color: var(--tinta); }
+
+.duas { display: grid; grid-template-columns: 500px 1fr; gap: 56px; align-items: start; }
+.duas .lista { font-size: 20px; color: var(--tinta-2); margin-top: 22px; }
+
+.numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--linha); }
+.num {
+  display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px;
+  font-family: var(--f-disp); font-weight: 700; font-stretch: 100%;
+  font-size: 66px; line-height: 1; letter-spacing: -.02em; color: var(--azul);
+}
+.num small { font-size: 28px; font-weight: 600; letter-spacing: 0; color: var(--tinta-2); }
+.num math { font-size: 52px; color: var(--azul); }
+.numero > p:last-child { font-size: 19px; line-height: 1.38; color: var(--tinta-2); }
+.porques { padding-top: 22px; display: grid; gap: 12px; }
+.tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.tres h4, .coluna h3, .f-nome {
+  font-family: var(--f-disp); font-weight: 680; font-stretch: 100%; color: var(--tinta);
+}
+.tres h4 { font-size: 22px; line-height: 1.15; margin-bottom: 6px; }
+.tres p { font-size: 18px; line-height: 1.42; color: var(--tinta-2); }
+
+.graf-lado { display: grid; grid-template-columns: 690px 1fr; gap: 44px; align-items: start; }
+.lado { display: grid; gap: 12px; font-size: 18.5px; line-height: 1.42; color: var(--tinta-2); }
+.lado .eq { font-size: 25px; }
+.raio { display: grid; grid-template-columns: 650px 1fr; grid-template-rows: auto auto; gap: 16px 44px; align-content: start; }
+.versoes { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--linha); }
+.versao { display: grid; gap: 4px; align-content: start; padding: 12px 20px 0 0; }
+.versao + .versao { padding-left: 20px; border-left: 1px solid var(--linha-2); }
+.versao h4 { display: flex; align-items: center; gap: 10px; font: 600 16px/1.2 var(--f-mono); color: var(--tinta); }
+.versao h4 span { font-weight: 500; color: var(--tinta-3); }
+.versao p { font-size: 17px; line-height: 1.35; color: var(--tinta-2); }
+
+.quatro { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 52px; align-content: start; }
+.bloco { display: grid; gap: 6px; align-content: start; padding-top: 10px; border-top: 1.5px solid var(--tinta); }
+.bloco .eq { border: 0; padding: 2px 0; font-size: 24px; }
+.bloco p { font-size: 17.5px; line-height: 1.4; color: var(--tinta-2); }
+.regua { display: block; width: 100%; height: auto; margin-top: 2px; }
+
+.ficha { display: grid; grid-template-columns: 1fr 1fr; gap: 0 64px; align-content: start; }
+.ficha .lead { grid-column: 1 / -1; margin-bottom: 18px; font-size: 20px; }
+.grupo { margin-bottom: 18px; }
+.grupo h3 { padding-bottom: 8px; border-bottom: 1.5px solid var(--tinta); }
+.grupo dl > div {
+  display: grid; grid-template-columns: 1fr auto 96px; align-items: baseline; gap: 18px;
+  padding: 6px 0; border-bottom: 1px solid var(--linha-2);
+}
+.grupo dt { font-size: 18.5px; color: var(--tinta-2); }
+.grupo dd { font: 500 19px/1.3 var(--f-mono); color: var(--tinta); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.grupo dd.ori { font: 400 14px/1.3 var(--f-mono); color: var(--tinta-3); text-align: left; }
+
+.objetivos { display: grid; grid-template-columns: 430px 1fr; gap: 56px; align-items: start; }
+.geral .rot, .especificos .rot { margin-bottom: 12px; }
+.geral p { font-size: 23px; line-height: 1.46; color: var(--tinta); text-wrap: pretty; }
+.especificos li {
+  display: grid; grid-template-columns: 46px 1fr; gap: 14px; align-items: baseline;
+  padding: 8px 0; border-bottom: 1px solid var(--linha-2);
+  font-size: 18.5px; line-height: 1.36; color: var(--tinta-2);
+}
+.especificos li:first-child { border-top: 1.5px solid var(--tinta); }
+
+.arq { display: grid; grid-template-columns: 560px 1fr; gap: 44px; align-items: start; }
+.foto { display: grid; gap: 8px; }
+.foto-img { position: relative; }
+.foto-img img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.foto-img svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.marca circle { fill: var(--tinta); stroke: #fff; stroke-width: 4; }
+.marca text { font: 600 30px var(--f-mono); fill: #fff; }
+.marca.ref circle { fill: #fff; stroke: var(--tinta-2); }
+.marca.ref text { fill: var(--tinta-2); }
+.itens { display: grid; gap: 16px; }
+.itens ol { display: grid; gap: 9px; margin-top: 8px; }
+.itens li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; font-size: 17px; line-height: 1.34; color: var(--tinta-2); }
+.itens li b { display: block; font-size: 18px; }
+.n { width: 28px; height: 28px; border-radius: 50%; background: var(--tinta); color: #fff; font: 600 14px/28px var(--f-mono); text-align: center; }
+.n.ref { background: #fff; color: var(--tinta-2); box-shadow: inset 0 0 0 1.5px var(--tinta-2); }
+
+.trilha { display: grid; gap: 14px; align-content: start; }
+.trilha .lead { font-size: 21px; max-width: none; margin-bottom: 6px; }
+.faixas, .fases { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+.faixa { padding: 8px 12px; border-radius: 6px; font: 500 12.5px/1.2 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; }
+.faixa.sem { grid-column: 1 / span 4; background: var(--azul-lav); color: var(--azul); }
+.faixa.com { grid-column: 5 / span 2; background: var(--led-quente-lav); color: var(--led-quente-tinta); }
+.fase { display: grid; grid-template-rows: auto auto auto 1fr; }
+.f-id { font: 600 15px/1 var(--f-mono); color: var(--azul); }
+.f-nome { margin-top: 6px; min-height: 50px; font-size: 21px; line-height: 1.15; }
+.f-trilho { position: relative; height: 34px; margin: 8px 0 12px; }
+.f-trilho::before { content: ""; position: absolute; left: 0; right: -18px; top: 15px; height: 4px; border-radius: 2px; background: var(--azul-1); }
+.fase:last-child .f-trilho::before { right: 10px; }
+.f-trilho::after { content: ""; position: absolute; right: 2px; top: 0; width: 5px; height: 34px; border-radius: 2px; background: var(--portao); }
+.criterio .chip-g { justify-self: start; }
+.criterio { display: grid; gap: 8px; align-content: start; font-size: 16.5px; line-height: 1.38; color: var(--tinta-2); }
+.aviso {
+  display: flex; align-items: baseline; gap: 18px; margin-top: 8px;
+  padding: 14px 20px; border-radius: 8px;
+  background: var(--superficie); box-shadow: inset 0 0 0 1px var(--linha);
+  font-size: 19px; color: var(--tinta-2);
+}
+.aviso b { white-space: nowrap; }
+
+.colunas3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.coluna { display: grid; grid-template-rows: auto 1fr auto; gap: 14px; }
+.coluna header { display: flex; align-items: center; gap: 12px; padding-bottom: 10px; border-bottom: 1.5px solid var(--tinta); }
+.coluna h3 { font-size: 21px; line-height: 1.15; }
+.coluna .lista { align-content: start; gap: 10px; font-size: 16.5px; line-height: 1.38; color: var(--tinta-2); }
+.coluna .lista li { padding-left: 22px; }
+.coluna .lista li::before { width: 7px; height: 7px; left: 2px; top: .56em; box-shadow: 0 0 0 2px var(--azul-lav); }
+.crit { display: grid; gap: 4px; padding-top: 8px; border-top: 2px solid var(--portao); font-size: 16px; line-height: 1.35; color: var(--tinta); }
+.crit .rot { color: var(--portao); }
+
+.tab { width: 100%; border-collapse: collapse; font-size: 17px; }
+.tab th {
+  padding: 0 14px 9px 0; text-align: left; border-bottom: 1.5px solid var(--tinta);
+  font: 500 12.5px/1.2 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-3);
+}
+.tab td { padding: 8px 14px 8px 0; border-bottom: 1px solid var(--linha-2); vertical-align: baseline; line-height: 1.32; color: var(--tinta-2); }
+.tab td.let { width: 46px; vertical-align: top; padding-top: 6px; font: 700 24px/1 var(--f-disp); color: var(--azul); }
+.tab td.gm { color: var(--tinta); font-weight: 500; }
+.tab td.cr { font: 500 17px/1.3 var(--f-mono); color: var(--tinta); white-space: nowrap; }
+.tab tr.fim-grupo td, .tab td.let { border-bottom-color: var(--linha); }
+.bloq .lead { font-size: 20px; margin-bottom: 16px; max-width: none; }
+.bloq .tab th:nth-child(2) { width: 340px; }
+.bloq .tab th:nth-child(3) { width: 200px; }
+
+.integ { display: grid; grid-template-columns: 632px 1fr; gap: 40px; align-items: start; }
+.diag { display: block; width: 100%; height: auto; }
+.diag .reg-r { fill: var(--azul-lav); }
+.diag .reg-f { fill: #EBEFF4; }
+.diag .rr { font: 500 12px var(--f-mono); letter-spacing: .08em; fill: var(--azul); }
+.diag .rf { font: 500 12px var(--f-mono); letter-spacing: .08em; fill: var(--tinta-3); }
+.diag .bx rect { fill: var(--superficie); stroke: var(--linha); stroke-width: 1; }
+.diag .t1 { font: 600 15px var(--f-text); fill: var(--tinta); }
+.diag .t2 { font: 400 12.5px var(--f-mono); fill: var(--tinta-3); }
+.diag .fio { fill: none; stroke: var(--tinta-2); stroke-width: 1.5; }
+.diag .fio.pot { stroke: var(--laranja); }
+.diag .fio.mag { stroke-dasharray: 4 4; }
+.diag .sl { font: 500 12px var(--f-mono); fill: var(--tinta-2); }
+.diag .sl.pot { fill: var(--laranja); }
+.integ .nota { margin-top: 10px; font-size: 15.5px; color: var(--tinta-2); }
+.integ-lado { display: grid; gap: 14px; }
+.integ-lado section { display: grid; gap: 8px; }
+.metodo { font-size: 16px; line-height: 1.38; color: var(--tinta-2); }
+.integ-lado header { display: flex; align-items: center; gap: 10px; }
+.integ-lado h3 { font: 680 20px/1.15 var(--f-disp); font-stretch: 100%; }
+.integ-lado .lista { gap: 7px; font-size: 16.5px; line-height: 1.36; color: var(--tinta-2); }
+.integ-lado .lista li { padding-left: 22px; }
+.integ-lado .lista li::before { width: 7px; height: 7px; left: 2px; top: .56em; box-shadow: 0 0 0 2px var(--azul-lav); }
+.integ-lado .crit { font-size: 15.5px; }
+.sint { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+.sint td { padding: 5px 10px 5px 0; border-bottom: 1px solid var(--linha-2); line-height: 1.3; color: var(--tinta-2); vertical-align: baseline; }
+.sint td:first-child { color: var(--tinta); font-weight: 500; white-space: nowrap; }
+.sint td:nth-child(2) { color: var(--tinta-3); padding-right: 8px; }
+
+.crono { display: grid; grid-template-rows: auto auto; gap: 14px; align-content: start; }
+.notas2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; font-size: 16.5px; line-height: 1.4; color: var(--tinta-2); padding-top: 12px; border-top: 1px solid var(--linha-2); }
+
+.result { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 52px; align-items: start; align-content: start; }
+.riscos th:first-child { width: 34%; }
+.result h3 { margin-bottom: 10px; }
+.checks li {
+  display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start;
+  padding: 9px 0; border-bottom: 1px solid var(--linha-2);
+  font-size: 19px; line-height: 1.36; color: var(--tinta-2);
+}
+.checks li:first-child { border-top: 1.5px solid var(--tinta); }
+.checks .ic { margin-top: 3px; }
+.riscos td:first-child { color: var(--tinta); font-weight: 500; }
+.riscos td { font-size: 16.5px; }
+.fecho {
+  grid-column: 1 / -1; display: flex; gap: 14px; align-items: baseline; margin-top: 14px;
+  padding: 14px 20px; border-radius: 8px;
+  background: var(--superficie); box-shadow: inset 0 0 0 1px var(--linha);
+  font-size: 19px; color: var(--tinta-2);
+}
+
+.refs { columns: 2; column-gap: 48px; font-size: 17px; line-height: 1.42; color: var(--tinta-2); counter-reset: r; }
+.refs li { break-inside: avoid; display: grid; grid-template-columns: 38px 1fr; margin-bottom: 11px; }
+.refs li::before { content: "[" counter(r) "]"; counter-increment: r; font: 500 14px/1.55 var(--f-mono); color: var(--tinta-3); }
+.refs i { color: var(--tinta); }
+
+/* ---------- barra de controle (só na tela) ---------- */
+.hud {
+  position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 8px 8px 14px; border-radius: 10px;
+  background: rgba(14, 26, 43, .92); color: #DCE7F3;
+  font: 500 13px/1.2 var(--f-mono);
+  box-shadow: 0 6px 20px rgba(14, 26, 43, .25);
+}
+.hud button {
+  font: inherit; color: var(--tinta); background: #fff;
+  border: 0; border-radius: 7px; padding: 8px 12px; cursor: pointer;
+}
+.hud button:hover { background: var(--azul-lav); }
+.hud button:focus-visible { outline: 2px solid #8FCBFF; outline-offset: 2px; }
+
+/* ---------- modo apresentação ---------- */
+html.apresentando, html.apresentando body { background: #04070C; height: 100%; overflow: hidden; }
+html.apresentando .deck { height: 100%; padding: 0; gap: 0; justify-content: center; }
+html.apresentando .quadro { display: none; border-radius: 0; box-shadow: none; }
+html.apresentando .quadro.atual { display: block; }
+html.apresentando .hud { display: none; }
+
+/* ---------- impressão / PDF ---------- */
+@page { size: 1280px 720px; margin: 0; }
+@media print {
+  html, body { background: #fff; }
+  .deck { display: block; padding: 0; }
+  .quadro { width: 1280px; height: 720px; border-radius: 0; box-shadow: none; break-after: page; }
+  .quadro:last-child { break-after: auto; }
+  .slide { transform: none; }
+  .hud, .g .cur { display: none !important; }
+}
+</style>
+<link rel="stylesheet" href="apresentacao.css">
+</head>
+<body>
+<main class="deck">
+<section class="quadro" id="abertura" aria-label="Hologram Orbiter"><div class="slide capa">
+  <div class="capa-texto">
+    <p class="capa-inst">Universidade Tecnológica Federal do Paraná · Câmpus Pato Branco<br>Engenharia de Computação · Oficina de Integração</p>
+    <div class="capa-meio">
+      <p class="capa-sobre">Apresentação do pré-projeto</p>
+      <h1 class="capa-titulo">Hologram<br>Orbiter</h1>
+      <p class="capa-sub">Display por persistência de visão<br>Projeto e validação experimental</p>
+    </div>
+    <div class="capa-pe">
+      <ul class="capa-autores">
+        <li>Pedro Mariano dos Santos</li>
+        <li>Marlon Mezomo Gotardo</li>
+        <li>Rodrigo Rodriguez Tato Gama da Silva</li>
+      </ul>
+      <p class="capa-orient">Orientador: Prof. Gustavo Weber Denardin</p>
+      <p class="capa-data">Pato Branco · setembro de 2026</p>
+    </div>
+  </div>
+  <figure class="capa-painel noite">
+    <svg data-cilindro="capa" viewBox="0 0 580 600" role="img" aria-label="Cilindro de 180 colunas por 29 linhas de LEDs formando a imagem de um planeta com anel; três colunas claras marcam os painéis que escrevem a imagem."></svg>
+    <figcaption class="capa-specs">
+      <span><b>29 × 180</b>pixels</span>
+      <span><b>3</b>painéis</span>
+      <span><b>1800</b>rpm</span>
+      <span><b>90&nbsp;Hz</b>meta de imagem</span>
+    </figcaption>
+  </figure>
+</div></section>
+
+<section class="quadro" id="principio" aria-label="Princípio de funcionamento"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Introdução<span>§ 1 e 2.1</span></p>
+    <h2 class="titulo">A imagem é escrita no ar, uma coluna por vez</h2>
+  </header>
+  <div class="corpo princ">
+    <p class="lead">Três painéis de LEDs giram e escrevem a imagem, coluna por coluna <span class="cit">[1, 2]</span>.</p>
+    <div class="tripla">
+      <figure class="etapa">
+        <div class="noite"><canvas id="pov-instante" width="736" height="596" role="img" aria-label="Rotor em perspectiva, com base, torre e três painéis sólidos de LEDs girando a 120 graus entre si.">LEDs acesos na posição atual dos três painéis.</canvas></div>
+        <figcaption><b>LEDs neste instante</b>Três painéis a 120°. Cada LED acende conforme a posição.</figcaption>
+      </figure>
+      <figure class="etapa">
+        <div class="noite"><canvas id="pov-varredura" width="736" height="596" role="img" aria-label="O rotor em perspectiva deixa rastros luminosos conforme seus painéis giram até 120 graus.">Rastro das colunas percorridas pelos painéis.</canvas></div>
+        <figcaption><b>Rastro da varredura</b>As colunas se acumulam conforme os painéis avançam.</figcaption>
+      </figure>
+      <figure class="etapa">
+        <div class="noite"><canvas id="pov-imagem" width="736" height="596" role="img" aria-label="A repetição da varredura dos três painéis forma a imagem de um planeta com anel.">Imagem formada pela repetição das passagens dos LEDs.</canvas></div>
+        <figcaption><b>Imagem formada</b>Após 120° por painel, o cilindro foi reescrito. A repetição sustenta a imagem.</figcaption>
+      </figure>
+    </div>
+    <div class="pov-controls" role="group" aria-label="Controles da sequência de escrita da imagem" data-no-nav>
+      <label for="pov-progress">Varredura por painel</label>
+      <input id="pov-progress" type="range" min="0" max="120" step="2" value="0" aria-describedby="pov-progress-value">
+      <output id="pov-progress-value" for="pov-progress">0° / 0,0 ms</output>
+      <button type="button" id="pov-play" aria-pressed="false">Pausar sequência</button>
+      <button type="button" id="pov-reset">Reiniciar</button>
+    </div>
+    <p class="nota motion-note">Sequência desacelerada. Meta de 90 Hz sujeita à validação visual.</p><p class="eq-linha"><span>Cada ponto do cilindro é reescrito</span><math class="d"><msub><mi>f</mi><mtext>img</mtext></msub><mo>=</mo><msub><mi>N</mi><mi>p</mi></msub><mspace width="0.17em"></mspace><mi>n</mi><mo>=</mo><mn>3</mn><mo>×</mo><mn>30</mn><mspace width="0.2em"></mspace><msup><mtext>s</mtext><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>=</mo><mn>90</mn><mspace width="0.2em"></mspace><mtext>Hz</mtext></math><span class="eq-n">(1)</span></p>
+  </div>
+</div></section>
+
+<section class="quadro" id="prototipo" aria-label="Um protótipo para construir e validar"><div class="slide visual-split"><header class="cab"><p class="sobre">Objetivo e arquitetura</p><h2 class="titulo">Um protótipo para construir e validar</h2></header><div class="corpo visual-split"><figure class="render "><div class="render-frame"><img src="img/montagem.png" width="1400" height="1000" alt="Render Blender da montagem completa, com base, torre, rotor e três painéis azuis." decoding="async"></div><figcaption>Montagem CAD v3.0.5. Invólucro apenas como referência de encaixe.</figcaption></figure><div class="editorial"><p class="lead">Construir um display cilíndrico e verificar sua estabilidade óptica, térmica e mecânica.</p><dl class="big-specs"><div><dt>Imagem de projeto</dt><dd>29 × 180 <small>pixels</small></dd></div><div><dt>Envelope da imagem</dt><dd>Ø208 × 201 <small>mm</small></dd></div></dl><p><b>Estrutura fixa</b><br>Base e torre integradas, chapa de alumínio e motor.</p><p><b>Rotor</b><br>Aranha, eletrônica embarcada e três painéis espaçados em 120°.</p><p class="status-note">CAD provisório. Fabricação definitiva dos painéis e operação ainda não liberadas.</p></div></div></div></section>
+
+<section class="quadro" id="dimensionamento" aria-label="O rotor desloca o ar e sofre arrasto"><div class="slide arrasto-slide">
+  <header class="cab"><p class="sobre">Ponto de operação</p><h2 class="titulo">O rotor desloca o ar e sofre arrasto</h2></header>
+  <div class="corpo arrasto-layout">
+    <div class="arrasto-visual">
+      <div class="arrasto-viewbar"><p class="g-tit">Três painéis em rotação</p><button type="button" id="arrasto-view" aria-controls="arrasto-scene arrasto-chart" aria-pressed="false" data-no-nav>Ver gráfico</button></div>
+      <div id="arrasto-scene" data-no-nav>
+        <figure class="arrasto-figure">
+          <canvas id="orbiter-flow" width="1520" height="840" role="img" aria-label="Animação do Hologram Orbiter: três painéis giram, formam a imagem dos LEDs e deslocam o ar. A força de arrasto se opõe ao movimento dos painéis." aria-describedby="arrasto-motion-note">Três painéis giratórios deslocam o ar. O arrasto se opõe ao movimento e a potência aerodinâmica cresce com o cubo da rotação e do raio, no modelo adotado.</canvas>
+          <figcaption class="nota" id="arrasto-motion-note">Movimento desacelerado · escoamento ilustrativo</figcaption>
+        </figure>
+      </div>
+      <div id="arrasto-chart" class="chart-story" hidden data-no-nav>
+        <figure class="grafico"><p class="g-tit">Corrente de fase estimada a 1800 rpm</p><svg class="g" id="g-raio" viewBox="0 0 650 330" role="img" aria-label="Modelo de corrente proporcional ao cubo do raio: 4,95 A a 100 mm e aproximadamente 10,9 A a 130 mm. Valores previstos."></svg><figcaption class="nota">Modelo de arrasto da proposta [5–7]. Valores calculados, a confirmar em bancada.</figcaption></figure>
+        <p class="takeaway">Reduzir o raio de 130 para 100 mm leva a potência aerodinâmica a <strong>45,5%</strong> do valor anterior, no modelo.</p>
+      </div>
+    </div>
+    <div class="arrasto-controls" role="group" aria-label="Controles do rotor e do escoamento" data-no-nav>
+      <div class="arrasto-slider">
+        <label for="arrasto-rpm">Rotação <output id="arrasto-rpm-value" for="arrasto-rpm">1800 rpm</output></label>
+        <input id="arrasto-rpm" type="range" min="0" max="2400" step="100" value="1800" aria-describedby="arrasto-rpm-limits">
+        <p class="arrasto-limits" id="arrasto-rpm-limits"><span>0</span><span>2400 rpm</span></p>
+      </div>
+      <div class="arrasto-slider">
+        <label for="arrasto-raio">Raio <output id="arrasto-raio-value" for="arrasto-raio">100 mm</output></label>
+        <input id="arrasto-raio" type="range" min="80" max="130" step="5" value="100" aria-describedby="arrasto-raio-limits">
+        <p class="arrasto-limits" id="arrasto-raio-limits"><span>80</span><span>130 mm</span></p>
+      </div>
+      <dl class="arrasto-readouts">
+        <div><dt>Velocidade do painel</dt><dd><output id="arrasto-speed" for="arrasto-rpm arrasto-raio">18,8 m/s</output></dd></div>
+        <div><dt>Reescrita da imagem</dt><dd><output id="arrasto-rate" for="arrasto-rpm">90 Hz</output></dd></div>
+        <div><dt>Potência de arrasto</dt><dd><output id="arrasto-power" for="arrasto-rpm arrasto-raio">1,00×</output></dd></div>
+      </dl>
+      <p class="arrasto-model">Potência relativa a 1800 rpm / 100 mm.<br><span class="arrasto-formula">P/P₀ = (ω/ω₀)³ (r/r₀)³</span><br>Área e C<sub>d</sub> fixos. Modelo sem CFD [5–7].</p>
+      <div class="arrasto-layers"><label><input type="checkbox" id="arrasto-air" checked>Ar e esteira</label><label><input type="checkbox" id="arrasto-image" checked>Imagem dos LEDs</label></div>
+      <button type="button" id="arrasto-reset">Restaurar 1800 rpm / 100 mm</button>
+      <p class="arrasto-target"><b>Projeto: 1800 rpm / 100 mm (90 Hz).</b><br>Os controles exploram o modelo. Ensaios em bancada devem validar as previsões.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="quadro" id="pecas" aria-label="As peças que formam o protótipo"><div class="slide parts"><header class="cab"><p class="sobre">Modelo no Blender</p><h2 class="titulo">As peças que formam o protótipo</h2></header><div class="corpo parts"><div class="gallery-three"><figure class="render "><div class="render-frame"><img src="img/base_perspectiva.png" width="1400" height="1000" alt="Render Blender da base e da torre integradas." decoding="async"></div><figcaption><b>01 / Base e torre</b>Estrutura fixa, apoio do motor e abas para grampos.</figcaption></figure><figure class="render "><div class="render-frame"><img src="img/aranha_perspectiva.png" width="1400" height="1000" alt="Render Blender da aranha com três braços e baia central." decoding="async"></div><figcaption><b>02 / Aranha</b>Três braços ligam a baia central aos painéis.</figcaption></figure><figure class="render "><div class="render-frame"><img src="img/painel_completo.png" width="1400" height="1000" alt="Render Blender de um painel LED completo, com encaixe central." decoding="async"></div><figcaption><b>03 / Painéis</b>Canal para a fita HD107S, com 29 LEDs por painel.</figcaption></figure></div><p class="bottom-line">CAD paramétrico em ABS. Cupons de junta e de canal precedem o lote estrutural.</p></div></div></section>
+
+<section class="quadro" id="juntas" aria-label="As juntas concentram a carga do rotor"><div class="slide visual-split mechanics"><header class="cab"><p class="sobre">Mecânica e fabricação</p><h2 class="titulo">As juntas concentram a carga do rotor</h2></header><div class="corpo visual-split mechanics"><div class="detail-images"><figure class="render "><div class="render-frame"><img src="img/painel_boss_face_contato.png" width="1400" height="1000" alt="Face de contato do encaixe central de um painel no modelo Blender." decoding="async"></div><figcaption>Encaixe do painel: transferência de carga e seção resistente.</figcaption></figure><figure class="render "><div class="render-frame"><img src="img/cupom_canal_led_secao.png" width="1400" height="1000" alt="Seção do cupom de teste do canal da fita LED." decoding="async"></div><figcaption>Cupom C02: ajuste do canal à fita LED real.</figcaption></figure></div><div class="editorial"><p class="metric-large"><b>≈ 150 N</b><span>por painel de 42 g, a 1800 rpm</span></p><p class="metric-large"><b>≈ 27,6 J</b><span>energia do rotor estimada na proposta</span></p><p>Fluência do ABS, massas reais e transferência de carga ainda precisam de validação.</p><p class="status-note">Contenção física antes de qualquer ensaio de rotação. O invólucro mostrado no CAD é uma referência.</p></div></div></div></section>
+
+<section class="quadro" id="eletronica" aria-label="A posição do rotor sincroniza a imagem"><div class="slide visual-split electronic-slide"><header class="cab"><p class="sobre">Eletrônica e firmware</p><h2 class="titulo">A posição do rotor sincroniza a imagem</h2></header><div class="corpo visual-split electronic-slide"><figure class="render "><div class="render-frame"><img src="img/montagem_baia.png" width="1400" height="1000" alt="Render Blender da baia com envelopes dourados representando a eletrônica." decoding="async"></div><figcaption>Baia do rotor. Volumes dourados representam os envelopes dos componentes.</figcaption></figure><div class="editorial electronics"><svg class="diag" viewBox="0 0 632 318" role="img" aria-label="Diagrama de blocos. No rotor: bateria LiFePO4, regulador de 5 V, ESP32-C3, deslocador de nível e fita HD107S, com o sensor Hall A3144 enviando o pulso de índice ao ESP32. Na estrutura fixa: fonte de bancada, ESC BLHeli_S, motor A2212 e o ímã que gera um pulso por volta.">
+        <defs>
+          <marker id="pt" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 .5L8 4L0 7.5z" fill="#3F4E63"/></marker>
+          <marker id="pt-pot" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 .5L8 4L0 7.5z" fill="#C55A11"/></marker>
+        </defs>
+        <rect class="reg-r" x="0" y="0" width="632" height="204" rx="10"/>
+        <text class="rr" x="16" y="24">ROTOR · GIRA A 1800 RPM</text>
+        <rect class="reg-f" x="0" y="214" width="632" height="104" rx="10"/>
+        <text class="rf" x="16" y="238">ESTRUTURA FIXA</text>
+
+        <path class="fio pot" d="M191 58V42H566V58M316 42V58M441 42V58"/>
+        <path class="fio pot" d="M530 42V34M522 34H538M522 29H538"/>
+        <text class="sl pot" x="378" y="36" text-anchor="middle">5 V</text>
+        <text class="sl pot" x="544" y="33">C</text>
+
+        <g class="bx"><rect x="16" y="58" width="100" height="56" rx="6"/><text class="t1" x="66" y="82" text-anchor="middle">Bateria</text><text class="t2" x="66" y="101" text-anchor="middle">LiFePO4 2S</text></g>
+        <g class="bx"><rect x="141" y="58" width="100" height="56" rx="6"/><text class="t1" x="191" y="82" text-anchor="middle">Regulador</text><text class="t2" x="191" y="101" text-anchor="middle">5 V</text></g>
+        <g class="bx"><rect x="266" y="58" width="100" height="56" rx="6"/><text class="t1" x="316" y="82" text-anchor="middle">ESP32-C3</text><text class="t2" x="316" y="101" text-anchor="middle">firmware</text></g>
+        <g class="bx"><rect x="391" y="58" width="100" height="56" rx="6"/><text class="t1" x="441" y="82" text-anchor="middle">Deslocador</text><text class="t2" x="441" y="101" text-anchor="middle">3,3 → 5 V</text></g>
+        <g class="bx"><rect x="516" y="58" width="100" height="56" rx="6"/><text class="t1" x="566" y="82" text-anchor="middle">Fita HD107S</text><text class="t2" x="566" y="101" text-anchor="middle">3 × 29 LEDs</text></g>
+        <path class="fio pot" d="M116 86H139" marker-end="url(#pt-pot)"/>
+        <path class="fio" d="M366 86H389" marker-end="url(#pt)"/>
+        <text class="sl" x="378" y="78" text-anchor="middle">SPI</text>
+        <path class="fio" d="M491 86H514" marker-end="url(#pt)"/>
+
+        <g class="bx"><rect x="391" y="138" width="100" height="48" rx="6"/><text class="t1" x="441" y="158" text-anchor="middle">Hall A3144</text><text class="t2" x="441" y="176" text-anchor="middle">em 5 V</text></g>
+        <path class="fio" d="M391 162H316V116" marker-end="url(#pt)"/>
+        <text class="sl" x="353" y="155" text-anchor="middle">índice</text>
+
+        <g class="bx"><rect x="16" y="250" width="100" height="52" rx="6"/><text class="t1" x="66" y="272" text-anchor="middle">Fonte</text><text class="t2" x="66" y="290" text-anchor="middle">bancada 7 V</text></g>
+        <g class="bx"><rect x="141" y="250" width="100" height="52" rx="6"/><text class="t1" x="191" y="272" text-anchor="middle">ESC</text><text class="t2" x="191" y="290" text-anchor="middle">BLHeli_S</text></g>
+        <g class="bx"><rect x="266" y="250" width="100" height="52" rx="6"/><text class="t1" x="316" y="272" text-anchor="middle">Motor</text><text class="t2" x="316" y="290" text-anchor="middle">A2212 920KV</text></g>
+        <g class="bx"><rect x="391" y="250" width="100" height="52" rx="6"/><text class="t1" x="441" y="272" text-anchor="middle">Ímã</text><text class="t2" x="441" y="290" text-anchor="middle">parte fixa</text></g>
+        <path class="fio pot" d="M116 276H139" marker-end="url(#pt-pot)"/>
+        <path class="fio pot" d="M241 276H264" marker-end="url(#pt-pot)"/>
+        <path class="fio" d="M316 250V209" marker-end="url(#pt)"/>
+        <text class="sl" x="324" y="236">eixo</text>
+        <path class="fio mag" d="M441 250V188"/>
+        <text class="sl" x="449" y="236">1 pulso por volta</text>
+      </svg><p><b>Um pulso de Hall por volta</b> corrige a referência angular. O ESP32-C3 calcula o instante de escrita de cada coluna.</p><p><b>16,2 mil atualizações/s</b> no total para 180 colunas a 90 Hz. Relógio e dados da fita passam por deslocador de nível.</p><p class="nota">Hall A3144 alimentado em 5 V [11]. Integração de LEDs e eletrônica somente após G3, seguida de novo balanceamento.</p></div></div></div></section>
+
+<section class="quadro" id="ensaios" aria-label="Quatro bloqueadores antes de integrar os LEDs"><div class="slide tests"><header class="cab"><p class="sobre">Validação experimental</p><h2 class="titulo">Quatro bloqueadores antes de integrar os LEDs</h2></header><div class="corpo tests"><p class="lead">G3 só fecha quando os ensaios de rotação atendem a todos os critérios.</p><table class="tab test-table"><thead><tr><th>Ensaio</th><th>Critério de aceite</th><th>Verificação</th></tr></thead><tbody><tr><td><b>A / Arrasto</b></td><td><strong>≤ 20 W</strong></td><td>Potência de entrada a 1800 rpm, após patamares de rotação.</td></tr><tr><td><b>B / Térmica e fluência</b></td><td><strong>&lt; 55 °C</strong> em 10 min<br><strong>&lt; 0,5 mm</strong> em 1 h</td><td>Temperatura da carcaça e crescimento da ponta do painel.</td></tr><tr><td><b>C / Vibração</b></td><td><strong>≤ 0,20 g</strong> a 30 Hz<br>Separação modal confirmada</td><td>Acelerômetro e FFT. Ensaio de impacto para medir a frequência natural.</td></tr><tr><td><b>D / Partida</b></td><td><strong>10 de 10</strong> partidas<br><strong>≤ 4,6 A</strong> de pico na fonte</td><td>Rampa do controlador com a inércia real do rotor.</td></tr></tbody></table><p class="bottom-line">Se um critério falhar, o projeto volta à revisão antes da integração óptica.</p></div></div></section>
+
+<section class="quadro" id="cronograma" aria-label="Nove semanas, com uma condição para avançar"><div class="slide planning"><header class="cab"><p class="sobre">Metodologia e cronograma</p><h2 class="titulo">Nove semanas, com uma condição para avançar</h2></header><div class="corpo planning"><p class="lead">Planejamento da proposta: 08/09 a 09/11/2026. Cada etapa termina com um portão de aceite.</p><ol class="schedule"><li><span class="week">S1–S3</span><h3>Projeto e fabricação</h3><p>Compras, cupons, peças e qualificação dimensional.</p><span class="gate">G0 / G1</span></li><li><span class="week">S4</span><h3>Montagem</h3><p>Balanceamento e contenção antes de girar.</p><span class="gate">G2</span></li><li><span class="week">S5–S6</span><h3>Ensaios de rotação</h3><p>Arrasto, térmica, vibração e partida.</p><span class="gate">G3</span></li><li><span class="week">S7–S8</span><h3>Integração óptica</h3><p>Eletrônica, firmware e imagem de teste.</p><span class="gate">G4</span></li><li><span class="week">S9</span><h3>Validação</h3><p>Imagem, demonstração e relatório final.</p><span class="gate">G5</span></li></ol><div class="schedule-notes"><p><b>Dependência de fabricação</b><br>Confirmar as dimensões dos painéis antes de fechar a base e a torre, cuja impressão leva 12–18 h.</p><p><b>Estado atual</b><br>A revisão 3.0.5 mantém pendências estruturais. As datas são o planejamento da proposta, não registro de etapas concluídas.</p></div></div></div></section>
+
+<section class="quadro" id="referencias" aria-label="Referências"><div class="slide">
+  <header class="cab">
+    <p class="sobre">Referências</p>
+    <h2 class="titulo">Obras citadas na proposta</h2>
+  </header>
+  <div class="corpo">
+    <ol class="refs">
+      <li><span>BLUNDELL, B. G.; SCHWARZ, A. J. <i>Volumetric Three-Dimensional Display Systems</i>. New York: Wiley, 2000.</span></li>
+      <li><span>FAVALORA, G. E. Volumetric 3D displays and application infrastructure. <i>Computer</i>, IEEE, v. 38, n. 8, p. 37–44, 2005.</span></li>
+      <li><span>KELLY, D. H. Visual responses to time-dependent stimuli. I. Amplitude sensitivity measurements. <i>Journal of the Optical Society of America</i>, v. 51, n. 4, p. 422–429, 1961.</span></li>
+      <li><span>TYLER, C. W. Analysis of visual modulation sensitivity. II. Peripheral retina and the role of photoreceptor dimensions. <i>Journal of the Optical Society of America A</i>, v. 2, n. 3, p. 393–398, 1985.</span></li>
+      <li><span>WHITE, F. M. <i>Fluid Mechanics</i>. 7. ed. New York: McGraw-Hill, 2011.</span></li>
+      <li><span>HOERNER, S. F. <i>Fluid-Dynamic Drag</i>. Bakersfield: edição do autor, 1965.</span></li>
+      <li><span>HENDERSHOT, J. R.; MILLER, T. J. E. <i>Design of Brushless Permanent-Magnet Machines</i>. Oxford: Motor Design Books, 2010.</span></li>
+      <li><span>INTERNATIONAL ORGANIZATION FOR STANDARDIZATION. <i>ISO 21940-11: Mechanical vibration — Rotor balancing — Part 11: Procedures and tolerances for rotors with rigid behaviour</i>. Genebra, 2016.</span></li>
+      <li><span>RAO, S. S. <i>Mechanical Vibrations</i>. 6. ed. Harlow: Pearson, 2018.</span></li>
+      <li><span>ASHBY, M. F. <i>Materials Selection in Mechanical Design</i>. 5. ed. Oxford: Butterworth-Heinemann, 2016.</span></li>
+      <li><span>ALLEGRO MICROSYSTEMS. <i>A3141/2/3/4 Sensitive Hall-Effect Switches for High-Temperature Operation — Datasheet</i>. Manchester, NH, 2019.</span></li>
+    </ol>
+  </div>
+</div></section>
+
+<section class="quadro" id="fechamento" aria-label="Uma imagem estável, com operação validada"><div class="slide visual-split closing"><header class="cab"><p class="sobre">Resultados esperados</p><h2 class="titulo">Uma imagem estável, com operação validada</h2></header><div class="corpo visual-split closing"><div class="closing-copy"><p class="lead">A demonstração deve reunir 90 Hz de imagem, três varreduras coincidentes e os limites dos ensaios atendidos.</p><div class="closing-metrics"><p><b>≤ 20 W</b><span>potência de entrada</span></p><p><b>&lt; 55 °C</b><span>motor em regime</span></p><p><b>≤ 0,20 g</b><span>vibração a 30 Hz</span></p></div><p>CAD, memória de cálculo e registros dos ensaios documentam o que foi projetado e o que foi medido.</p><p class="questions">Perguntas?</p><p class="nota">Próxima etapa: fechar as pendências estruturais e qualificar os cupons.</p></div><figure class="render "><div class="render-frame"><img src="img/aranha_entrada_fios.png" width="1400" height="1000" alt="Detalhe Blender das entradas de fios nos braços da aranha." decoding="async"></div><figcaption>Detalhe da revisão 3.0.5: passagem dos fios na aranha.</figcaption></figure></div></div></section>
+</main>
+<div class="hud" role="toolbar" aria-label="Controles da apresentação"><span id="slide-status" aria-live="polite">1 / 11</span><button type="button" id="bt-anterior" aria-label="Slide anterior">←</button><button type="button" id="bt-proximo" aria-label="Próximo slide">→</button><button type="button" id="bt-apresentar" aria-label="Entrar no modo apresentação (F)">Apresentar</button><button type="button" id="bt-movimento" aria-pressed="false" title="Pausar ou retomar animações (M)">Pausar animações</button><a href="apresentacao-completa-original.html" target="_blank" rel="noopener">Detalhes técnicos</a><span class="keyboard-help">F apresenta · M pausa · Esc sai</span></div>
+<script>
+'use strict';
+const NS = 'http://www.w3.org/2000/svg';
+function el(pai, tag, at, txt) {
+  const e = document.createElementNS(NS, tag);
+  if (at) for (const k in at) if (at[k] != null) e.setAttribute(k, at[k]);
+  if (txt != null) e.textContent = txt;
+  if (pai) pai.appendChild(e);
+  return e;
+}
+const r1 = v => Math.round(v * 10) / 10;
+const num = (v, d = 0) => v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false });
+function escala(d0, d1, p0, p1) {
+  const f = v => p0 + (v - d0) * (p1 - p0) / (d1 - d0);
+  f.inv = p => d0 + (p - p0) * (d1 - d0) / (p1 - p0);
+  return f;
+}
+// Texto com subscrito: sub(pai, attrs, [['f'], ['n', true], [' ≈ 46 Hz']])
+function sub(pai, at, partes) {
+  const t = el(pai, 'text', at);
+  for (const [s, baixo] of partes) {
+    el(t, 'tspan', baixo ? { 'baseline-shift': 'sub', style: 'font-size:.72em' } : null, s);
+  }
+  return t;
+}
+
+/* ---------- cilindro de LEDs ----------
+   180 colunas (2° cada) × 29 linhas, como no display real. A imagem de teste é um
+   planeta com anel, definida em milímetros sobre o cilindro de r = 100 mm:
+   x = arco a partir da frente, y = altura (positiva para baixo); pixel 3,49 × 6,94 mm. */
+function pixel(thetaGraus, linha) {
+  const x = 100 * thetaGraus * Math.PI / 180;
+  const y = (linha - 14) * 6.944;
+  const noDisco = x * x + y * y <= 60 * 60;
+  const a = -14 * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+  const xr = x * ca + y * sa, yr = -x * sa + y * ca;
+  const q = (xr / 118) ** 2 + (yr / 30) ** 2;
+  const frente = yr > 0;                        // metade do anel que passa na frente
+  if (q >= 0.55 && q <= 1 && (frente || !noDisco)) return 2;
+  if (!noDisco) return 0;
+  if (frente && q > 1 && q < 1.5) return 0;     // sombra do anel sobre o planeta
+  const faixa = Math.round(y / 6.944);
+  if (faixa === -4 || faixa === 3) return 0;    // faixas do planeta
+  return 1;
+}
+
+let nSeta = 0;
+function cilindro(svg, cfg) {
+  const { modo, cx, R, topo, altura, e, rp, fases, seta = false, cabecas = false } = cfg;
+  const L = 29, C = 180, py = altura / (L - 1), k = R / 200;
+  const rad = g => g * Math.PI / 180;
+  const P = new Map();
+  const junta = (grupo, d) => P.set(grupo, (P.get(grupo) || '') + d);
+  // LED aceso (encapsulamento 2020, quadrado) e o halo de brilho em volta (círculo)
+  const ponto = (grupo, x, y, rx, ry) =>
+    junta(grupo, `M${r1(x - rx)} ${r1(y - ry)}h${r1(2 * rx)}v${r1(2 * ry)}h${r1(-2 * rx)}z`);
+  const halo = (grupo, x, y, rx, ry) =>
+    junta(grupo, `M${r1(x - rx)} ${r1(y)}a${r1(rx)} ${r1(ry)} 0 1 0 ${r1(2 * rx)} 0a${r1(rx)} ${r1(ry)} 0 1 0 ${r1(-2 * rx)} 0`);
+  // LEDs apagados: uma linha tracejada por coluna, agrupada pela largura aparente
+  const COL = new Map();
+  const coluna = (grupo, x, y0, rx, ry) => {
+    const chave = grupo + '|' + r1(rx);
+    const c = COL.get(chave) || { grupo, rx, ry, d: '' };
+    c.d += `M${r1(x)} ${r1(y0 - ry)}V${r1(y0 + altura + ry)}`;
+    COL.set(chave, c);
+  };
+  const desenhaColunas = (grupo, cor, opac) => {
+    for (const c of COL.values()) {
+      if (c.grupo !== grupo) continue;
+      el(svg, 'path', {
+        d: c.d, fill: 'none', stroke: cor, 'stroke-opacity': opac, 'stroke-width': r1(2 * c.rx),
+        'stroke-dasharray': `${r1(2 * c.ry)} ${r1(py - 2 * c.ry)}`,
+      });
+    }
+  };
+  const desenha = (grupo, cor, opac) => {
+    if (P.has(grupo)) el(svg, 'path', { d: P.get(grupo), fill: cor, 'fill-opacity': opac });
+  };
+  // giro anti-horário visto de cima: a face da frente anda da esquerda para a direita (θ crescente)
+  const idade = th => Math.min(...fases.map(f => (((f - th) % 360) + 360) % 360));
+  const nivel = a => (a < 30 ? 0 : a < 60 ? 1 : a < 90 ? 2 : 3);
+  const OP = [1, .7, .46, .26], OPB = [.2, .13, .08, .05];
+
+  const arco = (y, g0, g1, raio = R) => {
+    let d = '';
+    for (let g = g0; g <= g1 + 1e-6; g += 3) {
+      d += (g === g0 ? 'M' : 'L') + r1(cx + raio * Math.sin(rad(g))) + ' ' + r1(y + e * raio * Math.cos(rad(g)));
+    }
+    return d;
+  };
+  const yA = topo - py * 0.9, yB = topo + altura + py * 0.9;
+  const contorno = frente => el(svg, 'path', {
+    d: frente ? arco(yA, -90, 90) + arco(yB, -90, 90) : arco(yA, 90, 270) + arco(yB, 90, 270),
+    fill: 'none', stroke: frente ? '#3B5779' : '#22364F', 'stroke-width': r1(Math.max(1.1, 1.4 * k)),
+  });
+
+  // pontos da malha
+  if (modo !== 'instante') {
+    for (let j = 0; j < C; j++) {
+      const th = (j + 0.5) * 2 - 180;
+      const c = Math.cos(rad(th)), x = cx + R * Math.sin(rad(th));
+      const frente = c >= 0;
+      const rx = rp * Math.max(0.3, Math.abs(c)) * (frente ? 1 : 0.75), ry = rp * (frente ? 1 : 0.75);
+      const n = modo === 'varredura' ? nivel(idade(th)) : 0;
+      const y0 = topo + e * R * c;
+      coluna(frente ? 'apagado' : 'tras', x, y0, rx, ry);
+      if (!frente) continue;
+      for (let i = 0; i < L; i++) {
+        const v = pixel(th, i);
+        if (!v) continue;
+        const y = y0 + i * py, t = v === 1 ? 'p' : 'a';
+        halo(t + 'b' + n, x, y, rx * 2.5, ry * 2.5);
+        ponto(t + n, x, y, rx, ry);
+      }
+    }
+  }
+
+  // painéis: barra e os 29 LEDs da coluna que está sendo escrita
+  const painel = (phi, camada) => {
+    const c = Math.cos(rad(phi)), frente = c >= 0;
+    if ((camada === 'frente') !== frente) return;
+    const x = cx + R * Math.sin(rad(phi)), dy = e * R * c;
+    const mostraBarra = modo !== 'imagem' || cabecas;
+    if (mostraBarra) {
+      const w = Math.max(2, 7 * k * Math.max(0.35, Math.abs(c)));
+      el(svg, 'rect', {
+        x: r1(x - w / 2), y: r1(topo - py * 0.8 + dy), width: r1(w), height: r1(altura + py * 1.6), rx: r1(w / 2),
+        fill: '#2B557F', 'fill-opacity': frente ? .75 : .5,
+      });
+    }
+    if (modo === 'imagem' && !cabecas) return;
+    const rx = rp * Math.max(0.35, Math.abs(c)) * 1.1, ry = rp * 1.1;
+    for (let i = 0; i < L; i++) {
+      const y = topo + i * py + dy;
+      const v = frente ? pixel(phi, i) : 0;
+      if (!v) { if (modo !== 'imagem') ponto(camada + '-off', x, y, rx, ry); continue; }
+      const cor = modo === 'instante' ? (v === 1 ? 'p' : 'a') : 'w';
+      halo(camada + '-g' + cor, x, y, rx * 3, ry * 3);
+      ponto(camada + '-' + cor, x, y, rx, ry);
+    }
+  };
+
+  contorno(false);
+  desenhaColunas('tras', '#1B2B40', .8);
+  fases.forEach(f => painel(f, 'tras'));
+  desenha('tras-off', '#4C6C92', .6);
+  desenhaColunas('apagado', '#223752', 1);
+  fases.forEach(f => painel(f, 'frente'));
+  desenha('frente-off', '#5A7DA6', 1);
+  for (let n = 3; n >= 0; n--) { desenha('pb' + n, '#6FB8FF', OPB[n]); desenha('ab' + n, '#FFD28A', OPB[n]); }
+  for (let n = 3; n >= 0; n--) { desenha('p' + n, '#A3D5FF', OP[n]); desenha('a' + n, '#FFE3AE', OP[n]); }
+  desenha('frente-gp', '#8CCBFF', .3);
+  desenha('frente-ga', '#FFD28A', .3);
+  desenha('frente-gw', '#FFFFFF', .22);
+  desenha('frente-p', '#C9E7FF', 1);
+  desenha('frente-a', '#FFF0D2', 1);
+  desenha('frente-w', '#FFFFFF', 1);
+  contorno(true);
+
+  if (seta) {
+    const id = 'giro' + (++nSeta);
+    const m = el(el(svg, 'defs'), 'marker', { id, viewBox: '0 0 8 8', refX: 6, refY: 4, markerWidth: 7, markerHeight: 7, orient: 'auto' });
+    el(m, 'path', { d: 'M0 .5L8 4L0 7.5z', fill: '#8FA9C6' });
+    const yS = yB + 20 * k;
+    el(svg, 'path', { d: arco(yS, -34, 34, R * 0.9), fill: 'none', stroke: '#8FA9C6', 'stroke-width': 1.6, 'marker-end': `url(#${id})` });
+    el(svg, 'text', {
+      x: cx, y: r1(yS + e * R * 0.9 + 26), 'text-anchor': 'middle',
+      style: 'font: 500 12.5px var(--f-mono); letter-spacing: .06em; fill: #8FA9C6',
+    }, 'GIRO ANTI-HORÁRIO VISTO DE CIMA');
+  }
+}
+
+const CIL = {
+  capa: { modo: 'imagem', cabecas: true, seta: true, cx: 290, R: 200, topo: 92, altura: 388, e: 0.17, rp: 2.6, fases: [-38, 82, 202] },
+  fim: { modo: 'varredura', seta: true, cx: 290, R: 200, topo: 92, altura: 388, e: 0.17, rp: 2.6, fases: [16, 136, 256] },
+  instante: { modo: 'instante', cx: 184, R: 118, topo: 32, altura: 228, e: 0.17, rp: 1.6, fases: [0, 120, 240] },
+  varredura: { modo: 'varredura', cx: 184, R: 118, topo: 32, altura: 228, e: 0.17, rp: 1.6, fases: [0, 120, 240] },
+  imagem: { modo: 'imagem', cx: 184, R: 118, topo: 32, altura: 228, e: 0.17, rp: 1.6, fases: [0, 120, 240] },
+};
+document.querySelectorAll('svg[data-cilindro]').forEach(s => cilindro(s, CIL[s.dataset.cilindro]));
+
+/* ---------- gráficos ---------- */
+function interativo(svg, a, mover) {
+  const alvo = el(svg, 'rect', { x: a.x, y: a.y, width: a.w, height: a.h, fill: 'transparent', class: 'alvo' });
+  const local = ev => new DOMPoint(ev.clientX, ev.clientY).matrixTransform(svg.getScreenCTM().inverse());
+  alvo.addEventListener('pointermove', ev => mover(local(ev)));
+  alvo.addEventListener('pointerleave', () => mover(null));
+}
+function leitura(svg, largura, nLinhas) {
+  const g = el(svg, 'g', { class: 'cur', visibility: 'hidden' });
+  const linha = el(g, 'line', { class: 'cur-linha' });
+  const caixa = el(g, 'rect', { class: 'cur-caixa', rx: 6, width: largura, height: 14 + nLinhas * 21 });
+  const textos = Array.from({ length: nLinhas }, (_, i) => el(g, 'text', { class: i ? null : 'forte', style: 'font-size:14px' }));
+  return {
+    g, linha,
+    mostra(bx, by, linhas) {
+      g.setAttribute('visibility', 'visible');
+      caixa.setAttribute('x', bx); caixa.setAttribute('y', by);
+      textos.forEach((t, i) => { t.textContent = linhas[i]; t.setAttribute('x', bx + 12); t.setAttribute('y', by + 23 + i * 21); });
+    },
+    esconde() { g.setAttribute('visibility', 'hidden'); },
+  };
+}
+
+// Slide 3: onde cada caso cai na escala de taxa de imagem
+function graficoFaixas(svg) {
+  const X = escala(0, 100, 256, 580);
+  const y0 = 38, passo = 62, yFim = y0 + passo * 4 + 24;
+  for (const v of [0, 30, 60, 90]) {
+    el(svg, 'line', { x1: X(v), x2: X(v), y1: 12, y2: yFim, class: v ? 'grade' : 'base' });
+    el(svg, 'text', { x: X(v), y: yFim + 22, class: 'tick', 'text-anchor': 'middle' }, v);
+  }
+  el(svg, 'line', { x1: X(90), x2: X(90), y1: 12, y2: yFim, stroke: 'var(--azul)', 'stroke-width': 1.2, 'stroke-dasharray': '5 4' });
+  const linhas = [
+    { rot: 'Ventiladores comerciais', sub: '1–2 hélices, 450–900 rpm', de: 15, ate: 30, cor: 'var(--laranja)', val: '15–30 Hz' },
+    { rot: 'Limiar de fusão, fóvea', sub: 'luminância moderada [3]', de: 40, ate: 60, cor: 'var(--tinta-3)', val: '40–60 Hz' },
+    { rot: 'Limiar de fusão, periferia', sub: 'fora do eixo [4]', de: 90, ref: true, val: '≈ 90 Hz' },
+    { rot: 'Protótipo v2.0', sub: '3 painéis a 1200 rpm', de: 60, cor: 'var(--tinta-3)', val: '60 Hz' },
+    { rot: 'Hologram Orbiter v3.0', sub: '3 painéis a 1800 rpm', de: 90, cor: 'var(--azul)', val: '90 Hz', forte: true },
+  ];
+  linhas.forEach((l, k) => {
+    const y = y0 + k * passo;
+    el(svg, 'text', { x: 0, y: y + 5, class: l.forte ? 'forte' : null, style: 'font-size:16.5px' + (l.forte ? '' : ';fill:var(--tinta)') }, l.rot);
+    el(svg, 'text', { x: 0, y: y + 25, class: 'tick' }, l.sub);
+    let xv, ancora = 'start';
+    if (l.ate != null) {
+      el(svg, 'rect', { x: X(l.de), y: y - 6, width: X(l.ate) - X(l.de), height: 12, rx: 4, fill: l.cor });
+      xv = X(l.ate) + 10;
+    } else if (l.ref) {
+      const c = X(l.de);
+      el(svg, 'path', { d: `M${c} ${y - 8}L${c + 8} ${y}L${c} ${y + 8}L${c - 8} ${y}Z`, fill: 'var(--superficie)', stroke: 'var(--tinta-2)', 'stroke-width': 1.6 });
+      xv = c - 14; ancora = 'end';
+    } else {
+      const c = X(l.de);
+      el(svg, 'circle', { cx: c, cy: y, r: 7, fill: l.cor, stroke: 'var(--papel)', 'stroke-width': 2.5 });
+      if (l.de >= 80) { xv = c - 14; ancora = 'end'; } else xv = c + 14;
+    }
+    el(svg, 'text', { x: xv, y: y + 5, 'text-anchor': ancora, class: 'forte', style: 'font-family:var(--f-mono);font-size:14px;font-weight:500' }, l.val);
+  });
+}
+
+// Slide 5: f_img = Np · n  (Eq. 1)
+function graficoTaxa(svg) {
+  const W = 690, H = 440, m = { l: 50, r: 92, t: 30, b: 50 };
+  const X = escala(300, 2400, m.l, W - m.r), Y = escala(0, 125, H - m.b, m.t);
+  const COR = { 1: 'var(--azul-1)', 2: 'var(--azul-2)', 3: 'var(--azul)' };
+  const TRACO = { 1: '1.5 6', 2: '9 6', 3: null };
+  el(svg, 'rect', { x: m.l, y: Y(90), width: W - m.r - m.l, height: Y(60) - Y(90), fill: 'var(--tinta)', 'fill-opacity': .05 });
+  for (const v of [0, 30, 60, 90, 120]) {
+    if (v) el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), class: 'grade' });
+    el(svg, 'text', { x: m.l - 10, y: Y(v) + 4.5, class: 'tick', 'text-anchor': 'end' }, v);
+  }
+  el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), class: 'base' });
+  for (let v = 300; v <= 2400; v += 300) {
+    el(svg, 'line', { x1: X(v), x2: X(v), y1: Y(0), y2: Y(0) + 5, class: 'base' });
+    el(svg, 'text', { x: X(v), y: Y(0) + 22, class: 'tick', 'text-anchor': 'middle' }, v);
+  }
+  el(svg, 'text', { x: W - m.r, y: H - 4, class: 'eixo', 'text-anchor': 'end' }, 'rotação (rpm)');
+  el(svg, 'text', { x: m.l - 10, y: m.t - 14, class: 'eixo' }, 'Hz');
+
+  el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(90), y2: Y(90), stroke: 'var(--tinta-2)', 'stroke-width': 1.2, 'stroke-dasharray': '6 5' });
+  el(svg, 'text', { x: X(330), y: Y(90) + 22, class: 'forte', style: 'font-size:14px' }, 'faixa do limiar de fusão de cintilação');
+  el(svg, 'text', { x: X(330), y: Y(90) + 40, style: 'font-size:14px' }, 'chega a ≈ 90 Hz na visão periférica');
+
+  for (const n of [1, 2, 3]) {
+    el(svg, 'line', { x1: X(300), y1: Y(n * 5), x2: X(2400), y2: Y(n * 40), stroke: COR[n], 'stroke-width': 2.5, 'stroke-linecap': 'round', 'stroke-dasharray': TRACO[n] });
+    el(svg, 'text', { x: W - m.r + 10, y: Y(n * 40) + 5, class: n === 3 ? 'forte' : null }, n === 1 ? '1 painel' : `${n} painéis`);
+  }
+  // ventiladores comerciais: dois braços entre 450 e 900 rpm, sobre a reta de 2 painéis
+  el(svg, 'line', { x1: X(450), y1: Y(15), x2: X(900), y2: Y(30), stroke: 'var(--laranja)', 'stroke-width': 7, 'stroke-linecap': 'round', 'stroke-opacity': .9 });
+
+  el(svg, 'circle', { cx: X(1200), cy: Y(60), r: 6, fill: 'var(--tinta-3)', stroke: 'var(--papel)', 'stroke-width': 2.5 });
+  el(svg, 'text', { x: X(1180), y: Y(60) - 10, 'text-anchor': 'end', style: 'font-size:14px' }, 'v2.0: 60 Hz a 1200 rpm');
+  el(svg, 'circle', { cx: X(1800), cy: Y(90), r: 7.5, fill: 'var(--azul)', stroke: 'var(--papel)', 'stroke-width': 2.5 });
+  el(svg, 'text', { x: X(1780), y: Y(90) - 12, 'text-anchor': 'end', class: 'forte' }, 'ponto de projeto: 3 painéis a 1800 rpm');
+
+  const cur = leitura(svg, 172, 4);
+  cur.linha.setAttribute('y1', m.t); cur.linha.setAttribute('y2', Y(0));
+  const pts = [1, 2, 3].map(n => el(cur.g, 'circle', { r: 5, fill: COR[n], stroke: 'var(--superficie)', 'stroke-width': 2 }));
+  interativo(svg, { x: m.l, y: m.t, w: W - m.r - m.l, h: Y(0) - m.t }, p => {
+    if (!p) return cur.esconde();
+    const rpm = Math.round(Math.min(2400, Math.max(300, X.inv(p.x))) / 10) * 10, x = X(rpm);
+    cur.linha.setAttribute('x1', x); cur.linha.setAttribute('x2', x);
+    pts.forEach((c, i) => { c.setAttribute('cx', x); c.setAttribute('cy', Y((i + 1) * rpm / 60)); });
+    const bx = x > (m.l + W - m.r) / 2 ? x - 184 : x + 12;
+    cur.mostra(bx, m.t + 4, [`${rpm} rpm`, `1 painel: ${num(rpm / 60, 1)} Hz`, `2 painéis: ${num(rpm / 30, 1)} Hz`, `3 painéis: ${num(rpm / 20, 1)} Hz`]);
+  });
+}
+
+// Slide 6: I ∝ r³ a rotação fixa (Eq. 6), ancorada em 4,95 A a 100 mm
+function graficoRaio(svg) {
+  const W = 650, H = 330, m = { l: 46, r: 18, t: 24, b: 46 };
+  const X = escala(60, 145, m.l, W - m.r), Y = escala(0, 14, H - m.b, m.t);
+  const I = r => 4.95 * (r / 100) ** 3;
+  const rLim = 100 * Math.cbrt(5.5 / 4.95);
+  el(svg, 'rect', { x: m.l, y: Y(14), width: W - m.r - m.l, height: Y(5.5) - Y(14), fill: 'var(--laranja)', 'fill-opacity': .08 });
+  for (let v = 0; v <= 14; v += 2) {
+    if (v) el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), class: 'grade' });
+    el(svg, 'text', { x: m.l - 10, y: Y(v) + 4.5, class: 'tick', 'text-anchor': 'end' }, v);
+  }
+  el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), class: 'base' });
+  for (let v = 60; v <= 140; v += 10) {
+    el(svg, 'line', { x1: X(v), x2: X(v), y1: Y(0), y2: Y(0) + 5, class: 'base' });
+    if (v % 20 === 0) el(svg, 'text', { x: X(v), y: Y(0) + 22, class: 'tick', 'text-anchor': 'middle' }, v);
+  }
+  el(svg, 'text', { x: W - m.r, y: H - 4, class: 'eixo', 'text-anchor': 'end' }, 'raio do plano médio, r (mm)');
+  el(svg, 'text', { x: m.l - 10, y: m.t - 10, class: 'eixo' }, 'A');
+
+  el(svg, 'line', { x1: m.l, x2: W - m.r, y1: Y(5.5), y2: Y(5.5), stroke: 'var(--laranja)', 'stroke-width': 1.5, 'stroke-dasharray': '7 5' });
+  el(svg, 'text', { x: X(61.5), y: Y(5.5) - 30, class: 'forte', style: 'font-size:14px' }, 'limite térmico do A2212');
+  el(svg, 'text', { x: X(61.5), y: Y(5.5) - 12, style: 'font-size:14px' }, 'sem ventilação forçada: ≈ 5,5 A');
+
+  const recorte = 'recorte-raio';
+  el(el(el(svg, 'defs'), 'clipPath', { id: recorte }), 'rect', { x: m.l, y: m.t, width: W - m.r - m.l, height: Y(0) - m.t });
+  let d = '';
+  for (let r = 60; r <= 145; r += 0.5) d += (r === 60 ? 'M' : 'L') + r1(X(r)) + ' ' + r1(Y(I(r)));
+  el(svg, 'path', { d, fill: 'none', stroke: 'var(--azul)', 'stroke-width': 2.5, 'stroke-linejoin': 'round', 'clip-path': `url(#${recorte})` });
+
+  el(svg, 'circle', { cx: X(rLim), cy: Y(5.5), r: 4.5, fill: 'var(--papel)', stroke: 'var(--laranja)', 'stroke-width': 2 });
+  el(svg, 'circle', { cx: X(100), cy: Y(4.95), r: 7, fill: 'var(--azul)', stroke: 'var(--papel)', 'stroke-width': 2.5 });
+  const lx = X(100) + 14, ly = Y(4.95) + 24;
+  el(svg, 'text', { x: lx, y: ly, class: 'forte' }, 'v3.0: r = 100 mm');
+  el(svg, 'text', { x: lx, y: ly + 18, style: 'font-size:14px' }, '4,95 A · 46 °C previstos');
+  el(svg, 'text', { x: lx, y: ly + 36, style: 'font-size:14px' }, `5,5 A já em r ≈ ${num(rLim)} mm`);
+
+  const vx = X(130), vy = Y(I(130));
+  el(svg, 'path', { d: `M${vx - 7} ${vy - 7}L${vx + 7} ${vy + 7}M${vx + 7} ${vy - 7}L${vx - 7} ${vy + 7}`, stroke: 'var(--laranja)', 'stroke-width': 3, 'stroke-linecap': 'round' });
+  el(svg, 'text', { x: X(128), y: Y(12.9), 'text-anchor': 'end', class: 'forte' }, 'r = 130 mm (modelo)');
+  el(svg, 'text', { x: X(128), y: Y(12.9) + 18, 'text-anchor': 'end', style: 'font-size:14px' }, '9,8–10,9 A · 101 °C previstos');
+
+  const cur = leitura(svg, 156, 3);
+  cur.linha.setAttribute('y1', m.t); cur.linha.setAttribute('y2', Y(0));
+  const pt = el(cur.g, 'circle', { r: 5, fill: 'var(--azul)', stroke: 'var(--superficie)', 'stroke-width': 2 });
+  interativo(svg, { x: m.l, y: m.t, w: W - m.r - m.l, h: Y(0) - m.t }, p => {
+    if (!p) return cur.esconde();
+    const r = Math.round(Math.min(145, Math.max(60, X.inv(p.x)))), x = X(r), i = I(r);
+    cur.linha.setAttribute('x1', x); cur.linha.setAttribute('x2', x);
+    pt.setAttribute('cx', x); pt.setAttribute('cy', Y(Math.min(i, 14)));
+    const bx = x > (m.l + W - m.r) / 2 ? x - 168 : x + 12;
+    cur.mostra(bx, Y(0) - 90, [`r = ${r} mm`, `I = ${num(i, 2)} A`, `(r/100)³ = ${num((r / 100) ** 3, 2)}`]);
+  });
+}
+
+// Slide 7: excitação síncrona × frequência natural da torre (Eq. 11)
+function regua(svg) {
+  const X = escala(0, 60, 16, 524), y = 40;
+  el(svg, 'rect', { x: X(30), y: y - 5, width: X(46) - X(30), height: 10, rx: 2, fill: 'var(--azul-lav)' });
+  el(svg, 'line', { x1: X(0), x2: X(60), y1: y, y2: y, class: 'base' });
+  for (let v = 0; v <= 60; v += 10) {
+    el(svg, 'line', { x1: X(v), x2: X(v), y1: y, y2: y + 5, class: 'base' });
+    el(svg, 'text', { x: X(v), y: y + 22, class: 'tick', 'text-anchor': 'middle' }, v);
+  }
+  el(svg, 'circle', { cx: X(30), cy: y, r: 6.5, fill: 'var(--tinta)', stroke: 'var(--papel)', 'stroke-width': 2.5 });
+  const d = X(46);
+  el(svg, 'path', { d: `M${d} ${y - 8}L${d + 8} ${y}L${d} ${y + 8}L${d - 8} ${y}Z`, fill: 'var(--laranja)', stroke: 'var(--papel)', 'stroke-width': 2 });
+  el(svg, 'text', { x: X(30) + 4, y: y - 14, 'text-anchor': 'end', style: 'font-size:14px' }, 'excitação síncrona: 30 Hz');
+  sub(svg, { x: (X(30) + d) / 2, y: y - 14, 'text-anchor': 'middle', class: 'forte', style: 'font-size:14px' }, [['f/f'], ['n', true], [' = 0,65']]);
+  sub(svg, { x: d - 4, y: y - 14, style: 'font-size:14px' }, [['f'], ['n', true], [' ≈ 46 Hz']]);
+}
+
+
+
+graficoRaio(document.getElementById('g-raio'));
+
+
+// Slide 15: cronograma (Figura 3 da proposta)
+function gantt(svg) {
+  const W = 1152, x0 = 500, x1 = 1144, wk = (x1 - x0) / 9, yH = 56, hL = 20.5;
+  const inicio = new Date(2026, 8, 8);
+  const data = (sem, dia = 0) => {
+    const d = new Date(inicio);
+    d.setDate(d.getDate() + (sem - 1) * 7 + dia);
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  };
+  const T = [
+    ['F0', 'Compras do caminho crítico', 1, 2],
+    ['F1', 'Cupons C01 e C02', 1, 1],
+    ['F1', 'Lote dos três painéis', 2, 1],
+    ['F1', 'Aranha, tampa e suporte do ímã', 2, 1],
+    ['F1', 'Base e torre integradas (12–18 h)', 3, 1],
+    ['F1', 'Corte e furação da chapa R01', 3, 1],
+    ['F1', 'Verificação dimensional e pesagem', 3, 1, 'G1'],
+    ['F2', 'Montagem e balanceamento estático', 4, 1, 'G2'],
+    ['F2', 'Ensaio de impacto C0 e contenção', 4, 1],
+    ['F3', 'Bloqueador A: potência e arrasto', 5, 1],
+    ['F3', 'Bloqueador B: térmica em regime contínuo', 5, 1],
+    ['F3', 'Bloqueadores C e D: vibração e partida', 6, 1, 'G3'],
+    ['F4', 'Fiação e eletrônica de bordo', 7, 1],
+    ['F4', 'Firmware: SPI, índice angular, colunas', 7, 1],
+    ['F4', 'Imagem de teste e rebalanceamento', 8, 1, 'G4'],
+    ['F5', 'Bloqueador E, ajustes e demonstração', 9, 1, 'G5'],
+    ['F5', 'Documentação e relatório final', 9, 1],
+  ];
+  const FASE = { F0: 'Aquisição', F1: 'Fabricação', F2: 'Montagem', F3: 'Ensaios de rotação', F4: 'Integração óptica', F5: 'Validação' };
+  const yFim = yH + T.length * hL;
+
+  const grupos = [];
+  T.forEach((t, i) => {
+    const g = grupos[grupos.length - 1];
+    if (g && g.f === t[0]) g.n++; else grupos.push({ f: t[0], i, n: 1 });
+  });
+  grupos.forEach((g, k) => {
+    const y = yH + g.i * hL, h = g.n * hL;
+    if (k % 2 === 1) el(svg, 'rect', { x: 0, y, width: W, height: h, fill: '#EDF1F6' });
+    const rotulo = 'font:600 13px var(--f-mono);fill:var(--azul)';
+    if (g.n === 1) {
+      el(svg, 'text', { x: 8, y: y + hL / 2 + 5, style: rotulo }, `${g.f} · ${FASE[g.f]}`);
+    } else {
+      el(svg, 'text', { x: 8, y: y + h / 2 - 3, style: rotulo }, g.f);
+      el(svg, 'text', { x: 8, y: y + h / 2 + 15, style: 'font-size:14px' }, FASE[g.f]);
+    }
+  });
+
+  el(svg, 'text', { x: 8, y: 44, style: 'font-size:14px;font-style:italic;fill:var(--tinta-3)' }, 'Concluídos em 05/09: projeto CAD, memória de cálculo e verificação');
+  for (let s = 1; s <= 9; s++) {
+    const xc = x0 + (s - 0.5) * wk;
+    el(svg, 'text', { x: xc, y: 36, 'text-anchor': 'middle', style: 'font:600 13px var(--f-mono);fill:var(--tinta)' }, `S${s}`);
+    el(svg, 'text', { x: xc, y: 51, 'text-anchor': 'middle', class: 'tick', style: 'font-size:11.5px' }, data(s));
+  }
+  for (let s = 0; s <= 9; s++) el(svg, 'line', { x1: x0 + s * wk, x2: x0 + s * wk, y1: 24, y2: yFim, class: 'grade' });
+
+  T.forEach(([f, nome, ini, dur, g], i) => {
+    const yc = yH + i * hL + hL / 2;
+    el(svg, 'text', { x: 150, y: yc + 5, style: 'font-size:14.5px;fill:var(--tinta)' }, nome);
+    if (g) el(svg, 'text', { x: 488, y: yc + 5, 'text-anchor': 'end', style: 'font:600 12.5px var(--f-mono);fill:var(--portao)' }, g);
+    const b = el(svg, 'rect', {
+      x: r1(x0 + (ini - 1) * wk + 4), y: r1(yc - 7), width: r1(dur * wk - 8), height: 14, rx: 3,
+      fill: g ? 'var(--azul)' : 'var(--azul-2)',
+    });
+    el(b, 'title', null, `${nome} · ${FASE[f].toLowerCase()} · ${data(ini)} a ${data(ini + dur - 1, 6)}`);
+  });
+
+  for (const [s, g] of [[3, 'G1'], [4, 'G2'], [6, 'G3'], [8, 'G4'], [9, 'G5']]) {
+    const x = x0 + s * wk, c = Math.min(x, W - 17);
+    el(svg, 'line', { x1: x, x2: x, y1: 20, y2: yFim + 2, stroke: 'var(--portao)', 'stroke-width': 1.5, 'stroke-dasharray': '5 4' });
+    el(svg, 'rect', { x: c - 16, y: 0, width: 32, height: 19, rx: 4, fill: 'var(--portao-lav)', stroke: '#E6B3BC' });
+    el(svg, 'text', { x: c, y: 14, 'text-anchor': 'middle', style: 'font:600 12.5px var(--f-mono);fill:var(--portao)' }, g);
+  }
+}
+
+
+
+window.orbiterDiagram = { cilindro, CIL, pixel };
+</script>
+<script src="arrasto.js"></script>
+<script src="orbiter-renderer.js"></script>
+<script src="principio.js"></script>
+<script src="apresentacao.js"></script>
+</body>
+</html>
