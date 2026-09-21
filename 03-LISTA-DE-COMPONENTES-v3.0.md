@@ -1,6 +1,6 @@
 # Lista de componentes — Hologram Orbiter v3.0
 
-Revisada em 08/09/2026. Preços em BRL são **estimativas de ordem de grandeza**
+Revisada em 08/09/2026; pull-downs do 74AHCT125 acrescentados em 21/09/2026. Preços em BRL são **estimativas de ordem de grandeza**
 para orçamento, não cotações.
 
 Componentes em mãos não significam montagem validada. O buck e a instrumentação
@@ -68,6 +68,7 @@ Tudo isto gira junto com o rotor.
 | Chave liga/desliga | componente miniatura com capacidade DC compatível com a corrente de entrada do buck; **curso tangencial** — confirmar datasheet e nota | ⚠️ | 5 |
 | Sensor de índice | **A3144 nu**, dessoldado do módulo HW-477 — **no rotor** | ✅ | — |
 | Resistor de pull-up | 10 kΩ, do sinal do hall para **3,3 V** | 🛒 | 1 |
+| Resistores de pull-down | 2 × 10 kΩ, das entradas CLK e DATA do 74AHCT125 ao **GND** (esquema §2.2) | 🛒 | 1 |
 | Deslocador de nível | **74AHCT125** para CLK e DATA, com `/OE` definidos e **100 nF cerâmico** junto ao CI; buck em 4,5 V não garante nível lógico | 🛒 | 5 |
 | Divisor da bateria | 150 kΩ / 47 kΩ + 100 nF no ADC; tolerâncias e calibração a verificar | 🛒 | a cotar |
 | Proteção da alimentação | fusível/polyfuse nominal 7,5 A do esquema: selecionar modelo, corrente de manutenção a quente e coordenação com fios/chave | ⚠️ | a cotar |

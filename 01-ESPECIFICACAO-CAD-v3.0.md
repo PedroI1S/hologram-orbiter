@@ -610,9 +610,12 @@ dois números.
   2–3 mm, em raio livre da campânula (r = 29 mm no CAD: 15 mm além da campânula
   de Ø27,8; azimute 20° nos dois, rotor e base). Posição angular cotada — é
   a referência de fase da imagem inteira.
-- **fiação dos painéis:** seis condutores por painel: 5 V e GND de potência,
-  DATA com seu retorno GND e CLK com seu retorno GND. Use AWG 24 para potência
-  e AWG 28 nos pares de sinal/retorno. O antigo envelope de quatro fios não
+- **fiação dos painéis:** seis condutores por painel, porque os dados correm em
+  cadeia pelos três painéis (esquema 05 §1 e §4): 5 V e GND de potência, CLK e
+  DATA de entrada e CLK e DATA de retorno. O retorno sai da ponta superior da
+  fita e leva os dados ao painel seguinte; o do painel 3 fica montado e sem
+  conexão, para os três chicotes continuarem iguais. Use AWG 24 para potência
+  e AWG 28 nos quatro fios de sinal. O antigo envelope de quatro fios não
   valida esse chicote: medir o feixe real, sua massa e os caminhos de passagem
   antes de qualificar a montagem. A rota passa pela cavidade da carenagem e
   pelo sulco da longarina; preservar a espiga, que transmite os 158 N. A corrente

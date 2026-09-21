@@ -8,7 +8,7 @@ tudo girando a 1800 RPM.
 **Na parte fixa** (§8): fonte de bancada, ESC, motor e o gerador do sinal de
 acelerador. Mais o ímã, que é o único elemento fixo que o rotor "vê".
 
-**Revisado em 08/09/2026.** Este documento especifica um circuito e firmware
+**Revisado em 08/09/2026; pull-downs do 74AHCT125 acrescentados em 21/09/2026.** Este documento especifica um circuito e firmware
 planejados. Não há firmware implementado neste pacote nem ensaio elétrico
 aprovado. Buck, chicotes, medição térmica e temporização continuam pendentes.
 
@@ -71,6 +71,15 @@ nível definido e colocar 100 nF cerâmico junto a VCC/GND do CI. A pinagem depe
 do encapsulamento comprado. O capacitor bulk não substitui esse desacoplamento.
 [Datasheet Texas Instruments](https://www.ti.com/lit/ds/symlink/sn74ahct125.pdf).
 
+**Pull-down de 10 kΩ ao GND nas entradas de CLK e DATA do CI.** No reset, o
+GPIO 4 e o GPIO 6 ficam só como entrada, sem pull-up nem pull-down, e continuam
+assim até o firmware configurar o SPI. Com a entrada do buffer flutuando, a
+saída pode oscilar, e a fita pode receber lixo e acender no boot, antes de
+existir o limite de corrente do firmware (§5). No pior caso, em branco pleno,
+são 5,2 A. O pull-down segura CLK e DATA em nível baixo até o SPI assumir e
+custa 0,33 mA por pino quando o ESP32-C3 puxa 3,3 V.
+[Datasheet ESP32-C3, tabela de pinos](https://documentation.espressif.com/esp32-c3_datasheet_en.html).
+
 **Não usar buck em 4,5 V como substituto garantido do buffer.** O limiar de
 ~3,15 V continua acima do V_OH mínimo de 0,8 × VDD = 2,64 V especificado para o
 ESP32-C3. O regulador da Super Mini e a fita reais também precisam ser
@@ -80,8 +89,8 @@ identificados. [Datasheet ESP32-C3](https://documentation.espressif.com/esp32-c3
 
 | Sinal | Pino | Vai para | Nota |
 |---|---|---|---|
-| SPI CLK | GPIO 4 | 74AHCT125 entrada A | 20 MHz solicitados, 180 colunas, DMA; medir clock efetivo (§5) |
-| SPI MOSI | GPIO 6 | 74AHCT125 entrada B | dados da cadeia |
+| SPI CLK | GPIO 4 | 74AHCT125 entrada A | 20 MHz solicitados, 180 colunas, DMA; medir clock efetivo (§5); pull-down 10 kΩ (§2.2) |
+| SPI MOSI | GPIO 6 | 74AHCT125 entrada B | dados da cadeia; pull-down 10 kΩ (§2.2) |
 | ÍNDICE | GPIO 3 | saída do A3144 | interrupção na borda de descida |
 | V_BAT | GPIO 0 (ADC) | divisor **150k / 47k** + **100 nF ao GND no pino** | 1,72 V a 7,2 V (LiFe cheia) · corte em 1,38 V (= 5,8 V) |
 | 5V | 5V | trilho do buck | — |
@@ -224,7 +233,7 @@ Coordenadas do rotor: braço 1 em +x, Z = 0 no topo do cubo.
 | Item | Envelope | Onde | Massa (catálogo) |
 |---|---:|---|---:|
 | Bateria LiFePO4 2S | 58 × 30 × 17 | berço central, deitada em y, sobre trilhos em Z = 9; a arruela e a porca fina terminam em Z = 5 | 50 g (medida) |
-| Placa de interface: 74AHCT125, pull-up, divisor, polyfuse, chave slide, JST-XH | 15 × 20 × 8 | +x, x 19,5…34,5 · y −5…15, em pilares de 6 mm, sob a janela da tampa; os terminais do hall sobem debaixo dela | 5,5 g |
+| Placa de interface: 74AHCT125, pull-up do hall, pull-downs de CLK e DATA, divisor, polyfuse, chave slide, JST-XH | 15 × 20 × 8 | +x, x 19,5…34,5 · y −5…15, em pilares de 6 mm, sob a janela da tampa; os terminais do hall sobem debaixo dela | 5,5 g |
 | ESP32-C3 Super Mini | 18 × 22,5 × 5 | −x, x −36…−18 · y ±11, em pilares de 6 mm; USB-C para −y | 3,0 g |
 | Buck 5 V mini560 | 22 × 17 × 6 | em pé numa ranhura na parede da baia a 140°, indutor para dentro | 2,0 g |
 | C bulk 1000 µF | Ø10 × 20 | em pé numa cerca em (22,5, −22), lado +x | 2,5 g |
