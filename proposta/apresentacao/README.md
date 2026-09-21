@@ -29,7 +29,7 @@ A animação de arrasto também usa movimento desacelerado. As partículas repre
 - `apresentacao.pdf`: versão estática dos 11 slides, incluindo um quadro da nova cena de arrasto. As animações e os controles funcionam no HTML.
 - `apresentacao-completa-original.html` e `.pdf`: versão anterior preservada, com cálculos e explicações detalhadas. O botão **Detalhes técnicos** abre o HTML original.
 
-As oito imagens PNG utilizadas são cópias dos renders do Blender em `Hologram_Orbiter_v3_0/exports/preview`. Os renders mostram o CAD, não peças já fabricadas. As estimativas e os critérios vêm da apresentação e da proposta originais. O estado provisório do CAD vem do README da revisão 3.0.5, de 14/09/2026.
+As sete imagens PNG utilizadas são cópias dos renders do Blender em `Hologram_Orbiter_v3_0/exports/preview`. Os renders mostram o CAD, não peças já fabricadas. As estimativas e os critérios vêm da apresentação e da proposta originais. O estado provisório do CAD vem do README da revisão 3.0.5, de 14/09/2026.
 
 Para atualizar o PDF após editar o HTML:
 

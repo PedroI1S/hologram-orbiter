@@ -98,13 +98,12 @@
 .gate { margin-top: auto; padding-top: 8px; color: var(--portao); font: 500 17px/1 var(--f-mono); }
 .schedule-notes { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--linha); }
 .schedule-notes p { font-size: 20px; color: var(--tinta-2); }
-.corpo.closing { grid-template-columns: 590px 1fr; gap: 50px; }
+.corpo.closing { grid-template-columns: minmax(0, 920px); justify-content: center; }
 .closing-copy { display: grid; gap: 26px; font-size: 23px; color: var(--tinta-2); }
 .closing-metrics { display: flex; justify-content: space-between; gap: 20px; padding-block: 23px; border-block: 1px solid var(--linha); }
 .closing-metrics b { display: block; font: 650 35px/1 var(--f-disp); color: var(--azul); }
 .closing-metrics span { display: block; margin-top: 10px; font-size: 16px; }
 .questions { font: 750 65px/1 var(--f-disp); letter-spacing: -.02em; color: var(--tinta); }
-.closing > .render .render-frame { height: 400px; }
 /* Escrita da imagem: instante, acúmulo das colunas e percepção em sequência. */
 .princ { grid-template-rows: auto auto auto auto auto; align-content: start; gap: 8px; }
 .princ .lead { max-width: none; font-size: 21px; line-height: 1.3; }
