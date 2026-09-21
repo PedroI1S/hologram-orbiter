@@ -10,7 +10,7 @@ A revisão independente de 03/09 circulou como documento 08 solto; ela foi
 `parameters.json`, no gerador e nos documentos apontam para a tabela de
 disposição no fim deste arquivo.
 
-**Última atualização:** 21/09/2026 — acrescentada a C10. Antes: 08/09/2026, rev. local 3.0.4. As disposições de 03/09 no fim são históricas; os cálculos corrigidos em 08/09 prevalecem.
+**Última atualização:** 21/09/2026 — acrescentadas a C10 e a C11. Antes: 08/09/2026, rev. local 3.0.4. As disposições de 03/09 no fim são históricas; os cálculos corrigidos em 08/09 prevalecem.
 
 ---
 
@@ -155,6 +155,21 @@ CLK dividido em três ramos e a ordem dos bits no modo quad.
 fitas e fios no comprimento real. Decidir antes de montar os chicotes e o
 lastro do G3 (plano 04). Até lá, vale a cadeia do 05.
 
+### C11 · Enlace de imagem da base ao rotor · **ensaiar antes de abrir ao público**
+
+O esquema 05 §9 planeja a página na ESP32 da base e a imagem transmitida por
+ESP-NOW ao ESP32-C3 do rotor. Três incertezas:
+
+- o tremor que o rádio causa na varredura, porque o C3 tem um núcleo só;
+- o alcance com a antena da Super Mini dentro da baia fechada;
+- a contenção, que precisa deixar passar 2,4 GHz.
+
+**Fechar assim:** ensaio do enlace de imagem do plano 04, primeiro na bancada
+com o índice simulado e depois girando. Se o tremor passar de 1/4 de coluna
+(46 µs), usar as janelas de rádio do 05 §9.4. Antes de escrever a página,
+decidir o formato do desenho livre: carrossel de três quadros de 60 × 29 ou
+tela única de 180 × 29 (05 §9.1).
+
 ### D3 · Orçamento completo de massa e chicotes
 
 O teto do rotor permanece **280 g**. O relatório publica um subtotal nominal com eletrônica de catálogo, Hall e contrapesos; ainda é necessário reconciliar as ferragens de 4 g/painel com a massa real dos chicotes de seis condutores. A estimativa antiga de fios no CG não foi uma pesagem e não garante sua inclusão na soma.
@@ -188,6 +203,9 @@ não trabalha.
 **Invólucro.** A pista externa mantém a canaleta de 4,4 × 3 mm em r = 135 porque
 custa nada e não pode ser acrescentada depois de imprimir. A tampa impressa 07
 saiu do pacote (`containment_cap.enabled` a devolve). Não é item deste projeto.
+Uma exposição pública (esquema 05 §9.5) muda isso: com gente em volta, a
+contenção fechada vira permanente e precisa deixar passar o rádio
+(policarbonato, não tela metálica). Decidir antes de qualquer exposição.
 
 **Fixação do rotor.** Decidida: arruela Ø20 a 0,6 N·m, que dá 500 N contra os
 22 N necessários e 1,9 MPa no ABS. Não depende de medir a campânula. Ajuste de

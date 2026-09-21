@@ -2,6 +2,8 @@
 
 **Atualização local 08/09, revisão 3.0.4:** fabricação definitiva dos painéis e giro dependem de fechar a revisão estrutural e qualificar a instrumentação do plano 04. O CAD é provisório.
 
+**Atualização de 21/09:** a ESP32 da base substitui o Arduino, e o plano ganhou a imagem pelo celular: página hospedada na ESP32 da base e imagem transmitida por rádio ao rotor (esquema 05 §9).
+
 ---
 
 ## 1. O que o projeto entrega
@@ -15,15 +17,18 @@ Entregáveis finais:
 1. protótipo mecânico balanceado, operando de forma estável e contida;
 2. cadeia óptica funcional — fita, controlador, índice angular, imagem de teste;
 3. os cinco bloqueadores aprovados com evidência registrada;
-4. documentação de operação, com memória de cálculo rastreável.
+4. documentação de operação, com memória de cálculo rastreável;
+5. imagem enviada pelo celular: página hospedada na ESP32 da base e
+   transmitida por rádio ao ESP32-C3 do rotor (esquema 05 §9).
 
 ## 2. Estado atual
 
 | Bloco | Situação |
 |---|---|
 | Ponto de operação | ✅ congelado — r = 100 mm, 1800 RPM, 90 Hz |
-| Cadeia de acionamento | ✅ A2212 920KV · ESC LittleBee Spring 20A · fonte de bancada · gerador Arduino |
+| Cadeia de acionamento | ✅ A2212 920KV · ESC LittleBee Spring 20A · fonte de bancada · ESP32 da base (DevKit 30 pinos) |
 | Cadeia óptica | ✅ HD107S 144/m · ESP32-C3 · A3144 nu no rotor |
+| Imagem pelo celular | 🔄 planejada no esquema 05 §9; hardware em mãos, firmware a fazer |
 | Especificação CAD | ✅ escrita, corrigida e alinhada ao CAD em 03/09 |
 | Modelo CAD | ⚠️ rev. local 3.0.4: 56 critérios geométricos; resistência e ensaios continuam pendentes |
 | Compras | 🔄 motor, ESC, fita, ESP32-C3, bateria LiFe e hall em mãos; faltam buck, shifter, ímã, ferragens, chapa e filamento |
@@ -88,10 +93,11 @@ raio 100 ±0,1 mm · Δh ≤ ±0,5 mm. Peça fora de tolerância é reimpressa, 
 | Aranha no eixo, com a arruela Ø20 × Ø8,5 em alumínio e a porca M6 fina com trava química | rotor acoplado |
 | Painéis nas longarinas, porcas planas com trava química | rotor completo, sem LEDs |
 | Balanceamento estático | painéis casados em massa |
-| Contenção de ensaio montada | caixa fechada, chapa ou tela |
+| Contenção de ensaio montada | caixa fechada, chapa ou tela; policarbonato se for usar o rádio (esquema 05 §9.4) |
+| Firmware da rampa na ESP32 da base: armação, rampa ≥ 12 s, teto do pulso, watchdog e botões (esquema 05 §8.2) | sinal do ESC conferido na bancada, sem motor |
 
 **Portão G2:** rotor montado, girando à mão sem rocamento perceptível,
-contenção de ensaio montada.
+contenção de ensaio montada, rampa da ESP32 da base conferida na bancada.
 
 > **Pesar os painéis é necessário, não suficiente.** Δm ≤ 0,084 g casa as
 > *massas*, não os *momentos*: dois painéis de massa idêntica com o CG em raios
@@ -116,6 +122,7 @@ Ensaios A (potência), B (térmica), C (vibração) e D (partida). Detalhe em
 | ESP32-C3, regulador, bateria na baia | eletrônica de bordo |
 | Sensor hall no rotor, ímã no suporte fixo | referência de fase |
 | Firmware: SPI, índice, mapeamento de colunas | imagem de teste na tela |
+| Enlace ESP-NOW: a base transmite, o rotor troca a imagem no índice | imagem enviada da base aparece na tela |
 | Rebalanceamento com a eletrônica montada | rotor final balanceado |
 
 **Portão G4:** imagem de teste estável a 1800 RPM, taxa de dados confirmada.
@@ -124,7 +131,11 @@ Ensaios A (potência), B (térmica), C (vibração) e D (partida). Detalhe em
 
 Ensaio E, ajuste de brilho e contraste, documentação de operação.
 
-**Portão G5:** jitter imperceptível em sacada, operação contínua estável.
+Imagem pelo celular: página na ESP32 da base (QR code, desenho, galeria, fila e
+aprovação) e ensaio do enlace de imagem do plano 04, antes de abrir ao público.
+
+**Portão G5:** jitter imperceptível em sacada, operação contínua estável e,
+depois do ensaio do enlace, imagem enviada pelo celular sem tremor.
 
 ---
 
@@ -137,12 +148,13 @@ Semanas relativas à entrega do CAD. Deslocam junto com ela.
 | 1 | 0 | CAD regenerado · compras disparadas |
 | 2 | 1 | cupons · lote dos painéis · aranha e tampa |
 | 3 | 1 | base e torre (impressão longa) · chapa cortada |
-| 4 | 2 | montagem · balanceamento estático · **G2** |
+| 4 | 2 | montagem · balanceamento estático · rampa na bancada · **G2** |
 | 5 | 3 | ensaios A e B |
 | 6 | 3 | ensaios C e D · **G3** |
-| 7 | 4 | fiação, eletrônica, firmware |
+| 7 | 4 | fiação, eletrônica, firmware, enlace de rádio |
 | 8 | 4 | imagem de teste · rebalanceamento · **G4** |
 | 9 | 5 | ensaio E · ajustes · **G5** |
+| 10 | 5 | página na base · ensaio do enlace · demonstração com o celular |
 
 **Caminho crítico:** a impressão da base leva 12–18 h numa única peça e não pode
 ser paralelizada. Comece cedo, e só depois que os painéis passarem em G1 — se o
@@ -167,6 +179,9 @@ da eletrônica de bordo.
 | Fluência do painel em operação | **média** | alto | ponta afastando entre medições | limitar tempo contínuo; medir deflexão a quente |
 | Falha estrutural do painel | baixa | **crítico** | trinca na inspeção | SF 2,5 — inspecionar entre patamares |
 | Ressonância da parte fixa | média | alto | pico fora de 1× na varredura | ensaio de impacto antes de montar o motor; grampear a base |
+| Rádio atrasa as colunas do rotor | média | médio | tremor acima de 46 µs no ensaio do enlace | rotor só escuta; colunas acima do rádio; janelas de rádio |
+| Rádio fraco no rotor | média | baixo | perda de pacotes no ensaio de alcance | 8,5 dBm na Super Mini; contenção de policarbonato; base mais perto |
+| Página pública alcança o motor | baixa | **crítico** | qualquer rota de motor no servidor | página sem comando de motor; teto do pulso; watchdog; corte físico da fonte |
 
 **O risco que mais mudou de posição:** a partida. Com inércia 100× a de uma
 hélice e ESC sensorless, é agora um bloqueador próprio, não um detalhe de
@@ -193,6 +208,8 @@ O projeto é bem-sucedido quando, simultaneamente:
 - P_entrada ≤ 20 W e o motor estabiliza abaixo de 55 °C em regime contínuo;
 - a vibração a 30 Hz fica em ≤ 0,20 g, sem crescimento;
 - o rotor parte de forma confiável, 10 vezes em 10;
+- a imagem enviada pelo celular aparece sem tremor, e nada na página alcança o
+  motor;
 - toda cota e todo número do projeto são rastreáveis até um datasheet, uma
   medição ou uma linha de cálculo publicada.
 
@@ -211,11 +228,11 @@ já está escrito no plano de ensaios.
 | [`02-PLANO-DE-PROJETO-v3.0.md`](02-PLANO-DE-PROJETO-v3.0.md) | fases, portões, riscos |
 | [`03-LISTA-DE-COMPONENTES-v3.0.md`](03-LISTA-DE-COMPONENTES-v3.0.md) | o que comprar e por quê |
 | [`04-PLANO-DE-ENSAIOS-v3.0.md`](04-PLANO-DE-ENSAIOS-v3.0.md) | bloqueadores e critérios |
-| [`05-ESQUEMA-ELETRICO-v3.0.md`](05-ESQUEMA-ELETRICO-v3.0.md) | eletrônica embarcada do rotor |
+| [`05-ESQUEMA-ELETRICO-v3.0.md`](05-ESQUEMA-ELETRICO-v3.0.md) | eletrônica do rotor e da base, e o enlace de imagem |
 | [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md) | o que ainda falta |
 | [`07-GLOSSARIO-E-PREMISSAS.md`](07-GLOSSARIO-E-PREMISSAS.md) | vocabulário e origem de cada número |
 | [`legado/`](legado/LEIA-ME.md) | v2.0, v2.1 e a auditoria que as reprovou — histórico, não referência |
 
 ## Condições atualizadas para os portões
 
-Antes de G1: fechar a seção resistente e a transferência de carga/FDM/fluência; cupons de calibração não liberam o lote de painéis. Em G3 usar lastro representativo da distribuição final e referência angular fixa sincronizada, pois o Hall embarcado só entra em G4. Qualificar a medição térmica sem cabos em superfícies girantes e o método de dois planos antes de registrar aprovação. Repetir os ensaios aplicáveis em G4 com bateria, chicotes, sensores e retenções finais; reconciliar a massa completa contra 280 g.
+Antes de G1: fechar a seção resistente e a transferência de carga/FDM/fluência; cupons de calibração não liberam o lote de painéis. Em G3 usar lastro representativo da distribuição final e referência angular fixa sincronizada, pois o Hall embarcado só entra em G4. Qualificar a medição térmica sem cabos em superfícies girantes e o método de dois planos antes de registrar aprovação. Repetir os ensaios aplicáveis em G4 com bateria, chicotes, sensores e retenções finais; reconciliar a massa completa contra 280 g. Antes de abrir a página ao público: ensaio do enlace de imagem (plano 04) e contenção fechada que deixe passar o rádio.

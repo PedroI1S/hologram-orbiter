@@ -140,6 +140,16 @@ entregar um sinal de 3,3 V seguro ao ESP32-C3.
 **V_IH** — tensão mínima que uma entrada digital reconhece como nível alto. A
 fita quer 3,5 V e o ESP32-C3 entrega 3,3 — daí o deslocador de nível.
 
+**ESP-NOW** — protocolo da Espressif para dois ESP32 conversarem direto, sem
+roteador nem conexão, em pacotes de até 250 bytes. Leva a imagem da ESP32 da
+base ao rotor (esquema 05 §9).
+
+**Portal cativo** — página que o celular abre sozinho ao entrar numa rede Wi-Fi,
+como em hotel. É como o QR code leva o público à página de desenho.
+
+**Tremor** *(jitter)* — variação no instante em que cada coluna acende; aparece
+como borda vertical tremida. O orçamento é 1/4 de coluna, 46 µs a 1800 RPM.
+
 ---
 
 ## 2. Medido, derivado ou assumido
@@ -174,7 +184,7 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | Subtotal do rotor | ver relatório gerado da revisão atual | CAD + componentes declarados + Hall + contrapeso | ⚠️ reconciliar chicotes/ferragens e pesar; não é massa completa certificada |
 | Eletrônica da baia | 5,5 + 3,0 + 2,0 + 2,5 + 2,0 g | catálogo | ❌ **pesar cada peça** |
 | Sensor de índice | **A3144 nu**, TO-92, 0,2 g | dessoldado do módulo | ✅ |
-| Gerador de sinal do ESC | Arduino ou gerador de bancada | em mãos | ✅ |
+| Gerador de sinal do ESC | ESP32 DevKit de 30 pinos (XX5R69), no lugar do Arduino | em mãos | ✅ |
 
 **Os três itens em negrito são o caso térmico inteiro.** Se o Rth real for 6 °C/W
 em vez de 3,5, ou se o Cd vier em 0,50, os 43 °C viram 68 a 99. É por isso que o

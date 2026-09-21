@@ -4,7 +4,8 @@ Cinco bloqueadores. **Revisados em 08/09/2026; nenhum ensaio físico consta como
 aprovado.** A instrumentação térmica, a referência angular e a identificação
 em dois planos precisam ser fechadas antes dos ensaios correspondentes. As
 correções digitais não liberam a estrutura para girar; resolver antes as
-pendências mecânicas da revisão completa.
+pendências mecânicas da revisão completa. Em 21/09/2026 entrou o ensaio do
+enlace de imagem, que não é bloqueador de rotação.
 
 > **Por que este plano é diferente do da v2.1.** O critério antigo era
 > `I ≤ 5,8 A`, um número cuja derivação estava numa planilha que se perdeu, e que
@@ -269,6 +270,7 @@ parado e com movimento rápido dos olhos (sacada). Registrar com celular a 240 f
 | Imagem tripla ou fantasma | Δh ou raio diferentes entre painéis | remedir Datum D e o raio; reimprimir o painel fora |
 | Deslocamento angular entre varreduras | atraso de atualização serial ou folga na junta | medir temporização/compensação por LED; conferir junta e fase mecânica |
 | Borda vertical serrilhada | jitter de fase do sensor de índice | verificar entreferro e histerese do hall |
+| Tremor só quando chega imagem nova | interrupções do rádio no rotor | janelas de rádio (esquema 05 §9.4) |
 | Imagem "respirando" ou cisalhada | rotação instável entre voltas | **o BLHeli_S não tem governor** — ver abaixo |
 | Cintilação periférica | 90 Hz insuficiente para o brilho usado | reduzir brilho; 2000 RPM não liberados pelo cálculo atual |
 
@@ -291,6 +293,33 @@ o firmware por um com telemetria de RPM.
 
 ---
 
+## Enlace de imagem — rádio da base ao rotor
+
+**O que se verifica:** se o rádio do rotor atrapalha a varredura e se a imagem
+chega inteira com o rotor girando e a tampa fechada. O projeto está no esquema
+05 §9. Não é bloqueador de rotação; é condição para abrir a página ao público.
+
+**Parte 1 — tremor, na bancada, com o rotor parado.** ESP32-C3 do rotor com o
+firmware final e o índice simulado por um pulso a 30 Hz no GPIO 3, vindo da
+ESP32 da base ou de um gerador de funções. Analisador lógico na primeira borda
+de CLK de cada quadro. Medir o atraso de cada coluna em relação ao instante
+previsto por 10 min sem rádio e por 10 min recebendo uma imagem de 180 × 29 a
+cada 5 s.
+
+**Critério:** pior atraso com rádio abaixo de **46 µs** (1/4 de coluna) e
+nenhuma coluna perdida. Se falhar, usar janelas de rádio (esquema 05 §9.4) e
+repetir.
+
+**Parte 2 — alcance, girando.** Rotor final a 1800 RPM, na contenção de
+policarbonato e com a tampa fechada; ESP32 da base na posição de uso. Enviar 100
+imagens seguidas.
+
+**Critério:** as 100 chegam com o CRC certo, com reenvio se preciso.
+
+**Parte 3 — visual.** Repetir o Bloqueador E com imagens chegando pelo rádio.
+
+---
+
 ## Sequência e portões
 
 ```
@@ -310,6 +339,7 @@ G4  Integração óptica
      └─ fita, ESP32, sensor de índice, imagem de teste; repetir A–D no rotor final
 
 G5  Bloqueador E e demonstração
+     └─ imagem pelo celular só depois do ensaio do enlace de imagem
 ```
 
 **Nada de LEDs antes de G3.** Os ensaios de rotação são os de maior risco físico;
@@ -328,8 +358,12 @@ Não são formalidade. O rotor guarda **27,6 J** e um painel solto sai a
 **18,9 m/s** com 7,9 J.
 
 - **Nunca girar sem contenção integral.** Caixa fechada, chapa ou tela de aço em
-  torno do rotor. Não há exceção para "só um teste rápido".
+  torno do rotor. Não há exceção para "só um teste rápido". Com o enlace de
+  imagem (esquema 05 §9), a contenção precisa deixar passar 2,4 GHz:
+  policarbonato, não tela de aço.
 - **Operação remota.** Ninguém no plano do rotor durante a subida de rotação.
+  Com público, ele fica fora da contenção, e a página do celular nunca comanda
+  o motor (esquema 05 §8.2).
 - **Parada de emergência** ao alcance, cortando a fonte. Ela corta a
   alimentação, **não para o rotor**: com *brake on stop* desabilitado (decisão
   correta para a fonte de bancada) o rotor entra em roda livre e o arrasto cai

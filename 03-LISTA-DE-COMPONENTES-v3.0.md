@@ -1,6 +1,6 @@
 # Lista de componentes — Hologram Orbiter v3.0
 
-Revisada em 08/09/2026; pull-downs do 74AHCT125 acrescentados em 21/09/2026. Preços em BRL são **estimativas de ordem de grandeza**
+Revisada em 08/09/2026. Em 21/09/2026: pull-downs do 74AHCT125 e ESP32 na base no lugar do Arduino. Preços em BRL são **estimativas de ordem de grandeza**
 para orçamento, não cotações.
 
 Componentes em mãos não significam montagem validada. O buck e a instrumentação
@@ -42,7 +42,9 @@ painéis de 208 mm por causa de folga na junta ou no canal.
 | Motor BLDC | **A2212 920KV**, 2–4S, 52 g, eixo M6, base 4×M3 em 16 × 19 mm | ✅ | — |
 | ESC | **LittleBee Spring 20A**, BLHeli_S, 25 × 13 mm | ✅ | — |
 | Fonte de bancada | ajustável; operar em **6–7 V**, ≥ 5 A | ✅ | — |
-| Gerador do sinal do ESC | **Arduino em mãos**; firmware de rampa nominal **≥ 12 s** e botão de parada ainda a implementar — ver §8 do esquema | ✅ | — |
+| Gerador do sinal do ESC | **ESP32 DevKit de 30 pinos em mãos** (módulo "ESP-32" genérico, marcação XX5R69), no lugar do Arduino; também hospeda a página da imagem pelo celular (§9 do esquema). Firmware de rampa **≥ 12 s**, teto do pulso, watchdog e botões ainda a implementar — ver §8 do esquema | ✅ | — |
+| Botões de partida e de parada | 2 × botão momentâneo, de D32 e D33 ao GND, com pull-up interno | 🛒 | 2 |
+| Pull-down do sinal do ESC | 10 kΩ, de D25 ao GND | 🛒 | 1 |
 | **Arruela Ø20 × Ø8,5 × 2 mm, alumínio** | cortar da mesma chapa da R01 (a referência de corte traz o disco). O furo precisa passar pelo **colar Ø8 do eixo**, que sobe 5–7 mm acima da campânula: uma arruela M6 assentaria no colar e a porca não apertaria o cubo. Alternativa de prateleira: DIN 125 M8 em aço (Ø16; 3,4 MPa no ABS) | 🛒 | — |
 | **Porca M6 fina DIN 439B** (3 mm) + Loctite 243 | **não** a cônica de 14 mm que veio com o motor, **nem** a autotravante baixa de 6 mm: com o colar até 5–7 mm e a rosca acabando em 12–14, a de 6 mm terminaria no fim do eixo. Apertar a **0,6 N·m** | 🛒 | 2 |
 
@@ -80,6 +82,15 @@ Tudo isto gira junto com o rotor.
 | Carregador **modo LiFe** | 3,6 V/célula — modo LiPo (4,2 V) destrói o pack | ⚠️ | 60 |
 
 > **Empacotamento — a baia foi ampliada por causa disto.** Bateria, MCU,
+> regulador, deslocador de nível, capacitor, chave e conector numa baia que era
+> de Ø66 × 20 mm. Passou para **Ø78 × 29**, com 24 mm úteis acima da porca. Um
+> DevKit ESP32 de 55 × 28 mm não caberia junto com a bateria; o C3 Super Mini
+> (22 × 18) cabe. O esboço de layout está no CAD (`spider.bay_layout`) e é
+> verificado pelo gerador: placa de interface em +x sob a janela da tampa,
+> ESP32-C3 em −x, buck em pé na parede, capacitor em pé numa cerca. As massas
+> são de catálogo e somam exatamente os 15 g de folga: **pesar cada peça real
+> antes de fixar**.
+
 > **Tudo o que vai na baia sofre 98 a 114 g.** A aceleração centrífuga em
 > r = 27–32 mm é `ω²r` = 960 a 1140 m/s². Duas consequências práticas na compra:
 >
@@ -89,15 +100,6 @@ Tudo isto gira junto com o rotor.
 >   lado no topo. Uma cerca de 3 mm no pé não segura: cole, ou use um polímero
 >   SMD deitado. Confirme também que o pack é de **células rígidas** — as pontas
 >   dele estão a r = 29.
->
-> regulador, deslocador de nível, capacitor, chave e conector numa baia que era
-> de Ø66 × 20 mm. Passou para **Ø78 × 29**, com 24 mm úteis acima da porca. Um
-> DevKit ESP32 de 55 × 28 mm não caberia junto com a bateria; o C3 Super Mini
-> (22 × 18) cabe. O esboço de layout está no CAD (`spider.bay_layout`) e é
-> verificado pelo gerador: placa de interface em +x sob a janela da tampa,
-> ESP32-C3 em −x, buck em pé na parede, capacitor em pé numa cerca. As massas
-> são de catálogo e somam exatamente os 15 g de folga: **pesar cada peça real
-> antes de fixar**.
 
 > **Duas armadilhas elétricas que não são opcionais.**
 >
@@ -122,6 +124,10 @@ Tudo isto gira junto com o rotor.
 > conector de balanceamento **JST-XH de 3 vias** além do de potência. Sem o
 > balanceador não há carga célula a célula, e num pack que gira lacrado isso
 > não é aceitável. Carregar sempre em **modo LiFe**.
+
+> **A imagem pelo celular não pede peça nova no rotor.** O ESP32-C3 já tem
+> rádio; a página e a fila ficam na ESP32 da base (esquema 05 §9). No rotor, só
+> o firmware muda.
 
 **Base de energia:** a hipótese de 60 mA por LED dá **5,22 A / 26,1 W** em
 branco pleno. Com ESP de 0,3 W e buck a 87,5%, seriam 4,57 A na bateria e
@@ -177,7 +183,7 @@ requer capacidade contínua superior a 5,28 A. Ver esquema §5 e pendência C7.
 | Referência angular fixa 1/rev | sensor óptico ou equivalente, marca no rotor e mesma base de tempo da vibração | fase em G3, quando não há Hall embarcado | ⚠️ | a cotar |
 | Paquímetro digital | 0,01 mm | verificação dimensional | ⚠️ | 30–50 |
 | Tacômetro | necessário até qualificar leitura alternativa de RPM; Bluejay exige novo gerador DShot bidirecional e não fornece a referência fixa de fase | ⚠️ | 0–40 |
-| Analisador lógico / osciloscópio | resolução adequada a SPI de 20–26,67 MHz | verificar clock efetivo, transações e atraso óptico/índice | ⚠️ | a cotar |
+| Analisador lógico / osciloscópio | resolução adequada a SPI de 20–26,67 MHz | verificar clock efetivo, transações, atraso óptico/índice e o tremor com rádio (esquema §9) | ⚠️ | a cotar |
 | Câmera | celular a 240 fps serve | validação visual de jitter | ✅ | — |
 
 > **A resolução da balança é requisito, não conforto.** As versões anteriores
