@@ -2,6 +2,7 @@
 
 Revisões independentes do pacote v3.0, arquivadas por data. Cada uma é um
 registro do estado do projeto num dia, com o que foi verificado e como.
+Propostas datadas que aguardam decisão também ficam aqui, sob a mesma regra.
 
 **Estes documentos não mandam em cota nem em requisito.** A hierarquia de
 autoridade do [`../README.md`](../README.md) continua valendo: o arquivo de
@@ -17,6 +18,7 @@ aqui.
 
 | Arquivo | Escopo | Estado |
 |---|---|---|
+| [`2026-09-21-PROPOSTA-SPI-QUAD.md`](2026-09-21-PROPOSTA-SPI-QUAD.md) | dados das três fitas: cadeia do 05 ou SPI quad, com ensaio de bancada | proposta, não adotada; decisão na 06 C10 |
 | [`2026-09-14-CORRECAO-RAIZES-E-FIACAO.md`](2026-09-14-CORRECAO-RAIZES-E-FIACAO.md) | saliências internas e entradas de fios da aranha, revisão CAD 3.0.5 | corrigidas; sondagem da malha e regressão com os defeitos antigos |
 | [`2026-09-03-REVISAO-DAS-RATIFICACOES.md`](2026-09-03-REVISAO-DAS-RATIFICACOES.md) | pacote na revisão de CAD 3.0.3, depois das ratificações B'3, C2 e C9 | aplicada; o que sobrou está na §7 |
 

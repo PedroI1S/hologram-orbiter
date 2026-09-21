@@ -10,7 +10,7 @@ A revisão independente de 03/09 circulou como documento 08 solto; ela foi
 `parameters.json`, no gerador e nos documentos apontam para a tabela de
 disposição no fim deste arquivo.
 
-**Última atualização:** 08/09/2026 — rev. local 3.0.4. As disposições de 03/09 no fim são históricas; os cálculos corrigidos em 08/09 prevalecem.
+**Última atualização:** 21/09/2026 — acrescentada a C10. Antes: 08/09/2026, rev. local 3.0.4. As disposições de 03/09 no fim são históricas; os cálculos corrigidos em 08/09 prevalecem.
 
 ---
 
@@ -140,6 +140,20 @@ que BLHeli_S **não tem corte por baixa tensão**. Sobra um resíduo estreito:
   `motor_plate.center_clearance_verified` já é `false`. Confirmar com o motor em
   mãos e anotar no DXF antes de cortar a chapa. Lembrar que o arco do suporte do
   ímã ocupa o lado +x: os fios saem por −x.
+
+### C10 · Dados das fitas: cadeia ou SPI quad · **decidir antes dos chicotes**
+
+O esquema 05 liga as três fitas em cadeia numa única saída SPI. A alternativa
+é o modo quad do SPI2, com um clock comum e uma linha de dados por fita.
+Ela triplica a folga de tempo por coluna e elimina a defasagem de 0,5° e 1°
+entre painéis. Também reduz cada chicote de seis para quatro condutores
+(~1,5 g a menos no rotor), sem peça nova e sem mudar o CAD. Os riscos são o
+CLK dividido em três ramos e a ordem dos bits no modo quad.
+
+**Fechar assim:** ensaios A a C da
+[proposta de 21/09](revisoes/2026-09-21-PROPOSTA-SPI-QUAD.md), com as três
+fitas e fios no comprimento real. Decidir antes de montar os chicotes e o
+lastro do G3 (plano 04). Até lá, vale a cadeia do 05.
 
 ### D3 · Orçamento completo de massa e chicotes
 
