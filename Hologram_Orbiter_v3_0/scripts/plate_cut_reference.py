@@ -22,10 +22,10 @@ def holes() -> list[tuple[float, float, float, str]]:
     motor = P["unverified_interfaces"]["motor"]
     bt = P["base_tower"]
     out = []
-    hx = motor["base_bolt_rectangle_x"] / 2
-    hy = motor["base_bolt_rectangle_y"] / 2
-    for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
-        out.append((sx * hx, sy * hy, motor["base_bolt_hole_diameter"], f"motor M3 (retangulo {2 * hx:g} x {2 * hy:g})"))
+    hx = motor["base_bolt_diagonal_x"] / 2
+    hy = motor["base_bolt_diagonal_y"] / 2
+    for x, y in ((hx, 0.0), (0.0, hy), (-hx, 0.0), (0.0, -hy)):
+        out.append((x, y, motor["base_bolt_hole_diameter"], f"motor M3 (cruz, diagonais {2 * hx:g} e {2 * hy:g})"))
     for i in range(4):
         a = math.radians(bt["flange_hole_angle_offset_deg"] + i * 90.0)
         r = bt["flange_hole_pcd"] / 2
@@ -84,7 +84,7 @@ def write_svg(path: Path) -> None:
         parts.append(f'<text x="{cx - od / 2:.3f}" y="{od / 2 + 5:.3f}" font-size="2.4" font-family="sans-serif">arruela Ø{od} × Ø{hole}</text>')
     parts.append(f'<text x="{-w / 2}" y="{d / 2 + 6}" font-size="3.2" font-family="sans-serif">R01 suporte do motor — alumínio {q["thickness"]} mm — escala 1:1 — NÃO IMPRIMIR EM 3D</text>')
     motor = P["unverified_interfaces"]["motor"]
-    parts.append(f'<text x="{-w / 2}" y="{d / 2 + 10.5}" font-size="2.6" font-family="sans-serif">4× Ø{motor["base_bolt_hole_diameter"]} motor ({motor["base_bolt_rectangle_x"]:g} × {motor["base_bolt_rectangle_y"]:g}) · 4× Ø{P["base_tower"]["flange_hole_diameter"]} flange PCD {P["base_tower"]["flange_hole_pcd"]} · centro Ø{q["center_clearance_diameter"]} (verificar)</text>')
+    parts.append(f'<text x="{-w / 2}" y="{d / 2 + 10.5}" font-size="2.6" font-family="sans-serif">4× Ø{motor["base_bolt_hole_diameter"]} motor em cruz (diagonais {motor["base_bolt_diagonal_x"]:g} e {motor["base_bolt_diagonal_y"]:g}) · 4× Ø{P["base_tower"]["flange_hole_diameter"]} flange PCD {P["base_tower"]["flange_hole_pcd"]} · centro Ø{q["center_clearance_diameter"]} (verificar)</text>')
     if wb:
         parts.append(f'<text x="{-w / 2}" y="{d / 2 + 14.5}" font-size="2.6" font-family="sans-serif">Disco à direita: arruela do eixo na mesma chapa — o furo Ø{wb[3]} passa pelo colar Ø8; uma arruela M6 não passa.</text>')
     parts.append("</svg>")

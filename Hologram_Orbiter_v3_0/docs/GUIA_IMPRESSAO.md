@@ -101,7 +101,12 @@ centro e não tem conserto.
 - **Chapa R01** em alumínio 2 mm, cortada pelo DXF/SVG 1:1. O mesmo desenho
   traz o **disco da arruela do eixo, Ø20 × Ø8,5**: cortar da mesma chapa. O
   furo de 8,5 passa pelo colar Ø8 do eixo; uma arruela M6 comum não passa e
-  faria a porca apertar o colar em vez do cubo.
+  faria a porca apertar o colar em vez do cubo. Furação do motor em **cruz**
+  (diagonais 16 e 19), alívio central Ø8.
+- **Réplica impressa da R01** para ensaios em baixa rotação:
+  `teste_impresso/` (STL e G-code Creality em ABS, 2 mm,
+  100 % maciço), gerada por `scripts/r01_placa_teste.py`. Não substitui o
+  alumínio na operação a 1800 RPM.
 - **Porca do eixo: M6 fina DIN 439B (3 mm) com Loctite 243**, a 0,6 N·m. Não a
   cônica do motor, não a autotravante baixa de 6 mm.
 - Dois dos quatro M4 da flange passam sob a aba do suporte do ímã (2,5 mm):

@@ -30,6 +30,7 @@ novos sondam as raízes e as janelas na malha final dos três braços.
 | Cupom do canal do LED (fatia real de 30 mm do painel) | `exports/stl/C02_cupom_canal_LED.stl` | imprimir primeiro |
 | Chapa do motor (referência, NÃO imprimir) | `exports/stl/R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl` | — |
 | Chapa do motor **e disco da arruela do eixo** para corte 1:1 | `fabricacao/R01_suporte_motor_60x60_aluminio_2mm.dxf` / `.svg` | alumínio 2 mm |
+| Réplica impressa da chapa, para ensaios em baixa rotação (`scripts/r01_placa_teste.py`) | `teste_impresso/*.stl` / `*.gcode` | ABS 2 mm |
 | Montagem editável (com envelopes da eletrônica da baia) | `exports/fonte/Hologram_Orbiter_v3_0.blend` | — |
 | Renders de inspeção; `montagem_baia.png` mostra o layout da baia | `exports/preview/*.png` | — |
 | Parâmetros (fonte de verdade) | `CAD/parameters.json` | — |

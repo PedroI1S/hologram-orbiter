@@ -12,12 +12,12 @@ A validação dos STL exportados aparece em stl_validation.json; o build só pub
 |---|---:|---|---:|
 | spider | 70.88 | [148.763, 171.777, 35.0] | 10988 |
 | panel_each | 31.94 | [30.0, 50.0, 208.0] | 3988 |
-| lid | 10.12 | [82.0, 82.0, 5.0] | 6552 |
+| lid | 10.12 | [82.0, 82.0, 5.0] | 6538 |
 | base_tower | 319.8 | [280.0, 280.0, 154.0] | 8080 |
 | magnet_bracket | 1.81 | [23.386, 41.554, 21.5] | 1726 |
 | joint_coupon | 10.07 | [58.0, 24.0, 12.0] | 60 |
 | led_coupon | 3.53 | [8.0, 30.0, 30.0] | 154 |
-| motor_plate_reference_aluminium | 18.38 | [60.0, 60.0, 2.0] | 3536 |
+| motor_plate_reference_aluminium | 18.72 | [60.0, 60.0, 2.0] | 3528 |
 
 ## Física
 

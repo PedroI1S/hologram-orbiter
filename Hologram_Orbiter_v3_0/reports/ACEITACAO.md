@@ -57,7 +57,7 @@ Consulte `FISICA.json` e os bloqueadores de resistência, fluência, massa e ins
 | Malhas (arestas não-manifold no gerador) | 0 | 0 | ✅ | validação independente em reports/stl_validation.json |
 | Base + brim cabe na mesa | 296.0 – 296.0 | ≤ [300.0, 300.0] mm (X e Y) | ✅ | envelope medido em cada eixo, com o brim configurado |
 | Piso da baia íntegro sob os furos da flange | 0.0 – 12.0 | sólido de Z = 0 até a flange inferior (12) | ✅ | 06-PENDENCIAS B3; furos só na flange superior: True |
-| Rebaixo da flange livra as cabeças dos M3 do motor | 3.5 – 16.0 | profundidade ≥ 3.3 mm e raio livre ≥ 15.5 mm | ✅ | medido na malha; cabeça Ø5.5 × 3.0 em r = 12.42 (retângulo 16 × 19). Os M4 em PCD 40 ficam fora do rebaixo e continuam definindo o assento da chapa |
+| Rebaixo da flange livra as cabeças dos M3 do motor | 3.5 – 16.0 | profundidade ≥ 3.3 mm e raio livre ≥ 12.6 mm | ✅ | medido na malha; cabeça Ø5.5 × 3.0 em r = 9.50 (cruz de diagonais 16 e 19). Os M4 em PCD 40 ficam fora do rebaixo e continuam definindo o assento da chapa |
 | Abas de grampo com furo livre | True | livre | ✅ | 4 abas a 90°, furo Ø5 em r = 149 |
 | Fita de 201,4 mm cabe no canal | 102.9 | ≤ 104 mm (topo do painel) | ✅ | batente em Z=-98.5 por causa do bolso de fios |
 | Suporte do ímã com dois pontos de fixação | 2 | ≥ 2 parafusos | ✅ | 06-PENDENCIAS B4; arco a 4.6 mm da campânula |

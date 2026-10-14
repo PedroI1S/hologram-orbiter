@@ -1332,7 +1332,7 @@ def build_base_tower() -> bpy.types.Object:
 
     # Rebaixo para as cabeças dos 4 × M3 do motor (revisão de 03/09, item 3). Os M3
     # entram por baixo da chapa R01 e as cabeças ficam entre a chapa e a flange,
-    # em r = 12,42. Sem este rebaixo a chapa apoia nas quatro cabeças e não na
+    # em r = 8 e 9,5 (cruz de diagonais 16 e 19). Sem este rebaixo a chapa apoia nas quatro cabeças e não na
     # flange, e o Datum B sai 2–3 mm alto. O piso do rebaixo olha para cima:
     # não acrescenta balanço à impressão.
     fmr = q.get("flange_motor_recess", {"enabled": False})
@@ -1547,10 +1547,11 @@ def build_motor_plate_reference() -> bpy.types.Object:
     motor = P["unverified_interfaces"]["motor"]
     plate = cube("motor_plate_reference", (q["width"], q["depth"], q["thickness"]), (0.0, 0.0, q["thickness"] / 2))
     cutters = []
-    hx = motor["base_bolt_rectangle_x"] / 2
-    hy = motor["base_bolt_rectangle_y"] / 2
-    for i, (sx, sy) in enumerate(((-1, -1), (1, -1), (1, 1), (-1, 1))):
-        cutters.append(cylinder(f"motor_plate_motor_hole_{i}", motor["base_bolt_hole_diameter"] / 2, q["thickness"] + 0.4, (sx * hx, sy * hy, q["thickness"] / 2)))
+    # Furação do motor em cruz: 16 e 19 mm são as diagonais (furos opostos).
+    hx = motor["base_bolt_diagonal_x"] / 2
+    hy = motor["base_bolt_diagonal_y"] / 2
+    for i, (x, y) in enumerate(((hx, 0.0), (0.0, hy), (-hx, 0.0), (0.0, -hy))):
+        cutters.append(cylinder(f"motor_plate_motor_hole_{i}", motor["base_bolt_hole_diameter"] / 2, q["thickness"] + 0.4, (x, y, q["thickness"] / 2)))
     bt = P["base_tower"]
     for i in range(4):
         x, y = polar(bt["flange_hole_pcd"] / 2, bt["flange_hole_angle_offset_deg"] + i * 90.0)
@@ -1784,9 +1785,12 @@ def measure_base(base: bpy.types.Object) -> dict:
     # Revisão 08, item 3: rebaixo para as cabeças dos M3 do motor, medido na
     # malha — profundidade no raio da cabeça e raio livre no topo da flange.
     mot = P["unverified_interfaces"]["motor"]
-    r_head = math.hypot(mot["base_bolt_rectangle_x"] / 2, mot["base_bolt_rectangle_y"] / 2)
+    # Cruz 16/19: o parafuso mais externo fica em r = 9,5, a 90°. A cabeça cai quase toda
+    # sobre o furo Ø22 da torre; a sonda vai na borda externa dela, sobre o piso do rebaixo.
+    r_head = max(mot["base_bolt_diagonal_x"], mot["base_bolt_diagonal_y"]) / 2
     out["motor_screw_radius_mm"] = round(r_head, 3)
-    hx2, hy2 = polar(r_head, 30.0)  # longe dos furos M4 (45°) e do furo da torre
+    r_probe = r_head + mot["base_bolt_head_diameter"] / 2 - 0.3
+    hx2, hy2 = polar(r_probe, 90.0 if mot["base_bolt_diagonal_y"] >= mot["base_bolt_diagonal_x"] else 0.0)
     runs = pr.solid_runs((hx2, hy2, -1.0), (0, 0, 1), tower_top + 2.0)
     top_at_head = (runs[-1][1] - 1.0) if runs else None
     out["flange_top_at_motor_screw_radius_mm"] = round(top_at_head, 3) if top_at_head is not None else None
@@ -2467,8 +2471,8 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
             [rec_d, rec_r],
             "profundidade ≥ %.1f mm e raio livre ≥ %.1f mm" % (head_h + 0.3, need_r),
             rec_d >= head_h + 0.3 and rec_r >= need_r,
-            "medido na malha; cabeça Ø%.1f × %.1f em r = %.2f (retângulo %g × %g). Os M4 em PCD %g ficam fora do rebaixo e continuam definindo o assento da chapa"
-            % (head_d, head_h, r_screw, P["unverified_interfaces"]["motor"]["base_bolt_rectangle_x"], P["unverified_interfaces"]["motor"]["base_bolt_rectangle_y"], P["base_tower"]["flange_hole_pcd"]),
+            "medido na malha; cabeça Ø%.1f × %.1f em r = %.2f (cruz de diagonais %g e %g). Os M4 em PCD %g ficam fora do rebaixo e continuam definindo o assento da chapa"
+            % (head_d, head_h, r_screw, P["unverified_interfaces"]["motor"]["base_bolt_diagonal_x"], P["unverified_interfaces"]["motor"]["base_bolt_diagonal_y"], P["base_tower"]["flange_hole_pcd"]),
         )
     if rb.get("clamp_tab_hole_free") is not None:
         add("Abas de grampo com furo livre", rb["clamp_tab_hole_free"], "livre", rb["clamp_tab_hole_free"], "%d abas a %.0f°, furo Ø%.0f em r = %.0f" % (P["base_tower"]["clamp_tabs"]["count"], 360.0 / P["base_tower"]["clamp_tabs"]["count"], P["base_tower"]["clamp_tabs"]["hole_diameter"], P["base_tower"]["clamp_tabs"]["hole_radius"]))

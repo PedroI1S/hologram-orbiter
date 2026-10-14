@@ -21,7 +21,7 @@ Use paquímetro calibrado, três leituras. Depois de medir, atualize
 | # | O que medir | Campo em parameters.json | Valor atual (provisório) | Efeito |
 |---|---|---|---|---|
 | 1 | **Eixo, a partir da face em que o cubo assenta: altura do topo do colar Ø8 e da ponta da rosca; Ø do colar** | `shaft.collar_top_above_bell`, `shaft.protrusion_above_bell`, `shaft.collar_diameter` | 7 · 14 · Ø8 (desenho; a soma 5 + 7 = 12 não fecha com 14) | Rosca sobrando (3 ou 1 mm), colar × arruela, furo do cubo |
-| 2 | Eixo sai por baixo da base do motor? Quanto? | `motor_plate.center_clearance_diameter` | Ø12 | Furo central da chapa |
+| 2 | Eixo sai por baixo da base do motor? Quanto? | `motor_plate.center_clearance_diameter` | Ø8 (era Ø12; com os M3 em cruz a r = 8 sobravam 0,4 mm de alma) | Furo central da chapa |
 | 3 | Arruela cortada e porca fina compradas: espessura e altura reais | `unverified_interfaces.m6_nut.washer_thickness`, `.height` | 2,0 · 3,0 | Topo da porca (+5) contra os trilhos (Z = 9) |
 | 4 | **Massa e envelope de cada componente da baia** (placa de interface, ESP32-C3, mini560, capacitor, fios) | `spider.bay_layout.components[*].mass_g`, `size_xyz`, `center_xy` | catálogo: 5,5 · 3,0 · 2,0 · 2,5 · 2,0 g | Subtotal/margem a recalcular, contrapesos do relatório atual, janela da tampa |
 | 5 | Ímã: Ø × h e polaridade (face voltada ao sensor) | `unverified_interfaces.magnet`, `magnet_bracket.magnet_pocket_*` | Ø4 × 2 | Alojamento no poste, pulso de índice |

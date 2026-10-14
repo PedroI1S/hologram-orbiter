@@ -103,14 +103,15 @@
       "body_verified": true,
       "body_source": "paquimetro, 02/09/2026 (glossario secao 2): 38 mm no total = 24 do corpo + 14 do eixo, Ø27,8 — coincide com o datasheet",
       "mass_g": 52.0,
-      "base_bolt_rectangle_x": 16.0,
-      "base_bolt_rectangle_y": 19.0,
+      "base_bolt_diagonal_x": 16.0,
+      "base_bolt_diagonal_y": 19.0,
+      "base_bolt_pattern_note": "Padrao em CRUZ: 16 e 19 mm sao as diagonais (distancia entre furos opostos), furos em (+-8, 0) e (0, +-9,5). Corrigido em 14/10/2026; ate entao o modelo tratava os valores como lados de um retangulo 16 x 19 (furos em r = 12,42), e a chapa cortada por aquele DXF nao encaixava no motor.",
       "base_bolt_hole_diameter": 3.2,
       "base_bolt_head_diameter": 5.5,
       "base_bolt_head_height": 3.0,
-      "base_bolt_head_note": "Pior caso: M3 cilindrico ISO 4762 (cabeca O5,5 x 3,0). Um M3 panela (O5,6 x 2,4) tambem cabe no rebaixo O32 x 3,5 da flange. As cabecas ficam sob a chapa R01, em r = 12,42.",
+      "base_bolt_head_note": "Pior caso: M3 cilindrico ISO 4762 (cabeca O5,5 x 3,0). Um M3 panela (O5,6 x 2,4) tambem cabe no rebaixo O32 x 3,5 da flange. As cabecas ficam sob a chapa R01, em r = 8 e 9,5 (cruz 16/19): a borda externa (ate r = 12,25) fica sobre o piso do rebaixo, o resto sobre o furo O22 da torre.",
       "base_pattern_verified": true,
-      "base_pattern_source": "datasheet (4-M3 em retangulo 16 x 19)"
+      "base_pattern_source": "datasheet (4-M3 em cruz, diagonais 16 e 19); leitura corrigida em 14/10/2026"
     },
     "motor_stack": {
       "plate_top_to_bell_face": 24.0,
@@ -801,7 +802,7 @@
       "enabled": true,
       "diameter": 32.0,
       "depth": 3.5,
-      "note": "REVISAO 03/09 item 3 (ver 06-PENDENCIAS-ABERTAS): rebaixo no TOPO da flange superior para as cabecas dos 4 x M3 que prendem o motor. Os M3 entram por baixo da chapa R01 (o motor tem furo roscado na base), logo as cabecas ficam ENTRE a chapa e a flange, em r = 12,42 (retangulo 16 x 19). A face superior da flange era um anel solido de r = 11 (furo da torre O22) a r = 30: as cabecas O5,5 (r 9,7 a 15,2) assentavam nela, a chapa nao encostava, o motor ficava 2-3 mm alto apoiado em quatro cabecas e o Datum B = 186 saia errado no mesmo valor. O rebaixo O32 x 3,5 abre r <= 16 (0,8 mm de folga radial sobre a cabeca) e 0,5 mm de folga sobre uma cabeca cilindrica de 3,0. Os 4 furos M4 em PCD 40 (r = 20) ficam FORA do rebaixo: a chapa continua assentando no anel r 16-30 da face original, que e o assento que define o Datum B. Nao cria balanco novo: o piso do rebaixo olha para cima. Alternativa descartada: M3 escareado na chapa de 2 mm (cabe, mas depende da chapa ser cortada e escareada certo e some do modelo)."
+      "note": "REVISAO 03/09 item 3 (ver 06-PENDENCIAS-ABERTAS): rebaixo no TOPO da flange superior para as cabecas dos 4 x M3 que prendem o motor. Os M3 entram por baixo da chapa R01 (o motor tem furo roscado na base), logo as cabecas ficam ENTRE a chapa e a flange, em r = 8 e 9,5 (cruz de diagonais 16 e 19; ate 14/10/2026 o modelo usava por engano um retangulo 16 x 19, r = 12,42). A face superior da flange era um anel solido de r = 11 (furo da torre O22) a r = 30: as cabecas O5,5 (r 5,25 a 12,25) assentavam nela pela borda externa, a chapa nao encostava, o motor ficava 2-3 mm alto apoiado em quatro cabecas e o Datum B = 186 saia errado no mesmo valor. O rebaixo O32 x 3,5 abre r <= 16 (3,75 mm de folga radial sobre a cabeca mais externa) e 0,5 mm de folga sobre uma cabeca cilindrica de 3,0. Os 4 furos M4 em PCD 40 (r = 20) ficam FORA do rebaixo: a chapa continua assentando no anel r 16-30 da face original, que e o assento que define o Datum B. Nao cria balanco novo: o piso do rebaixo olha para cima. Alternativa descartada: M3 escareado na chapa de 2 mm (cabe, mas depende da chapa ser cortada e escareada certo e some do modelo)."
     },
     "flange_hole_pcd": 40.0,
     "flange_hole_diameter": 4.0,
@@ -874,9 +875,9 @@
     "width": 60.0,
     "depth": 60.0,
     "thickness": 2.0,
-    "center_clearance_diameter": 12.0,
+    "center_clearance_diameter": 8.0,
     "center_clearance_verified": false,
-    "center_clearance_note": "Alivio para a ponta inferior do eixo/anel elastico e passagem dos fios de fase. Confirmar no motor real.",
+    "center_clearance_note": "Alivio para a ponta inferior do eixo/anel elastico. O8 desde 14/10/2026: com os M3 em r = 8 (cruz 16/19) o O12 anterior deixava 0,4 mm de alma ate o furo M3; o O8 deixa 2,4 mm. Nao passa os fios de fase (ver 06-PENDENCIAS C9). Confirmar no motor real.",
     "washer_blank": {
       "enabled": true,
       "outer_diameter": 20.0,

@@ -108,7 +108,7 @@
         0.0,
         1.229
       ],
-      "triangles": 6552,
+      "triangles": 6538,
       "non_manifold_edges": 0
     },
     "base_tower": {
@@ -231,14 +231,14 @@
         30.0,
         2.0
       ],
-      "volume_cm3": 6.809,
-      "estimated_mass_g": 18.38,
+      "volume_cm3": 6.935,
+      "estimated_mass_g": 18.72,
       "centroid_mm": [
         0.0,
-        0.0,
+        -0.0,
         1.0
       ],
-      "triangles": 3536,
+      "triangles": 3528,
       "non_manifold_edges": 0
     }
   },
@@ -617,7 +617,7 @@
         12.0
       ],
       "upper_flange_hole_free": true,
-      "motor_screw_radius_mm": 12.42,
+      "motor_screw_radius_mm": 9.5,
       "flange_motor_recess_depth_mm": 3.5,
       "flange_recess_free_radius_mm": 16.0,
       "motor_screw_head_diameter_mm": 5.5,
@@ -711,7 +711,7 @@
           22.0
         ],
         [
-          -24.99999999999999,
+          -24.999999999999993,
           43.30127018922194,
           22.0
         ],
@@ -1406,9 +1406,9 @@
         3.5,
         16.0
       ],
-      "requisito": "profundidade ≥ 3.3 mm e raio livre ≥ 15.5 mm",
+      "requisito": "profundidade ≥ 3.3 mm e raio livre ≥ 12.6 mm",
       "passa": true,
-      "nota": "medido na malha; cabeça Ø5.5 × 3.0 em r = 12.42 (retângulo 16 × 19). Os M4 em PCD 40 ficam fora do rebaixo e continuam definindo o assento da chapa"
+      "nota": "medido na malha; cabeça Ø5.5 × 3.0 em r = 9.50 (cruz de diagonais 16 e 19). Os M4 em PCD 40 ficam fora do rebaixo e continuam definindo o assento da chapa"
     },
     {
       "criterio": "Abas de grampo com furo livre",
@@ -1481,14 +1481,15 @@
       "body_verified": true,
       "body_source": "paquimetro, 02/09/2026 (glossario secao 2): 38 mm no total = 24 do corpo + 14 do eixo, Ø27,8 — coincide com o datasheet",
       "mass_g": 52.0,
-      "base_bolt_rectangle_x": 16.0,
-      "base_bolt_rectangle_y": 19.0,
+      "base_bolt_diagonal_x": 16.0,
+      "base_bolt_diagonal_y": 19.0,
+      "base_bolt_pattern_note": "Padrao em CRUZ: 16 e 19 mm sao as diagonais (distancia entre furos opostos), furos em (+-8, 0) e (0, +-9,5). Corrigido em 14/10/2026; ate entao o modelo tratava os valores como lados de um retangulo 16 x 19 (furos em r = 12,42), e a chapa cortada por aquele DXF nao encaixava no motor.",
       "base_bolt_hole_diameter": 3.2,
       "base_bolt_head_diameter": 5.5,
       "base_bolt_head_height": 3.0,
-      "base_bolt_head_note": "Pior caso: M3 cilindrico ISO 4762 (cabeca O5,5 x 3,0). Um M3 panela (O5,6 x 2,4) tambem cabe no rebaixo O32 x 3,5 da flange. As cabecas ficam sob a chapa R01, em r = 12,42.",
+      "base_bolt_head_note": "Pior caso: M3 cilindrico ISO 4762 (cabeca O5,5 x 3,0). Um M3 panela (O5,6 x 2,4) tambem cabe no rebaixo O32 x 3,5 da flange. As cabecas ficam sob a chapa R01, em r = 8 e 9,5 (cruz 16/19): a borda externa (ate r = 12,25) fica sobre o piso do rebaixo, o resto sobre o furo O22 da torre.",
       "base_pattern_verified": true,
-      "base_pattern_source": "datasheet (4-M3 em retangulo 16 x 19)"
+      "base_pattern_source": "datasheet (4-M3 em cruz, diagonais 16 e 19); leitura corrigida em 14/10/2026"
     },
     "motor_stack": {
       "plate_top_to_bell_face": 24.0,

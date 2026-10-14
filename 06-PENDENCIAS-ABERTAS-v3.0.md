@@ -135,7 +135,7 @@ que BLHeli_S **não tem corte por baixa tensão**. Sobra um resíduo estreito:
   descer se o ESC ficar frio e a comutação limpa. Se houver instabilidade,
   suba a tensão antes de suspeitar do sinal.
 - **Fios de fase.** O motor assenta plano na chapa R01 e os fios saem pela
-  lateral do estator. Para descerem pelo alívio central Ø12 e pela torre eles
+  lateral do estator. Para descerem pelo alívio central (agora Ø8) e pela torre eles
   precisam de um rasgo na chapa ou de um caminho pela borda —
   `motor_plate.center_clearance_verified` já é `false`. Confirmar com o motor em
   mãos e anotar no DXF antes de cortar a chapa. Lembrar que o arco do suporte do

@@ -429,7 +429,7 @@ que a base é apoiada numa mesa. Alvo de área livre: ≥ 600 mm².
 > **Não confunda o propósito.** Esta ventilação serve à baia — eletrônica de
 > base, cabos, calor por condução pela torre. **Ela não refrigera o motor**, que
 > fica em Z = 156, acima e fora da baia: o único caminho baia → motor é o furo da
-> torre e o Ø12 da chapa, cerca de 113 mm². A temperatura do motor é definida
+> torre e o Ø8 da chapa, cerca de 50 mm². A temperatura do motor é definida
 > pelo ar ao redor dele e se resolve por medição, no Bloqueador B.
 
 > **O diâmetro de Ø280 é definitivo, e quem manda nele é a impressora.** A mesa
@@ -450,11 +450,17 @@ Chapa de 60 × 60 × 2 mm. **Não imprimir.** Gerar como referência de corte.
 
 | Furação | Padrão |
 |---|---|
-| Motor | **4 × Ø3,2 num retângulo de 16 × 19 mm** — ver §6.1 |
+| Motor | **4 × Ø3,2 em cruz, diagonais de 16 e 19 mm**: furos em (±8, 0) e (0, ±9,5) — ver §6.1 |
 | Flange da torre | 4 × Ø4 em PCD 40, a 45° |
+| Alívio central | Ø8 (ponta inferior do eixo; **não verificado**) |
 
-Os dois padrões não colidem: raio máximo do padrão do motor ≈ 12,4 mm contra
-20 mm do padrão da flange.
+Os padrões não colidem: o furo do motor mais externo fica em r = 9,5 mm, contra
+20 mm do padrão da flange. A alma entre o alívio central Ø8 e os M3 em r = 8 é
+de 2,4 mm; o Ø12 anterior deixava 0,4 mm.
+
+Para ensaios em baixa rotação há uma réplica impressa em ABS, com a mesma
+furação e folgas de impressão: `Hologram_Orbiter_v3_0/teste_impresso/`, gerada por
+`scripts/r01_placa_teste.py`.
 
 ### 5.6 Contrapesos
 
@@ -512,15 +518,17 @@ os 4 furos Ø4 em PCD 40 já servem aos dois caminhos.
 | Corpo | Ø27,8 × 24 mm (**medido** em 02/09/2026) |
 | Massa | 52 g |
 | Tensão | 7,4–14,8 V (2–4S) |
-| **Furação da base** | **4 × M3 num retângulo de 16 × 19 mm** |
+| **Furação da base** | **4 × M3 em cruz: diagonais de 16 e 19 mm** — furos em (±8, 0) e (0, ±9,5) |
 | **Eixo** | desenho cotado: **colar Ø8 × 5 + rosca M6 × 7** dentro de uma saliência total de **14** (a soma dá 12; os 2 mm restantes devem ser um ressalto Ø6,9 sob o colar) — **medir topo do colar e ponta a partir da face de apoio** |
 | Porca do eixo | cônica, M6, sextavado 12 mm, 14 mm de altura |
 | Constante de torque | 10,38 mN·m/A |
 | Resistência efetiva | 0,221 Ω |
 
-> **Dois pontos onde é fácil errar.** A furação da base é um **retângulo de
-> 16 × 19 mm**, não um círculo de furos — e ela fica na **base** do motor, onde
-> saem os fios. A **campânula é vazada, com 5 raios, e não tem furos roscados**:
+> **Dois pontos onde é fácil errar.** A furação da base é uma **cruz**: 16 e
+> 19 mm são as **diagonais** (distância entre furos opostos), não os lados de um
+> retângulo nem um círculo de furos — e ela fica na **base** do motor, onde saem
+> os fios. Até 14/10/2026 o modelo lia 16 × 19 como retângulo; a chapa cortada
+> por aquele DXF não encaixava no motor. A **campânula é vazada, com 5 raios, e não tem furos roscados**:
 > o eixo M6 é o único caminho nativo de fixação. Os 4 furos em PCD 19 do cubo só
 > servem com adaptador de hélice comprado à parte.
 >

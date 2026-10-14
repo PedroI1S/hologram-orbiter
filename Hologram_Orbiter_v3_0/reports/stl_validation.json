@@ -126,7 +126,7 @@
     },
     {
       "file": "03_tampa_baia_ABS.stl",
-      "triangle_count": 6552,
+      "triangle_count": 6538,
       "dimensions_mm": [
         82.0,
         82.0,
@@ -306,7 +306,7 @@
     },
     {
       "file": "R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl",
-      "triangle_count": 3536,
+      "triangle_count": 3528,
       "dimensions_mm": [
         60.0,
         60.0,
@@ -322,7 +322,7 @@
         30.0,
         2.0
       ],
-      "signed_volume_cm3": 6.8092,
+      "signed_volume_cm3": 6.9348,
       "degenerate_triangles": 0,
       "non_two_manifold_edges": 0,
       "connected_components": 1,

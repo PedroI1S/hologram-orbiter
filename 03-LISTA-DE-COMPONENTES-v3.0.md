@@ -39,7 +39,7 @@ painéis de 208 mm por causa de folga na junta ou no canal.
 
 | Item | Espec | Sit. | ~R$ |
 |---|---|:--:|---:|
-| Motor BLDC | **A2212 920KV**, 2–4S, 52 g, eixo M6, base 4×M3 em 16 × 19 mm | ✅ | — |
+| Motor BLDC | **A2212 920KV**, 2–4S, 52 g, eixo M6, base 4×M3 em cruz (diagonais 16 e 19 mm) | ✅ | — |
 | ESC | **LittleBee Spring 20A**, BLHeli_S, 25 × 13 mm | ✅ | — |
 | Fonte de bancada | ajustável; operar em **6–7 V**, ≥ 5 A | ✅ | — |
 | Gerador do sinal do ESC | **ESP32 DevKit de 30 pinos em mãos** (módulo "ESP-32" genérico, marcação XX5R69), no lugar do Arduino; também hospeda a página da imagem pelo celular (§9 do esquema). Firmware de rampa **≥ 12 s**, teto do pulso, watchdog e botões ainda a implementar — ver §8 do esquema | ✅ | — |
@@ -151,7 +151,7 @@ requer capacidade contínua superior a 5,28 A. Ver esquema §5 e pendência C7.
 | Chapa de alumínio | 2 mm, 60 × 60 mm, cortada e furada | 1 | 🛒 | 10 |
 | Parafuso **M3 × 40** + porca **plana** M3 | fixação painel → longarina | 6 + 6 | 🛒 | 10 |
 | Trava química média (Loctite 243) | substitui o nyloc nas juntas do painel | 1 | 🛒 | 25 |
-| Parafuso **M3 × 6** | motor → chapa (padrão 16 × 19 mm) | 4 | 🛒 | 3 |
+| Parafuso **M3 × 6** | motor → chapa (cruz, diagonais 16 e 19 mm) | 4 | 🛒 | 3 |
 | Parafuso M4 × 16 (2) e **M4 × 20** (2, sob a aba de 2,5 mm do suporte do ímã) + porca nylon | chapa → flange da torre | 4 + 4 | 🛒 | 5 |
 | Parafuso M3 × 10 | tampa da baia | 2 | 🛒 | 2 |
 | Massa de balanceamento | fita adesiva de chumbo ou tungstênio | — | 🛒 | 20 |

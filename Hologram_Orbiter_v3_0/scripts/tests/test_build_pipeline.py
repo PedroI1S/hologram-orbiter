@@ -130,7 +130,7 @@ class PipelineTests(unittest.TestCase):
     def test_success_propagates_parameters_preserves_manual_and_hashes_outputs(self) -> None:
         p = json.loads((self.root / "CAD" / "parameters.json").read_text())
         p["motor_plate"]["width"] = 62.0
-        p["unverified_interfaces"]["motor"]["base_bolt_rectangle_x"] = 18.0
+        p["unverified_interfaces"]["motor"]["base_bolt_diagonal_x"] = 18.0
         p["containment_cap"]["enabled"] = True
         custom = Path(self.tmp.name) / "custom parameters.json"
         custom.write_text(json.dumps(p))
@@ -143,7 +143,10 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(len(list((self.root / "exports" / "stl").glob("*.stl"))), 10)
         svg = next((self.root / "fabricacao").glob("*.svg")).read_text()
         self.assertIn('width="62.0"', svg)
-        self.assertIn('18 × 19', svg)
+        self.assertIn('diagonais 18 e 19', svg)
+        # Furação do motor em cruz: 18 e 19 são as diagonais, furos em (±9, 0) e (0, ±9,5).
+        self.assertIn('cx="9.000" cy="-0.000"', svg)
+        self.assertIn('cx="0.000" cy="9.500"', svg)
         manifest = json.loads((self.root / "reports" / "build_manifest.json").read_text())
         self.assertFalse(manifest["previews_generated"])
         self.assertEqual(manifest["inputs"]["parameters"]["sha256"], hashlib.sha256(custom.read_bytes()).hexdigest())

@@ -15,7 +15,8 @@ e dela que sai o eixo. **Não confundir com o cilindro de proteção.** Neste mo
 ela é vazada, com 5 raios, e não tem furos roscados.
 
 **Base do motor** — a parte **fixa**, onde saem os três fios de fase. É ela que
-parafusa na chapa de alumínio, pelo padrão de 4 × M3 em retângulo 16 × 19 mm.
+parafusa na chapa de alumínio, pelo padrão de 4 × M3 em cruz: 16 e 19 mm são as
+diagonais, com furos em (±8, 0) e (0, ±9,5).
 
 **Colar do eixo** — o trecho Ø8 × 5 mm do eixo entre a campânula e a rosca M6.
 É ele que centra o cubo (furo Ø8 H8), e é por ele que a arruela precisa de furo
@@ -161,7 +162,7 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | Motor, kv | A2212, 920 kv | datasheet | ✅ medido |
 | Kt | 10,38 mN·m/A | `9,5493/kv` | ✅ derivado |
 | Resistência efetiva | 0,221 Ω | ponto de catálogo com hélice | ⚠️ **envelope, não Rm** |
-| Furação da base do motor | retângulo 16 × 19, 4 × M3 | datasheet | ✅ |
+| Furação da base do motor | cruz, diagonais 16 e 19, 4 × M3 | datasheet (leitura corrigida em 14/10/2026) | ✅ |
 | Campânula | vazada, 5 raios, sem furos roscados | datasheet | ✅ |
 | Eixo | colar Ø8 × 5 + rosca M6 × 7, sob cota total de 14 (a soma dá 12) | desenho cotado do datasheet | ⚠️ **medir topo do colar e ponta a partir da face de apoio** |
 | Corpo do motor | 24 mm × Ø27,8 | medido | ✅ |
