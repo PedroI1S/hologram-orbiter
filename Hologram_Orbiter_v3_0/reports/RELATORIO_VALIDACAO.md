@@ -5,7 +5,7 @@ Gerado por CAD/generate.py na mesma execução de geometry_report.json e FISICA.
 
 ## Geometria
 
-Critérios: 58/58. Ver ACEITACAO.md para requisitos e cobertura.
+Critérios: 59/59. Ver ACEITACAO.md para requisitos e cobertura.
 A validação dos STL exportados aparece em stl_validation.json; o build só publica se ela também passar.
 
 | Peça | Massa CAD (g) | Dimensões (mm) | Triângulos |
@@ -13,11 +13,11 @@ A validação dos STL exportados aparece em stl_validation.json; o build só pub
 | spider | 70.88 | [148.763, 171.777, 35.0] | 10988 |
 | panel_each | 31.94 | [30.0, 50.0, 208.0] | 3988 |
 | lid | 10.12 | [82.0, 82.0, 5.0] | 6538 |
-| base_tower | 319.8 | [280.0, 280.0, 154.0] | 8080 |
-| magnet_bracket | 1.81 | [23.386, 41.554, 21.5] | 1726 |
+| base_tower | 319.8 | [280.0, 280.0, 154.0] | 8082 |
+| magnet_bracket | 1.81 | [38.701, 30.008, 21.5] | 1736 |
 | joint_coupon | 10.07 | [58.0, 24.0, 12.0] | 60 |
 | led_coupon | 3.53 | [8.0, 30.0, 30.0] | 154 |
-| motor_plate_reference_aluminium | 18.72 | [60.0, 60.0, 2.0] | 3528 |
+| motor_plate_reference_aluminium | 18.72 | [60.0, 60.0, 2.0] | 3512 |
 
 ## Física
 

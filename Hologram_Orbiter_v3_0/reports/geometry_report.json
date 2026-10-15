@@ -134,33 +134,33 @@
         0.0,
         34.075
       ],
-      "triangles": 8080,
+      "triangles": 8082,
       "non_manifold_edges": 0
     },
     "magnet_bracket": {
       "dimensions_mm": [
-        23.386,
-        41.554,
+        38.701,
+        30.008,
         21.5
       ],
       "bounds_min_mm": [
-        9.804,
-        -20.777,
+        -5.511,
+        -5.511,
         0.0
       ],
       "bounds_max_mm": [
         33.19,
-        20.777,
+        24.497,
         21.5
       ],
       "volume_cm3": 1.739,
       "estimated_mass_g": 1.81,
       "centroid_mm": [
-        24.307,
-        6.567,
+        22.472,
+        10.996,
         6.8
       ],
-      "triangles": 1726,
+      "triangles": 1736,
       "non_manifold_edges": 0
     },
     "joint_coupon": {
@@ -235,10 +235,10 @@
       "estimated_mass_g": 18.72,
       "centroid_mm": [
         0.0,
-        -0.0,
+        0.0,
         1.0
       ],
-      "triangles": 3528,
+      "triangles": 3512,
       "non_manifold_edges": 0
     }
   },
@@ -638,7 +638,7 @@
       "arc_to_bell_clearance_mm": 4.6,
       "winding_scan": {
         "pitch_mm": 0.5,
-        "rays": 10195,
+        "rays": 11350,
         "bad_winding_segments": 0,
         "thin_solid_segments": 0,
         "examples": []
@@ -1149,7 +1149,7 @@
       ],
       "requisito": "0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm",
       "passa": true,
-      "nota": "10195 raios, passo 0.5 mm"
+      "nota": "11350 raios, passo 0.5 mm"
     },
     {
       "criterio": "Furo do cubo livre",
@@ -1430,6 +1430,16 @@
       "requisito": "≥ 2 parafusos",
       "passa": true,
       "nota": "06-PENDENCIAS B4; arco a 4.6 mm da campânula"
+    },
+    {
+      "criterio": "Furos do suporte do ímã coincidem com os M4 da flange",
+      "valor": [
+        0.0,
+        90.0
+      ],
+      "requisito": "cada furo do suporte sobre um M4",
+      "passa": true,
+      "nota": "M4 da flange a 0, 90, 180, 270°"
     },
     {
       "criterio": "Folga do suporte do ímã à campânula",

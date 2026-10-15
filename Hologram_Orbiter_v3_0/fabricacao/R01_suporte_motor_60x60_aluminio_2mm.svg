@@ -4,10 +4,10 @@
 <circle cx="0.000" cy="-9.500" r="1.600" fill="none" stroke="#000" stroke-width="0.3"><title>motor M3 (cruz, diagonais 16 e 19) Ø3.2</title></circle>
 <circle cx="-8.000" cy="-0.000" r="1.600" fill="none" stroke="#000" stroke-width="0.3"><title>motor M3 (cruz, diagonais 16 e 19) Ø3.2</title></circle>
 <circle cx="0.000" cy="9.500" r="1.600" fill="none" stroke="#000" stroke-width="0.3"><title>motor M3 (cruz, diagonais 16 e 19) Ø3.2</title></circle>
-<circle cx="14.142" cy="-14.142" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
-<circle cx="-14.142" cy="-14.142" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
-<circle cx="-14.142" cy="14.142" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
-<circle cx="14.142" cy="14.142" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
+<circle cx="20.000" cy="-0.000" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
+<circle cx="0.000" cy="-20.000" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
+<circle cx="-20.000" cy="-0.000" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
+<circle cx="-0.000" cy="20.000" r="2.000" fill="none" stroke="#000" stroke-width="0.3"><title>flange da torre M4 (PCD 40) Ø4.0</title></circle>
 <circle cx="0.000" cy="-0.000" r="4.000" fill="none" stroke="#000" stroke-width="0.3"><title>alivio central (eixo/fios) - NAO VERIFICADO Ø8.0</title></circle>
 <circle cx="50.000" cy="-0.000" r="10.000" fill="none" stroke="#000" stroke-width="0.3"><title>arruela do eixo Ø20.0</title></circle>
 <circle cx="50.000" cy="-0.000" r="4.250" fill="none" stroke="#000" stroke-width="0.3"><title>furo Ø8.5 (passa pelo colar Ø8 do eixo)</title></circle>

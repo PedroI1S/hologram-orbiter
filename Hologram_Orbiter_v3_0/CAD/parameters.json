@@ -806,7 +806,8 @@
     },
     "flange_hole_pcd": 40.0,
     "flange_hole_diameter": 4.0,
-    "flange_hole_angle_offset_deg": 45.0,
+    "flange_hole_angle_offset_deg": 0.0,
+    "flange_hole_angle_note": "Furos M4 a 0, 90, 180 e 270 graus, na mesma linha dos M3 do motor (cruz). Ate 15/10/2026 ficavam a 45 graus, e os fios de fase do motor, que saem numa diagonal, sempre cobriam um deles.",
     "flange_holes_upper_only": true,
     "flange_holes_note": "Os 4 furos M4 so atravessam a flange superior (chapa do motor). Antes o cortador ia de Z=-1 ao topo e abria 4 furos inuteis no piso da baia, sob a torre (06-PENDENCIAS B3).",
     "peripheral_holes": {
@@ -892,9 +893,10 @@
     "arc_half_angle_deg": 58.0,
     "bolt_hole_diameter": 4.3,
     "bolt_azimuths_deg": [
-      -45.0,
-      45.0
+      0.0,
+      90.0
     ],
+    "arc_center_azimuth_deg": 45.0,
     "arm_width": 10.0,
     "post_diameter": 8.0,
     "post_radius": 29.0,
@@ -903,7 +905,7 @@
     "air_gap": 2.5,
     "magnet_pocket_diameter": 4.3,
     "magnet_pocket_depth": 2.2,
-    "note": "Suporte do ima (peca 06) preso sob DOIS parafusos M4 da flange (r=20, -45 e +45 graus): arco de r 18,5 a 24,5 com os furos abertos para dentro (garfo com boca de ~3 mm), mais um braco radial ate o poste em r=29, 20 graus (mesmo azimute do sensor no cubo). Dois pontos de fixacao impedem a rotacao da aba, que era presa por um unico parafuso e definia sozinha a fase da imagem (06-PENDENCIAS B4). O arco passa a 4,6 mm da campanula (Ø27,8). Os dois M4 sob a aba precisam de 20 mm em vez de 16 (chapa 2 + aba 2,5 + flange 8 + porca). Os fios de fase do motor devem sair pelo lado oposto ao arco (-x)."
+    "note": "Suporte do ima (peca 06) preso sob DOIS parafusos M4 da flange (r=20, 0 e 90 graus desde 15/10/2026; antes -45 e +45): arco de r 18,5 a 24,5 centrado em 45 graus com os furos abertos para dentro (garfo com boca de ~3 mm), mais um braco radial ate o poste em r=29, 20 graus (mesmo azimute do sensor no cubo). Dois pontos de fixacao impedem a rotacao da aba, que era presa por um unico parafuso e definia sozinha a fase da imagem (06-PENDENCIAS B4). O arco passa a 4,6 mm da campanula (Ø27,8). Os dois M4 sob a aba precisam de 20 mm em vez de 16 (chapa 2 + aba 2,5 + flange 8 + porca). O poste continua em 20 graus, entre os dois parafusos, e a referencia de fase nao mudou. Os fios de fase do motor saem numa diagonal livre (135, 225 ou 315 graus); a de 45 graus fica sob o arco."
   },
   "coupons": {
     "joint_block": [

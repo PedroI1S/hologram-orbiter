@@ -391,7 +391,7 @@ Impressa integrada, sem separar no fatiador.
 | Nervuras radiais | 8 unidades, 8 × 8 mm, da baia até a pista |
 | Torre | Ø30 externo, parede 4 mm, 150 mm a partir do piso |
 | Flange inferior e superior | Ø60 × 8 mm |
-| Furos das flanges | 4 × Ø4 em PCD 40, a 45°, **só na flange superior** |
+| Furos das flanges | 4 × Ø4 em PCD 40, a 0°, 90°, 180° e 270°, **só na flange superior** |
 | Passagem de fiação | furo central da torre + janela lateral |
 | Furos periféricos | removidos — as abas de grampo fazem a fixação |
 | **Contato com a mesa** | sem balanço; folga ≤ 0,2 mm em 3 pontos a 120° na pista |
@@ -451,11 +451,12 @@ Chapa de 60 × 60 × 2 mm. **Não imprimir.** Gerar como referência de corte.
 | Furação | Padrão |
 |---|---|
 | Motor | **4 × Ø3,2 em cruz, diagonais de 16 e 19 mm**: furos em (±8, 0) e (0, ±9,5) — ver §6.1 |
-| Flange da torre | 4 × Ø4 em PCD 40, a 45° |
+| Flange da torre | 4 × Ø4 em PCD 40, a 0°, 90°, 180° e 270° — na linha dos M3 do motor |
 | Alívio central | Ø8 (ponta inferior do eixo; **não verificado**) |
 
 Os padrões não colidem: o furo do motor mais externo fica em r = 9,5 mm, contra
-20 mm do padrão da flange. A alma entre o alívio central Ø8 e os M3 em r = 8 é
+20 mm do padrão da flange. Os M4 ficam nos mesmos eixos dos M3 desde 15/10/2026:
+a 45°, os fios de fase, que saem do motor numa diagonal, sempre cobriam um deles. A alma entre o alívio central Ø8 e os M3 em r = 8 é
 de 2,4 mm; o Ø12 anterior deixava 0,4 mm.
 
 Para ensaios em baixa rotação há uma réplica impressa em ABS, com a mesma

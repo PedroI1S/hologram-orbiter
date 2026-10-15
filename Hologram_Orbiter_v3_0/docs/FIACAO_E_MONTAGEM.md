@@ -43,7 +43,7 @@ O retorno DATA/CLK é soldado à ponta superior da fita e retorna à baia pela c
 | Terminais | rasgo 4,8 × 1,4 subindo até a baia, debaixo da placa de interface (onde está o pull-up) | r ≈ 27,3–28,7, azimute 20° |
 | Ímã Ø4 × 2 | topo do poste do `06_suporte_ima_ABS` | r = 29, azimute **20°** da base (+x = 0°) |
 | Entreferro | | 2,5 mm (poste termina em Z = 177,5; Datum A em Z = 180) |
-| Suporte | arco sob **dois** parafusos M4 da flange (r = 20, −45° e +45°), garfo aberto para dentro, braço radial até o poste | aba de 2,5 mm; poste de 21,5 mm sobre a chapa; arco a 4,6 mm da campânula |
+| Suporte | arco sob **dois** parafusos M4 da flange (r = 20, 0° e 90°), centrado em 45°, garfo aberto para dentro, braço radial até o poste em 20° | aba de 2,5 mm; poste de 21,5 mm sobre a chapa; arco a 4,6 mm da campânula |
 
 **Fase:** o pulso ocorre quando o **braço 1 está alinhado com +x da base**
 (sensor e ímã no mesmo azimute, 20°). Como o giro é anti-horário visto de cima,
@@ -51,8 +51,10 @@ o braço 1 passa pelo azimute 20° da base 1/18 de volta depois do pulso. Com do
 parafusos a aba não gira: a referência de fase não depende do aperto de um
 único M4.
 
-Os fios de fase do motor devem sair pelo lado **oposto** ao arco do suporte
-(−x): o arco cobre 116° em torno de +x, a 2,5 mm de altura sobre a chapa.
+Os fios de fase do motor saem numa **diagonal** da cruz de furos. Oriente o
+motor para que saiam a 135°, 225° ou 315°: a diagonal de 45° fica sob o arco do
+suporte, que cobre 116° (de −13° a 103°) a 2,5 mm de altura sobre a chapa. Com
+os M4 nos eixos (0°, 90°, 180°, 270°), nenhuma diagonal cobre parafuso.
 
 O sensor alimenta o ESP32 do rotor diretamente (5 V, pull-up de 10 kΩ para
 3,3 V). Nada de sinal cruzando o entreferro além do campo do ímã.

@@ -25,7 +25,7 @@ Consulte `FISICA.json` e os bloqueadores de resistência, fluência, massa e ins
 | Enrolamento por raios — aranha | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 16660 raios, passo 1.5 mm |
 | Enrolamento por raios — tampa | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 7885 raios, passo 1.0 mm |
 | Enrolamento por raios — base | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 18612 raios, passo 3.0 mm |
-| Enrolamento por raios — suporte do ímã | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 10195 raios, passo 0.5 mm |
+| Enrolamento por raios — suporte do ímã | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 11350 raios, passo 0.5 mm |
 | Furo do cubo livre | True | livre | ✅ | Ø8.0 para eixo medido em Ø8.0 |
 | Rebaixo da arruela | 0.0 | 0.0 ±0,1 mm (zero: arruela no topo do cubo) | ✅ | medido; 6.0 mm de cubo sob a arruela |
 | Pele sobre os alívios do cubo | 2.0 | ≥ 2,0 mm | ✅ | medido |
@@ -61,10 +61,11 @@ Consulte `FISICA.json` e os bloqueadores de resistência, fluência, massa e ins
 | Abas de grampo com furo livre | True | livre | ✅ | 4 abas a 90°, furo Ø5 em r = 149 |
 | Fita de 201,4 mm cabe no canal | 102.9 | ≤ 104 mm (topo do painel) | ✅ | batente em Z=-98.5 por causa do bolso de fios |
 | Suporte do ímã com dois pontos de fixação | 2 | ≥ 2 parafusos | ✅ | 06-PENDENCIAS B4; arco a 4.6 mm da campânula |
+| Furos do suporte do ímã coincidem com os M4 da flange | 0.0 – 90.0 | cada furo do suporte sobre um M4 | ✅ | M4 da flange a 0, 90, 180, 270° |
 | Folga do suporte do ímã à campânula | 4.6 | ≥ 2 mm | ✅ | campânula medida em Ø28 |
 | Canaleta de assento dentro da pista | 2.8 – 2.8 | lábios ≥ 1,2 mm | ✅ | provisão (invólucro fora de escopo): canaleta r 132.8–137.2 |
 | Cilindro encomendado cabe na canaleta | 0.2 – 0.2 | folga ≥ 0 nos dois lados | ✅ | Ø int 266, parede 4, contra canaleta de 4.4 |
 | Folga radial rotor → cilindro encomendado | 21.17 | ≥ 10 mm após deflexão | ✅ | informativo: raio dinâmico 111.8 contra Ø int 266 |
 | Folga vertical topo do rotor → borda do cilindro encomendado | 17.0 | ≥ 10 mm | ✅ | informativo: cilindro de 305 mm apoiado em Z=5 |
 
-**Resultado:** 58 de 58 critérios atendidos.
+**Resultado:** 59 de 59 critérios atendidos.

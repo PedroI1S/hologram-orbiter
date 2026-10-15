@@ -138,8 +138,9 @@ que BLHeli_S **não tem corte por baixa tensão**. Sobra um resíduo estreito:
   lateral do estator. Para descerem pelo alívio central (agora Ø8) e pela torre eles
   precisam de um rasgo na chapa ou de um caminho pela borda —
   `motor_plate.center_clearance_verified` já é `false`. Confirmar com o motor em
-  mãos e anotar no DXF antes de cortar a chapa. Lembrar que o arco do suporte do
-  ímã ocupa o lado +x: os fios saem por −x.
+  mãos e anotar no DXF antes de cortar a chapa. Os fios saem numa diagonal da
+  cruz de furos; desde 15/10/2026 os M4 ficam nos eixos e nenhuma diagonal os
+  cobre. A de 45° fica sob o arco do suporte do ímã: usar 135°, 225° ou 315°.
 
 ### C10 · Dados das fitas: cadeia ou SPI quad · **decidir antes dos chicotes**
 
@@ -291,7 +292,7 @@ tomadas a favor de **manter a geometria e declarar o suporte**.
 | B1 | Ombro da longarina | aerofólio termina em 74,0; raio medido na malha: 100,0 |
 | B2 | Critérios de aceitação | 54 critérios, os geométricos medidos por traçado de raios no STL final |
 | B3 | Cortador da flange | furos só na flange superior; piso sólido de Z = 0 a 12 sob eles |
-| B4 | Poste do ímã | suporte sob os dois M4 de ±45°, garfo aberto para dentro, poste em r = 29, 20°; dois M4 passam a × 20 |
+| B4 | Poste do ímã | suporte sob dois M4 (±45° até 15/10/2026; hoje 0° e 90°, arco centrado em 45°), garfo aberto para dentro, poste em r = 29, 20°; dois M4 passam a × 20 |
 | B5 | Abas de grampo | 4 a 90° nos cantos da mesa (3 a 120° não cabem); furo Ø5 em r = 149 |
 | B6 | `mass_limit_g` da base | 330; modelo com abas dá 321 |
 | B7 | Tampa de invólucro | removida (fora de escopo, confirmado em 03/09) |

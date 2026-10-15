@@ -162,7 +162,7 @@
     },
     {
       "file": "04_05_base_torre_ABS_integradas.stl",
-      "triangle_count": 8080,
+      "triangle_count": 8082,
       "dimensions_mm": [
         280.0,
         280.0,
@@ -198,20 +198,20 @@
     },
     {
       "file": "06_suporte_ima_ABS.stl",
-      "triangle_count": 1726,
+      "triangle_count": 1736,
       "dimensions_mm": [
-        23.3863,
-        41.5544,
+        38.7011,
+        30.0082,
         21.5
       ],
       "bounds_min_mm": [
-        9.8035,
-        -20.7772,
+        -5.5113,
+        -5.5113,
         0.0
       ],
       "bounds_max_mm": [
         33.1898,
-        20.7772,
+        24.4969,
         21.5
       ],
       "signed_volume_cm3": 1.7385,
@@ -222,7 +222,7 @@
       "outward_orientation": true,
       "ray_winding": {
         "pitch_mm": 0.5,
-        "rays": 10195,
+        "rays": 11350,
         "bad_winding_segments": 0,
         "thin_solid_segments": 0,
         "examples": []
@@ -306,7 +306,7 @@
     },
     {
       "file": "R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl",
-      "triangle_count": 3528,
+      "triangle_count": 3512,
       "dimensions_mm": [
         60.0,
         60.0,

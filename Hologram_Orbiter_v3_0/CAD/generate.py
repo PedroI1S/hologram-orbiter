@@ -1467,7 +1467,8 @@ def build_magnet_bracket() -> bpy.types.Object:
     é a referência de fase da imagem inteira. Os furos dos parafusos abrem
     para dentro do arco (garfo), porque fechar 2 mm de parede do lado interno
     esbarraria na campânula (Ø30) — o parafuso e a cabeça continuam prendendo
-    a aba entre r = 18 e r = 23,5.
+    a aba entre r = 18 e r = 23,5. O arco é centrado em `arc_center_azimuth_deg`
+    (45°, entre os M4 de 0° e 90°).
     """
     q = P["magnet_bracket"]
     bt = P["base_tower"]
@@ -1477,8 +1478,8 @@ def build_magnet_bracket() -> bpy.types.Object:
         "bracket_arc",
         q["arc_inner_radius"],
         q["arc_outer_radius"],
-        -q["arc_half_angle_deg"],
-        q["arc_half_angle_deg"],
+        q["arc_center_azimuth_deg"] - q["arc_half_angle_deg"],
+        q["arc_center_azimuth_deg"] + q["arc_half_angle_deg"],
         0.0,
         t,
         steps=48,
@@ -2482,6 +2483,11 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     # -- suporte do ímã --
     mb = report["magnet_bracket"]
     add("Suporte do ímã com dois pontos de fixação", mb["bolts"], "≥ 2 parafusos", mb["bolts"] >= 2, "06-PENDENCIAS B4; arco a %.1f mm da campânula" % mb["arc_to_bell_clearance_mm"])
+    flange_az = [(P["base_tower"]["flange_hole_angle_offset_deg"] + 90.0 * i) % 360.0 for i in range(4)]
+    bracket_az = [az % 360.0 for az in P["magnet_bracket"]["bolt_azimuths_deg"]]
+    misaligned = [az for az in bracket_az if min(abs((az - f + 180.0) % 360.0 - 180.0) for f in flange_az) > 0.01]
+    add("Furos do suporte do ímã coincidem com os M4 da flange", bracket_az, "cada furo do suporte sobre um M4", not misaligned,
+        "M4 da flange a %s°" % ", ".join("%g" % f for f in flange_az))
     add("Folga do suporte do ímã à campânula", mb["arc_to_bell_clearance_mm"], "≥ 2 mm", mb["arc_to_bell_clearance_mm"] >= 2.0, "campânula medida em Ø%.0f" % P["unverified_interfaces"]["motor"]["body_diameter"])
 
     # -- provisão do cilindro (fora de escopo) --
