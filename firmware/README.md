@@ -3,8 +3,10 @@
 **ESP32 da base: gerador do sinal do ESC** (esquema 05 §8), em Rust `no_std`
 sobre o `esp-hal` 1.2. Escrito e gravado em 19/10/2026 na ESP32 da base
 (revisão v3.1, dois núcleos), com a fonte do ESC desligada: armação, teclas,
-botões (por jumper ao GND) e watchdog conferidos na placa. **Ainda não foi
-ensaiado com o ESC.**
+botões (por jumper ao GND) e watchdog conferidos na placa. No mesmo dia,
+com o ESC a 7,0 V e o motor sem rotor, partiu pela rampa e girou no sentido
+anti-horário visto de cima (registro em
+`esc_blheli_s_2026-10-16/registro.md`). **Ainda sem ensaio com o rotor.**
 
 | Pasta | O que é |
 |---|---|
@@ -123,6 +125,12 @@ mantém o teclado funcionando):
 script -q ensaio.log espflash monitor --chip esp32
 ```
 
+O `espflash monitor` passa pelo carregador da ROM ao conectar. Em 19/10 ele
+às vezes deixou a placa parada ali, sem o banner depois de "Commands" e sem
+pulso no D25: nesse caso, Ctrl+R reinicia a placa no programa. No monitor,
+Ctrl+C fecha o monitor em vez de parar o motor; para parar, espaço ou `p`.
+Evitar o `screen`: rolar a tela nele manda setas (Esc `[` `A`) à placa.
+
 As linhas que começam com `D;` são o registro, separado por `;` com vírgula
 decimal: `t_ms;estado;pulso_us;acel_%;alvo_us;giro_s`. Mudanças de estado
 saem na hora; em giro, uma linha a cada 200 ms.
@@ -154,8 +162,8 @@ ligado.
    corrente, GND comum). Energizar o ESC com a placa já em 1000 µs: ele
    deve bipar e armar.
 3. **Motor sem rotor, preso, sem hélice.** Alvo baixo (1200 µs) e
-   partida. Conferir o sentido anti-horário visto de cima (pendente desde
-   16/10). Conferir a PARADA pelo botão e pela serial, e o WATCHDOG: em
+   partida. Conferir o sentido anti-horário visto de cima (confirmado em
+   19/10 com Normal; conferir de novo se os fios do motor forem trocados). Conferir a PARADA pelo botão e pela serial, e o WATCHDOG: em
    giro, `W` → o motor para em menos de 1 s e o banner volta com
    `CoreMwdt0` ou `SysRtcWdt`.
 4. **Calibrar o teto, com o rotor e a contenção do 04.** Subir em patamares
