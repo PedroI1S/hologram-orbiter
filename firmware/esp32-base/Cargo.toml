@@ -1,0 +1,26 @@
+[package]
+edition      = "2024"
+name         = "esp32-base"
+rust-version = "1.95"
+version      = "0.1.0"
+description  = "ESP32 da base: sinal do ESC com armação, rampa, teto e watchdog (esquema 05 §8)"
+publish      = false
+
+[dependencies]
+controle-motor         = { path = "../controle-motor" }
+critical-section       = "1.2.0"
+esp-bootloader-esp-idf = { version = "0.6.0", features = ["esp32"] }
+esp-hal                = { version = "~1.2.2", features = ["esp32", "unstable"] }
+esp-println            = { version = "0.18.0", default-features = false, features = ["esp32", "uart", "critical-section"] }
+
+[profile.dev]
+# O perfil de depuração padrão é lento e grande demais para o chip.
+opt-level = "s"
+
+[profile.release]
+codegen-units = 1
+debug         = 2
+lto           = "fat"
+opt-level     = "s"
+# Pânico também em release ao estourar aritmética: no chip ele reinicia e o pulso some.
+overflow-checks = true
