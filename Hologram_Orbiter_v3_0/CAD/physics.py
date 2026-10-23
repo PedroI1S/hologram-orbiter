@@ -135,12 +135,62 @@ def _flexure_case(section, vertices, load, length, modulus):
             "strength_certified": False}
 
 
+def _kick_start(schedule, inputs, kt, inertia, drag_torque, omega_design,
+                source_voltage, dt=1e-3, settle_s=30.):
+    """Integrate the firmware kick start (05 §8.2) on an averaged ESC/motor model.
+
+    Duty is linear in the pulse between the ESC PPM limits; the winding sees
+    duty*bus = Kt*omega + R*I. A current-limited bench supply lets the bus sag,
+    so at the limit I = efficiency*limit/duty: the phase current RISES while the
+    pulse falls and the supply is still limiting. The rotor is held still until
+    the kick (on 19/10/2026 nothing below it started), drag scales with omega²
+    and the fixed losses are left out of the transient, as in plan 04.
+    """
+    s = schedule
+    resistance, efficiency = inputs["effective_resistance_ohm"], inputs["esc_efficiency"]
+    limit = inputs["source_current_limit_a"]
+    span = s["ppm_max_us"]-s["ppm_min_us"]
+    hold_end = s["rise_s"]+s["kick_hold_s"]
+    fall_end = hold_end+(s["kick_us"]-s["target_us"])/s["fall_us_per_s"]
+    speed = 0.
+    peak = {"rpm": 0., "time_s": s["rise_s"], "pulse_us": s["kick_us"]}
+    current_peak = power_peak = 0.
+    bus_min = source_voltage
+    for step in range(round((fall_end+settle_s-s["rise_s"])/dt)):
+        t = s["rise_s"]+step*dt
+        pulse = s["kick_us"] if t < hold_end else max(
+            s["target_us"], s["kick_us"]-s["fall_us_per_s"]*(t-hold_end))
+        duty = (pulse-s["ppm_min_us"])/span
+        bus = source_voltage
+        current = (duty*bus-kt*speed)/resistance
+        if duty*current/efficiency > limit:
+            current = efficiency*limit/duty
+            bus = (resistance*current+kt*speed)/duty
+        current_peak = max(current_peak, current)
+        power_peak = max(power_peak, duty*bus*current/efficiency)
+        bus_min = min(bus_min, bus)
+        if speed*30/math.pi > peak["rpm"]:
+            peak = {"rpm": speed*30/math.pi, "time_s": t, "pulse_us": pulse}
+        speed += (kt*current-drag_torque*(speed/omega_design)**2)/inertia*dt
+    # Steady speed at the target: duty*V = Kt*omega + R*I_drag*(omega/omega_design)².
+    a = resistance*drag_torque/kt/omega_design**2
+    duty = (s["target_us"]-s["ppm_min_us"])/span
+    target_speed = (-kt+math.sqrt(kt*kt+4*a*duty*source_voltage))/(2*a)
+    return {"source_voltage_v": source_voltage, "peak_rpm": peak["rpm"],
+            "peak_rpm_time_s": peak["time_s"], "peak_rpm_pulse_us": peak["pulse_us"],
+            "peak_phase_current_a": current_peak, "peak_input_power_w": power_peak,
+            "min_bus_voltage_v": bus_min, "fall_end_s": fall_end,
+            "target_rpm": target_speed*30/math.pi, "time_step_s": dt}
+
+
 def calculate_physics(parameters, panel_triangles=None):
     """Return JSON-serializable section, flexure and drive estimates.
 
     Optional ``physics_assumptions`` explicitly overrides Kv, resistance, fixed motor
-    losses, ESC efficiency, ambient temperature and thermal resistance. Defaults
-    reproduce the documented assumptions and remain unvalidated inputs.
+    losses, ESC efficiency, ambient temperature, thermal resistance, the bench
+    supply (voltages and current limit), the 8 A phase ceiling and the shaft
+    friction clamp. Defaults reproduce the documented assumptions and remain
+    unvalidated inputs. ``startup_kick`` is the firmware start schedule.
     """
     p = parameters
     q = p["panel"]
@@ -149,7 +199,10 @@ def calculate_physics(parameters, panel_triangles=None):
     inputs = {"motor_kv": 920., "effective_resistance_ohm": .221,
               "extra_loss_w": .7, "esc_efficiency": .95,
               "ambient_c": 25., "thermal_resistance_k_w": 3.5,
-              "source_voltage_v": 7., "abs_strength_mpa": 30.}
+              "source_voltages_v": [10., 12.], "source_current_limit_a": 30.,
+              "phase_current_ceiling_a": 8., "shaft_friction_mu": .3,
+              "shaft_friction_radius_mm": 7., "nut_factor": .2,
+              "abs_strength_mpa": 30.}
     inputs.update(p.get("physics_assumptions", {}))
     omega = operating["rpm"]*2*math.pi/60
     radius_mm = operating["panel_mid_plane_radius_mm"]
@@ -170,24 +223,70 @@ def calculate_physics(parameters, panel_triangles=None):
     drag_torque = kt*current
     inertia = loads["rotor_inertia_g_m2"]/1000
 
+    voltages = inputs["source_voltages_v"]
+
     def drive_case(phase_current, speed):
         copper = phase_current**2*inputs["effective_resistance_ohm"]
         loss = copper+inputs["extra_loss_w"]
         power = (kt*phase_current*speed+loss)/inputs["esc_efficiency"]
         return {"phase_current_a": phase_current, "input_power_w": power,
-                "source_current_a": power/inputs["source_voltage_v"],
-                "source_voltage_v": inputs["source_voltage_v"],
+                "source_currents": [{"voltage_v": v, "current_a": power/v} for v in voltages],
                 "copper_loss_w": copper,
                 "steady_motor_temperature_c": inputs["ambient_c"]
                     + inputs["thermal_resistance_k_w"]*loss}
 
-    startup = []
-    for seconds in [8., 12.]:
-        acceleration_torque = inertia*omega/seconds
-        case = drive_case((drag_torque+acceleration_torque)/kt, omega)
-        case.pop("steady_motor_temperature_c")  # A transient is not a thermal equilibrium.
-        case.update({"ramp_s": seconds, "acceleration_torque_nm": acceleration_torque})
-        startup.append(case)
+    kick = p["startup_kick"]
+    limit = inputs["source_current_limit_a"]
+    duty = (kick["kick_us"]-kick["ppm_min_us"])/(kick["ppm_max_us"]-kick["ppm_min_us"])
+    stall = []
+    for v in voltages:
+        # Stalled: I = duty*V/R, unless the supply limit caps it at efficiency*limit/duty.
+        unlimited = duty*v/inputs["effective_resistance_ohm"]
+        stall_current = min(unlimited, inputs["esc_efficiency"]*limit/duty)
+        stall.append({"source_voltage_v": v, "duty": duty, "phase_current_a": stall_current,
+                      "bus_voltage_v": inputs["effective_resistance_ohm"]*stall_current/duty,
+                      "source_current_a": duty*stall_current/inputs["esc_efficiency"],
+                      "input_power_w": inputs["effective_resistance_ohm"]*stall_current**2
+                          / inputs["esc_efficiency"],
+                      "torque_nm": kt*stall_current,
+                      "supply_limiting": stall_current < unlimited})
+    ceiling = drive_case(inputs["phase_current_ceiling_a"], omega)
+    ceiling.pop("steady_motor_temperature_c")  # A start transient is not a thermal equilibrium.
+    ceiling["torque_nm"] = kt*inputs["phase_current_ceiling_a"]
+    trajectories = []
+    for v in voltages:
+        case = _kick_start(kick, inputs, kt, inertia, drag_torque, omega, v)
+        case["exceeds_phase_ceiling"] = case["peak_phase_current_a"] > ceiling["phase_current_a"]
+        case["exceeds_start_power_ceiling"] = case["peak_input_power_w"] > ceiling["input_power_w"]
+        case["exceeds_operating_rpm"] = case["peak_rpm"] > operating["rpm"]
+        trajectories.append(case)
+    startup = {"schedule": kick, "source_current_limit_a": limit,
+               "stall_at_kick": stall, "trajectories": trajectories,
+               "phase_ceiling": ceiling,
+               "model": "averaged DC model: duty linear in pulse, a supply at its current limit "
+                        "lets the bus sag, rotor still until the kick, drag ~ omega², fixed "
+                        "losses ignored in the transient; ignores the ESC Startup Power limit "
+                        "and the supply/lead resistance; not a measurement"}
+    shaft = p["unverified_interfaces"]["shaft"]
+    preload = (p["unverified_interfaces"]["m6_nut"]["torque_nm"]
+               / (inputs["nut_factor"]*float(shaft["thread"].lstrip("M"))/1000))
+    friction = inputs["shaft_friction_mu"]*inputs["shaft_friction_radius_mm"]/1000
+
+    def clamp_case(torque):
+        return {"torque_nm": torque, "required_clamp_force_n": torque/friction,
+                "preload_margin": preload*friction/torque}
+
+    shaft_clamp = {
+        "preload_estimate_n": preload,
+        "preload_basis": "nut torque/(nut_factor*thread diameter); not measured",
+        "steady": clamp_case(drag_torque),
+        "kick_stall": [dict(clamp_case(c["torque_nm"]), source_voltage_v=c["source_voltage_v"])
+                       for c in stall],
+        "phase_ceiling": clamp_case(ceiling["torque_nm"]),
+        "kick_trajectory_peaks": [dict(clamp_case(kt*c["peak_phase_current_a"]),
+                                       source_voltage_v=c["source_voltage_v"])
+                                  for c in trajectories],
+    }
     stretch_rpm = operating["stretch_rpm_not_target"]
     stretch = drive_case(current*(stretch_rpm/operating["rpm"])**2,
                          stretch_rpm*2*math.pi/60)
@@ -223,8 +322,8 @@ def calculate_physics(parameters, panel_triangles=None):
                   "inertia_g_m2": inertia*1000,
                   "inertia_status": "conservative unmeasured design premise",
                   "rotor_energy_j": .5*inertia*omega**2,
-                  "steady": drive_case(current, omega), "startup": startup,
-                  "stretch": stretch},
+                  "steady": drive_case(current, omega), "startup_kick": startup,
+                  "shaft_clamp": shaft_clamp, "stretch": stretch},
     }
     if panel_triangles is not None:
         checks = []

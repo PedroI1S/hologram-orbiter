@@ -10,7 +10,7 @@ A revisão independente de 03/09 circulou como documento 08 solto; ela foi
 `parameters.json`, no gerador e nos documentos apontam para a tabela de
 disposição no fim deste arquivo.
 
-**Última atualização:** 21/09/2026 — acrescentadas a C10 e a C11. Antes: 08/09/2026, rev. local 3.0.4. As disposições de 03/09 no fim são históricas; os cálculos corrigidos em 08/09 prevalecem.
+**Última atualização:** 20/10/2026 — C9: fonte do ESC em 10–12 V e sobretensão no barramento na parada. Antes: 21/09/2026 — acrescentadas a C10 e a C11. Antes: 08/09/2026, rev. local 3.0.4. As disposições de 03/09 no fim são históricas; os cálculos corrigidos em 08/09 prevalecem.
 
 ---
 
@@ -114,26 +114,33 @@ motor (`motor_stack.plate_top_to_bell_face`, medida mas com
 colar o ímã**. Se passar de 3,0 mm, usar calços sob o poste, ou um ímã **Ø5 × 3
 N52** (~2× o campo). Ver também C2 (polaridade) e C3 (campo do motor).
 
-### C9 · ESC a 6 V · saída dos fios de fase
+### C9 · ESC em 10–12 V · sobretensão na parada · saída dos fios de fase
 
 **O ESC não é alimentado pela bateria** (ratificado por Pedro, 03/09, e já era o
 que o esquema 05 §8 descrevia): ele fica na **parte fixa**, alimentado pela
-**fonte de bancada em 6–7 V, ≥ 5 A**. A bateria LiFe do rotor alimenta só a
-fita, o ESP32-C3 e o sensor. As duas linhas de energia não se encontram.
+**fonte de bancada em 10–12 V, com limite de corrente de ~3 A** (desde
+20/10/2026; antes, 6–7 V). A bateria LiFe do rotor alimenta só a fita, o
+ESP32-C3 e o sensor. As duas linhas de energia não se encontram.
 
 Isso encerra a metade da pendência que dependia da origem da alimentação, e o
 **LVC também já estava encerrado**: o glossário §2–3 registra, do manual Rev16.x,
 que BLHeli_S **não tem corte por baixa tensão**. Sobra um resíduo estreito:
 
-- **Margem do ESC em 6 V.** O LittleBee Spring é especificado para **2–4S**, ou
-  seja 7,4 V nominais no piso da faixa, e o projeto o opera deliberadamente em
-  **6–7 V** para manter o duty alto (spec §10). O que ainda não foi verificado
-  não é o LVC nem a fonte, e sim se o **regulador interno** (que alimenta o
-  EFM8BB21) e o **gate driver** têm margem em 6,0 V. Gate drive fraco não
-  desliga o ESC: aumenta o RdsOn e aparece como calor no ESC e comutação suja.
-  **Fechar assim:** operar o primeiro ensaio em **7,0 V**, não em 6,0, e só
-  descer se o ESC ficar frio e a comutação limpa. Se houver instabilidade,
-  suba a tensão antes de suspeitar do sinal.
+- **Margem do ESC em 6 V — encerrada em 20/10/2026.** O projeto operava o ESC
+  em 6–7 V, abaixo do piso de 2S, para manter o duty alto. Em 19/10, a 7,0 V
+  o rotor não partiu; partiu com a fonte em 10,4 V e chute de 1400 µs
+  (`esc_blheli_s_2026-10-19/registro.md`), e a fonte passou a 10–12 V, dentro
+  da faixa 2–4S do ESC. Em troca, o duty em regime cai (a 1800 RPM, 16–20 %
+  da rotação a vazio) e o mesmo pulso gira mais rápido: o teto de regime da
+  ESP32 caiu para 1320 µs, estimado, e precisa ser medido com tacômetro na
+  tensão em uso.
+- **Sobretensão no barramento na parada — aberta.** Em 19/10, com Brake on
+  stop desligado, a parada na hora a partir de 1400 µs (fonte em 8,4 V)
+  levou o barramento a quase 20 V, acima dos 16,8 V do ESC: o BLHeli_S freia
+  regenerando, e a fonte não absorve corrente. **Fechar assim:** grampo ou
+  resistor de descarga no barramento do ESC (05 §8.2; 03), conferido medindo
+  a tensão do barramento numa parada a partir da rotação plena. Até lá, parar
+  pela parada suave (`d`) e evitar a parada na hora a partir de rotação alta.
 - **Fios de fase.** O motor assenta plano na chapa R01 e os fios saem pela
   lateral do estator. Para descerem pelo alívio central (agora Ø8) e pela torre eles
   precisam de um rasgo na chapa ou de um caminho pela borda —
@@ -256,7 +263,7 @@ tomadas a favor de **manter a geometria e declarar o suporte**.
 | 16 | 256 colunas a 22,0 Mbit/s não cabem em SPI a 20 MHz | **Documentos** · 05 corrigido para **30 MHz** nesse caso |
 | 17 | Chave e capacitor a 98–114 g | **Documentos** · nota na lista 03: curso da chave **tangencial**, capacitor colado |
 | 18 | Divisor do ADC com 36 kΩ de impedância de fonte | **Documentos** · **100 nF** no pino, no 05 |
-| 19 | ESC LittleBee a 6 V, abaixo do nominal de 2S | **Aberta → C9** |
+| 19 | ESC LittleBee a 6 V, abaixo do nominal de 2S | **Encerrada** em 20/10/2026 · fonte em 10–12 V (C9) |
 | 20 | Saída dos fios de fase pela chapa | **Aberta → C9** · `motor_plate.center_clearance_verified` já era `false` |
 | 21 | Corrente na fonte de 1,95 A na linha do ponto de projeto | **Documentos** · a tabela misturava 7,4 V com 7 V; unificada em **7 V** |
 | 22 | Rampa de 12 s dando 7,3 A | **Documentos** · **6,8 A**: (24,3 + 46,1)/10,38 |

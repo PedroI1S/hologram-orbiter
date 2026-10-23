@@ -45,9 +45,8 @@
     "admissible_unbalance_g_mm": 8.4,
     "delta_mass_between_panels_g": 0.084,
     "battery_eccentricity_limit_mm": 0.17,
-    "startup_ramp_s": 12.0,
-    "startup_peak_current_a": 7.3,
-    "startup_note": "Rampa LINEAR de RPM >=12s: ~7,30A de fase no caso51,4mNm. Rampa de sinal servo nao garante aceleracao linear. Ensaio limita fonte7V a4,6A; verificar RPM real."
+    "startup_kick_stall_phase_current_a": 20.0,
+    "startup_note": "Partida com CHUTE (05 secao 8.2, firmware 0.2.0), nao rampa: a rampa de 12 s ate 1200 us nao partiu em 19/10/2026. Fonte 10-12 V com limite de 30 A (nao 3 A; Pedro, 20/10/2026): a fonte nao limita, e com o rotor parado no chute o modelo medio da 16,7 A de fase a 10 V e 20,0 A a 12 V (173-208 mN.m), acima do teto de 8 A. O modelo ignora o Startup Power do ESC e a resistencia da fonte e dos cabos. Valores em FISICA.json (drive.startup_kick); confirmar RPM com tacometro."
   },
   "material": {
     "abs_density_g_cm3": 1.04,
@@ -953,7 +952,25 @@
     "thermal_resistance_k_w": 3.5,
     "ambient_c": 25.0,
     "esc_efficiency": 0.95,
-    "source_voltage_v": 7.0,
+    "source_voltages_v": [
+      10.0,
+      12.0
+    ],
+    "source_current_limit_a": 30.0,
+    "phase_current_ceiling_a": 8.0,
+    "shaft_friction_mu": 0.3,
+    "shaft_friction_radius_mm": 7.0,
+    "nut_factor": 0.2,
     "abs_strength_mpa": 30.0
+  },
+  "startup_kick": {
+    "note": "Partida do firmware 0.2.0 (firmware/controle-motor/src/config.rs; 05 secao 8.2): sobe do PPM minimo ao chute em rise_s, segura o chute kick_hold_s e desce ao alvo a fall_us_per_s. target_us e o alvo ao ligar (INITIAL_TARGET_US); o bloqueador D usa o teto de regime. Duty linear no pulso entre ppm_min_us e ppm_max_us (gravados no ESC em 16/10/2026).",
+    "ppm_min_us": 1148,
+    "ppm_max_us": 1832,
+    "rise_s": 3.0,
+    "kick_us": 1400,
+    "kick_hold_s": 2.0,
+    "fall_us_per_s": 42.0,
+    "target_us": 1200
   }
 }

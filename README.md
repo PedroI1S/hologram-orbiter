@@ -40,9 +40,10 @@ o subtotal CAD não comprova a margem até 280 g.
 |---|---|
 | Rotação / velocidade angular | 1800 RPM / 188,496 rad/s |
 | Motor / acionamento | A2212 920KV / ESC LittleBee Spring 20A |
-| Corrente de regime prevista | 4,95 A de fase; ~16,63 W / 2,38 A na fonte de 7 V, com eficiência ESC assumida de 95% |
+| Corrente de regime prevista | 4,95 A de fase; ~16,63 W na fonte (1,66 A a 10 V, 1,39 A a 12 V), com eficiência ESC assumida de 95% |
 | Temperatura prevista | ~46,4 °C, sob as hipóteses térmicas; limite de aceite <55 °C |
-| Partida nominal | rampa de RPM ≥12 s; ~7,30 A de fase / 4,02 A na fonte; medir aceleração real |
+| Fonte do ESC | 10–12 V com limite de corrente de ~3 A, desde 20/10/2026; grampo ou resistor de descarga no barramento do ESC |
+| Partida nominal | chute de 1400 µs: subida de 3 s, chute de 2 s, descida ao alvo (05 §8.2); ~7,7 A de fase com o rotor parado no chute (modelo, fonte limitada a 3 A); medir aceleração real |
 | Esticada a 2000 RPM | ~6,11 A / 56,3 °C; não liberada |
 | Carga radial de referência | 158,1 N por painel de 44,5 g; ~159,9 N a 45 g |
 | Energia de projeto | ~27,5 J para J=1,55 g·m², hipótese conservadora não medida |

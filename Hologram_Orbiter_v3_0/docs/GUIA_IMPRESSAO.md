@@ -127,4 +127,4 @@ centro e não tem conserto.
 - todas as porcas capturadas; entreferro do hall 2–3 mm.
 
 Nunca ensaie o rotor sem contenção, parada de emergência e operação remota.
-Rampa nominal de RPM ≥ 12 s (pico calculado ~7,30 A de fase; verificar aceleração real). Grampear a base pelas abas.
+Partida com chute da ESP32 da base (esquema 05 §8.2), fonte do ESC em 10–12 V limitada a ~3 A (~7,7 A de fase no chute, pelo modelo; verificar aceleração real). Grampear a base pelas abas.

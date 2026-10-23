@@ -117,7 +117,15 @@
       "esc_efficiency": 0.95,
       "ambient_c": 25.0,
       "thermal_resistance_k_w": 3.5,
-      "source_voltage_v": 7.0,
+      "source_voltages_v": [
+        10.0,
+        12.0
+      ],
+      "source_current_limit_a": 30.0,
+      "phase_current_ceiling_a": 8.0,
+      "shaft_friction_mu": 0.3,
+      "shaft_friction_radius_mm": 7.0,
+      "nut_factor": 0.2,
       "abs_strength_mpa": 30.0
     },
     "omega_rad_s": 188.49555921538757,
@@ -129,36 +137,158 @@
     "steady": {
       "phase_current_a": 4.95,
       "input_power_w": 16.63140537757437,
-      "source_current_a": 2.3759150539391958,
-      "source_voltage_v": 7.0,
+      "source_currents": [
+        {
+          "voltage_v": 10.0,
+          "current_a": 1.663140537757437
+        },
+        {
+          "voltage_v": 12.0,
+          "current_a": 1.3859504481311975
+        }
+      ],
       "copper_loss_w": 5.415052500000001,
       "steady_motor_temperature_c": 46.40268375
     },
-    "startup": [
-      {
-        "phase_current_a": 8.468513968988356,
-        "input_power_w": 34.861060792365926,
-        "source_current_a": 4.980151541766561,
-        "source_voltage_v": 7.0,
-        "copper_loss_w": 15.849176074292155,
-        "ramp_s": 8.0,
-        "acceleration_torque_nm": 0.03652101459798134
+    "startup_kick": {
+      "schedule": {
+        "note": "Partida do firmware 0.2.0 (firmware/controle-motor/src/config.rs; 05 secao 8.2): sobe do PPM minimo ao chute em rise_s, segura o chute kick_hold_s e desce ao alvo a fall_us_per_s. target_us e o alvo ao ligar (INITIAL_TARGET_US); o bloqueador D usa o teto de regime. Duty linear no pulso entre ppm_min_us e ppm_max_us (gravados no ESC em 16/10/2026).",
+        "ppm_min_us": 1148,
+        "ppm_max_us": 1832,
+        "rise_s": 3.0,
+        "kick_us": 1400,
+        "kick_hold_s": 2.0,
+        "fall_us_per_s": 42.0,
+        "target_us": 1200
       },
-      {
-        "phase_current_a": 7.295675979325571,
-        "input_power_w": 28.144516739121368,
-        "source_current_a": 4.02064524844591,
-        "source_voltage_v": 7.0,
-        "copper_loss_w": 11.763142246963097,
-        "ramp_s": 12.0,
-        "acceleration_torque_nm": 0.024347343065320895
-      }
-    ],
+      "source_current_limit_a": 30.0,
+      "stall_at_kick": [
+        {
+          "source_voltage_v": 10.0,
+          "duty": 0.3684210526315789,
+          "phase_current_a": 16.670635865682303,
+          "bus_voltage_v": 9.999999999999998,
+          "source_current_a": 6.465066540707818,
+          "input_power_w": 64.65066540707818,
+          "torque_nm": 0.1730357023375028,
+          "supply_limiting": false
+        },
+        {
+          "source_voltage_v": 12.0,
+          "duty": 0.3684210526315789,
+          "phase_current_a": 20.004763038818766,
+          "bus_voltage_v": 12.0,
+          "source_current_a": 7.758079848849382,
+          "input_power_w": 93.0969581861926,
+          "torque_nm": 0.20764284280500336,
+          "supply_limiting": false
+        }
+      ],
+      "trajectories": [
+        {
+          "source_voltage_v": 10.0,
+          "peak_rpm": 1692.0112530028787,
+          "peak_rpm_time_s": 6.431,
+          "peak_rpm_pulse_us": 1339.898,
+          "peak_phase_current_a": 16.670635865682303,
+          "peak_input_power_w": 64.6506654070782,
+          "min_bus_voltage_v": 10.0,
+          "fall_end_s": 9.761904761904763,
+          "target_rpm": 590.9406235217209,
+          "time_step_s": 0.001,
+          "exceeds_phase_ceiling": true,
+          "exceeds_start_power_ceiling": true,
+          "exceeds_operating_rpm": false
+        },
+        {
+          "source_voltage_v": 12.0,
+          "peak_rpm": 1963.5362693850675,
+          "peak_rpm_time_s": 6.337,
+          "peak_rpm_pulse_us": 1343.846,
+          "peak_phase_current_a": 20.004763038818766,
+          "peak_input_power_w": 93.0969581861926,
+          "min_bus_voltage_v": 12.0,
+          "fall_end_s": 9.761904761904763,
+          "target_rpm": 690.9855757428628,
+          "time_step_s": 0.001,
+          "exceeds_phase_ceiling": true,
+          "exceeds_start_power_ceiling": true,
+          "exceeds_operating_rpm": true
+        }
+      ],
+      "phase_ceiling": {
+        "phase_current_a": 8.0,
+        "input_power_w": 32.1012356979405,
+        "source_currents": [
+          {
+            "voltage_v": 10.0,
+            "current_a": 3.2101235697940504
+          },
+          {
+            "voltage_v": 12.0,
+            "current_a": 2.6751029748283752
+          }
+        ],
+        "copper_loss_w": 14.144,
+        "torque_nm": 0.08303736161316277
+      },
+      "model": "averaged DC model: duty linear in pulse, a supply at its current limit lets the bus sag, rotor still until the kick, drag ~ omega², fixed losses ignored in the transient; ignores the ESC Startup Power limit and the supply/lead resistance; not a measurement"
+    },
+    "shaft_clamp": {
+      "preload_estimate_n": 499.99999999999994,
+      "preload_basis": "nut torque/(nut_factor*thread diameter); not measured",
+      "steady": {
+        "torque_nm": 0.051379367498144465,
+        "required_clamp_force_n": 24.466365475306883,
+        "preload_margin": 20.436218877897243
+      },
+      "kick_stall": [
+        {
+          "torque_nm": 0.1730357023375028,
+          "required_clamp_force_n": 82.39795349404893,
+          "preload_margin": 6.06811187411483,
+          "source_voltage_v": 10.0
+        },
+        {
+          "torque_nm": 0.20764284280500336,
+          "required_clamp_force_n": 98.87754419285874,
+          "preload_margin": 5.056759895095692,
+          "source_voltage_v": 12.0
+        }
+      ],
+      "phase_ceiling": {
+        "torque_nm": 0.08303736161316277,
+        "required_clamp_force_n": 39.54160076817274,
+        "preload_margin": 12.64491043069892
+      },
+      "kick_trajectory_peaks": [
+        {
+          "torque_nm": 0.1730357023375028,
+          "required_clamp_force_n": 82.39795349404893,
+          "preload_margin": 6.06811187411483,
+          "source_voltage_v": 10.0
+        },
+        {
+          "torque_nm": 0.20764284280500336,
+          "required_clamp_force_n": 98.87754419285874,
+          "preload_margin": 5.056759895095692,
+          "source_voltage_v": 12.0
+        }
+      ]
+    },
     "stretch": {
       "phase_current_a": 6.1111111111111125,
       "input_power_w": 23.408862332966073,
-      "source_current_a": 3.344123190423725,
-      "source_voltage_v": 7.0,
+      "source_currents": [
+        {
+          "voltage_v": 10.0,
+          "current_a": 2.340886233296607
+        },
+        {
+          "voltage_v": 12.0,
+          "current_a": 1.9507385277471727
+        }
+      ],
       "copper_loss_w": 8.2533950617284,
       "steady_motor_temperature_c": 56.336882716049395,
       "rpm": 2000.0,

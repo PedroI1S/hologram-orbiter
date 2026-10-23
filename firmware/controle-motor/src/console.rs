@@ -1,9 +1,10 @@
 //! Teclas da serial (115200 8N1). O monitor não ecoa; o firmware ecoa os
 //! dígitos.
 //!
-//! Parar é uma tecla só e vale a qualquer momento, inclusive no meio de um
-//! número: espaço, `p`, Esc ou Ctrl-C. A serial ajusta o alvo, mas nunca dá
-//! partida: isso é só do botão (05 §8.2).
+//! Parar na hora é uma tecla só e vale a qualquer momento, inclusive no meio
+//! de um número: espaço, `p`, Esc ou Ctrl-C. A serial ajusta o alvo, encerra
+//! o chute e faz a parada suave, mas nunca dá partida: isso é só do botão
+//! (05 §8.2).
 
 use crate::controller::{Command, StopSource};
 
@@ -13,10 +14,13 @@ const MAX_DIGITS: u8 = 5;
 
 pub const HELP: &str = "\
 # Teclas (a partida é só pelo botão D32):
-#   espaço, p, Esc, Ctrl-C   PARAR (a qualquer momento)
-#   1350 Enter               alvo em µs
+#   espaço, p, Esc, Ctrl-C   PARAR na hora (a qualquer momento)
+#   d                        parada suave: desce ao acelerador zero e para
+#   k                        encerra o chute agora (ao ver o rotor girar)
+#   1250 Enter               alvo de regime em µs (até o teto)
 #   + / -                    alvo ±5 µs      > / <  alvo ±1 µs
-#   r20 Enter                rampa de partida em s (mínimo 12; só parado)
+#   r3 Enter                 subida até o chute em s (3 a 30; só parado)
+#   c2 Enter                 duração do chute em s (0 a 5; só parado)
 #   s                        estado          h ou ?  esta ajuda
 #   W (maiúsculo)            trava o laço de propósito: ensaio do WATCHDOG";
 
@@ -24,8 +28,10 @@ pub const HELP: &str = "\
 pub enum Field {
     /// Alvo em µs.
     Target,
-    /// Rampa em s.
+    /// Subida em s.
     Ramp,
+    /// Chute em s.
+    Kick,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -125,21 +131,26 @@ impl Console {
                 });
                 Some(Action::Echo(byte))
             }
-            b'r' | b'R' => {
-                self.entry = Some(Entry {
-                    field: Field::Ramp,
-                    value: 0,
-                    digits: 0,
-                    last_key_ms: now_ms,
-                });
-                Some(Action::Echo(b'r'))
-            }
+            b'r' | b'R' => self.prefix(Field::Ramp, b'r', now_ms),
+            b'c' | b'C' => self.prefix(Field::Kick, b'c', now_ms),
+            b'k' | b'K' => Some(Action::Command(Command::EndKick)),
+            b'd' | b'D' => Some(Action::Command(Command::SoftStop)),
             b's' | b'S' => Some(Action::Status),
             b'h' | b'H' | b'?' => Some(Action::Help),
             b'W' => Some(Action::Freeze),
             b'\r' | b'\n' => None,
             _ => Some(Action::Error("tecla sem função; h mostra a ajuda")),
         }
+    }
+
+    fn prefix(&mut self, field: Field, echo: u8, now_ms: u32) -> Option<Action> {
+        self.entry = Some(Entry {
+            field,
+            value: 0,
+            digits: 0,
+            last_key_ms: now_ms,
+        });
+        Some(Action::Echo(echo))
     }
 
     fn finish(&mut self) -> Option<Action> {
@@ -153,6 +164,7 @@ impl Console {
                 Err(_) => return Some(Action::Error("alvo fora da faixa")),
             },
             Field::Ramp => Command::SetRamp(entry.value * 1000),
+            Field::Kick => Command::SetKick(entry.value * 1000),
         };
         Some(Action::Command(command))
     }
@@ -207,9 +219,12 @@ mod tests {
     }
 
     #[test]
-    fn ramp_entry() {
+    fn ramp_and_kick_entry() {
         let mut c = Console::new(5, 1);
         assert_eq!(feed(&mut c, b"r20\r").last(), Some(&cmd(Command::SetRamp(20_000))));
+        assert_eq!(feed(&mut c, b"c2\r").last(), Some(&cmd(Command::SetKick(2_000))));
+        assert_eq!(feed(&mut c, b"C0\n").last(), Some(&cmd(Command::SetKick(0))));
+        assert_eq!(feed(&mut c, b"c\r").last(), Some(&Action::Error("número vazio")));
         assert_eq!(feed(&mut c, b"r\r").last(), Some(&Action::Error("número vazio")));
         // "r 20": o espaço para, e o resto vira um alvo de 20 µs (que o
         // controlador recusa). Nada sobe.
@@ -228,6 +243,13 @@ mod tests {
         assert_eq!(feed(&mut c, b"sS"), [Action::Status, Action::Status]);
         assert_eq!(feed(&mut c, b"h?"), [Action::Help, Action::Help]);
         assert_eq!(feed(&mut c, b"W"), [Action::Freeze]);
+        assert_eq!(feed(&mut c, b"kK"), [cmd(Command::EndKick), cmd(Command::EndKick)]);
+        assert_eq!(feed(&mut c, b"dD"), [cmd(Command::SoftStop), cmd(Command::SoftStop)]);
+        // No meio de um número, k e d só interrompem a entrada.
+        assert_eq!(
+            feed(&mut c, b"12d").last(),
+            Some(&Action::Error("número interrompido: só dígitos e Enter"))
+        );
         assert!(matches!(feed(&mut c, b"w")[..], [Action::Error(_)]));
         assert_eq!(feed(&mut c, b"\r\n"), Vec::<Action>::new());
         assert!(matches!(feed(&mut c, b"x")[..], [Action::Error(_)]));
@@ -237,7 +259,7 @@ mod tests {
     fn the_console_never_starts_the_motor() {
         let mut c = Console::new(5, 1);
         for b in 0..=255u8 {
-            for prefix in [&b""[..], b"1", b"r"] {
+            for prefix in [&b""[..], b"1", b"r", b"c"] {
                 let mut bytes = prefix.to_vec();
                 bytes.extend([b, b'\r']);
                 for action in feed(&mut c, &bytes) {

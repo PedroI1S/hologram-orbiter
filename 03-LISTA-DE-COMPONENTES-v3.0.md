@@ -41,8 +41,9 @@ painéis de 208 mm por causa de folga na junta ou no canal.
 |---|---|:--:|---:|
 | Motor BLDC | **A2212 920KV**, 2–4S, 52 g, eixo M6, base 4×M3 em cruz (diagonais 16 e 19 mm) | ✅ | — |
 | ESC | **LittleBee Spring 20A**, BLHeli_S, 25 × 13 mm | ✅ | — |
-| Fonte de bancada | ajustável; operar em **6–7 V**, ≥ 5 A | ✅ | — |
-| Gerador do sinal do ESC | **ESP32 DevKit de 30 pinos em mãos** (módulo "ESP-32" genérico, marcação XX5R69), no lugar do Arduino; também hospeda a página da imagem pelo celular (§9 do esquema). Firmware de rampa **≥ 12 s**, teto do pulso, watchdog e botões ainda a implementar — ver §8 do esquema | ✅ | — |
+| Fonte de bancada | ajustável; operar em **10–12 V** com limite de corrente de ~3 A (desde 20/10/2026: a 7 V a partida não saiu) | ✅ | — |
+| Grampo ou resistor de descarga no barramento do ESC | limiar acima de 12,6 V e abaixo de 16,8 V; dissipar a energia do rotor (27,6 J a 1800 RPM) a cada parada — ver §8.2 do esquema | 🛒 | a cotar |
+| Gerador do sinal do ESC | **ESP32 DevKit de 30 pinos em mãos** (módulo "ESP-32" genérico, marcação XX5R69), no lugar do Arduino; também hospeda a página da imagem pelo celular (§9 do esquema). Firmware em Rust (`firmware/`): armação, partida com chute, teto de regime, parada suave, watchdog e botões — ver §8 do esquema | ✅ | — |
 | Botões de partida e de parada | 2 × botão momentâneo, de D32 e D33 ao GND, com pull-up interno | 🛒 | 2 |
 | Pull-down do sinal do ESC | 10 kΩ, de D25 ao GND | 🛒 | 1 |
 | **Arruela Ø20 × Ø8,5 × 2 mm, alumínio** | cortar da mesma chapa da R01 (a referência de corte traz o disco). O furo precisa passar pelo **colar Ø8 do eixo**, que sobe 5–7 mm acima da campânula: uma arruela M6 assentaria no colar e a porca não apertaria o cubo. Alternativa de prateleira: DIN 125 M8 em aço (Ø16; 3,4 MPa no ABS) | 🛒 | — |

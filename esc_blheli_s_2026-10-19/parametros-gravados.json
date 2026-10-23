@@ -1,0 +1,26 @@
+{
+  "firmware": "BLHeli_S",
+  "version": "16.7",
+  "layout": "A-H-25",
+  "esc_channel": 1,
+  "signal_pin": "D3",
+  "parameters": {
+    "Programming by TX": true,
+    "Startup Power": "0.25",
+    "Temperature Protection": "140 C",
+    "Low RPM Power Protection": false,
+    "Brake on stop": false,
+    "Demag Compensation": "Low",
+    "Motor Timing": "Medium",
+    "Beep Strength": 40,
+    "Beacon Strength": 80,
+    "Beacon Delay": "10 minutes",
+    "Motor Direction": "Normal",
+    "PPM Min Throttle": "1148 us",
+    "PPM Max Throttle": "1832 us"
+  },
+  "raw_config_address": "0x1A00",
+  "raw_config_size": 112,
+  "raw_config_sha256": "9c6244b3ed50906c81aafd83ac51eb58c9de642c894bd19fce8b4edf5527e3b1",
+  "source": "Releitura pelo ESC Configurator 0.32.1 após Write Settings; Read Settings às 18:33:07 de 19/10/2026, ESC 1 identificado às 18:33:08."
+}

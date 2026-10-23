@@ -22,8 +22,9 @@ diagonais, com furos em (±8, 0) e (0, ±9,5).
 É ele que centra o cubo (furo Ø8 H8), e é por ele que a arruela precisa de furo
 Ø8,5: uma arruela M6 assentaria no colar e a porca não apertaria o cubo.
 
-**kv** — rotação por volt sem carga. 920 kv em 7 V dá 6440 RPM a vazio; a
-1800 RPM o motor está a aproximadamente 28 % disso. A base das tabelas de fonte é 7 V.
+**kv** — rotação por volt sem carga. 920 kv dá 9200 RPM a vazio a 10 V e
+11 040 RPM a 12 V; a 1800 RPM o motor está a 16–20 % disso. A fonte do ESC opera
+em 10–12 V desde 20/10/2026; as tabelas antigas usavam 7 V (6440 RPM, 28 %).
 
 **Kt** — constante de torque, `9,5493 / kv`. Diz quanto torque sai por ampère.
 
@@ -31,7 +32,7 @@ diagonais, com furos em (±8, 0) e (0, ±9,5).
 1–2 ms), não tensão analógica.
 
 **LVC** — corte por baixa tensão do ESC. Pode desligar o motor se ele achar que
-a bateria acabou — problema real quando se opera a fonte em 6–7 V.
+a bateria acabou — problema real quando se opera a fonte perto do piso da faixa.
 
 **Governor** — modo de malha fechada de rotação do ESC. É o que mantém a rotação
 estável quando a carga varia.
@@ -174,7 +175,8 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | ESC: governor | **não existe** em BLHeli_S | manual Rev16.x | ✅ |
 | ESC: corte por baixa tensão | **não existe** em BLHeli_S — o LVC definido acima não se aplica a este ESC | manual Rev16.x | ✅ |
 | ESC: tempo de rampa | **não existe** — só *startup power* (0,031–1,5) | manual Rev16.x | ✅ |
-| Fonte de bancada | ajustável | em mãos | ✅ |
+| ESC: Startup Power gravado | **0,25** desde 19/10/2026 (era 0,125; original 0,50) | releitura no configurador | ✅ |
+| Fonte de bancada | ajustável; operada em **10–12 V** com limite de corrente de ~3 A | em mãos | ✅ |
 | Bateria LiFePO4 800 mAh | 58 × 30 × 17 mm, 50 g, **6,6 V nominal**, 2S, 20C | comprada | ✅ |
 | Faixa útil da bateria | 7,2 V cheia · 6,6 no platô · **corte em 5,8** (dropout do buck) | derivado | ⚠️ |
 | **Rth do motor** | **3,5 °C/W** | assumido | ❌ **o termopar decide** |
@@ -224,22 +226,28 @@ Três consequências:
 
 1. O corte por baixa tensão que estava como pendência **não existe** — item
    encerrado.
-2. A **rampa nominal de RPM ≥ 12 s vem do gerador de sinal**, não do ESC. Isso torna o gerador
-   ainda mais obrigatório.
+2. A **partida vem do gerador de sinal**, não do ESC: subida ao chute de
+   1400 µs, chute curto e descida ao alvo (05 §8.2). A rampa de 12 s não deu
+   partida com o rotor (19/10/2026). Isso torna o gerador ainda mais
+   obrigatório.
 3. Se a imagem "respirar", a correção **não** é modo governor — e provavelmente
    não será preciso: a inércia mantém a variação entre voltas em 0,03 a 0,11 %,
    contra 0,14 % de orçamento.
 
 Dois ajustes que valem para o nosso caso, e que o manual descreve:
 
-- **Low RPM power protect = desabilitado.** A 1800 RPM estamos a 26 % da rotação
-  a vazio, exatamente o regime que essa proteção limita. O manual diz que
+- **Low RPM power protect = desabilitado.** A 1800 RPM, com a fonte em 10–12 V,
+  estamos a 16–20 % da rotação a vazio, exatamente o regime que essa proteção
+  limita. O manual diz que
   desabilitá-la "pode ser necessário para atingir potência plena em motores de
   baixo kv com tensão de alimentação baixa". Em troca, aumenta o risco de perda
   de sincronismo — por isso é ajuste de bancada, não de projeto.
 - **Brake on stop = desabilitado.** O BLHeli_S usa *damped light* sempre, com
   frenagem regenerativa. Frear um rotor de 27,6 J contra uma fonte de bancada,
-  que não afunda corrente, empurra a tensão do barramento para cima.
+  que não afunda corrente, empurra a tensão do barramento para cima. Mesmo com
+  ele desabilitado, a parada na hora a partir da rotação plena levou o
+  barramento a quase 20 V em 19/10/2026: grampo ou resistor de descarga no
+  barramento do ESC (05 §8.2).
 
 ---
 

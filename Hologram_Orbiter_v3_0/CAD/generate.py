@@ -2681,11 +2681,31 @@ def write_validation_summary(report: dict, path: Path) -> None:
             rows.append(f"| {mass} | {c['unsupported_length_mm']} | {c['modulus_mpa']} | {c['tip_deflection_mm']:.3f} | {c['max_bending_stress_mpa']:.3f} |")
     rows += ["", f"Folga radial calculada com o teto de massa: {d['containment']['radial_clearance_mm']:.2f} mm.",
              "Carga uniforme simplificada: não representa certificação de resistência ou fluência.", "",
-             "## Acionamento", "",
-             f"Regime: {physics['drive']['steady']['phase_current_a']:.2f} A de fase, {physics['drive']['steady']['input_power_w']:.2f} W / {physics['drive']['steady']['source_current_a']:.2f} A na fonte de 7 V.",
-             "Rampa nominal >= 12 s de RPM; conferir aceleração e corrente reais no bloqueador D."]
-    for c in physics['drive']['startup']:
-        rows.append(f"- {c['ramp_s']:.0f} s: {c['phase_current_a']:.2f} A de fase / {c['source_current_a']:.2f} A na fonte.")
+             "## Acionamento", ""]
+    drive = physics['drive']
+    start, clamp = drive['startup_kick'], drive['shaft_clamp']
+    kick, ceiling = start['schedule'], start['phase_ceiling']
+    def at_source(case):
+        return " / ".join(f"{s['current_a']:.2f} A a {s['voltage_v']:.0f} V" for s in case['source_currents'])
+    volts = "–".join(f"{v:.0f}" for v in drive['inputs_unvalidated']['source_voltages_v'])
+    rows += [f"Regime: {drive['steady']['phase_current_a']:.2f} A de fase, {drive['steady']['input_power_w']:.2f} W na fonte ({at_source(drive['steady'])}).",
+             f"Partida com chute (05 §8.2): {kick['ppm_min_us']}→{kick['kick_us']} µs em {kick['rise_s']:.0f} s, chute de {kick['kick_hold_s']:.0f} s, descida a {kick['fall_us_per_s']:.0f} µs/s até {kick['target_us']} µs; fonte em {volts} V com limite de {start['source_current_limit_a']:.0f} A.",
+             f"Teto de {ceiling['phase_current_a']:.0f} A de fase: {ceiling['input_power_w']:.2f} W na fonte ({at_source(ceiling)}), {ceiling['torque_nm']*1000:.1f} mN·m."]
+    stalls = {s['source_voltage_v']: s for s in start['stall_at_kick']}
+    for c in start['trajectories']:
+        s = stalls[c['source_voltage_v']]
+        flags = (["passa do teto de fase"] if c['exceeds_phase_ceiling'] else []) + \
+                ([f"passa dos {ceiling['input_power_w']:.2f} W do bloqueador D"] if c['exceeds_start_power_ceiling'] else []) + \
+                ([f"passa de {report['operating_point']['rpm']:.0f} RPM"] if c['exceeds_operating_rpm'] else [])
+        limiting = f" com a fonte limitando e o barramento em {s['bus_voltage_v']:.2f} V" if s['supply_limiting'] else ""
+        rows.append(f"- Fonte em {c['source_voltage_v']:.0f} V: parado no chute, {s['phase_current_a']:.2f} A de fase e {s['input_power_w']:.1f} W / {s['source_current_a']:.2f} A na fonte{limiting}, {s['torque_nm']*1000:.1f} mN·m; "
+                    f"pico de {c['peak_rpm']:.0f} RPM a {c['peak_rpm_pulse_us']:.0f} µs; fase até {c['peak_phase_current_a']:.2f} A e fonte até {c['peak_input_power_w']:.1f} W; {c['target_rpm']:.0f} RPM no alvo."
+                    + (f" **No modelo, {' e '.join(flags)}.**" if flags else ""))
+    peaks = ", ".join(f"{c['required_clamp_force_n']:.1f} N ({c['preload_margin']:.1f}×) no pico da partida a {c['source_voltage_v']:.0f} V" for c in clamp['kick_trajectory_peaks'])
+    rows += [f"Aperto do eixo (μ {drive['inputs_unvalidated']['shaft_friction_mu']}, r {drive['inputs_unvalidated']['shaft_friction_radius_mm']:.0f} mm, pré-carga estimada {clamp['preload_estimate_n']:.0f} N): "
+             f"{clamp['steady']['required_clamp_force_n']:.1f} N em regime, "
+             f"{clamp['phase_ceiling']['required_clamp_force_n']:.1f} N ({clamp['phase_ceiling']['preload_margin']:.1f}×) no teto de fase, {peaks}.",
+             "Modelo médio, sem o Startup Power do ESC nem a resistência da fonte e dos cabos; não é medição: conferir RPM, corrente e tensão reais no bloqueador D."]
     rows += ["", "## Montagem e orçamento nominal", "",
              f"Interseções da eletrônica com aranha: {d['bay_layout']['mesh_intersections']['components']}.",
              f"Contrapesos nominais: {d['bay_layout']['counterweight_placement']}.",

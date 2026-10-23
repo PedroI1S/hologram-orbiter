@@ -1,0 +1,27 @@
+{
+  "version": "16.7",
+  "layout": "A-H-25",
+  "parameters": {
+    "Startup Power": "0.25"
+  },
+  "raw_config_size": 112,
+  "before_sha256": "0528d8f4e26c6d40a83fc5482bcc7588bf0366c1aad2e1e274f0619b16330369",
+  "after_sha256": "9c6244b3ed50906c81aafd83ac51eb58c9de642c894bd19fce8b4edf5527e3b1",
+  "before_equals_2026_10_16_readback": true,
+  "changed_bytes": [
+    {
+      "offset": 9,
+      "address": "0x1a09",
+      "before": 5,
+      "recorded": 7
+    }
+  ],
+  "unchanged_bytes": 111,
+  "write_log_time": "2026/10/19 18:32:54",
+  "readback_log_times": [
+    "2026/10/19 18:32:54",
+    "2026/10/19 18:32:55",
+    "2026/10/19 18:33:07"
+  ],
+  "startup_power_code_table": "ESC Configurator 0.32.1: 0.031=1, 0.047=2, 0.063=3, 0.094=4, 0.125=5, 0.188=6, 0.25=7, 0.38=8, 0.50=9, 0.75=10, 1.00=11, 1.25=12, 1.50=13"
+}

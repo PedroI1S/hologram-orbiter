@@ -2,17 +2,18 @@
 
 use crate::controller::Limits;
 
-/// Duty do LEDC para um pulso, preso entre o pulso de parada e o teto.
+/// Duty do LEDC para um pulso, preso entre o pulso de parada e o chute.
 ///
 /// É a última barreira antes do hardware: o firmware não escreve no LEDC por
-/// outro caminho. No teto o arredondamento é para baixo, para o pulso gerado
-/// nunca passar dele nem por uma fração de µs.
+/// outro caminho. No chute o arredondamento é para baixo, para o pulso gerado
+/// nunca passar dele nem por uma fração de µs. O teto de regime, mais baixo,
+/// é do controlador: acima dele o pulso só fica durante a partida.
 pub fn duty_for(pulse_ns: u32, lim: &Limits, freq_hz: u32, bits: u32) -> u32 {
     let scale = (1u64 << bits) * freq_hz as u64;
-    let pulse = pulse_ns.clamp(lim.stop_ns(), lim.ceiling_ns()) as u64;
+    let pulse = pulse_ns.clamp(lim.stop_ns(), lim.kick_ns()) as u64;
     let rounded = (pulse * scale + 500_000_000) / 1_000_000_000;
-    let ceiling = lim.ceiling_ns() as u64 * scale / 1_000_000_000;
-    rounded.min(ceiling) as u32
+    let max = lim.kick_ns() as u64 * scale / 1_000_000_000;
+    rounded.min(max) as u32
 }
 
 /// Pulso que um duty gera, em ns (para o registro).
@@ -29,8 +30,11 @@ mod tests {
         stop_us: 1000,
         ppm_min_us: 1148,
         ppm_max_us: 1832,
-        ceiling_us: 1400,
-        min_ramp_ms: 12_000,
+        ceiling_us: 1320,
+        kick_us: 1400,
+        min_ramp_ms: 3_000,
+        fall_ms: 6_000,
+        adjust_ms: 12_000,
         arming_ms: 2_000,
     };
 
@@ -49,7 +53,7 @@ mod tests {
     }
 
     #[test]
-    fn output_never_leaves_stop_to_ceiling() {
+    fn output_never_leaves_stop_to_kick() {
         for pulse in [0, 500_000, 999_999, 1_400_001, 1_832_000, 2_000_000, u32::MAX] {
             let p = pulse_ns_for(duty_for(pulse, &LIM, 50, 16), 50, 16);
             assert!((999_000..=1_400_000).contains(&p), "{pulse} → {p}");
@@ -57,7 +61,7 @@ mod tests {
         for pulse in (1_000_000..=1_400_000).step_by(37) {
             let p = pulse_ns_for(duty_for(pulse, &LIM, 50, 16), 50, 16);
             assert!(p <= 1_400_000);
-            // meio passo (153 ns) arredondando; no teto, até um passo para baixo
+            // meio passo (153 ns) arredondando; no chute, até um passo para baixo
             assert!((p as i64 - pulse as i64).abs() <= 306, "{pulse} → {p}");
         }
     }

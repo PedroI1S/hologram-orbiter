@@ -124,6 +124,7 @@ fn main() -> ! {
         lim,
         config::INITIAL_TARGET_US,
         config::INITIAL_RAMP_MS,
+        config::INITIAL_KICK_MS,
         t0,
     );
     let mut panel = Panel::new(config::START_DEBOUNCE_MS, config::STOP_DEBOUNCE_MS, t0);
@@ -176,6 +177,17 @@ fn main() -> ! {
                 lim.stop_us,
                 lim.arming_ms / 1000
             ),
+            Some(Event::KickReached { after_ms }) => println!(
+                "# CHUTE em {} µs após {} s de subida; dura {} s (k encerra antes)",
+                lim.kick_us,
+                Tenths(after_ms / 100),
+                Tenths(ctl.kick_ms() / 100)
+            ),
+            Some(Event::KickEnded { held_ms }) => println!(
+                "# fim do chute após {} s: descendo a {} µs",
+                Tenths(held_ms / 100),
+                ctl.target_us()
+            ),
             Some(Event::Reached {
                 target_us,
                 after_ms,
@@ -184,11 +196,15 @@ fn main() -> ! {
                 Tenths(after_ms / 100),
                 Tenths(ctl.running_ms(now).unwrap_or(0) / 100)
             ),
+            Some(Event::SoftStopped { run_ms }) => println!(
+                "# PARADO (parada suave) após {} s de giro",
+                Tenths(run_ms / 100)
+            ),
             None => {}
         }
 
         // Fora da configuração, o LEDC só é escrito aqui, sempre por `duty_for`,
-        // que prende o pulso no teto.
+        // que prende o pulso no chute.
         let wanted = pwm::duty_for(ctl.pulse_ns(), &lim, config::PWM_FREQ_HZ, config::PWM_BITS);
         if wanted != duty {
             duty = wanted;
@@ -246,15 +262,25 @@ fn banner() {
         config::PWM_FREQ_HZ
     );
     println!(
-        "# teto {} µs{} · rampa mínima {} s · watchdog {} ms",
+        "# teto de regime {} µs{} · watchdog {} ms",
         lim.ceiling_us,
         if config::CEILING_MEASURED {
             ""
         } else {
             " (ESTIMADO, não medido com tacômetro)"
         },
-        lim.min_ramp_ms / 1000,
         config::WATCHDOG_MS
+    );
+    println!(
+        "# partida: subida de {} s ao chute de {} µs, chute de {} s, descida a {} µs/s",
+        Tenths(config::INITIAL_RAMP_MS / 100),
+        lim.kick_us,
+        Tenths(config::INITIAL_KICK_MS / 100),
+        lim.fall_rate_ns_per_s() / 1000
+    );
+    println!(
+        "# ajustes em giro e parada suave (d) a {} µs/s; espaço, p e D33 param na hora",
+        lim.adjust_rate_ns_per_s() / 1000
     );
     println!(
         "# armando: {} µs por {} s",
@@ -271,10 +297,12 @@ fn apply(ctl: &mut Controller, command: Command, now: u32) {
     let running_before = ctl.running_ms(now);
     match ctl.command(command, now) {
         Reply::Started { count } => println!(
-            "# PARTIDA {count}: de {} a {} µs em {} s",
+            "# PARTIDA {count}: de {} a {} µs (chute) em {} s, chute de {} s, depois {} µs",
             ctl.limits().ppm_min_us,
-            ctl.target_us(),
-            ctl.ramp_ms() / 1000
+            ctl.limits().kick_us,
+            Tenths(ctl.ramp_ms() / 100),
+            Tenths(ctl.kick_ms() / 100),
+            ctl.target_us()
         ),
         Reply::Stopped { was_running } => {
             let Command::Stop(source) = command else {
@@ -298,7 +326,19 @@ fn apply(ctl: &mut Controller, command: Command, now: u32) {
             "# alvo {target_us} µs{}",
             if saturated { " (no limite)" } else { "" }
         ),
-        Reply::Ramp { ramp_ms } => println!("# rampa de partida: {} s", ramp_ms / 1000),
+        Reply::SoftStop { was_running: true } => println!(
+            "# PARADA SUAVE em {} µs: descendo ao acelerador zero a {} µs/s",
+            Tenths((pulse_before + 50) / 100),
+            ctl.limits().adjust_rate_ns_per_s() / 1000
+        ),
+        Reply::SoftStop { was_running: false } => println!("# já parado"),
+        Reply::KickEnded => println!(
+            "# chute encerrado pela tecla em {} µs: descendo a {} µs",
+            Tenths((pulse_before + 50) / 100),
+            ctl.target_us()
+        ),
+        Reply::Ramp { ramp_ms } => println!("# subida até o chute: {} s", ramp_ms / 1000),
+        Reply::Kick { kick_ms } => println!("# chute: {} s", kick_ms / 1000),
         Reply::Rejected(reject) => println!("# recusado: {}", reject.message()),
     }
 }
@@ -326,11 +366,13 @@ fn status(ctl: &Controller, panel: &Panel) {
     let lim = ctl.limits();
     let pressed = |p: bool| if p { "pressionado" } else { "solto" };
     println!(
-        "# {} · pulso {} µs · alvo {} µs · rampa {} s · teto {} µs{} · partidas {}",
+        "# {} · pulso {} µs · alvo {} µs · subida {} s · chute {} µs por {} s · teto {} µs{} · partidas {}",
         ctl.state().label(),
         Tenths((ctl.pulse_ns() + 50) / 100),
         ctl.target_us(),
         ctl.ramp_ms() / 1000,
+        lim.kick_us,
+        ctl.kick_ms() / 1000,
         lim.ceiling_us,
         if config::CEILING_MEASURED {
             ""

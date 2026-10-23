@@ -38,10 +38,13 @@ Carga uniforme simplificada: não representa certificação de resistência ou f
 
 ## Acionamento
 
-Regime: 4.95 A de fase, 16.63 W / 2.38 A na fonte de 7 V.
-Rampa nominal >= 12 s de RPM; conferir aceleração e corrente reais no bloqueador D.
-- 8 s: 8.47 A de fase / 4.98 A na fonte.
-- 12 s: 7.30 A de fase / 4.02 A na fonte.
+Regime: 4.95 A de fase, 16.63 W na fonte (1.66 A a 10 V / 1.39 A a 12 V).
+Partida com chute (05 §8.2): 1148→1400 µs em 3 s, chute de 2 s, descida a 42 µs/s até 1200 µs; fonte em 10–12 V com limite de 30 A.
+Teto de 8 A de fase: 32.10 W na fonte (3.21 A a 10 V / 2.68 A a 12 V), 83.0 mN·m.
+- Fonte em 10 V: parado no chute, 16.67 A de fase e 64.7 W / 6.47 A na fonte, 173.0 mN·m; pico de 1692 RPM a 1340 µs; fase até 16.67 A e fonte até 64.7 W; 591 RPM no alvo. **No modelo, passa do teto de fase e passa dos 32.10 W do bloqueador D.**
+- Fonte em 12 V: parado no chute, 20.00 A de fase e 93.1 W / 7.76 A na fonte, 207.6 mN·m; pico de 1964 RPM a 1344 µs; fase até 20.00 A e fonte até 93.1 W; 691 RPM no alvo. **No modelo, passa do teto de fase e passa dos 32.10 W do bloqueador D e passa de 1800 RPM.**
+Aperto do eixo (μ 0.3, r 7 mm, pré-carga estimada 500 N): 24.5 N em regime, 39.5 N (12.6×) no teto de fase, 82.4 N (6.1×) no pico da partida a 10 V, 98.9 N (5.1×) no pico da partida a 12 V.
+Modelo médio, sem o Startup Power do ESC nem a resistência da fonte e dos cabos; não é medição: conferir RPM, corrente e tensão reais no bloqueador D.
 
 ## Montagem e orçamento nominal
 

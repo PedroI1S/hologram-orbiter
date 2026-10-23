@@ -71,3 +71,7 @@ Sinal gerado pela ESP32 da base com o firmware de `firmware/esp32-base` (commit 
 - O sentido depende da ordem dos três fios do motor nos pads do ESC: trocar quaisquer dois inverte o giro. Marcar fios e pads antes de desmontar.
 
 Ainda sem ensaio: a parada e o watchdog com o motor girando, a partida com o rotor (inércia cerca de 100 vezes maior; bloqueador D do 04) e o teto medido com tacômetro.
+
+## Atualização de 19/10/2026 — Startup Power 0,25
+
+Com a peça impressa montada, a partida falhou com Startup Power 0,125. O valor foi elevado para **0,25**, gravado e confirmado por releitura; só o byte de Startup Power mudou. Registro, bytes e logs em `esc_blheli_s_2026-10-19/`.

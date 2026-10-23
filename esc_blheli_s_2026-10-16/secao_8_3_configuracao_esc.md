@@ -9,8 +9,10 @@ O configurador identificou o ESC como **A-H-25 — BLHeli_S, 16.7**, no canal **
 | Motor Direction | Normal | Normal — preservado |
 | Brake on stop | Desligado | Desligado |
 | Low RPM Power Protection | Ligado | Desligado |
-| Startup Power | 0,50 | 0,125 |
+| Startup Power | 0,50 | 0,125; **0,25 desde 19/10/2026** (ver abaixo) |
 
 Como não havia um mapeamento prévio entre Normal/Reversed e a ordem das fases, o usuário solicitou preservar Normal, e o sentido ficou para o primeiro giro. Em 19/10/2026, com o sinal gerado pela ESP32 da base e o motor sem rotor a 7,0 V, o giro foi **anti-horário visto de cima**, o sentido exigido pela especificação, sem alterar a configuração. O valor de partida 0,125 deu partida no motor sem rotor; com o rotor, a partida ainda será ensaiada.
 
 A comparação dos 112 bytes de configuração antes e depois confirmou alterações somente nos campos Startup Power e Low RPM Power Protection; os outros 110 bytes permaneceram idênticos. O firmware BLHeli_S 16.7 e o layout A-H-25 foram mantidos. As três fases do motor permaneceram desconectadas, sem ensaio de rotação. Ao final, o configurador foi desconectado da porta USB.
+
+Em 19/10/2026, com a peça impressa montada, a partida com Startup Power 0,125 só fazia o motor tremer. O valor foi elevado para **0,25** pelo mesmo procedimento (Uno como interface, Write Settings e três releituras). Dos 112 bytes de configuração, só o de Startup Power mudou (offset 9: 5 → 7). Mesmo assim, a 7,0 V a partida não saiu; o rotor só partiu com a fonte em 10,4 V e pulso de 1400 µs, e a fonte do ESC passou a 10–12 V. Registro completo em `esc_blheli_s_2026-10-19/registro.md`.

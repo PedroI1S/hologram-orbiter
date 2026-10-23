@@ -94,10 +94,11 @@ raio 100 ±0,1 mm · Δh ≤ ±0,5 mm. Peça fora de tolerância é reimpressa, 
 | Painéis nas longarinas, porcas planas com trava química | rotor completo, sem LEDs |
 | Balanceamento estático | painéis casados em massa |
 | Contenção de ensaio montada | caixa fechada, chapa ou tela; policarbonato se for usar o rádio (esquema 05 §9.4) |
-| Firmware da rampa na ESP32 da base: armação, rampa ≥ 12 s, teto do pulso, watchdog e botões (esquema 05 §8.2) | sinal do ESC conferido na bancada, sem motor |
+| Firmware da partida na ESP32 da base: armação, partida com chute (subida de 3 s ao chute de 1400 µs, chute de 2 s, descida ao alvo), teto de regime, parada suave, watchdog e botões (esquema 05 §8.2) | sinal do ESC conferido na bancada, sem motor |
 
 **Portão G2:** rotor montado, girando à mão sem rocamento perceptível,
-contenção de ensaio montada, rampa da ESP32 da base conferida na bancada.
+contenção de ensaio montada, partida da ESP32 da base conferida na bancada,
+grampo ou resistor de descarga no barramento do ESC instalado.
 
 > **Pesar os painéis é necessário, não suficiente.** Δm ≤ 0,084 g casa as
 > *massas*, não os *momentos*: dois painéis de massa idêntica com o CG em raios
@@ -148,7 +149,7 @@ Semanas relativas à entrega do CAD. Deslocam junto com ela.
 | 1 | 0 | CAD regenerado · compras disparadas |
 | 2 | 1 | cupons · lote dos painéis · aranha e tampa |
 | 3 | 1 | base e torre (impressão longa) · chapa cortada |
-| 4 | 2 | montagem · balanceamento estático · rampa na bancada · **G2** |
+| 4 | 2 | montagem · balanceamento estático · partida na bancada · **G2** |
 | 5 | 3 | ensaios A e B |
 | 6 | 3 | ensaios C e D · **G3** |
 | 7 | 4 | fiação, eletrônica, firmware, enlace de rádio |
@@ -172,7 +173,8 @@ da eletrônica de bordo.
 |---|---|---|---|---|
 | Arrasto acima do estimado | média | alto | P_entrada > 20 W em G3 | carenagem do boss; recuo para 1500 RPM |
 | Motor aquece além do previsto | média | alto | curva térmica sem estabilizar | ventilação da baia; é o fator que decide |
-| Partida sensorless falha | **média** | médio | travamento na rampa | rampa de 12 s; duty alto; ESC sensored |
+| Partida sensorless falha | **ocorreu** (19/10) | médio | ESC treme e desiste | chute de 1400 µs com a fonte em 10–12 V (partiu em 19/10); Startup Power 0,25 → 0,38 → 0,50; ESC sensored |
+| Sobretensão no barramento do ESC na parada | **ocorreu** (19/10: ~20 V) | alto | tensão do barramento na parada | grampo ou resistor de descarga; parada suave (`d`) |
 | Δm entre painéis fora | média | médio | pesagem em G1 | massa adesiva; reimpressão |
 | Eletrônica mais pesada que o catálogo | média | médio | pesagem das peças reais (massa completa e chicotes ainda não reconciliados) | mini560 em vez de XL4015; polyfuse em vez de porta-fusível; alívios mais fundos |
 | Vibração acima do limite | baixa | médio | FFT em G3 | balanceamento em dois planos |

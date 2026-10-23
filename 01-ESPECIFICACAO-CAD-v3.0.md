@@ -82,7 +82,7 @@ A e B e da estrutura, sem afrouxar limites.
 | Tensão de flexão no painel | 21,7–28,8 MPa no modelo uniforme | resistência não certificada; razão nominal a 30 MPa de 1,38–1,04 |
 | Energia cinética do rotor | 27,6 J | energia armazenada em operação |
 | Energia de um painel solto | 7,9 J a 18,9 m/s (velocidade no CG, r = 100) | idem |
-| Inércia do rotor | 1,55 g·m², premissa conservadora | rampa de partida ≥ 12 s |
+| Inércia do rotor | 1,55 g·m², premissa conservadora | partida com chute curto (05 §8.2); a rampa de 12 s não partiu |
 | Desbalanceamento admissível | **8,4 g·mm** | contrapesos, berço da bateria, Δm |
 
 **Duas bases de massa, de propósito.**
@@ -332,9 +332,14 @@ o Ø da baia e a borda do cubo.
 Não coincidir com a raiz dos braços nem com os rasgos de ventilação.
 
 **Aperto do eixo — decidido, sem medição pendente.** O torque vai da campânula
-ao cubo por atrito. Em regime ele precisa de **51,4 mN·m**; durante a rampa de 12 s,
-o modelo chega a **75,7 mN·m**. Com a premissa de atrito usada anteriormente
-(μ ≈ 0,3 em raio efetivo de 7 mm), são ~24,5 N e ~36,1 N de aperto.
+ao cubo por atrito. Em regime ele precisa de **51,4 mN·m**. Na partida com chute
+(05 §8.2), a fonte de 10–12 V tem limite de 30 A e não segura a corrente: com o
+rotor parado no chute, o modelo médio dá 16,7 A de fase a 10 V e 20,0 A a 12 V,
+ou **173–208 mN·m**, bem acima do teto de 8 A do ensaio (83 mN·m). É um teto do
+modelo, que ignora o Startup Power do ESC e a resistência da fonte e dos cabos
+(`reports/FISICA.json`, `drive.startup_kick`). Com a premissa de atrito usada
+anteriormente (μ ≈ 0,3 em raio efetivo de 7 mm), são ~24,5 N de aperto em regime
+e ~82–99 N na partida.
 O coeficiente de atrito e a retenção da pré-carga precisam de verificação. A tabela compara pressões médias estimadas:
 
 | Torque | Força | Arruela M6 padrão (Ø12) | **Arruela larga (Ø20)** |
@@ -343,7 +348,8 @@ O coeficiente de atrito e a retenção da pré-carga precisam de verificação. 
 | 3,0 N·m | 2500 N | 39,8 MPa — escoa | 9,5 MPa |
 
 **Especificado: arruela Ø20 e torque de 0,6 N·m.** A estimativa de 500 N
-dá margem nominal de ~14× sobre a partida e pressão média de 1,9 MPa no ABS.
+dá margem nominal de ~5× sobre a partida a 12 V (~6× a 10 V) e pressão média de
+1,9 MPa no ABS.
 Isso não certifica a retenção de pré-carga por um polímero sob carga e calor. O assento
 plano de Ø20 é o topo do cubo, sem rebaixo — ver abaixo.
 
@@ -769,19 +775,24 @@ Rotor completo: ~278,85 g (subtotal nominal) com a baia ampliada, o layout da el
   catálogo), Hall0,2g e contrapeso3,05g; reconciliar chicotes/ferragens e pesar antes do aceite de massa
 Balanceamento: e = 6,3/188,50 = 33,4 µm → U = 0,252 · 33,4 = 8,4 g·mm
   (cargas pela referência de 44,5 g; balanceamento pela massa real — ver §2.1)
-Partida: rampa de 12 s → 7,30 A de fase, ~28,1 W / 4,02 A na fonte a 7 V
-  rampa de 8 s → 8,47 A de fase, ~34,9 W / 4,98 A na fonte: excede os 8 A
+Partida: chute de 1400 µs (05 §8.2), duty = 252/684 = 0,368; fonte em
+  10–12 V com limite de 30 A, que não atua. Rotor parado no chute:
+  I = 0,368·V/0,221 → 16,7 A a 10 V e 20,0 A a 12 V (173–208 mN·m;
+  modelo sem o Startup Power do ESC); teto de 8 A de fase = 32,1 W na
+  fonte (3,2 A a 10 V, 2,7 A a 12 V)
 ```
 
 **Corrente de fase ≠ corrente da fonte.** Os 4,95 A são de fase — é deles que
 sai o aquecimento. No ponto de projeto a fonte de bancada vê **16,63 W**, ou seja
-**2,38 A em 7 V**; no melhor caso, **14,47 W** e **2,07 A em 7 V**. Toda tabela
-de corrente na fonte neste pacote usa **7 V** como base: uma linha em 7,4 V dá
-um número 6 % menor e não é comparável.
+**1,66 A a 10 V** e **1,39 A a 12 V**; no melhor caso, **14,47 W** (1,45 A e
+1,21 A). Desde 20/10/2026 a fonte do ESC opera em **10–12 V**: a 7 V a partida
+não saiu (plano 04, bloqueador D). Compare potências, ou correntes na mesma
+tensão; as tabelas antigas em 7 V não são comparáveis.
 A eficiência do ESC assumida é 95 %, explícita na conta
 `P_fonte = (Kt·ω·I + I²R + 0,7)/0,95`. Ela também deve ser medida.
-Começar com a fonte em 7,0 V; só investigar 6–7 V conforme a pendência C9: a 1800 RPM o motor
-está a 26% da rotação a vazio em 2S, e duty baixo piora a comutação.
+A 1800 RPM, com 10–12 V, o motor está a 16–20 % da rotação a vazio: o duty mais
+baixo piora a comutação em baixa rotação, e o mesmo pulso gira mais rápido. O
+teto de regime é medido com tacômetro na tensão em uso (05 §8.2; pendência C9).
 
 ### 10.0 Flexão do painel — seção vigente e hipóteses ainda abertas
 

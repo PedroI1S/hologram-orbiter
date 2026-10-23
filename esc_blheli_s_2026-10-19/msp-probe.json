@@ -1,0 +1,46 @@
+[
+  {
+    "cmd": 1,
+    "length": 3,
+    "payload_hex": "00012b",
+    "checksum_ok": true,
+    "command": "API_VERSION"
+  },
+  {
+    "cmd": 2,
+    "length": 4,
+    "payload_hex": "4254464c",
+    "checksum_ok": true,
+    "command": "FC_VARIANT",
+    "text": "BTFL"
+  },
+  {
+    "cmd": 3,
+    "length": 3,
+    "payload_hex": "040300",
+    "checksum_ok": true,
+    "command": "FC_VERSION"
+  },
+  {
+    "cmd": 4,
+    "length": 6,
+    "payload_hex": "415244550000",
+    "checksum_ok": true,
+    "command": "BOARD_INFO",
+    "text": "ARDU"
+  },
+  {
+    "cmd": 104,
+    "length": 8,
+    "payload_hex": "e803e803e803e803",
+    "checksum_ok": true,
+    "command": "MOTOR"
+  },
+  {
+    "cmd": 36,
+    "length": 4,
+    "payload_hex": "00000000",
+    "checksum_ok": true,
+    "command": "FEATURE_CONFIG"
+  }
+]

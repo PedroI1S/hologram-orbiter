@@ -24,16 +24,22 @@ estimado. É a maior incerteza do projeto e a entrada de todo o caso térmico.
 patamares de 600, 1000, 1400 e 1800 RPM, 2 min em cada. Ler **tensão e corrente
 na fonte de bancada** e calcular a potência de entrada.
 
-| Corrente de fase | P entrada | I na fonte a 7 V | T motor prevista | |
-|---:|---:|---:|---:|---|
-| 3,0 A | 9,0 W | 1,29 A | 34 °C | |
-| 4,0 A | 12,7 W | 1,81 A | 40 °C | |
-| 4,44 A | 14,47 W | **2,07 A** | 43 °C | melhor caso (Cd do boss 0,20) |
-| **4,95 A** | **16,63 W** | **2,38 A** | **46 °C** | ← **ponto de projeto** (Cd do boss 0,35) |
-| 5,0 A | 16,85 W | 2,41 A | 47 °C | |
-| 5,5 A | 19,1 W | 2,73 A | 51 °C | limite aceitável |
-| 6,0 A | 21,47 W | 3,07 A | 55,3 °C | previsão acima do limite térmico |
-| 8,0 A | 32,1 W | 4,59 A | 77 °C | parar imediatamente |
+| Corrente de fase | P entrada | I na fonte a 10 V | I na fonte a 12 V | T motor prevista | |
+|---:|---:|---:|---:|---:|---|
+| 3,0 A | 9,0 W | 0,90 A | 0,75 A | 34 °C | |
+| 4,0 A | 12,7 W | 1,27 A | 1,06 A | 40 °C | |
+| 4,44 A | 14,47 W | **1,45 A** | **1,21 A** | 43 °C | melhor caso (Cd do boss 0,20) |
+| **4,95 A** | **16,63 W** | **1,66 A** | **1,39 A** | **46 °C** | ← **ponto de projeto** (Cd do boss 0,35) |
+| 5,0 A | 16,85 W | 1,69 A | 1,40 A | 47 °C | |
+| 5,5 A | 19,1 W | 1,91 A | 1,59 A | 51 °C | limite aceitável |
+| 6,0 A | 21,47 W | 2,15 A | 1,79 A | 55,3 °C | previsão acima do limite térmico |
+| 8,0 A | 32,1 W | 3,21 A | 2,68 A | 77 °C | parar imediatamente |
+
+A fonte do ESC passou de 6–7 V para **10–12 V** em 20/10/2026: a 7,0 V, com
+alvo de até 1300 µs, o rotor não partiu, e só partiu com 1400 µs e a fonte em
+10,4 V (bloqueador D). A potência não depende da tensão; a corrente
+na fonte é `P/V`. Ler a tensão na fonte junto com a corrente: com limite de
+corrente, a tensão cai (em 19/10, de 10,4 V para 8,4 V a 2,48 A).
 
 **Critério de aceite:** P_entrada **≤ 20 W** a 1800 RPM, em regime estável.
 
@@ -218,36 +224,54 @@ admissível) ou empeno de painel.
 de uma hélice 1045. ESCs sensorless são sintonizados para hélice, e partida com
 inércia alta é o modo de falha clássico: o motor perde sincronismo e trava.
 
-**Método.** Com o rotor completo, rampa nominal configurada em **≥ 12 s**, executar 10
-partidas consecutivas do repouso até 1800 RPM.
+**Método.** Com o rotor completo, fonte em 10–12 V com limite de corrente de
+~3 A, grampo ou resistor de descarga no barramento do ESC (05 §8.2) e o alvo no
+teto de regime, executar 10 partidas consecutivas do repouso até 1800 RPM com a
+partida do firmware: subida de 3 s ao chute de 1400 µs, chute de 2 s (a tecla
+`k` o encerra ao ver o rotor girar) e descida ao alvo a 42 µs/s.
 
-Confirmar a curva de RPM: uma rampa linear de pulso servo não garante uma
-rampa linear de velocidade. Com J=0,00155 kg·m² e arrasto de 51,4 mN·m, a
-aceleração linear em 12 s exige 24,35 mN·m e prevê **7,30 A de fase**,
-~28,17 W / **4,02 A na fonte de 7 V**, usando η_ESC=95%. Em 8 s seriam
-**8,47 A de fase / 4,98 A na fonte**, fora do limite. O mínimo matemático para
-8 A é ~9,23 s, sem margem; não é a rampa nominal.
+**Por que chute, e não rampa longa.** Em 19/10/2026 a rampa de 12 s até 1200 µs
+não deu partida: o ESC fazia três tentativas, cada uma mais forte que a
+anterior porque o acelerador ainda subia, e desistia antes de chegar a ~4 % de
+acelerador. O rotor só partiu com 1400 µs e a fonte em 10,4 V
+(`esc_blheli_s_2026-10-19/registro.md`). Com o chute, a aceleração deixa de ser
+imposta pela rampa: no início quem limita é o Startup Power do ESC, e depois o
+limite de corrente da fonte. Pelo modelo deste plano, com o rotor parado no
+chute e a fonte limitada a 3 A, a tensão cai a ~4,6 V e a corrente de fase
+fica em ~7,7 A, perto do teto de 8 A: **não subir o limite de corrente da
+fonte**. Pelo mesmo modelo, chute de 2 s seguido da descida dá pico de
+~1620 RPM a 12 V; 3 s dariam ~1760 RPM. Sustentado, 1400 µs passariam de
+2000 RPM. Confirmar a curva de RPM com tacômetro.
 
 **Critérios de aceite:**
 - 10 de 10 partidas bem-sucedidas, sem travamento nem ruído de dessincronismo;
-- pico de corrente na fonte durante a rampa ≤ **4,6 A a 7 V** (32,1 W / 7 V, a
-  mesma linha da tabela do bloqueador A; estimativa equivalente a 8,0 A
-  de fase nesse modelo, não uma medição de corrente de fase);
+- pico de potência na fonte durante a partida ≤ **32,1 W** (3,2 A a 10 V,
+  2,7 A a 12 V; a mesma linha da tabela do bloqueador A, estimativa
+  equivalente a 8,0 A de fase nesse modelo, não uma medição de corrente de
+  fase);
+- rotação durante a partida ≤ 1800 RPM, medida com tacômetro;
+- tensão no barramento do ESC ≤ 16,8 V em todas as paradas;
 - nenhum evento de proteção do ESC.
 
 **Se falhar:**
-1. Alongar a rampa além dos 12 s nominais, medir a aceleração e recalcular
-   `I_fase=(J·ω/t + 0,0514)/0,0103797`. Manter o teto de 4,6 A na fonte a 7 V.
-2. Reduzir a potência de partida nas configurações do ESC.
-3. Ajustar a fonte para 6–7 V, o que faz o ESC operar em duty mais alto e melhora
-   a resolução de comutação em baixa rotação.
-4. **Desabilitar o "Low RPM power protect"** do BLHeli_S. A 1800 RPM estamos a
-   26 % da rotação a vazio, exatamente o regime que essa proteção limita; o
-   manual indica desabilitá-la para motores de baixo kv em tensão baixa. Em
-   troca, aumenta o risco de perda de sincronismo — ajuste de bancada.
-5. **Desabilitar o "Brake on stop".** O BLHeli_S freia com regeneração, e uma
-   fonte de bancada não afunda corrente: frear 27,6 J empurra o barramento para
-   cima.
+1. Alongar o chute (`c3` a `c5`) ou a subida (`r`), sem passar de 1800 RPM no
+   tacômetro.
+2. Subir o Startup Power do ESC: 0,25 (gravado em 19/10/2026) → 0,38 → 0,50,
+   o original. A falha de 19/10 foi de potência insuficiente — a 0,125 o motor
+   só tremia, com menos de 1 A —, não de perda de sincronismo por excesso.
+3. A fonte já está em 10–12 V (decisão de 20/10/2026): a 7,0 V, com alvo de
+   até 1300 µs, a partida não saiu. Em troca, o mesmo pulso gira mais rápido (teto de regime menor) e a
+   resolução de comutação em baixa rotação piora.
+4. **Desabilitar o "Low RPM power protect"** do BLHeli_S (feito em 16/10). A
+   1800 RPM, com 10–12 V, estamos a 16–20 % da rotação a vazio, exatamente o
+   regime que essa proteção limita; o manual indica desabilitá-la para motores
+   de baixo kv em tensão baixa. Em troca, aumenta o risco de perda de
+   sincronismo — ajuste de bancada.
+5. **Desabilitar o "Brake on stop"** (feito em 16/10). O BLHeli_S freia com
+   regeneração, e uma fonte de bancada não afunda corrente: frear 27,6 J
+   empurra o barramento para cima. Mesmo desabilitado, a parada na hora levou
+   o barramento a quase 20 V em 19/10: o grampo ou resistor de descarga é
+   obrigatório, e a parada normal de ensaio é a suave (`d`).
 6. Se nada resolver, o caminho é um ESC sensored ou um controlador FOC.
 
 ---
@@ -373,6 +397,11 @@ Não são formalidade. O rotor guarda **27,6 J** e um painel solto sai a
 - **Ninguém abre a contenção antes de o rotor parar — no mínimo 90 s após o
   corte, e só com o rotor visivelmente imóvel.** Se for preciso frear de fato,
   use um resistor de descarga no barramento do ESC; nunca a fonte.
+- **Grampo ou resistor de descarga no barramento do ESC** antes de girar com a
+  fonte em 10–12 V. Em 19/10/2026 a parada na hora a partir da rotação plena
+  levou o barramento a quase 20 V, acima dos 16,8 V do ESC. Parar os ensaios
+  pela parada suave (`d` na serial); a parada na hora (D33, espaço) fica para
+  quando for preciso.
 - **Subir em patamares** com inspeção entre eles. Nunca ir direto a 1800.
 - Após qualquer reimpressão ou remontagem, **refazer o balanceamento**.
 - **Grampear a base à bancada** pelas abas externas do anel (quatro, nos

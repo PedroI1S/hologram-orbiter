@@ -92,4 +92,4 @@ assenta: altura do topo do colar e da ponta do eixo.
 5. Montar o cubo no eixo, assentar a arruela Ø20 × Ø8,5 × 2 e apertar a porca fina M6 conforme §3. **A bateria e a tampa ainda devem estar removidas**, para acesso axial à porca. Conferir eixo, rosca, giro livre e entreferro.
 6. Instalar, reter e conectar a bateria no berço em Z local 9…26 (global 195…212). Conferir proteção elétrica, chave, fios afastados do eixo e retenção de todos os componentes.
 7. Fechar a tampa com 2 × M3 autoatarraxantes nos postes y=±35. Pesar e reconciliar o conjunto completo; repetir o balanceamento após qualquer abertura, correção ou troca de componente.
-8. Operação somente após resolver as pendências estruturais e instrumentais. Ensaio com contenção, base grampeada e operação remota; rampa nominal de RPM ≥12 s, limites e bloqueadores conforme plano 04.
+8. Operação somente após resolver as pendências estruturais e instrumentais. Ensaio com contenção, base grampeada e operação remota; fonte do ESC em 10–12 V com limite de ~3 A e grampo ou resistor de descarga no barramento; partida com chute da ESP32 da base (esquema 05 §8.2), limites e bloqueadores conforme plano 04.

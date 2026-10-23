@@ -1,6 +1,6 @@
 [package]
 name = "controle-motor"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 description = "Lógica do gerador de sinal do ESC (armação, rampa, teto, parada), sem hardware"
 publish = false

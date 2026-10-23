@@ -273,22 +273,25 @@ Tudo que entrar aqui precisa ficar onde o CAD diz: **1 mm de excentricidade em
 
 ```
 Fonte de bancada ──── ESC LittleBee Spring 20A ──── motor A2212 920KV
-   6–7 V, ≥ 5 A        BLHeli_S, sinal servo            3 fases
+  10–12 V, ~3 A        BLHeli_S, sinal servo            3 fases
         │                      ▲
         │                      │ PWM 1–2 ms, 50 Hz · D25, pull-down 10 kΩ
-        └──── GND ─────── ESP32 da base: rampa (§8.2) e página (§9)
+        └──── GND ─────── ESP32 da base: partida (§8.2) e página (§9)
                                │
                   botões de partida (D32) e de parada (D33)
+
+Barramento do ESC: grampo ou resistor de descarga entre + e GND (§8.2).
+Fonte com limite de corrente ajustado em ~3 A.
 ```
 
 ### 8.1 Por que um microcontrolador, e qual
 
-Um gerador de bancada produz o pulso de 1–2 ms sem dificuldade, mas **a rampa é
-a função que importa** — variar a largura de pulso de 1000 para o alvo ao longo
-de pelo menos 12 segundos — e isso ele não faz bem.
+Um gerador de bancada produz o pulso de 1–2 ms sem dificuldade, mas **a partida
+é a função que importa** — subir a um chute acima do teto, segurá-lo por pouco
+tempo e descer ao alvo (§8.2) — e isso ele não faz bem.
 
 E o ESC **não tem tempo de rampa**: o manual do BLHeli_S expõe *startup power*,
-não duração. A rampa é responsabilidade deste gerador, inteira.
+não duração. A partida é responsabilidade deste gerador, inteira.
 
 **A placa é a ESP32 DevKit de 30 pinos em mãos**, no lugar do Arduino previsto
 antes. O módulo é um "ESP-32" genérico, com marcação XX5R69, não o
@@ -320,32 +323,53 @@ ARMAÇÃO   ao ligar, manter 1000 µs por ~2 s antes de qualquer coisa.
           O BLHeli_S só arma vendo mínimo estável; sinal ausente ou
           alto na energização = ESC não arma, por segurança.
 
-RAMPA     começa só pelo botão de partida (D32).
-          de 1000 µs até o alvo em >= 12 s, linear no comando.
-          Confirmar a rampa de RPM: pulso linear não garante aceleração linear.
-          Com J=0,00155 kg.m² e T_arrasto=51,4 mN.m, 12 s dão 7,30 A
-          de fase e ~4,02 A na fonte de 7 V (eta_ESC=95%).
-          8 s dariam 8,47 A/~4,98 A e reprovam o teto de 8 A/4,6 A.
+PARTIDA   começa só pelo botão de partida (D32). Sobe de 1148 µs (PPM mínimo,
+          acelerador zero) ao CHUTE de 1400 µs em >= 3 s, linear no comando;
+          segura o chute por 2 s (0 a 5 s, ajustável parado) e desce ao alvo
+          a 42 µs/s. A base não mede rotação: o chute acaba pelo tempo ou,
+          antes, pela tecla do operador ao ver o rotor girar.
+          Em 19/10/2026, com Startup Power 0,25, o rotor só partiu com
+          1400 µs e a fonte em 10,4 V. Com a rampa antiga, de 12 s até
+          1200 µs, o ESC tremia três vezes e desistia antes de o acelerador
+          subir (esc_blheli_s_2026-10-19/registro.md).
+          Acima do teto o pulso só fica na partida, por tempo limitado:
+          sustentado, 1400 µs passam de 1800 RPM a 10–12 V (~2060–2350 RPM
+          pelo modelo do 04). Pelo mesmo modelo, chute de 2 s seguido da
+          descida dá pico de ~1620 RPM a 12 V. Confirmar com tacômetro.
 
-PARADA    normal: botão de parada (D33) -> 1000 µs; confirmar resposta do ESC
-          na bancada.
+PARADA    na hora: botão de parada (D33), ou espaço/p na serial -> 1000 µs.
+          suave: tecla d na serial -> desce ao acelerador zero a 21 µs/s e
+          então 1000 µs; para o fim de ensaio, com menos energia devolvida
+          ao barramento.
           emergência: corte físico da fonte acessível ao operador.
           Nenhuma ação garante parada imediata; contenção fechada até rotor
           visivelmente imóvel e pelo menos 90 s após corte (plano de ensaios).
 
-TETO      a única função que escreve no PWM limita o pulso ao valor que dá
+BARRAMENTO o BLHeli_S freia regenerando, e a fonte de bancada não absorve
+          corrente. Em 19/10/2026, com Brake on stop desligado, a parada na
+          hora a partir de 1400 µs (fonte em 8,4 V) levou o barramento a quase
+          20 V, acima dos 16,8 V de 4S, o máximo de venda do ESC. Antes de
+          novas paradas a partir da rotação plena, grampo ou resistor de
+          descarga no barramento do ESC: limiar acima de 12,6 V e abaixo de
+          16,8 V, dissipando a energia do rotor (27,6 J a 1800 RPM). A
+          parada suave reduz essa energia, mas não a zera (modelo: ~4 J
+          devolvidos a 12 V).
+
+TETO      a única função que escreve no PWM prende o pulso no chute; o
+          controlador prende o alvo de regime no teto, o valor que dá
           1800 RPM, medido com o tacômetro na tensão de fonte em uso: sem
-          governor, o mesmo pulso gira mais rápido com mais tensão. A 1800 RPM
-          o motor está a 26 % da rotação a vazio (§8.3): um pulso errado leva
-          o rotor muito acima disso.
+          governor, o mesmo pulso gira mais rápido com mais tensão. Até a
+          medição, 1320 µs (estimado: ~1790 RPM a 12 V, ~1560 RPM a 10 V).
+          A 1800 RPM o motor está a 16–20 % da rotação a vazio com 10–12 V
+          (§8.3): um pulso errado leva o rotor muito acima disso.
 
 WATCHDOG  ligado. Se o firmware travar, o PWM por hardware continua no último
           pulso e o botão de parada deixa de responder; o watchdog transforma
           a trava em reset, o pulso some e o ESC desliga o motor. Confirmar na
           bancada, junto com a PARADA.
 
-REINÍCIO  depois de qualquer reset, 1000 µs e espera o operador. A rampa nunca
-          recomeça sozinha.
+REINÍCIO  depois de qualquer reset, 1000 µs e espera o operador. A partida
+          nunca recomeça sozinha.
 
 PÁGINA    nenhum comando de motor na página do §9, nem escondido. O motor só
           se comanda pelos botões.
@@ -368,9 +392,9 @@ houver, **não** deve alimentá-la ao mesmo tempo — uma fonte só.
 | Parâmetro | Valor | Motivo |
 |---|---|---|
 | Direction | conforme o sentido anti-horário visto de cima | bordo de ataque em +y |
-| **Brake on stop** | **desabilitado** | frear 27,6 J contra fonte de bancada empurra o barramento |
-| **Low RPM power protect** | **desabilitado** | a 1800 RPM estamos a 26 % da rotação a vazio, o regime que ela limita |
-| Startup power | começar baixo e subir | é o ajuste da partida com inércia 100× a de uma hélice |
+| **Brake on stop** | **desabilitado** | frear 27,6 J contra fonte de bancada empurra o barramento; mesmo desabilitado, a parada na hora levou o barramento a ~20 V em 19/10 (§8.2, BARRAMENTO) |
+| **Low RPM power protect** | **desabilitado** | a 1800 RPM, com 10–12 V, estamos a 16–20 % da rotação a vazio, o regime que ela limita |
+| Startup power | **0,25** desde 19/10/2026 (era 0,125; original 0,50) | a 0,125 o rotor só tremia; se a partida falhar no chute, subir para 0,38 e depois 0,50 |
 
 ### 8.4 Opcional, mas provavelmente vale
 
