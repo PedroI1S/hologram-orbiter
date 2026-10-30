@@ -579,7 +579,7 @@ mod tests {
     #[test]
     fn configured_target_range_and_nudges() {
         let mut c = Controller::new(crate::config::LIMITS, 1200, 3_000, 2_000, 0);
-        for us in [600, 1000, 1148, 1350] {
+        for us in [1000, 1148, 1350] {
             assert_eq!(
                 c.command(Command::SetTarget(us), 0),
                 Reply::Target {
@@ -593,26 +593,26 @@ mod tests {
             Reply::Rejected(Reject::AboveCeiling)
         );
         assert_eq!(
-            c.command(Command::SetTarget(599), 0),
+            c.command(Command::SetTarget(999), 0),
             Reply::Rejected(Reject::BelowMinimum)
         );
         c.command(Command::NudgeTarget(5), 0);
         assert_eq!(c.target_us(), 1350);
-        c.command(Command::SetTarget(600), 0);
+        c.command(Command::SetTarget(1000), 0);
         c.command(Command::NudgeTarget(-5), 0);
-        assert_eq!(c.target_us(), 600);
+        assert_eq!(c.target_us(), 1000);
     }
 
     #[test]
     fn configured_linear_endpoints_hold_without_a_kick() {
-        for target in [600, 1148, 1350] {
+        for target in [1000, 1148, 1350] {
             let mut c = Controller::new(crate::config::LIMITS, target, 3_000, 2_000, 0);
             c.update(2_000);
             c.command(Command::Start, 2_000);
             for t in 2_001..=20_000 {
                 c.update(t);
                 assert_ne!(c.state(), State::Kicking);
-                assert!((600_000..=1_350_000).contains(&c.pulse_ns()));
+                assert!((1_000_000..=1_350_000).contains(&c.pulse_ns()));
             }
             assert_eq!(c.state(), State::Holding);
             assert_eq!(c.pulse_ns(), target as u32 * 1000);
@@ -645,16 +645,16 @@ mod tests {
 
     #[test]
     fn configured_overshoot_reaches_low_target_within_output_limits() {
-        let mut c = Controller::new(crate::config::LIMITS, 600, 3_000, 0, 0);
+        let mut c = Controller::new(crate::config::LIMITS, 1000, 3_000, 0, 0);
         c.update(2_000);
         c.command(Command::SetStartMode(StartMode::Overshoot), 2_000);
         c.command(Command::Start, 2_000);
         for t in 2_001..=35_000 {
             c.update(t);
-            assert!((600_000..=1_350_000).contains(&c.pulse_ns()));
+            assert!((1_000_000..=1_350_000).contains(&c.pulse_ns()));
         }
         assert_eq!(c.state(), State::Holding);
-        assert_eq!(c.pulse_ns(), 600_000);
+        assert_eq!(c.pulse_ns(), 1_000_000);
         c.command(Command::SoftStop, 35_000);
         c.update(35_001);
         assert_eq!(c.pulse_ns(), 1_000_000);

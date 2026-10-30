@@ -23,7 +23,7 @@ pub const PPM_MIN_US: u16 = 1148;
 pub const PPM_MAX_US: u16 = 1832;
 
 /// Menor pulso selecionável pelo console; abaixo do acelerador zero do ESC.
-pub const TARGET_MIN_US: u16 = 600;
+pub const TARGET_MIN_US: u16 = STOP_US;
 
 /// TETO de regime (05 §8.2): o maior alvo aceito.
 ///

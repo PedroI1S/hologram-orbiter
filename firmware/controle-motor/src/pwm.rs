@@ -41,11 +41,11 @@ mod tests {
     };
 
     #[test]
-    fn configured_output_stays_between_600_and_1350_microseconds() {
+    fn configured_output_stays_between_1000_and_1350_microseconds() {
         let lim = crate::config::LIMITS;
         for pulse in (0..=2_000_000).step_by(37).chain([u32::MAX]) {
             let actual = pulse_ns_for(duty_for(pulse, &lim, 50, 16), 50, 16);
-            assert!((600_000..=1_350_000).contains(&actual));
+            assert!((1_000_000..=1_350_000).contains(&actual));
         }
     }
 
