@@ -1,15 +1,20 @@
 # Firmware
 
-**Faixa atual de alvos: 1000–1350 µs (30/10/2026).** O chute também está
+**Faixa atual de alvos: 1150–1350 µs (30/10/2026).** O chute também está
 limitado a 1350 µs. A armação e a parada continuam em 1000 µs; o alvo ao
-ligar continua em 1200 µs. O mínimo selecionável é o mesmo pulso de parada (1000 µs, 0 RPM em regime).
-O PPM mínimo gravado no ESC permanece em
-1148 µs: alvos abaixo disso são pulsos de acelerador zero, não RPM.
-O controlador e a saída PWM aceitam a faixa completa; `+`/`-` e `>`/`<`
-saturam nos extremos. No perfil linear, alvos abaixo de 1148 µs fazem o
-pulso descer desde o PPM mínimo, respeitando a inclinação máxima; por
-isso podem levar mais que o tempo de rampa selecionado. A parada suave
-abaixo do PPM mínimo retorna ao pulso de parada sem subir até 1148 µs.
+ligar continua em 1200 µs. O PPM mínimo gravado no ESC permanece em
+1148 µs. Os ajustes `+`/`-` e `>`/`<` saturam nos limites de alvo.
+A saída PWM permite 1000–1350 µs para incluir armação, parada e rampas.
+
+Com fonte de 10,4 V e a carga do rotor completo documentada no CAD
+(4,95 A a 1800 RPM, motor de 920 KV, resistência efetiva de 0,221 Ω), o
+modelo médio estima cerca de 28 RPM em 1150 µs, 611 RPM em 1200 µs e
+1809 RPM em 1350 µs. A estimativa de 1150 µs é uma extrapolação próxima
+do acelerador zero: não garante partida nem giro sustentado, pois o modelo
+não representa atrito estático, comutação e potência mínima de partida.
+Confirmar as rotações com tacômetro. Equação usada, igual à de `CAD/physics.py`:
+`duty × V = Kt × ω + R × I_projeto × (ω/ω_projeto)²`, com
+`duty = (pulso_us − 1148)/684` e `Kt = 60/(2π × 920)`.
 
 Esta alteração passou em 39 testes, Clippy e compilação para ESP32.
 **Ainda não gravada: a placa estava desconectada.** O registro de gravação
@@ -95,7 +100,7 @@ Como no 05 §8.1, com os nomes impressos na placa:
 | ARMAÇÃO | 1000 µs desde a configuração do LEDC; nada é aceito por 2 s | testes; emulador; placa (0.1.0) |
 | PARTIDA | botão D32 ou `g` na serial. Linear (padrão): de 1148 µs diretamente ao alvo em ≥ 3 s. Overshoot (`o`): sobe a 1350 µs em ≥ 3 s, segura 2 s (0 a 5 s; `k` encerra antes), desce ao alvo a ~34 µs/s. `l` volta ao linear; perfil só muda sem giro | testes dos dois perfis e dos comandos; a rampa de 12 s da 0.1.0 foi conferida na placa |
 | PARADA | na hora: botão D33, ou espaço/`p`/Esc/Ctrl-C na serial → 1000 µs, a qualquer momento. Suave: `d` desce ao PPM mínimo a ~17 µs/s e então 1000 µs | testes; emulador e placa só a parada na hora (0.1.0) |
-| TETO | alvos de 1000–1350 µs; chute de 1350 µs; `pwm::duty_for` limita a saída a essa faixa, arredondando para cima no mínimo e para baixo no máximo | testes de limites, rampas, paradas e saída PWM |
+| TETO | alvos de 1150–1350 µs; chute de 1350 µs; `pwm::duty_for` limita a saída a 1000–1350 µs (inclui parada e rampas), arredondando para cima no mínimo e para baixo no máximo | testes de limites, rampas, paradas e saída PWM |
 | WATCHDOG | dois: o do grupo de timers TIMG0 e o do RTC, 500 ms, os dois reiniciando o chip inteiro (o LEDC para e o pulso some) | emulador (TIMG0); placa: `W` reiniciou pelos dois (0.1.0) |
 | REINÍCIO | depois de qualquer reinício: 1000 µs, alvo padrão (1200 µs) e espera; a partida nunca recomeça sozinha | emulador (travamento e pânico); placa (0.1.0) |
 | PÁGINA | não existe ainda; a serial seleciona o perfil, dá partida, ajusta o alvo e para | testes de comandos e das 256 teclas: apenas `g`/`G` geram partida |
@@ -212,7 +217,7 @@ suave). `giro_s` é o tempo desde a partida, não uma medida de rotação.
 | espaço, `p`, Esc, Ctrl-C | **parar na hora**, a qualquer momento, inclusive no meio de um número |
 | `d` | **parada suave**: desce ao acelerador zero a ~17 µs/s e para |
 | `k` | encerra o chute agora (ou a subida até ele) e desce ao alvo; para quando o rotor já gira |
-| `1250` Enter | alvo em µs (1000–1350; recusado fora da faixa) |
+| `1250` Enter | alvo em µs (1150–1350; recusado fora da faixa) |
 | `+` `-` | alvo ±5 µs |
 | `>` `<` | alvo ±1 µs |
 | `r3` Enter | subida até o alvo (linear) ou até o chute (overshoot), em s (3 a 30; só parado) |
