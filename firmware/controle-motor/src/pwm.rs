@@ -2,18 +2,19 @@
 
 use crate::controller::Limits;
 
-/// Duty do LEDC para um pulso, preso entre o pulso de parada e o chute.
+/// Duty do LEDC para um pulso, preso entre o mínimo configurado e o chute.
 ///
 /// É a última barreira antes do hardware: o firmware não escreve no LEDC por
 /// outro caminho. No chute o arredondamento é para baixo, para o pulso gerado
-/// nunca passar dele nem por uma fração de µs. O teto de regime, mais baixo,
-/// é do controlador: acima dele o pulso só fica durante a partida.
+/// nunca passar dele nem por uma fração de µs. No mínimo, arredonda para cima.
+/// O controlador também limita os alvos ao teto de regime.
 pub fn duty_for(pulse_ns: u32, lim: &Limits, freq_hz: u32, bits: u32) -> u32 {
     let scale = (1u64 << bits) * freq_hz as u64;
-    let pulse = pulse_ns.clamp(lim.stop_ns(), lim.kick_ns()) as u64;
+    let pulse = pulse_ns.clamp(lim.target_min_ns().min(lim.stop_ns()), lim.kick_ns()) as u64;
     let rounded = (pulse * scale + 500_000_000) / 1_000_000_000;
     let max = lim.kick_ns() as u64 * scale / 1_000_000_000;
-    rounded.min(max) as u32
+    let min = (lim.target_min_ns().min(lim.stop_ns()) as u64 * scale).div_ceil(1_000_000_000);
+    rounded.clamp(min, max) as u32
 }
 
 /// Pulso que um duty gera, em ns (para o registro).
@@ -30,6 +31,7 @@ mod tests {
         stop_us: 1000,
         ppm_min_us: 1148,
         ppm_max_us: 1832,
+        target_min_us: 1000,
         ceiling_us: 1320,
         kick_us: 1400,
         min_ramp_ms: 3_000,
@@ -37,6 +39,15 @@ mod tests {
         adjust_ms: 12_000,
         arming_ms: 2_000,
     };
+
+    #[test]
+    fn configured_output_stays_between_600_and_1350_microseconds() {
+        let lim = crate::config::LIMITS;
+        for pulse in (0..=2_000_000).step_by(37).chain([u32::MAX]) {
+            let actual = pulse_ns_for(duty_for(pulse, &lim, 50, 16), 50, 16);
+            assert!((600_000..=1_350_000).contains(&actual));
+        }
+    }
 
     #[test]
     fn stop_pulse_at_50_hz_16_bits() {
@@ -54,7 +65,15 @@ mod tests {
 
     #[test]
     fn output_never_leaves_stop_to_kick() {
-        for pulse in [0, 500_000, 999_999, 1_400_001, 1_832_000, 2_000_000, u32::MAX] {
+        for pulse in [
+            0,
+            500_000,
+            999_999,
+            1_400_001,
+            1_832_000,
+            2_000_000,
+            u32::MAX,
+        ] {
             let p = pulse_ns_for(duty_for(pulse, &LIM, 50, 16), 50, 16);
             assert!((999_000..=1_400_000).contains(&p), "{pulse} → {p}");
         }

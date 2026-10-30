@@ -1,5 +1,19 @@
 # Firmware
 
+**Faixa atual de alvos: 600–1350 µs (30/10/2026).** O chute também está
+limitado a 1350 µs. A armação e a parada continuam em 1000 µs; o alvo ao
+ligar continua em 1200 µs. O PPM mínimo gravado no ESC permanece em
+1148 µs: alvos abaixo disso são pulsos de acelerador zero, não RPM.
+O controlador e a saída PWM aceitam a faixa completa; `+`/`-` e `>`/`<`
+saturam nos extremos. No perfil linear, alvos abaixo de 1148 µs fazem o
+pulso descer desde o PPM mínimo, respeitando a inclinação máxima; por
+isso podem levar mais que o tempo de rampa selecionado. A parada suave
+abaixo do PPM mínimo retorna ao pulso de parada sem subir até 1148 µs.
+
+Esta alteração passou em 39 testes, Clippy e compilação para ESP32.
+**Ainda não gravada: a placa estava desconectada.** O registro de gravação
+abaixo corresponde à configuração anterior de 1400 µs.
+
 **Versão 0.3.0, 30/10/2026: partida linear por padrão e partida pelo terminal.**
 O perfil linear sobe de 1148 µs diretamente ao alvo em 3 s, sem chute e sem
 descida automática ao fim da partida. A tecla `o` seleciona o overshoot
@@ -12,6 +26,12 @@ ESP32. Gravada em 30/10/2026 na ESP32 revisão v3.1 (4 MB), pela porta
 Conferidos pela serial: banner 0.3.0, fim da armação, estado `PARADO`,
 perfil `linear`, alvo de 1200 µs e zero partidas. Nenhum comando de partida
 foi enviado; os perfis ainda não foram ensaiados com o motor nesta versão.
+
+**Registro da gravação anterior: teto ajustado em 30/10/2026 para 1400 µs**, por solicitação do operador,
+ainda sem calibração com tacômetro. Gravado na ESP32 pela porta
+`/dev/cu.usbserial-A5069RR4` em 30/10/2026, com verificação pelo espflash.
+Conferidos pela serial: teto de 1400 µs e aceitação do alvo de 1400 µs
+com estado `PARADO` e zero partidas. Alvo restaurado para 1200 µs.
 
 **ESP32 da base: gerador do sinal do ESC** (esquema 05 §8), em Rust `no_std`
 sobre o `esp-hal` 1.2. Escrito e gravado em 19/10/2026 na ESP32 da base
@@ -72,9 +92,9 @@ Como no 05 §8.1, com os nomes impressos na placa:
 | Requisito | Como está feito | Verificado |
 |---|---|---|
 | ARMAÇÃO | 1000 µs desde a configuração do LEDC; nada é aceito por 2 s | testes; emulador; placa (0.1.0) |
-| PARTIDA | botão D32 ou `g` na serial. Linear (padrão): de 1148 µs diretamente ao alvo em ≥ 3 s. Overshoot (`o`): sobe a 1400 µs em ≥ 3 s, segura 2 s (0 a 5 s; `k` encerra antes), desce ao alvo a 42 µs/s. `l` volta ao linear; perfil só muda sem giro | testes dos dois perfis e dos comandos; a rampa de 12 s da 0.1.0 foi conferida na placa |
-| PARADA | na hora: botão D33, ou espaço/`p`/Esc/Ctrl-C na serial → 1000 µs, a qualquer momento. Suave: `d` desce ao PPM mínimo a 21 µs/s e então 1000 µs | testes; emulador e placa só a parada na hora (0.1.0) |
-| TETO | o alvo de regime fica entre o PPM mínimo e o teto (1320 µs); acima do teto o pulso só fica na partida, por tempo limitado; todo pulso passa por `pwm::duty_for`, que prende entre 1000 µs e o chute, arredondando para baixo no chute | testes, inclusive o tempo acima do teto sob comandos aleatórios |
+| PARTIDA | botão D32 ou `g` na serial. Linear (padrão): de 1148 µs diretamente ao alvo em ≥ 3 s. Overshoot (`o`): sobe a 1350 µs em ≥ 3 s, segura 2 s (0 a 5 s; `k` encerra antes), desce ao alvo a ~34 µs/s. `l` volta ao linear; perfil só muda sem giro | testes dos dois perfis e dos comandos; a rampa de 12 s da 0.1.0 foi conferida na placa |
+| PARADA | na hora: botão D33, ou espaço/`p`/Esc/Ctrl-C na serial → 1000 µs, a qualquer momento. Suave: `d` desce ao PPM mínimo a ~17 µs/s e então 1000 µs | testes; emulador e placa só a parada na hora (0.1.0) |
+| TETO | alvos de 600–1350 µs; chute de 1350 µs; `pwm::duty_for` limita a saída a essa faixa, arredondando para cima no mínimo e para baixo no máximo | testes de limites, rampas, paradas e saída PWM |
 | WATCHDOG | dois: o do grupo de timers TIMG0 e o do RTC, 500 ms, os dois reiniciando o chip inteiro (o LEDC para e o pulso some) | emulador (TIMG0); placa: `W` reiniciou pelos dois (0.1.0) |
 | REINÍCIO | depois de qualquer reinício: 1000 µs, alvo padrão (1200 µs) e espera; a partida nunca recomeça sozinha | emulador (travamento e pânico); placa (0.1.0) |
 | PÁGINA | não existe ainda; a serial seleciona o perfil, dá partida, ajusta o alvo e para | testes de comandos e das 256 teclas: apenas `g`/`G` geram partida |
@@ -82,7 +102,7 @@ Como no 05 §8.1, com os nomes impressos na placa:
 Além do pedido:
 
 - **Ajustes em giro** (novo alvo, `+`/`-`) e a **parada suave** andam a
-  21 µs/s (do PPM mínimo ao chute, 252 µs, em 12 s), nos dois sentidos.
+  21 µs/s (do PPM mínimo ao chute, 202 µs, em 12 s), nos dois sentidos.
   Na subida ao chute e durante o chute, mudar o alvo só muda onde a descida
   termina. Na partida linear, muda o destino usando a inclinação de ajuste.
   Descer
@@ -105,9 +125,8 @@ Além do pedido:
    `g` inicia pelo notebook; `l`/`o` selecionam o perfil. A página do celular
    continua sem controle do motor. A serial também ajusta o alvo, encerra o
    chute e para.
-3. **Teto de regime de 1320 µs estimado.** Ver `config.rs`: pelo modelo do
-   04, 25 % do acelerador dá ~1790 RPM com o rotor a 12 V e ~1560 RPM a
-   10 V. O valor final é medido (abaixo), na tensão em uso.
+3. **Teto de regime de 1350 µs, sem calibração.** Ver `config.rs`.
+   O valor final é medido (abaixo), na tensão em uso.
 4. **Dois watchdogs** em vez de um.
 
 ## Instalação (uma vez por máquina)
@@ -190,9 +209,9 @@ suave). `giro_s` é o tempo desde a partida, não uma medida de rotação.
 | `l` | selecionar **linear** (padrão): sobe diretamente ao alvo, sem overshoot; só sem giro |
 | `o` | selecionar **overshoot**: sobe ao chute e depois desce ao alvo; só sem giro |
 | espaço, `p`, Esc, Ctrl-C | **parar na hora**, a qualquer momento, inclusive no meio de um número |
-| `d` | **parada suave**: desce ao acelerador zero a 21 µs/s e para |
+| `d` | **parada suave**: desce ao acelerador zero a ~17 µs/s e para |
 | `k` | encerra o chute agora (ou a subida até ele) e desce ao alvo; para quando o rotor já gira |
-| `1250` Enter | alvo de regime em µs (recusado acima do teto) |
+| `1250` Enter | alvo em µs (600–1350; recusado fora da faixa) |
 | `+` `-` | alvo ±5 µs |
 | `>` `<` | alvo ±1 µs |
 | `r3` Enter | subida até o alvo (linear) ou até o chute (overshoot), em s (3 a 30; só parado) |
@@ -214,8 +233,8 @@ conferir o perfil e o alvo com `s`. Digitar `g` para partir. A rampa vai de
 1148 µs até 1200 µs em aproximadamente 3 s e permanece nesse alvo.
 
 Para usar overshoot, com o motor parado, digitar `o`, `c2` Enter e depois
-`g`: sobe a 1400 µs, mantém o chute por 2 s e desce ao alvo. `c0` elimina
-apenas a espera em 1400 µs; ainda existe o pico. Para eliminar o pico, usar
+`g`: sobe a 1350 µs, mantém o chute por 2 s e desce ao alvo. `c0` elimina
+apenas a espera em 1350 µs; ainda existe o pico. Para eliminar o pico, usar
 `l`. As teclas `l`, `o`, `g`, `s`, `p` e `d` não precisam de Enter; enviar
 somente a tecla, sem escrever palavras como `linear` ou `start`.
 
@@ -245,7 +264,7 @@ ligado.
    validado para a montagem. Se for overshoot, selecionar `o` e, ao ver o
    rotor girar, `k`. Subir em patamares com o tacômetro, na
    tensão de fonte que vai ser usada. Ao chegar ao teto sem 1800 RPM, subir
-   `CEILING_US` no `config.rs` no máximo 25 µs (sempre abaixo do chute),
+   `CEILING_US` no `config.rs` no máximo 25 µs (sem ultrapassar o chute),
    regravar e repetir. No pulso que der 1800 RPM, fixar o teto, marcar
    `CEILING_MEASURED = true` e anotar pulso, tensão e RPM no registro de
    ensaio.

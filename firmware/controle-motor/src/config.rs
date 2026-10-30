@@ -22,36 +22,26 @@ pub const PPM_MIN_US: u16 = 1148;
 /// acelerador máximo ao energizar entra em programação: o chute fica abaixo.
 pub const PPM_MAX_US: u16 = 1832;
 
+/// Menor pulso selecionável pelo console; abaixo do acelerador zero do ESC.
+pub const TARGET_MIN_US: u16 = 600;
+
 /// TETO de regime (05 §8.2): o maior alvo aceito.
 ///
 /// O valor final é o pulso que dá 1800 RPM com o rotor completo, medido com
 /// o tacômetro na tensão de fonte em uso; sem governor, o mesmo pulso gira
-/// mais rápido com mais tensão. Até essa medição vale 1320 µs (25 % do
-/// acelerador), uma estimativa para a fonte de 10–12 V: pelo modelo do 04
-/// (1,96 V de força contraeletromotriz + 4,95 A × 0,221 Ω a 1800 RPM, corrente
-/// ∝ ω²), 1320 µs dão ~1790 RPM a 12 V e ~1560 RPM a 10 V; 1800 RPM pedem
-/// ~1322 µs a 12 V e ~1357 µs a 10 V.
-///
-/// Calibração: com o tacômetro, na tensão em uso, subir em passos de no
-/// máximo 25 µs, regravando, até 1800 RPM com o rotor; anotar o pulso e a
-/// tensão no registro de ensaio e marcar [`CEILING_MEASURED`].
-pub const CEILING_US: u16 = 1320;
+/// mais rápido com mais tensão. Teto ajustado para 1350 µs em 30/10/2026,
+/// por solicitação do operador; ainda sem calibração com tacômetro.
+/// Registrar pulso, tensão e RPM medidos antes de marcar [`CEILING_MEASURED`].
+pub const CEILING_US: u16 = 1350;
 /// Passa a `true` junto com o [`CEILING_US`] medido; enquanto for `false`,
 /// o firmware avisa na energização.
 pub const CEILING_MEASURED: bool = false;
 
-/// CHUTE: pulso da partida, acima do teto de regime, e o maior pulso que sai
-/// do LEDC. Em 19/10/2026 o rotor só partiu com 1400 µs (fonte em 10,4 V,
-/// Startup Power 0,25); abaixo disso o ESC tremia e desistia. Sustentado,
-/// 1400 µs passariam de 1800 RPM a 10–12 V (~2060 a 10 V, ~2350 a 12 V pelo
-/// mesmo modelo): por isso só por tempo limitado.
-pub const KICK_US: u16 = 1400;
+/// CHUTE: pulso da partida opcional, limitado ao mesmo teto de regime.
+/// O máximo de 1350 µs vale também no overshoot.
+pub const KICK_US: u16 = CEILING_US;
 /// Duração do chute no modo overshoot; ignorada no modo linear (padrão).
-/// A tecla `k` o encerra antes. Com fonte em
-/// 10–12 V e limite de 30 A, 2 s e a descida abaixo até o alvo inicial de
-/// 1200 µs dão picos de ~1692 RPM a 10 V e ~1964 RPM a 12 V no modelo.
-/// A fonte não limita: parado no chute, ~16,7–20,0 A de fase. Este perfil
-/// excede os critérios do bloqueador D; revisar antes do ensaio com rotor.
+/// A tecla `k` o encerra antes.
 pub const INITIAL_KICK_MS: u32 = 2_000;
 
 /// SUBIDA: do PPM mínimo ao alvo (linear) ou ao chute (overshoot), em pelo
@@ -59,11 +49,11 @@ pub const INITIAL_KICK_MS: u32 = 2_000;
 pub const MIN_RAMP_MS: u32 = 3_000;
 pub const INITIAL_RAMP_MS: u32 = MIN_RAMP_MS;
 /// DESCIDA depois do chute: na inclinação do chute ao PPM mínimo em 6 s
-/// (42 µs/s). Mais lenta deixa o rotor acelerar mais no chute; mais rápida
+/// (~34 µs/s). Mais lenta deixa o rotor acelerar mais no chute; mais rápida
 /// devolve mais energia à fonte.
 pub const FALL_MS: u32 = 6_000;
 /// AJUSTES em giro e PARADA SUAVE: na inclinação do chute ao PPM mínimo em
-/// 12 s (21 µs/s), a mesma dos ajustes antes do chute.
+/// 12 s (~17 µs/s), a mesma dos ajustes antes do chute.
 pub const ADJUST_MS: u32 = 12_000;
 
 /// ARMAÇÃO: pulso de parada por ~2 s antes de qualquer comando.
@@ -93,6 +83,7 @@ pub const LIMITS: Limits = Limits {
     stop_us: STOP_US,
     ppm_min_us: PPM_MIN_US,
     ppm_max_us: PPM_MAX_US,
+    target_min_us: TARGET_MIN_US,
     ceiling_us: CEILING_US,
     kick_us: KICK_US,
     min_ramp_ms: MIN_RAMP_MS,
@@ -103,7 +94,7 @@ pub const LIMITS: Limits = Limits {
 
 const _: () = {
     assert!(LIMITS.is_valid());
-    assert!(INITIAL_TARGET_US > PPM_MIN_US && INITIAL_TARGET_US <= CEILING_US);
+    assert!(INITIAL_TARGET_US >= TARGET_MIN_US && INITIAL_TARGET_US <= CEILING_US);
     assert!(INITIAL_RAMP_MS >= MIN_RAMP_MS && INITIAL_RAMP_MS <= MAX_RAMP_MS);
     assert!(INITIAL_KICK_MS <= MAX_KICK_MS);
     // O maior pulso cabe no período.

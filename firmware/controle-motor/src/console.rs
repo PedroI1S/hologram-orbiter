@@ -18,7 +18,7 @@ pub const HELP: &str = "\
 #   espaço, p, Esc, Ctrl-C   PARAR na hora (a qualquer momento)
 #   d                        parada suave: desce ao acelerador zero e para
 #   k                        encerra o chute agora (ao ver o rotor girar)
-#   1250 Enter               alvo de regime em µs (até o teto)
+#   1250 Enter               alvo em µs (entre mínimo e teto configurados)
 #   + / -                    alvo ±5 µs      > / <  alvo ±1 µs
 #   r3 Enter                 subida até alvo/chute em s (3 a 30; só parado)
 #   c2 Enter                 duração do chute do overshoot (0 a 5 s; só parado)
@@ -343,11 +343,11 @@ mod tests {
         assert_eq!(ctl.start_mode(), StartMode::Overshoot);
         assert_eq!(ctl.starts(), 2);
         assert_eq!(
-            ctl.update(8_001),
-            Some(Event::KickReached { after_ms: 3_000 })
+            ctl.update(8_002),
+            Some(Event::KickReached { after_ms: 3_001 })
         );
         assert_eq!(ctl.pulse_ns(), config::LIMITS.kick_ns());
-        assert!(matches!(ctl.update(8_002), Some(Event::KickEnded { .. })));
+        assert!(matches!(ctl.update(8_003), Some(Event::KickEnded { .. })));
     }
 
     #[test]

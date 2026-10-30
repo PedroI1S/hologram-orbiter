@@ -2,7 +2,7 @@
 //! e TETO (05 §8.2).
 //!
 //! A partida linear (padrão) sobe do PPM mínimo diretamente ao alvo.
-//! No modo overshoot, sobe ao pulso de CHUTE, acima do teto de regime,
+//! No modo overshoot, sobe ao pulso de CHUTE, igual ou superior ao teto,
 //! segura o chute por pouco tempo e desce ao alvo. A base não mede a
 //! rotação: o chute acaba pelo tempo ou, antes, pela tecla do operador ao
 //! ver o rotor girar. Acima do teto de regime o pulso só fica durante a
@@ -44,6 +44,8 @@ pub struct Limits {
     pub ppm_min_us: u16,
     /// Acelerador máximo no ESC; nunca alcançado.
     pub ppm_max_us: u16,
+    /// Menor alvo de pulso aceito, independente do acelerador zero do ESC.
+    pub target_min_us: u16,
     /// TETO de regime: maior alvo aceito.
     pub ceiling_us: u16,
     /// CHUTE: pulso da partida e maior pulso que sai do LEDC.
@@ -62,8 +64,10 @@ impl Limits {
     pub const fn is_valid(&self) -> bool {
         self.stop_us >= 900
             && self.stop_us < self.ppm_min_us
+            && self.target_min_us > 0
+            && self.target_min_us <= self.ceiling_us
             && self.ppm_min_us < self.ceiling_us
-            && self.ceiling_us < self.kick_us
+            && self.ceiling_us <= self.kick_us
             && self.kick_us < self.ppm_max_us
             && self.min_ramp_ms >= 3_000
             && self.min_ramp_ms <= MAX_RAMP_MS
@@ -74,6 +78,10 @@ impl Limits {
 
     pub const fn stop_ns(&self) -> u32 {
         self.stop_us as u32 * 1000
+    }
+
+    pub const fn target_min_ns(&self) -> u32 {
+        self.target_min_us as u32 * 1000
     }
 
     pub const fn ppm_min_ns(&self) -> u32 {
@@ -181,7 +189,7 @@ pub enum Command {
     EndKick,
     /// Alvo absoluto, em µs.
     SetTarget(u16),
-    /// Alvo relativo, em µs; satura no teto e logo acima do PPM mínimo.
+    /// Alvo relativo, em µs; satura nos limites de alvo configurados.
     NudgeTarget(i16),
     /// Duração da subida até o alvo (linear) ou até o chute, em ms.
     SetRamp(u32),
@@ -207,7 +215,7 @@ pub enum Reject {
     Arming,
     Running,
     AboveCeiling,
-    NotAboveMinimum,
+    BelowMinimum,
     RampTooShort,
     RampTooLong,
     KickTooLong,
@@ -220,7 +228,7 @@ impl Reject {
             Reject::Arming => "ainda armando o ESC",
             Reject::Running => "motor girando: pare antes",
             Reject::AboveCeiling => "acima do teto",
-            Reject::NotAboveMinimum => "não passa do PPM mínimo; para parar use espaço, p ou d",
+            Reject::BelowMinimum => "abaixo do mínimo de pulso",
             Reject::RampTooShort => "subida abaixo do mínimo",
             Reject::RampTooLong => "subida acima do máximo",
             Reject::KickTooLong => "chute acima do máximo",
@@ -261,13 +269,14 @@ pub struct Controller {
     kick_ms: u32,
     start_mode: StartMode,
     starts: u32,
+    kick_pending: bool,
 }
 
 impl Controller {
     /// Começa armando, com o pulso de parada e perfil linear.
     pub fn new(lim: Limits, target_us: u16, ramp_ms: u32, kick_ms: u32, now_ms: u32) -> Self {
         assert!(lim.is_valid());
-        assert!(target_us > lim.ppm_min_us && target_us <= lim.ceiling_us);
+        assert!(target_us >= lim.target_min_us && target_us <= lim.ceiling_us);
         assert!(ramp_ms >= lim.min_ramp_ms && ramp_ms <= MAX_RAMP_MS);
         assert!(kick_ms <= MAX_KICK_MS);
         Self {
@@ -287,6 +296,7 @@ impl Controller {
             kick_ms,
             start_mode: StartMode::Linear,
             starts: 0,
+            kick_pending: false,
         }
     }
 
@@ -321,7 +331,7 @@ impl Controller {
                     self.halt();
                     return Some(Event::SoftStopped { run_ms });
                 }
-                if self.dest_ns == self.lim.kick_ns() {
+                if self.in_kick() {
                     self.state = State::Kicking;
                     self.kick_since_ms = now_ms;
                     return Some(Event::KickReached {
@@ -350,7 +360,9 @@ impl Controller {
                 State::Braking => Reply::SoftStop { was_running: true },
                 _ => {
                     let rate = self.lim.adjust_rate_ns_per_s();
-                    self.begin_move(self.lim.ppm_min_ns(), rate, now_ms);
+                    // Abaixo do acelerador zero não há frenagem a fazer.
+                    let dest = self.pulse_ns.min(self.lim.ppm_min_ns());
+                    self.begin_move(dest, rate, now_ms);
                     self.state = State::Braking;
                     Reply::SoftStop { was_running: true }
                 }
@@ -367,6 +379,7 @@ impl Controller {
                 State::Arming => Reply::Rejected(Reject::Arming),
                 State::Stopped => {
                     self.starts += 1;
+                    self.kick_pending = self.start_mode == StartMode::Overshoot;
                     self.run_since_ms = now_ms;
                     // De 1000 a 1148 µs o ESC não vê diferença: o salto é
                     // dentro do acelerador zero, e a subida inteira é útil.
@@ -375,7 +388,7 @@ impl Controller {
                         StartMode::Linear => self.target_ns(),
                         StartMode::Overshoot => self.lim.kick_ns(),
                     };
-                    let rate = rate(dest - self.lim.ppm_min_ns(), self.ramp_ms);
+                    let rate = rate(dest.abs_diff(self.lim.ppm_min_ns()), self.ramp_ms);
                     self.begin_move(dest, rate, now_ms);
                     Reply::Started { count: self.starts }
                 }
@@ -393,7 +406,7 @@ impl Controller {
             Command::NudgeTarget(delta) => {
                 let wanted = self.target_us as i32 + delta as i32;
                 let clamped =
-                    wanted.clamp(self.lim.ppm_min_us as i32 + 1, self.lim.ceiling_us as i32);
+                    wanted.clamp(self.lim.target_min_us as i32, self.lim.ceiling_us as i32);
                 self.set_target(clamped as u16, clamped != wanted, now_ms)
             }
             Command::SetRamp(ms) => {
@@ -425,8 +438,8 @@ impl Controller {
         if us > self.lim.ceiling_us {
             return Reply::Rejected(Reject::AboveCeiling);
         }
-        if us <= self.lim.ppm_min_us {
-            return Reply::Rejected(Reject::NotAboveMinimum);
+        if us < self.lim.target_min_us {
+            return Reply::Rejected(Reject::BelowMinimum);
         }
         let changed = us != self.target_us;
         self.target_us = us;
@@ -446,17 +459,18 @@ impl Controller {
 
     /// Subindo ao chute ou nele.
     fn in_kick(&self) -> bool {
-        self.state == State::Kicking
-            || (self.state == State::Ramping && self.dest_ns == self.lim.kick_ns())
+        self.kick_pending && matches!(self.state, State::Kicking | State::Ramping)
     }
 
     fn end_kick(&mut self, now_ms: u32) {
+        self.kick_pending = false;
         let rate = self.lim.fall_rate_ns_per_s();
         self.begin_move(self.target_ns(), rate, now_ms);
     }
 
     /// Parada na hora: pulso de parada; durante a armação, segue armando.
     fn halt(&mut self) {
+        self.kick_pending = false;
         if self.state != State::Arming {
             self.state = State::Stopped;
         }
@@ -500,7 +514,7 @@ impl Controller {
         self.state
     }
 
-    /// Pulso a gerar agora, em ns, sempre entre o pulso de parada e o chute.
+    /// Pulso a gerar agora, em ns, dentro da faixa configurada (inclui parada).
     pub fn pulse_ns(&self) -> u32 {
         self.pulse_ns
     }
@@ -553,6 +567,7 @@ mod tests {
         stop_us: 1000,
         ppm_min_us: 1148,
         ppm_max_us: 1832,
+        target_min_us: 1149,
         ceiling_us: 1320,
         kick_us: 1400,
         min_ramp_ms: 3_000,
@@ -560,6 +575,90 @@ mod tests {
         adjust_ms: 12_000,
         arming_ms: 2_000,
     };
+
+    #[test]
+    fn configured_target_range_and_nudges() {
+        let mut c = Controller::new(crate::config::LIMITS, 1200, 3_000, 2_000, 0);
+        for us in [600, 1000, 1148, 1350] {
+            assert_eq!(
+                c.command(Command::SetTarget(us), 0),
+                Reply::Target {
+                    target_us: us,
+                    saturated: false,
+                }
+            );
+        }
+        assert_eq!(
+            c.command(Command::SetTarget(1351), 0),
+            Reply::Rejected(Reject::AboveCeiling)
+        );
+        assert_eq!(
+            c.command(Command::SetTarget(599), 0),
+            Reply::Rejected(Reject::BelowMinimum)
+        );
+        c.command(Command::NudgeTarget(5), 0);
+        assert_eq!(c.target_us(), 1350);
+        c.command(Command::SetTarget(600), 0);
+        c.command(Command::NudgeTarget(-5), 0);
+        assert_eq!(c.target_us(), 600);
+    }
+
+    #[test]
+    fn configured_linear_endpoints_hold_without_a_kick() {
+        for target in [600, 1148, 1350] {
+            let mut c = Controller::new(crate::config::LIMITS, target, 3_000, 2_000, 0);
+            c.update(2_000);
+            c.command(Command::Start, 2_000);
+            for t in 2_001..=20_000 {
+                c.update(t);
+                assert_ne!(c.state(), State::Kicking);
+                assert!((600_000..=1_350_000).contains(&c.pulse_ns()));
+            }
+            assert_eq!(c.state(), State::Holding);
+            assert_eq!(c.pulse_ns(), target as u32 * 1000);
+            c.command(Command::SoftStop, 20_000);
+            // Parada suave abaixo de 1148 µs não sobe o pulso até o PPM mínimo.
+            if target <= 1148 {
+                c.update(20_001);
+                assert_eq!(c.state(), State::Stopped);
+                assert_eq!(c.pulse_ns(), 1_000_000);
+            }
+        }
+    }
+
+    #[test]
+    fn overshoot_adjustment_to_ceiling_does_not_start_another_kick() {
+        let mut c = Controller::new(crate::config::LIMITS, 1200, 3_000, 0, 0);
+        c.update(2_000);
+        c.command(Command::SetStartMode(StartMode::Overshoot), 2_000);
+        c.command(Command::Start, 2_000);
+        run(&mut c, 2_000, 12_000);
+        assert_eq!(c.state(), State::Holding);
+        c.command(Command::SetTarget(1350), 12_000);
+        for t in 12_001..=25_000 {
+            c.update(t);
+            assert_ne!(c.state(), State::Kicking);
+        }
+        assert_eq!(c.pulse_ns(), 1_350_000);
+        assert_eq!(c.state(), State::Holding);
+    }
+
+    #[test]
+    fn configured_overshoot_reaches_low_target_within_output_limits() {
+        let mut c = Controller::new(crate::config::LIMITS, 600, 3_000, 0, 0);
+        c.update(2_000);
+        c.command(Command::SetStartMode(StartMode::Overshoot), 2_000);
+        c.command(Command::Start, 2_000);
+        for t in 2_001..=35_000 {
+            c.update(t);
+            assert!((600_000..=1_350_000).contains(&c.pulse_ns()));
+        }
+        assert_eq!(c.state(), State::Holding);
+        assert_eq!(c.pulse_ns(), 600_000);
+        c.command(Command::SoftStop, 35_000);
+        c.update(35_001);
+        assert_eq!(c.pulse_ns(), 1_000_000);
+    }
 
     /// Controlador já armado em `t = 2000 ms`, no perfil overshoot.
     fn armed(target_us: u16, ramp_ms: u32, kick_ms: u32) -> Controller {
@@ -941,7 +1040,7 @@ mod tests {
         );
         assert_eq!(
             c.command(Command::SetTarget(1148), 2_000),
-            Reply::Rejected(Reject::NotAboveMinimum)
+            Reply::Rejected(Reject::BelowMinimum)
         );
         assert_eq!(
             c.command(Command::SetTarget(1320), 2_000),

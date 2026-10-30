@@ -271,6 +271,10 @@ fn banner() {
         config::PWM_FREQ_HZ
     );
     println!(
+        "# faixa de alvos {}–{} µs",
+        lim.target_min_us, lim.ceiling_us
+    );
+    println!(
         "# teto de regime {} µs{} · watchdog {} ms",
         lim.ceiling_us,
         if config::CEILING_MEASURED {
