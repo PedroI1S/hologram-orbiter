@@ -176,7 +176,7 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 | ESC: corte por baixa tensão | **não existe** em BLHeli_S — o LVC definido acima não se aplica a este ESC | manual Rev16.x | ✅ |
 | ESC: tempo de rampa | **não existe** — só *startup power* (0,031–1,5) | manual Rev16.x | ✅ |
 | ESC: Startup Power gravado | **0,25** desde 19/10/2026 (era 0,125; original 0,50) | releitura no configurador | ✅ |
-| Fonte de bancada | ajustável; operada em **10–12 V** com limite de corrente de ~3 A | em mãos | ✅ |
+| Fonte de bancada | ajustável; **10–12 V**, limite de corrente de **30 A**, conforme premissa registrada em 20/10/2026; não limita a partida no modelo | em mãos | ✅ |
 | Bateria LiFePO4 800 mAh | 58 × 30 × 17 mm, 50 g, **6,6 V nominal**, 2S, 20C | comprada | ✅ |
 | Faixa útil da bateria | 7,2 V cheia · 6,6 no platô · **corte em 5,8** (dropout do buck) | derivado | ⚠️ |
 | **Rth do motor** | **3,5 °C/W** | assumido | ❌ **o termopar decide** |

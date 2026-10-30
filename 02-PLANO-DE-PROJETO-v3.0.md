@@ -98,7 +98,10 @@ raio 100 ±0,1 mm · Δh ≤ ±0,5 mm. Peça fora de tolerância é reimpressa, 
 
 **Portão G2:** rotor montado, girando à mão sem rocamento perceptível,
 contenção de ensaio montada, partida da ESP32 da base conferida na bancada,
-grampo ou resistor de descarga no barramento do ESC instalado.
+grampo ou resistor de descarga no barramento do ESC instalado; base fixada
+conforme plano 04, incluindo o apoio e a fixação de eventual chapa intermediária.
+A montagem em apenas dois pontos opostos usada no ensaio com ruptura não
+atende à configuração de fixação prevista para esse portão.
 
 > **Pesar os painéis é necessário, não suficiente.** Δm ≤ 0,084 g casa as
 > *massas*, não os *momentos*: dois painéis de massa idêntica com o CG em raios
@@ -108,6 +111,11 @@ grampo ou resistor de descarga no barramento do ESC instalado.
 > quem fecha a conta é o bloqueador C.
 
 ### Fase 3 — Bloqueadores de rotação
+
+**Retomada suspensa — relato recebido em 27/10/2026:** a partida com rampa
+funcionou facilmente, mas houve oscilação e quebra de um braço da aranha na
+frenagem automática dentro da sequência de partida. Tratar a R02 do documento
+06 antes de novos giros; a observação não fecha G3.
 
 Ensaios A (potência), B (térmica), C (vibração) e D (partida). Detalhe em
 [`04-PLANO-DE-ENSAIOS-v3.0.md`](04-PLANO-DE-ENSAIOS-v3.0.md).
@@ -173,7 +181,9 @@ da eletrônica de bordo.
 |---|---|---|---|---|
 | Arrasto acima do estimado | média | alto | P_entrada > 20 W em G3 | carenagem do boss; recuo para 1500 RPM |
 | Motor aquece além do previsto | média | alto | curva térmica sem estabilizar | ventilação da baia; é o fator que decide |
-| Partida sensorless falha | **ocorreu** (19/10) | médio | ESC treme e desiste | chute de 1400 µs com a fonte em 10–12 V (partiu em 19/10); Startup Power 0,25 → 0,38 → 0,50; ESC sensored |
+| Partida sensorless falha | **ocorreu** (19/10) | médio | ESC treme e desiste | revisar o chute e o Startup Power conforme bloqueador D; a partida observada a 10,4 V não aprova o perfil a 12 V |
+| Partida excede potência ou rotação | **prevista no modelo** | alto | registrar tensão/corrente e RPM durante a partida | fonte 10–12 V, limite 30 A: chute atual prevê 16,7–20,0 A de fase e até 1964 RPM a 12 V; revisar o perfil antes do ensaio com rotor, mantendo os critérios do bloqueador D |
+| Oscilação e ruptura de braço na frenagem automática da partida | **relatada em 27/10** | alto | oscilação do corpo e braço rompido; faltam log e inspeção | suspender novos giros e tratar a R02: inspeção da fratura/conjunto, revisão da aranha e da transição automática ao alvo |
 | Sobretensão no barramento do ESC na parada | **ocorreu** (19/10: ~20 V) | alto | tensão do barramento na parada | grampo ou resistor de descarga; parada suave (`d`) |
 | Δm entre painéis fora | média | médio | pesagem em G1 | massa adesiva; reimpressão |
 | Eletrônica mais pesada que o catálogo | média | médio | pesagem das peças reais (massa completa e chicotes ainda não reconciliados) | mini560 em vez de XL4015; polyfuse em vez de porta-fusível; alívios mais fundos |

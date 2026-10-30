@@ -273,7 +273,7 @@ Tudo que entrar aqui precisa ficar onde o CAD diz: **1 mm de excentricidade em
 
 ```
 Fonte de bancada ──── ESC LittleBee Spring 20A ──── motor A2212 920KV
-  10–12 V, ~3 A        BLHeli_S, sinal servo            3 fases
+  10–12 V, limite 30 A  BLHeli_S, sinal servo            3 fases
         │                      ▲
         │                      │ PWM 1–2 ms, 50 Hz · D25, pull-down 10 kΩ
         └──── GND ─────── ESP32 da base: partida (§8.2) e página (§9)
@@ -281,14 +281,14 @@ Fonte de bancada ──── ESC LittleBee Spring 20A ──── motor A2212 
                   botões de partida (D32) e de parada (D33)
 
 Barramento do ESC: grampo ou resistor de descarga entre + e GND (§8.2).
-Fonte com limite de corrente ajustado em ~3 A.
+Fonte com limite de corrente de 30 A (premissa vigente; não limita a partida calculada).
 ```
 
 ### 8.1 Por que um microcontrolador, e qual
 
 Um gerador de bancada produz o pulso de 1–2 ms sem dificuldade, mas **a partida
-é a função que importa** — subir a um chute acima do teto, segurá-lo por pouco
-tempo e descer ao alvo (§8.2) — e isso ele não faz bem.
+é a função que importa** — subir linearmente ao alvo ou executar o overshoot
+opcional, com chute e descida ao alvo (§8.2) — e isso ele não faz bem.
 
 E o ESC **não tem tempo de rampa**: o manual do BLHeli_S expõe *startup power*,
 não duração. A partida é responsabilidade deste gerador, inteira.
@@ -318,13 +318,28 @@ TX0 e RX0 (USB), D14 (solta PWM no boot) e D34, D35, VP e VN (só entrada).
 
 ### 8.2 O que o firmware do gerador precisa fazer
 
+**Falha relatada em 27/10/2026:** o motor partiu facilmente com a rampa, mas
+houve oscilação e ruptura de um braço da aranha durante a frenagem automática
+da sequência. No modo overshoot, a descida do chute ao alvo é automática;
+conferir versão, parâmetros e log do ensaio. A inclinação limitada do PWM
+não valida a resposta mecânica dessa transição. Novos giros dependem da
+investigação e revisão da pendência R02 (documento 06).
+
+**Atualização de código em 30/10/2026 (0.3.0):** perfil linear por padrão,
+overshoot opcional e partida pelo terminal USB do computador. `l` seleciona
+linear, `o` seleciona overshoot, `g` inicia; D32 usa o mesmo perfil. A seleção
+só muda sem giro e volta a linear após reiniciar. Ver `firmware/README.md`.
+
 ```
 ARMAÇÃO   ao ligar, manter 1000 µs por ~2 s antes de qualquer coisa.
           O BLHeli_S só arma vendo mínimo estável; sinal ausente ou
           alto na energização = ESC não arma, por segurança.
 
-PARTIDA   começa só pelo botão de partida (D32). Sobe de 1148 µs (PPM mínimo,
-          acelerador zero) ao CHUTE de 1400 µs em >= 3 s, linear no comando;
+PARTIDA   começa pelo botão de partida (D32) ou pela tecla g na serial.
+          Exige armação concluída e botão de parada solto.
+          LINEAR (padrão, tecla l): sobe de 1148 µs (PPM mínimo, acelerador
+          zero) diretamente ao alvo em >= 3 s, sem pico nem descida ao final.
+          OVERSHOOT (tecla o): sobe de 1148 µs ao CHUTE de 1400 µs em >= 3 s;
           segura o chute por 2 s (0 a 5 s, ajustável parado) e desce ao alvo
           a 42 µs/s. A base não mede rotação: o chute acaba pelo tempo ou,
           antes, pela tecla do operador ao ver o rotor girar.
@@ -334,8 +349,14 @@ PARTIDA   começa só pelo botão de partida (D32). Sobe de 1148 µs (PPM mínim
           subir (esc_blheli_s_2026-10-19/registro.md).
           Acima do teto o pulso só fica na partida, por tempo limitado:
           sustentado, 1400 µs passam de 1800 RPM a 10–12 V (~2060–2350 RPM
-          pelo modelo do 04). Pelo mesmo modelo, chute de 2 s seguido da
-          descida dá pico de ~1620 RPM a 12 V. Confirmar com tacômetro.
+          pelo modelo do 04). Com limite de 30 A, rotor parado no chute:
+          16,7 A de fase / 64,7 W na fonte a 10 V; 20,0 A / 93,1 W a 12 V.
+          A fonte não limita. Chute de 2 s e descida até o alvo inicial de
+          1200 µs dão picos de 1692 RPM a 10 V e 1964 RPM a 12 V.
+          O modelo ignora o Startup Power e a resistência da fonte/cabos.
+          PERFIL NÃO APROVADO: excede os critérios do bloqueador D.
+          Revisar antes do ensaio com rotor; confirmar com tacômetro e
+          registro de tensão/corrente. Recalcular se o alvo for alterado.
 
 PARADA    na hora: botão de parada (D33), ou espaço/p na serial -> 1000 µs.
           suave: tecla d na serial -> desce ao acelerador zero a 21 µs/s e
@@ -369,7 +390,7 @@ WATCHDOG  ligado. Se o firmware travar, o PWM por hardware continua no último
           bancada, junto com a PARADA.
 
 REINÍCIO  depois de qualquer reset, 1000 µs e espera o operador. A partida
-          nunca recomeça sozinha.
+          nunca recomeça sozinha; o perfil volta a linear.
 
 PÁGINA    nenhum comando de motor na página do §9, nem escondido. O motor só
           se comanda pelos botões.

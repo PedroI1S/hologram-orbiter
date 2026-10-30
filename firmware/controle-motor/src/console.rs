@@ -2,25 +2,26 @@
 //! dígitos.
 //!
 //! Parar na hora é uma tecla só e vale a qualquer momento, inclusive no meio
-//! de um número: espaço, `p`, Esc ou Ctrl-C. A serial ajusta o alvo, encerra
-//! o chute e faz a parada suave, mas nunca dá partida: isso é só do botão
-//! (05 §8.2).
+//! de um número: espaço, `p`, Esc ou Ctrl-C. A serial seleciona o perfil,
+//! dá partida com `g`, ajusta o alvo, encerra o chute e faz a parada suave.
 
-use crate::controller::{Command, StopSource};
+use crate::controller::{Command, StartMode, StopSource};
 
 /// Número digitado e abandonado é descartado depois deste tempo.
 pub const ENTRY_TIMEOUT_MS: u32 = 10_000;
 const MAX_DIGITS: u8 = 5;
 
 pub const HELP: &str = "\
-# Teclas (a partida é só pelo botão D32):
+# Teclas (115200 8N1; comandos de uma tecla não precisam de Enter):
+#   g                        PARTIDA (também pelo botão D32)
+#   l / o                    perfil linear / overshoot (só parado; padrão linear)
 #   espaço, p, Esc, Ctrl-C   PARAR na hora (a qualquer momento)
 #   d                        parada suave: desce ao acelerador zero e para
 #   k                        encerra o chute agora (ao ver o rotor girar)
 #   1250 Enter               alvo de regime em µs (até o teto)
 #   + / -                    alvo ±5 µs      > / <  alvo ±1 µs
-#   r3 Enter                 subida até o chute em s (3 a 30; só parado)
-#   c2 Enter                 duração do chute em s (0 a 5; só parado)
+#   r3 Enter                 subida até alvo/chute em s (3 a 30; só parado)
+#   c2 Enter                 duração do chute do overshoot (0 a 5 s; só parado)
 #   s                        estado          h ou ?  esta ajuda
 #   W (maiúsculo)            trava o laço de propósito: ensaio do WATCHDOG";
 
@@ -118,6 +119,9 @@ impl Console {
     fn key(&mut self, byte: u8, now_ms: u32) -> Option<Action> {
         let nudge = |us| Some(Action::Command(Command::NudgeTarget(us)));
         match byte {
+            b'g' | b'G' => Some(Action::Command(Command::Start)),
+            b'l' | b'L' => Some(Action::Command(Command::SetStartMode(StartMode::Linear))),
+            b'o' | b'O' => Some(Action::Command(Command::SetStartMode(StartMode::Overshoot))),
             b'+' | b'=' => nudge(self.nudge_coarse_us),
             b'-' | b'_' => nudge(-self.nudge_coarse_us),
             b'>' | b'.' => nudge(self.nudge_fine_us),
@@ -209,7 +213,10 @@ mod tests {
         assert!(!c.is_editing());
         // Backspace corrige.
         let got = feed(&mut c, b"13x");
-        assert_eq!(got.last(), Some(&Action::Error("número interrompido: só dígitos e Enter")));
+        assert_eq!(
+            got.last(),
+            Some(&Action::Error("número interrompido: só dígitos e Enter"))
+        );
         let got = feed(&mut c, b"137\x7f5\n");
         assert_eq!(got.last(), Some(&cmd(Command::SetTarget(135))));
         let got = feed(&mut c, b"999999");
@@ -221,11 +228,26 @@ mod tests {
     #[test]
     fn ramp_and_kick_entry() {
         let mut c = Console::new(5, 1);
-        assert_eq!(feed(&mut c, b"r20\r").last(), Some(&cmd(Command::SetRamp(20_000))));
-        assert_eq!(feed(&mut c, b"c2\r").last(), Some(&cmd(Command::SetKick(2_000))));
-        assert_eq!(feed(&mut c, b"C0\n").last(), Some(&cmd(Command::SetKick(0))));
-        assert_eq!(feed(&mut c, b"c\r").last(), Some(&Action::Error("número vazio")));
-        assert_eq!(feed(&mut c, b"r\r").last(), Some(&Action::Error("número vazio")));
+        assert_eq!(
+            feed(&mut c, b"r20\r").last(),
+            Some(&cmd(Command::SetRamp(20_000)))
+        );
+        assert_eq!(
+            feed(&mut c, b"c2\r").last(),
+            Some(&cmd(Command::SetKick(2_000)))
+        );
+        assert_eq!(
+            feed(&mut c, b"C0\n").last(),
+            Some(&cmd(Command::SetKick(0)))
+        );
+        assert_eq!(
+            feed(&mut c, b"c\r").last(),
+            Some(&Action::Error("número vazio"))
+        );
+        assert_eq!(
+            feed(&mut c, b"r\r").last(),
+            Some(&Action::Error("número vazio"))
+        );
         // "r 20": o espaço para, e o resto vira um alvo de 20 µs (que o
         // controlador recusa). Nada sobe.
         let got = feed(&mut c, b"r 20\r");
@@ -243,8 +265,14 @@ mod tests {
         assert_eq!(feed(&mut c, b"sS"), [Action::Status, Action::Status]);
         assert_eq!(feed(&mut c, b"h?"), [Action::Help, Action::Help]);
         assert_eq!(feed(&mut c, b"W"), [Action::Freeze]);
-        assert_eq!(feed(&mut c, b"kK"), [cmd(Command::EndKick), cmd(Command::EndKick)]);
-        assert_eq!(feed(&mut c, b"dD"), [cmd(Command::SoftStop), cmd(Command::SoftStop)]);
+        assert_eq!(
+            feed(&mut c, b"kK"),
+            [cmd(Command::EndKick), cmd(Command::EndKick)]
+        );
+        assert_eq!(
+            feed(&mut c, b"dD"),
+            [cmd(Command::SoftStop), cmd(Command::SoftStop)]
+        );
         // No meio de um número, k e d só interrompem a entrada.
         assert_eq!(
             feed(&mut c, b"12d").last(),
@@ -256,18 +284,70 @@ mod tests {
     }
 
     #[test]
-    fn the_console_never_starts_the_motor() {
+    fn only_the_explicit_start_key_starts_the_motor() {
         let mut c = Console::new(5, 1);
         for b in 0..=255u8 {
             for prefix in [&b""[..], b"1", b"r", b"c"] {
                 let mut bytes = prefix.to_vec();
                 bytes.extend([b, b'\r']);
                 for action in feed(&mut c, &bytes) {
-                    assert_ne!(action, cmd(Command::Start));
+                    if action == cmd(Command::Start) {
+                        assert!(prefix.is_empty() && matches!(b, b'g' | b'G'));
+                    }
                 }
                 c.feed(0x1b, 0);
             }
         }
+    }
+
+    #[test]
+    fn terminal_selects_profiles_and_starts_the_controller() {
+        use crate::{
+            config,
+            controller::{Controller, Event, Reply, State},
+        };
+        let mut console = Console::new(5, 1);
+        let mut ctl = Controller::new(config::LIMITS, 1200, 3_000, 2_000, 0);
+        assert_eq!(console.feed(b'g', 0), Some(cmd(Command::Start)));
+        assert_eq!(
+            ctl.command(Command::Start, 0),
+            Reply::Rejected(crate::controller::Reject::Arming)
+        );
+        ctl.update(2_000);
+        // Sequência real enviada pelo terminal, com CRLF.
+        for action in feed(&mut console, b"l\r\n1250\r\nr3\r\ng\r\n") {
+            if let Action::Command(command) = action {
+                ctl.command(command, 2_000);
+            }
+        }
+        assert_eq!(ctl.start_mode(), StartMode::Linear);
+        assert_eq!(ctl.starts(), 1);
+        assert_eq!(ctl.target_us(), 1250);
+        let mut reached = false;
+        for t in 2_001..=5_001 {
+            if let Some(Event::Reached {
+                target_us: 1250, ..
+            }) = ctl.update(t)
+            {
+                reached = true;
+            }
+            assert!(ctl.pulse_ns() <= 1_250_000);
+        }
+        assert!(reached);
+        assert_eq!(ctl.state(), State::Holding);
+        for action in feed(&mut console, b"po\r\nc0\r\ng\r\n") {
+            if let Action::Command(command) = action {
+                ctl.command(command, 5_001);
+            }
+        }
+        assert_eq!(ctl.start_mode(), StartMode::Overshoot);
+        assert_eq!(ctl.starts(), 2);
+        assert_eq!(
+            ctl.update(8_001),
+            Some(Event::KickReached { after_ms: 3_000 })
+        );
+        assert_eq!(ctl.pulse_ns(), config::LIMITS.kick_ns());
+        assert!(matches!(ctl.update(8_002), Some(Event::KickEnded { .. })));
     }
 
     #[test]

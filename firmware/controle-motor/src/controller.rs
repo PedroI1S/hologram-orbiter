@@ -1,7 +1,8 @@
-//! Máquina de estados do gerador: ARMAÇÃO, PARTIDA COM CHUTE, REGIME, PARADA
+//! Máquina de estados do gerador: ARMAÇÃO, PARTIDA, REGIME, PARADA
 //! e TETO (05 §8.2).
 //!
-//! A partida sobe do PPM mínimo ao pulso de CHUTE, acima do teto de regime,
+//! A partida linear (padrão) sobe do PPM mínimo diretamente ao alvo.
+//! No modo overshoot, sobe ao pulso de CHUTE, acima do teto de regime,
 //! segura o chute por pouco tempo e desce ao alvo. A base não mede a
 //! rotação: o chute acaba pelo tempo ou, antes, pela tecla do operador ao
 //! ver o rotor girar. Acima do teto de regime o pulso só fica durante a
@@ -9,13 +10,30 @@
 //!
 //! O pulso fica em nanossegundos para a rampa avançar frações de µs a cada
 //! milissegundo sem acumular erro. Toda descida em giro tem inclinação
-//! limitada, para não frear mais rápido que o arrasto e devolver energia à
-//! fonte; a parada na hora é a única mudança instantânea.
+//! limitada no comando; isso não garante uma desaceleração mecânica limitada
+//! nem ausência de regeneração ou oscilação. A base não mede essas grandezas.
+//! A parada na hora é a única mudança instantânea.
 
 /// Subida mais longa aceita pelo console.
 pub const MAX_RAMP_MS: u32 = 30_000;
 /// Chute mais longo aceito pelo console.
 pub const MAX_KICK_MS: u32 = 5_000;
+
+/// Perfil selecionado para a próxima partida; só muda sem giro.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum StartMode {
+    Linear,
+    Overshoot,
+}
+
+impl StartMode {
+    pub const fn label(self) -> &'static str {
+        match self {
+            Self::Linear => "linear",
+            Self::Overshoot => "overshoot",
+        }
+    }
+}
 
 /// Faixa do sinal e tempos que o controlador nunca viola.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -102,7 +120,7 @@ const fn rate(span_ns: u32, ramp_ms: u32) -> u32 {
 pub enum State {
     /// Pulso de parada desde a energização; nenhum comando é aceito.
     Arming,
-    /// Pulso de parada; espera o botão de partida.
+    /// Pulso de parada; espera partida pelo botão ou pela serial.
     Stopped,
     /// Pulso a caminho do chute (subida) ou do alvo.
     Ramping,
@@ -151,8 +169,10 @@ impl StopSource {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Command {
-    /// Só o botão de partida gera este comando.
+    /// Partida pelo botão ou pela serial.
     Start,
+    /// Seleciona o perfil de partida, sem iniciar o motor.
+    SetStartMode(StartMode),
     /// Parada na hora.
     Stop(StopSource),
     /// Parada suave: desce ao PPM mínimo na inclinação de ajuste e para.
@@ -163,7 +183,7 @@ pub enum Command {
     SetTarget(u16),
     /// Alvo relativo, em µs; satura no teto e logo acima do PPM mínimo.
     NudgeTarget(i16),
-    /// Duração da subida até o chute, em ms.
+    /// Duração da subida até o alvo (linear) ou até o chute, em ms.
     SetRamp(u32),
     /// Duração do chute, em ms.
     SetKick(u32),
@@ -172,6 +192,7 @@ pub enum Command {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Reply {
     Started { count: u32 },
+    StartMode { mode: StartMode },
     Stopped { was_running: bool },
     SoftStop { was_running: bool },
     KickEnded,
@@ -238,11 +259,12 @@ pub struct Controller {
     target_us: u16,
     ramp_ms: u32,
     kick_ms: u32,
+    start_mode: StartMode,
     starts: u32,
 }
 
 impl Controller {
-    /// Começa armando, com o pulso de parada.
+    /// Começa armando, com o pulso de parada e perfil linear.
     pub fn new(lim: Limits, target_us: u16, ramp_ms: u32, kick_ms: u32, now_ms: u32) -> Self {
         assert!(lim.is_valid());
         assert!(target_us > lim.ppm_min_us && target_us <= lim.ceiling_us);
@@ -263,6 +285,7 @@ impl Controller {
             target_us,
             ramp_ms,
             kick_ms,
+            start_mode: StartMode::Linear,
             starts: 0,
         }
     }
@@ -348,12 +371,24 @@ impl Controller {
                     // De 1000 a 1148 µs o ESC não vê diferença: o salto é
                     // dentro do acelerador zero, e a subida inteira é útil.
                     self.pulse_ns = self.lim.ppm_min_ns();
-                    let rate = rate(self.lim.span_ns(), self.ramp_ms);
-                    self.begin_move(self.lim.kick_ns(), rate, now_ms);
+                    let dest = match self.start_mode {
+                        StartMode::Linear => self.target_ns(),
+                        StartMode::Overshoot => self.lim.kick_ns(),
+                    };
+                    let rate = rate(dest - self.lim.ppm_min_ns(), self.ramp_ms);
+                    self.begin_move(dest, rate, now_ms);
                     Reply::Started { count: self.starts }
                 }
                 _ => Reply::Rejected(Reject::Running),
             },
+            Command::SetStartMode(mode) => {
+                if self.state.is_running() {
+                    Reply::Rejected(Reject::Running)
+                } else {
+                    self.start_mode = mode;
+                    Reply::StartMode { mode }
+                }
+            }
             Command::SetTarget(us) => self.set_target(us, false, now_ms),
             Command::NudgeTarget(delta) => {
                 let wanted = self.target_us as i32 + delta as i32;
@@ -395,8 +430,9 @@ impl Controller {
         }
         let changed = us != self.target_us;
         self.target_us = us;
-        // Na partida o alvo só muda onde a descida termina; na parada suave,
-        // nada. Alvo repetido não replaneja: o movimento em curso segue igual.
+        // No overshoot o alvo só muda onde a descida termina; na parada suave,
+        // nada. No modo linear, mudar o alvo usa a inclinação de ajuste.
+        // Alvo repetido não replaneja: o movimento em curso segue igual.
         let adjustable = matches!(self.state, State::Ramping | State::Holding) && !self.in_kick();
         if adjustable && changed {
             let rate = self.lim.adjust_rate_ns_per_s();
@@ -481,6 +517,10 @@ impl Controller {
         self.kick_ms
     }
 
+    pub fn start_mode(&self) -> StartMode {
+        self.start_mode
+    }
+
     /// Partidas aceitas desde a energização.
     pub fn starts(&self) -> u32 {
         self.starts
@@ -521,10 +561,11 @@ mod tests {
         arming_ms: 2_000,
     };
 
-    /// Controlador já armado em `t = 2000 ms`.
+    /// Controlador já armado em `t = 2000 ms`, no perfil overshoot.
     fn armed(target_us: u16, ramp_ms: u32, kick_ms: u32) -> Controller {
         let mut c = Controller::new(LIM, target_us, ramp_ms, kick_ms, 0);
         assert_eq!(c.update(2_000), Some(Event::Armed));
+        c.command(Command::SetStartMode(StartMode::Overshoot), 2_000);
         c
     }
 
@@ -558,7 +599,10 @@ mod tests {
         for t in 0..2_000 {
             assert_eq!(c.update(t), None);
             assert_eq!(c.pulse_ns(), 1_000_000);
-            assert_eq!(c.command(Command::Start, t), Reply::Rejected(Reject::Arming));
+            assert_eq!(
+                c.command(Command::Start, t),
+                Reply::Rejected(Reject::Arming)
+            );
         }
         assert_eq!(c.update(2_000), Some(Event::Armed));
         assert_eq!(c.state(), State::Stopped);
@@ -573,22 +617,112 @@ mod tests {
             c.command(Command::Stop(StopSource::Button), 10),
             Reply::Stopped { was_running: false }
         );
-        assert_eq!(c.command(Command::SoftStop, 11), Reply::SoftStop { was_running: false });
+        assert_eq!(
+            c.command(Command::SoftStop, 11),
+            Reply::SoftStop { was_running: false }
+        );
         assert_eq!(c.state(), State::Arming);
         assert_eq!(c.update(2_000), Some(Event::Armed));
     }
 
     #[test]
+    fn linear_is_the_default_and_rises_to_the_target_without_kick_or_fall() {
+        for target in [1149, 1200, 1320] {
+            for ramp_ms in [3_000, 12_000, MAX_RAMP_MS] {
+                let mut c = Controller::new(LIM, target, ramp_ms, MAX_KICK_MS, 0);
+                assert_eq!(c.start_mode(), StartMode::Linear);
+                c.update(2_000);
+                assert_eq!(
+                    c.command(Command::Start, 2_000),
+                    Reply::Started { count: 1 }
+                );
+                assert_eq!(
+                    c.command(Command::EndKick, 2_000),
+                    Reply::Rejected(Reject::NotKicking)
+                );
+                let mut reached = None;
+                // A inclinação inteira arredonda para baixo, sobretudo a
+                // apenas 1 µs do mínimo; a rampa nunca deve acabar antes.
+                for t in 2_001..=2_000 + ramp_ms + 1_000 {
+                    let before = c.pulse_ns();
+                    if let Some(event) = c.update(t) {
+                        assert!(
+                            matches!(event, Event::Reached { target_us, .. } if target_us == target)
+                        );
+                        assert!(t >= 2_000 + ramp_ms);
+                        reached = Some(t);
+                    }
+                    assert!(c.pulse_ns() >= before);
+                    assert!(c.pulse_ns() <= target as u32 * 1000);
+                    assert_ne!(c.state(), State::Kicking);
+                }
+                assert!(reached.is_some());
+                assert_eq!(c.state(), State::Holding);
+                assert_eq!(c.pulse_ns(), target as u32 * 1000);
+            }
+        }
+    }
+
+    #[test]
+    fn mode_changes_only_without_running_and_reset_restores_linear() {
+        let mut c = armed(1200, 3_000, 2_000);
+        c.command(Command::Start, 2_000);
+        for t in [3_000, 6_000, 8_000, 20_000] {
+            c.update(t);
+            assert_eq!(
+                c.command(Command::SetStartMode(StartMode::Linear), t),
+                Reply::Rejected(Reject::Running)
+            );
+            assert_eq!(c.start_mode(), StartMode::Overshoot);
+        }
+        c.command(Command::SoftStop, 20_000);
+        assert_eq!(
+            c.command(Command::SetStartMode(StartMode::Linear), 20_000),
+            Reply::Rejected(Reject::Running)
+        );
+        c.command(Command::Stop(StopSource::Serial), 20_000);
+        assert_eq!(
+            c.command(Command::SetStartMode(StartMode::Linear), 20_000),
+            Reply::StartMode {
+                mode: StartMode::Linear
+            }
+        );
+        assert_eq!(c.pulse_ns(), LIM.stop_ns());
+        c.command(Command::Start, 20_000);
+        assert!(matches!(
+            run(&mut c, 20_000, 23_001),
+            Some((
+                _,
+                Event::Reached {
+                    target_us: 1200,
+                    ..
+                }
+            ))
+        ));
+        assert_eq!(c.start_mode(), StartMode::Linear);
+        let reset = Controller::new(LIM, 1200, 3_000, 2_000, 24_000);
+        assert_eq!(reset.start_mode(), StartMode::Linear);
+        assert_eq!(reset.pulse_ns(), LIM.stop_ns());
+        assert_eq!(reset.starts(), 0);
+    }
+
+    #[test]
     fn start_rises_to_the_kick_holds_it_then_falls_to_the_target() {
         let mut c = armed(1200, 3_000, 2_000);
-        assert_eq!(c.command(Command::Start, 2_000), Reply::Started { count: 1 });
+        assert_eq!(
+            c.command(Command::Start, 2_000),
+            Reply::Started { count: 1 }
+        );
         assert_eq!(c.state(), State::Ramping);
         assert_eq!(c.pulse_ns(), 1_148_000);
 
         // 252 µs em 3 s: 84 µs/s.
         run(&mut c, 2_000, 3_500);
         assert_eq!(c.pulse_ns(), 1_274_000);
-        assert_eq!(run(&mut c, 3_500, 5_000), Some((5_000, Event::KickReached { after_ms: 3_000 })));
+        assert_eq!(
+            run(&mut c, 3_500, 5_000),
+            Some((5_000, Event::KickReached { after_ms: 3_000 }))
+        );
         assert_eq!(c.state(), State::Kicking);
         assert_eq!(c.pulse_ns(), 1_400_000);
 
@@ -624,8 +758,17 @@ mod tests {
         run(&mut c, 4_000, 4_001);
         assert!(c.pulse_ns() < at_key);
         let (_, e) = run(&mut c, 4_001, 20_000).unwrap();
-        assert!(matches!(e, Event::Reached { target_us: 1200, .. }));
-        assert_eq!(c.command(Command::EndKick, 20_000), Reply::Rejected(Reject::NotKicking));
+        assert!(matches!(
+            e,
+            Event::Reached {
+                target_us: 1200,
+                ..
+            }
+        ));
+        assert_eq!(
+            c.command(Command::EndKick, 20_000),
+            Reply::Rejected(Reject::NotKicking)
+        );
 
         // No chute.
         c.command(Command::Stop(StopSource::Serial), 20_000);
@@ -641,28 +784,52 @@ mod tests {
     fn zero_kick_time_falls_right_after_reaching_the_kick() {
         let mut c = armed(1300, 3_000, 0);
         c.command(Command::Start, 2_000);
-        assert_eq!(run(&mut c, 2_000, 5_000), Some((5_000, Event::KickReached { after_ms: 3_000 })));
+        assert_eq!(
+            run(&mut c, 2_000, 5_000),
+            Some((5_000, Event::KickReached { after_ms: 3_000 }))
+        );
         assert_eq!(c.update(5_001), Some(Event::KickEnded { held_ms: 1 }));
         let (t, e) = run(&mut c, 5_001, 20_000).unwrap();
         // 100 µs a 42 µs/s: 2381 ms.
         assert_eq!(t, 5_001 + 2_381);
-        assert!(matches!(e, Event::Reached { target_us: 1300, .. }));
+        assert!(matches!(
+            e,
+            Event::Reached {
+                target_us: 1300,
+                ..
+            }
+        ));
     }
 
     #[test]
     fn longer_ramp_and_kick_are_honoured() {
         let mut c = armed(1200, 3_000, 2_000);
-        assert_eq!(c.command(Command::SetRamp(12_000), 2_000), Reply::Ramp { ramp_ms: 12_000 });
-        assert_eq!(c.command(Command::SetKick(5_000), 2_000), Reply::Kick { kick_ms: 5_000 });
+        assert_eq!(
+            c.command(Command::SetRamp(12_000), 2_000),
+            Reply::Ramp { ramp_ms: 12_000 }
+        );
+        assert_eq!(
+            c.command(Command::SetKick(5_000), 2_000),
+            Reply::Kick { kick_ms: 5_000 }
+        );
         c.command(Command::Start, 2_000);
-        assert_eq!(run(&mut c, 2_000, 15_000), Some((14_000, Event::KickReached { after_ms: 12_000 })));
-        assert_eq!(run(&mut c, 15_000, 19_001), Some((19_000, Event::KickEnded { held_ms: 5_000 })));
+        assert_eq!(
+            run(&mut c, 2_000, 15_000),
+            Some((14_000, Event::KickReached { after_ms: 12_000 }))
+        );
+        assert_eq!(
+            run(&mut c, 15_000, 19_001),
+            Some((19_000, Event::KickEnded { held_ms: 5_000 }))
+        );
     }
 
     #[test]
     fn ramp_and_kick_settings_only_while_stopped_and_in_range() {
         let mut c = armed(1300, 3_000, 2_000);
-        assert_eq!(c.command(Command::SetRamp(2_999), 2_000), Reply::Rejected(Reject::RampTooShort));
+        assert_eq!(
+            c.command(Command::SetRamp(2_999), 2_000),
+            Reply::Rejected(Reject::RampTooShort)
+        );
         assert_eq!(
             c.command(Command::SetRamp(MAX_RAMP_MS + 1), 2_000),
             Reply::Rejected(Reject::RampTooLong)
@@ -671,10 +838,19 @@ mod tests {
             c.command(Command::SetKick(MAX_KICK_MS + 1), 2_000),
             Reply::Rejected(Reject::KickTooLong)
         );
-        assert_eq!(c.command(Command::SetKick(0), 2_000), Reply::Kick { kick_ms: 0 });
+        assert_eq!(
+            c.command(Command::SetKick(0), 2_000),
+            Reply::Kick { kick_ms: 0 }
+        );
         c.command(Command::Start, 2_000);
-        assert_eq!(c.command(Command::SetRamp(20_000), 2_001), Reply::Rejected(Reject::Running));
-        assert_eq!(c.command(Command::SetKick(1_000), 2_001), Reply::Rejected(Reject::Running));
+        assert_eq!(
+            c.command(Command::SetRamp(20_000), 2_001),
+            Reply::Rejected(Reject::Running)
+        );
+        assert_eq!(
+            c.command(Command::SetKick(1_000), 2_001),
+            Reply::Rejected(Reject::Running)
+        );
         assert_eq!(c.ramp_ms(), 3_000);
         assert_eq!(c.kick_ms(), 0);
     }
@@ -699,19 +875,31 @@ mod tests {
             assert_eq!(c.pulse_ns(), 1_000_000);
             run(&mut c, at, at + 1_000);
             assert_eq!(c.pulse_ns(), 1_000_000);
-            assert_eq!(c.command(Command::Start, at + 1_000), Reply::Started { count: 2 });
+            assert_eq!(
+                c.command(Command::Start, at + 1_000),
+                Reply::Started { count: 2 }
+            );
             assert_eq!(c.pulse_ns(), 1_148_000);
-            assert_eq!(c.command(Command::Start, at + 1_000), Reply::Rejected(Reject::Running));
+            assert_eq!(
+                c.command(Command::Start, at + 1_000),
+                Reply::Rejected(Reject::Running)
+            );
         }
     }
 
     #[test]
     fn soft_stop_falls_at_the_adjust_rate_then_stops() {
         let (mut c, t) = started_and_holding(1320);
-        assert_eq!(c.command(Command::SoftStop, t), Reply::SoftStop { was_running: true });
+        assert_eq!(
+            c.command(Command::SoftStop, t),
+            Reply::SoftStop { was_running: true }
+        );
         assert_eq!(c.state(), State::Braking);
         // Repetir não replaneja; mudar o alvo também não.
-        assert_eq!(c.command(Command::SoftStop, t), Reply::SoftStop { was_running: true });
+        assert_eq!(
+            c.command(Command::SoftStop, t),
+            Reply::SoftStop { was_running: true }
+        );
         c.command(Command::SetTarget(1300), t);
         assert_eq!(c.state(), State::Braking);
         // 172 µs a 21 µs/s: 8191 ms.
@@ -720,7 +908,10 @@ mod tests {
         assert!(matches!(e, Event::SoftStopped { .. }));
         assert_eq!(c.state(), State::Stopped);
         assert_eq!(c.pulse_ns(), 1_000_000);
-        assert_eq!(c.command(Command::SoftStop, end), Reply::SoftStop { was_running: false });
+        assert_eq!(
+            c.command(Command::SoftStop, end),
+            Reply::SoftStop { was_running: false }
+        );
         assert_eq!(c.command(Command::Start, end), Reply::Started { count: 2 });
     }
 
@@ -740,8 +931,14 @@ mod tests {
     #[test]
     fn target_limits() {
         let mut c = armed(1200, 3_000, 2_000);
-        assert_eq!(c.command(Command::SetTarget(1321), 2_000), Reply::Rejected(Reject::AboveCeiling));
-        assert_eq!(c.command(Command::SetTarget(1400), 2_000), Reply::Rejected(Reject::AboveCeiling));
+        assert_eq!(
+            c.command(Command::SetTarget(1321), 2_000),
+            Reply::Rejected(Reject::AboveCeiling)
+        );
+        assert_eq!(
+            c.command(Command::SetTarget(1400), 2_000),
+            Reply::Rejected(Reject::AboveCeiling)
+        );
         assert_eq!(
             c.command(Command::SetTarget(1148), 2_000),
             Reply::Rejected(Reject::NotAboveMinimum)
@@ -780,14 +977,23 @@ mod tests {
         run(&mut c, 2_000, 4_000);
         c.command(Command::SetTarget(1300), 4_000);
         assert_eq!(c.state(), State::Ramping);
-        assert_eq!(run(&mut c, 4_000, 5_000), Some((5_000, Event::KickReached { after_ms: 3_000 })));
+        assert_eq!(
+            run(&mut c, 4_000, 5_000),
+            Some((5_000, Event::KickReached { after_ms: 3_000 }))
+        );
         c.command(Command::NudgeTarget(5), 6_000);
         assert_eq!(c.state(), State::Kicking);
         run(&mut c, 6_000, 7_000);
         // 95 µs a 42 µs/s: 2262 ms.
         let (t, e) = run(&mut c, 7_000, 20_000).unwrap();
         assert_eq!(t, 7_000 + 2_262);
-        assert!(matches!(e, Event::Reached { target_us: 1305, .. }));
+        assert!(matches!(
+            e,
+            Event::Reached {
+                target_us: 1305,
+                ..
+            }
+        ));
     }
 
     #[test]
@@ -822,7 +1028,13 @@ mod tests {
         // 42 µs a 21 µs/s: 2 s.
         let (t, e) = run(&mut c, 8_000, 20_000).unwrap();
         assert_eq!(t, 10_000);
-        assert!(matches!(e, Event::Reached { target_us: 1316, after_ms: 2_000 }));
+        assert!(matches!(
+            e,
+            Event::Reached {
+                target_us: 1316,
+                after_ms: 2_000
+            }
+        ));
         // Alvo repetido não replaneja.
         c.command(Command::SetTarget(1250), t);
         run(&mut c, t, t + 1_000);
@@ -836,15 +1048,25 @@ mod tests {
     fn millisecond_counter_wraparound() {
         let t0 = u32::MAX - 5_000;
         let mut c = Controller::new(LIM, 1200, 3_000, 2_000, t0);
-        assert_eq!(run(&mut c, t0, t0.wrapping_add(2_000)).map(|x| x.1), Some(Event::Armed));
+        assert_eq!(
+            run(&mut c, t0, t0.wrapping_add(2_000)).map(|x| x.1),
+            Some(Event::Armed)
+        );
         let t1 = t0.wrapping_add(2_000);
+        c.command(Command::SetStartMode(StartMode::Overshoot), t1);
         c.command(Command::Start, t1);
         let (t, e) = run(&mut c, t1, t1.wrapping_add(3_000)).unwrap();
         assert_eq!(t, t1.wrapping_add(3_000));
         assert_eq!(e, Event::KickReached { after_ms: 3_000 });
         let (t, e) = run(&mut c, t, t1.wrapping_add(20_000)).unwrap();
         assert_eq!(t, t1.wrapping_add(9_762));
-        assert!(matches!(e, Event::Reached { after_ms: 4_762, .. }));
+        assert!(matches!(
+            e,
+            Event::Reached {
+                after_ms: 4_762,
+                ..
+            }
+        ));
         assert_eq!(c.running_ms(t), Some(9_762));
     }
 
@@ -864,7 +1086,7 @@ mod tests {
     /// Sequências aleatórias de comandos e intervalos: nenhuma passa do chute,
     /// fica acima do teto de regime fora da partida ou por mais tempo que o
     /// limite, muda mais rápido que a inclinação máxima ou gira sem partida
-    /// pelo botão.
+    /// explícita.
     #[test]
     fn invariants_under_random_commands() {
         let mut seed = 0x2545_f491u32;
@@ -898,12 +1120,20 @@ mod tests {
                 let after = c.pulse_ns();
                 let allowed = max_rate * dt as u64 / 1000 + 1;
                 if after > before {
-                    assert!((after - before) as u64 <= allowed, "subiu {} em {dt} ms", after - before);
+                    assert!(
+                        (after - before) as u64 <= allowed,
+                        "subiu {} em {dt} ms",
+                        after - before
+                    );
                 }
                 // Na descida também: só a chegada da parada suave salta, e
                 // dentro do acelerador zero.
                 if after < before && c.state().is_running() {
-                    assert!((before - after) as u64 <= allowed, "desceu {} em {dt} ms", before - after);
+                    assert!(
+                        (before - after) as u64 <= allowed,
+                        "desceu {} em {dt} ms",
+                        before - after
+                    );
                 }
                 if was_running && c.state() == State::Stopped {
                     assert!((before - LIM.ppm_min_ns()) as u64 <= allowed);
@@ -917,6 +1147,8 @@ mod tests {
                     6 => Some(Command::SetKick(rnd() % 7_000)),
                     7 => Some(Command::SoftStop),
                     8 => Some(Command::EndKick),
+                    9 => Some(Command::SetStartMode(StartMode::Linear)),
+                    10 => Some(Command::SetStartMode(StartMode::Overshoot)),
                     _ => None,
                 };
                 if let Some(cmd) = cmd {
@@ -939,6 +1171,10 @@ mod tests {
                 }
                 let p = c.pulse_ns();
                 assert!(p >= LIM.stop_ns() && p <= LIM.kick_ns(), "pulso {p}");
+                if c.start_mode() == StartMode::Linear {
+                    assert!(p <= LIM.ceiling_ns());
+                    assert_ne!(c.state(), State::Kicking);
+                }
                 if p > LIM.ceiling_ns() {
                     above_ms += dt as u64;
                     assert!(above_ms <= max_above_ms, "{above_ms} ms acima do teto");

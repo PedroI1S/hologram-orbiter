@@ -23,7 +23,7 @@ use controle_motor::{
     button::{Panel, Request},
     config,
     console::{self, Action, Console},
-    controller::{Command, Controller, Event, Reply, StopSource},
+    controller::{Command, Controller, Event, Reply, StartMode, StopSource},
     pwm,
 };
 use esp_hal::{
@@ -143,7 +143,13 @@ fn main() -> ! {
                 Request::Start => Command::Start,
                 Request::Stop => Command::Stop(StopSource::Button),
             };
-            apply(&mut ctl, command, now);
+            handle(
+                Action::Command(command),
+                &mut ctl,
+                &panel,
+                stop_button.is_low(),
+                now,
+            );
         }
 
         // Poucos bytes por volta: cada resposta trava na impressão, e uma
@@ -163,17 +169,17 @@ fn main() -> ! {
                 println!();
             }
             if let Some(action) = action {
-                handle(action, &mut ctl, &panel, now);
+                handle(action, &mut ctl, &panel, stop_button.is_low(), now);
             }
         }
         if let Some(action) = console.poll(now) {
             println!();
-            handle(action, &mut ctl, &panel, now);
+            handle(action, &mut ctl, &panel, stop_button.is_low(), now);
         }
 
         match ctl.update(now) {
             Some(Event::Armed) => println!(
-                "# armado: {} µs por {} s; partida pelo botão D32",
+                "# armado: {} µs por {} s; partida por g ou botão D32",
                 lim.stop_us,
                 lim.arming_ms / 1000
             ),
@@ -234,7 +240,10 @@ fn now_ms() -> u32 {
 
 fn banner() {
     println!();
-    println!("# ESP32 da base: gerador do ESC, {}", env!("CARGO_PKG_VERSION"));
+    println!(
+        "# ESP32 da base: gerador do ESC, {}",
+        env!("CARGO_PKG_VERSION")
+    );
     let reason = esp_hal::system::reset_reason();
     println!("# reinício: {reason:?}");
     if matches!(
@@ -272,7 +281,11 @@ fn banner() {
         config::WATCHDOG_MS
     );
     println!(
-        "# partida: subida de {} s ao chute de {} µs, chute de {} s, descida a {} µs/s",
+        "# partida padrão: linear até o alvo em {} s; l/o selecionam linear/overshoot",
+        Tenths(config::INITIAL_RAMP_MS / 100)
+    );
+    println!(
+        "# overshoot opcional: subida de {} s ao chute de {} µs, chute de {} s, descida a {} µs/s",
         Tenths(config::INITIAL_RAMP_MS / 100),
         lim.kick_us,
         Tenths(config::INITIAL_KICK_MS / 100),
@@ -296,14 +309,23 @@ fn apply(ctl: &mut Controller, command: Command, now: u32) {
     let pulse_before = ctl.pulse_ns();
     let running_before = ctl.running_ms(now);
     match ctl.command(command, now) {
-        Reply::Started { count } => println!(
-            "# PARTIDA {count}: de {} a {} µs (chute) em {} s, chute de {} s, depois {} µs",
-            ctl.limits().ppm_min_us,
-            ctl.limits().kick_us,
-            Tenths(ctl.ramp_ms() / 100),
-            Tenths(ctl.kick_ms() / 100),
-            ctl.target_us()
-        ),
+        Reply::Started { count } => match ctl.start_mode() {
+            StartMode::Linear => println!(
+                "# PARTIDA {count} linear: de {} ao alvo {} µs em {} s",
+                ctl.limits().ppm_min_us,
+                ctl.target_us(),
+                Tenths(ctl.ramp_ms() / 100)
+            ),
+            StartMode::Overshoot => println!(
+                "# PARTIDA {count} overshoot: de {} a {} µs (chute) em {} s, chute de {} s, depois {} µs",
+                ctl.limits().ppm_min_us,
+                ctl.limits().kick_us,
+                Tenths(ctl.ramp_ms() / 100),
+                Tenths(ctl.kick_ms() / 100),
+                ctl.target_us()
+            ),
+        },
+        Reply::StartMode { mode } => println!("# perfil de partida: {}", mode.label()),
         Reply::Stopped { was_running } => {
             let Command::Stop(source) = command else {
                 return;
@@ -337,14 +359,17 @@ fn apply(ctl: &mut Controller, command: Command, now: u32) {
             Tenths((pulse_before + 50) / 100),
             ctl.target_us()
         ),
-        Reply::Ramp { ramp_ms } => println!("# subida até o chute: {} s", ramp_ms / 1000),
+        Reply::Ramp { ramp_ms } => println!("# subida até o alvo/chute: {} s", ramp_ms / 1000),
         Reply::Kick { kick_ms } => println!("# chute: {} s", kick_ms / 1000),
         Reply::Rejected(reject) => println!("# recusado: {}", reject.message()),
     }
 }
 
-fn handle(action: Action, ctl: &mut Controller, panel: &Panel, now: u32) {
+fn handle(action: Action, ctl: &mut Controller, panel: &Panel, stop_raw: bool, now: u32) {
     match action {
+        Action::Command(Command::Start) if !panel.allows_start(stop_raw) => {
+            println!("# recusado: botão de parada pressionado; solte antes de dar partida");
+        }
         Action::Command(command) => apply(ctl, command, now),
         Action::Echo(0x08) => print!("\x08 \x08"),
         Action::Echo(byte) => print!("{}", byte as char),
@@ -366,8 +391,9 @@ fn status(ctl: &Controller, panel: &Panel) {
     let lim = ctl.limits();
     let pressed = |p: bool| if p { "pressionado" } else { "solto" };
     println!(
-        "# {} · pulso {} µs · alvo {} µs · subida {} s · chute {} µs por {} s · teto {} µs{} · partidas {}",
+        "# {} · perfil {} · pulso {} µs · alvo {} µs · subida {} s · chute (só overshoot) {} µs por {} s · teto {} µs{} · partidas {}",
         ctl.state().label(),
+        ctl.start_mode().label(),
         Tenths((ctl.pulse_ns() + 50) / 100),
         ctl.target_us(),
         ctl.ramp_ms() / 1000,

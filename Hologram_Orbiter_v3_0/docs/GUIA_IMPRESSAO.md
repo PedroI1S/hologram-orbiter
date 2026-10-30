@@ -127,4 +127,4 @@ centro e não tem conserto.
 - todas as porcas capturadas; entreferro do hall 2–3 mm.
 
 Nunca ensaie o rotor sem contenção, parada de emergência e operação remota.
-Partida com chute da ESP32 da base (esquema 05 §8.2), fonte do ESC em 10–12 V limitada a ~3 A (~7,7 A de fase no chute, pelo modelo; verificar aceleração real). Grampear a base pelas abas.
+Premissa da fonte do ESC: 10–12 V com limite de 30 A. No chute atual da ESP32 da base (esquema 05 §8.2), o modelo prevê 16,7–20,0 A de fase e pico de 1964 RPM a 12 V; a fonte não limita a partida. Revisar o perfil conforme o bloqueador D do plano 04 antes de executar o ensaio com rotor. Grampear a base pelas abas.

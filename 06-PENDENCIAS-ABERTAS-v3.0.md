@@ -10,11 +10,48 @@ A revisão independente de 03/09 circulou como documento 08 solto; ela foi
 `parameters.json`, no gerador e nos documentos apontam para a tabela de
 disposição no fim deste arquivo.
 
-**Última atualização:** 20/10/2026 — C9: fonte do ESC em 10–12 V e sobretensão no barramento na parada. Antes: 21/09/2026 — acrescentadas a C10 e a C11. Antes: 08/09/2026, rev. local 3.0.4. As disposições de 03/09 no fim são históricas; os cálculos corrigidos em 08/09 prevalecem.
+**Última atualização:** 27/10/2026 — R02: partida com rampa bem-sucedida e ruptura de um braço da aranha durante oscilação na frenagem, conforme relato do usuário; C9: unificação com a premissa de limite de 30 A e os picos de partida recalculados. Antes: 20/10/2026 — fonte do ESC em 10–12 V e sobretensão no barramento na parada; 21/09/2026 — acrescentadas a C10 e a C11; 08/09/2026 — rev. local 3.0.4. As disposições de 03/09 no fim são históricas; os cálculos e critérios vigentes prevalecem.
 
 ---
 
 ## Abertas
+
+### R02 · Ruptura de braço da aranha na frenagem — bloqueia novos giros
+
+Pedro relatou em 27/10/2026 que **a partida funcionou facilmente com a rampa**,
+mas o corpo entrou em oscilação durante a **frenagem automática dentro da
+sequência de partida** e um braço da aranha quebrou **na raiz, junto ao cubo
+central**. Versão informada: V3.0; revisão do CAD e firmware ainda a confirmar.
+A oscilação pareceu lateral; uma solicitação vertical foi levantada pelo
+usuário a partir da aparência da quebra e permanece hipótese. A data e a
+configuração exata do ensaio ainda não foram informadas. Registro:
+[`revisoes/2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md`](revisoes/2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md).
+
+**Fixação informada posteriormente:** base parafusada a uma chapa de madeira
+em somente **dois pontos opostos**, por falta de espaço. Essa montagem difere
+dos três ou quatro pontos previstos no plano 04 e entra como possível fator
+contribuinte, sem comprovação de que tenha causado a oscilação ou a ruptura.
+
+**Causa em investigação.** Faltam rotação, tensão, parâmetros e log da
+rampa, inspeção da fratura na raiz e dados da peça impressa. No firmware atual há descida
+automática do chute ao alvo (padrão: 1400 → 1200 µs, a 42 µs/s); conferir se
+esse foi o trecho executado no ensaio. A sequência relatada não
+distingue a origem da oscilação da resistência da peça rompida. A estimativa
+de tração radial em 01 §5.2 não qualifica o comportamento na frenagem.
+
+**Fechar assim:** preservar e inspecionar a fratura na ligação braço–cubo,
+incluindo cunha inferior, camadas e seção impressa; conferir fixações e danos
+no restante do conjunto, o contato da base e o apoio da chapa de madeira à
+bancada; corrigir a fixação conforme plano 04; identificar a peça e os parâmetros do ensaio; revisar
+a resistência da aranha e o perfil de desaceleração. Depois dessas revisões,
+definir a verificação estática e a sequência de ensaios com medição de rotação
+e vibração durante a parada (plano 04, bloqueador C). Não retomar giros com a
+peça danificada ou por simples reimpressão do mesmo desenho sem essa avaliação.
+
+A partida bem-sucedida é uma observação válida para D, mas não fecha seus
+critérios de repetibilidade, potência e rotação. Os resultados numéricos do
+chute atual continuam estimativas de um perfil cuja correspondência com o
+ensaio ainda precisa ser confirmada.
 
 ### B'1 · Eixo do motor — medir antes de comprar a porca
 
@@ -118,13 +155,13 @@ N52** (~2× o campo). Ver também C2 (polaridade) e C3 (campo do motor).
 
 **O ESC não é alimentado pela bateria** (ratificado por Pedro, 03/09, e já era o
 que o esquema 05 §8 descrevia): ele fica na **parte fixa**, alimentado pela
-**fonte de bancada em 10–12 V, com limite de corrente de ~3 A** (desde
-20/10/2026; antes, 6–7 V). A bateria LiFe do rotor alimenta só a fita, o
+**fonte de bancada em 10–12 V, com limite de corrente de 30 A** (premissa
+registrada em 20/10/2026; antes, 6–7 V). A bateria LiFe do rotor alimenta só a fita, o
 ESP32-C3 e o sensor. As duas linhas de energia não se encontram.
 
 Isso encerra a metade da pendência que dependia da origem da alimentação, e o
 **LVC também já estava encerrado**: o glossário §2–3 registra, do manual Rev16.x,
-que BLHeli_S **não tem corte por baixa tensão**. Sobra um resíduo estreito:
+que BLHeli_S **não tem corte por baixa tensão**. Permanecem os pontos abaixo:
 
 - **Margem do ESC em 6 V — encerrada em 20/10/2026.** O projeto operava o ESC
   em 6–7 V, abaixo do piso de 2S, para manter o duty alto. Em 19/10, a 7,0 V
@@ -134,6 +171,16 @@ que BLHeli_S **não tem corte por baixa tensão**. Sobra um resíduo estreito:
   da rotação a vazio) e o mesmo pulso gira mais rápido: o teto de regime da
   ESP32 caiu para 1320 µs, estimado, e precisa ser medido com tacômetro na
   tensão em uso.
+- **Perfil de partida com limite de 30 A — aberto.** As menções a ~3 A eram
+  divergentes de `CAD/parameters.json`. A fonte não limita a partida no modelo:
+  rotor parado no chute de 1400 µs dá 16,7 A de fase / 64,7 W na fonte a 10 V
+  e 20,0 A / 93,1 W a 12 V. Subida de 3 s, chute de 2 s e descida a 42 µs/s
+  até o alvo inicial de 1200 µs dão picos de 1692 e 1964 RPM, respectivamente.
+  O perfil excede os critérios do bloqueador D do plano 04; revisar antes
+  do ensaio com rotor e recalcular para o alvo utilizado. O modelo ignora o
+  Startup Power e a resistência da fonte/cabos; não substitui medições.
+  No relato recebido em 27/10, a partida com rampa funcionou facilmente;
+  identificar o perfil realmente usado antes de compará-lo ao chute modelado.
 - **Sobretensão no barramento na parada — aberta.** Em 19/10, com Brake on
   stop desligado, a parada na hora a partir de 1400 µs (fonte em 8,4 V)
   levou o barramento a quase 20 V, acima dos 16,8 V do ESC: o BLHeli_S freia
@@ -141,6 +188,8 @@ que BLHeli_S **não tem corte por baixa tensão**. Sobra um resíduo estreito:
   resistor de descarga no barramento do ESC (05 §8.2; 03), conferido medindo
   a tensão do barramento numa parada a partir da rotação plena. Até lá, parar
   pela parada suave (`d`) e evitar a parada na hora a partir de rotação alta.
+  Essa orientação elétrica não valida a resposta mecânica na frenagem:
+  o relato de ruptura de 27/10 mantém novos giros suspensos pela R02.
 - **Fios de fase.** O motor assenta plano na chapa R01 e os fios saem pela
   lateral do estator. Para descerem pelo alívio central (agora Ø8) e pela torre eles
   precisam de um rasgo na chapa ou de um caminho pela borda —

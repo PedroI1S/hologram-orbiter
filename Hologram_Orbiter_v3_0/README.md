@@ -1,6 +1,12 @@
 # Hologram Orbiter v3.0 — pacote CAD, revisão 3.0.5
 
 **PROVISÓRIO — operação e fabricação definitiva dos painéis não liberadas.**
+Relato recebido em 27/10/2026: partida fácil com rampa, seguida de oscilação e
+ruptura de um braço da aranha na frenagem automática da sequência de partida.
+Novos giros suspensos até investigar a ruptura e revisar o conjunto e a
+transição de comando (documento 06, R02). A correspondência da peça ensaiada
+com esta revisão CAD ainda precisa ser confirmada.
+
 Revisão local de 14/09/2026. Os cupons continuam úteis para calibração; lote
 estrutural depende de fechar seção resistente, transferência de carga, ABS FDM,
 fluência, massas/chicotes reais e os bloqueadores do plano de ensaios.

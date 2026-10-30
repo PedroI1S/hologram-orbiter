@@ -13,3 +13,6 @@ __pycache__/
 # temporários
 .chk*.html
 *.tmp
+
+# Backups locais de firmware
+firmware-backups/

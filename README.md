@@ -9,6 +9,15 @@ A cinemática prevê 90 passagens por segundo; desempenho óptico ainda depende 
 ## Estado
 
 **Não liberado para girar nem para a fabricação definitiva dos painéis.**
+**Relato recebido em 27/10/2026:** a partida com rampa funcionou facilmente;
+na frenagem automática dentro da sequência de partida, o corpo oscilou e um
+braço da aranha quebrou. Novos giros ficam
+suspensos até investigar a ruptura, revisar a aranha e o procedimento de parada
+e inspecionar o conjunto. A ruptura foi na raiz, junto ao cubo central (V3.0,
+conforme usuário); rotação e parâmetros da rampa ainda precisam ser registrados.
+Ver o [relato do ensaio](revisoes/2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md)
+e a pendência R02 no documento 06.
+
 A revisão corrigiu a memória de flexão, as contas de partida e energia, os
 procedimentos de instrumentação, a parametrização das folgas e as falhas do build.
 O buck e suas guias foram recuados radialmente 1,2 mm para eliminar a colisão
@@ -17,6 +26,11 @@ com a aranha; o novo teste verifica os envelopes contra a malha final.
 A revisão 3.0.5 remove a saliência dos braços dentro da baia e desobstrui
 as três entradas de fios. Os critérios geométricos passam a verificar
 também essas regiões na malha final.
+
+**Documentação elétrica unificada em 27/10/2026:** fonte do ESC em 10–12 V
+com limite de 30 A, conforme a premissa já registrada nos cálculos. O perfil
+atual de partida excede os critérios do bloqueador D no modelo e precisa de
+revisão antes do ensaio com rotor. Ver o [registro da unificação](revisoes/2026-10-27-UNIFICACAO-FONTE-ESC.md).
 
 A seção do painel tem Iyy = **589,8846 mm⁴**, abaixo dos 910 usados antes.
 O modelo uniforme dá **3,83–7,74 mm** de deflexão com 44,5 g; no teto de aceite
@@ -42,8 +56,8 @@ o subtotal CAD não comprova a margem até 280 g.
 | Motor / acionamento | A2212 920KV / ESC LittleBee Spring 20A |
 | Corrente de regime prevista | 4,95 A de fase; ~16,63 W na fonte (1,66 A a 10 V, 1,39 A a 12 V), com eficiência ESC assumida de 95% |
 | Temperatura prevista | ~46,4 °C, sob as hipóteses térmicas; limite de aceite <55 °C |
-| Fonte do ESC | 10–12 V com limite de corrente de ~3 A, desde 20/10/2026; grampo ou resistor de descarga no barramento do ESC |
-| Partida nominal | chute de 1400 µs: subida de 3 s, chute de 2 s, descida ao alvo (05 §8.2); ~7,7 A de fase com o rotor parado no chute (modelo, fonte limitada a 3 A); medir aceleração real |
+| Fonte do ESC | 10–12 V com limite de corrente de 30 A, conforme premissa registrada em 20/10/2026; grampo ou resistor de descarga no barramento do ESC |
+| Perfil de partida atual, não aprovado | chute de 1400 µs: subida de 3 s, chute de 2 s, descida a 42 µs/s até o alvo inicial de 1200 µs (05 §8.2); modelo: 16,7–20,0 A de fase no chute, pico de 1692 RPM a 10 V e 1964 RPM a 12 V; excede os critérios do bloqueador D |
 | Esticada a 2000 RPM | ~6,11 A / 56,3 °C; não liberada |
 | Carga radial de referência | 158,1 N por painel de 44,5 g; ~159,9 N a 45 g |
 | Energia de projeto | ~27,5 J para J=1,55 g·m², hipótese conservadora não medida |
@@ -67,6 +81,9 @@ Parâmetros do CAD governam cotas, a especificação governa requisitos e o plan
 de ensaios governa aceite físico. Divergências devem ser corrigidas; não se deve
 escolher o valor que favorece a aprovação. O legado permanece arquivado e as
 revisões históricas descrevem os resultados da data indicada.
+
+A [proposta e suas apresentações](proposta/README.md) conservam os valores da
+proposta original; para alimentação, partida e aceite, usar os documentos vigentes acima.
 
 Sentido de giro: anti-horário visto de cima; bordo de ataque em +y local.
 Balança de 0,01 g, contenção e operação remota são requisitos do ensaio.

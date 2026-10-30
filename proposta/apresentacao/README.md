@@ -1,5 +1,10 @@
 # Apresentação Hologram Orbiter
 
+**Conteúdo da proposta original.** Os valores elétricos e critérios de partida
+destas apresentações são históricos. Para a premissa vigente de fonte em
+10–12 V com limite de 30 A e os critérios do bloqueador D, consultar
+[`../README.md`](../README.md) e o plano de ensaios indicado ali.
+
 Abra `apresentacao.html` no navegador. A pasta é independente de servidor e internet: fontes, imagens, estilos e scripts são locais. Para compartilhar a versão animada, envie a pasta inteira.
 
 ## Controles

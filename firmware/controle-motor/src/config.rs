@@ -1,4 +1,5 @@
-//! Valores de bancada. Mudar aqui e regravar: nada disto muda em execução.
+//! Valores de bancada e padrões ao ligar. Teto e pulsos exigem regravação;
+//! perfil, alvo e tempos podem ser ajustados pela serial.
 //!
 //! Faixa PPM: `esc_blheli_s_2026-10-16/parametros-gravados.json`.
 //! Armação, partida com chute e teto: esquema 05 §8.2. Fonte do ESC a
@@ -45,13 +46,16 @@ pub const CEILING_MEASURED: bool = false;
 /// 1400 µs passariam de 1800 RPM a 10–12 V (~2060 a 10 V, ~2350 a 12 V pelo
 /// mesmo modelo): por isso só por tempo limitado.
 pub const KICK_US: u16 = 1400;
-/// Duração do chute ao ligar; a tecla `k` o encerra antes. Pelo modelo, com o
-/// rotor pegando no chute, 2 s e a descida abaixo dão pico de ~1620 RPM a
-/// 12 V; 3 s dariam ~1760 RPM.
+/// Duração do chute no modo overshoot; ignorada no modo linear (padrão).
+/// A tecla `k` o encerra antes. Com fonte em
+/// 10–12 V e limite de 30 A, 2 s e a descida abaixo até o alvo inicial de
+/// 1200 µs dão picos de ~1692 RPM a 10 V e ~1964 RPM a 12 V no modelo.
+/// A fonte não limita: parado no chute, ~16,7–20,0 A de fase. Este perfil
+/// excede os critérios do bloqueador D; revisar antes do ensaio com rotor.
 pub const INITIAL_KICK_MS: u32 = 2_000;
 
-/// SUBIDA: do PPM mínimo ao chute em pelo menos 3 s (84 µs/s). É o valor ao
-/// ligar; `r` alonga até [`MAX_RAMP_MS`].
+/// SUBIDA: do PPM mínimo ao alvo (linear) ou ao chute (overshoot), em pelo
+/// menos 3 s. É o valor ao ligar; `r` alonga até [`MAX_RAMP_MS`].
 pub const MIN_RAMP_MS: u32 = 3_000;
 pub const INITIAL_RAMP_MS: u32 = MIN_RAMP_MS;
 /// DESCIDA depois do chute: na inclinação do chute ao PPM mínimo em 6 s
@@ -65,8 +69,8 @@ pub const ADJUST_MS: u32 = 12_000;
 /// ARMAÇÃO: pulso de parada por ~2 s antes de qualquer comando.
 pub const ARMING_MS: u32 = 2_000;
 
-/// Alvo ao ligar: onde o rotor fica depois do chute (~590 RPM a 10 V, ~690 a
-/// 12 V, pelo modelo); o regime se sobe pelo console.
+/// Alvo ao ligar: destino da partida (~590 RPM a 10 V, ~690 a 12 V, pelo
+/// modelo); o regime se sobe pelo console.
 pub const INITIAL_TARGET_US: u16 = 1200;
 
 /// Passos das teclas `+`/`-` e `>`/`<`, em µs.

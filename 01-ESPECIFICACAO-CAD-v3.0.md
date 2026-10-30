@@ -278,6 +278,15 @@ pode aumentar a área frontal.
 O cubo central com três braços radiais. Transmite o torque do motor, sustenta os
 painéis contra 158,1 N cada um, e abriga a eletrônica de bordo.
 
+**Falha física relatada em 27/10/2026:** após partida fácil com rampa, houve
+oscilação durante a frenagem automática na sequência de partida e ruptura
+da raiz de um braço da aranha, junto ao cubo central. O usuário identificou
+a versão como V3.0; revisão específica e configuração do ensaio ainda precisam
+ser confirmadas. A oscilação pareceu lateral; a hipótese de flexão vertical
+levantada pela aparência da quebra ainda exige inspeção. As cotas abaixo
+descrevem o CAD vigente; a peça ensaiada ainda precisa ser comparada a ele.
+Revisão estrutural e do procedimento de parada pendente (06, R02).
+
 | Feature | Cota |
 |---|---|
 | Disco do cubo | **Ø92** × 6 mm |
@@ -299,7 +308,10 @@ não engolir o trecho aerodinâmico.
 
 **Sulco de fiação.** O sulco de 4,4 × ~3 mm no lado de fuga (r 48–70, §6.3)
 reduz a seção do braço de ~63 para ~47 mm² e desloca o centróide ~2 mm: sob
-158 N dá ~9 MPa e SF ≈ 3 em tração. Aceitável; fica registrado.
+158 N dá ~9 MPa e SF ≈ 3 em tração na estimativa publicada. Esse resultado
+isolado não valida flexão, torção, cargas oscilatórias ou a resistência da
+peça FDM durante a frenagem. A conclusão anterior de aceitabilidade fica
+pendente de revisão diante da ruptura relatada (06, R02).
 
 A entrada pela parede da baia é cortada em x local = 37–42 mm,
 y = −10 a −5,5 mm, z = 0,8–5,8 mm acima do cubo. O início em 37 mm
@@ -790,6 +802,16 @@ não saiu (plano 04, bloqueador D). Compare potências, ou correntes na mesma
 tensão; as tabelas antigas em 7 V não são comparáveis.
 A eficiência do ESC assumida é 95 %, explícita na conta
 `P_fonte = (Kt·ω·I + I²R + 0,7)/0,95`. Ela também deve ser medida.
+
+**Partida ainda não aprovada.** Com limite de 30 A, o modelo não prevê limitação
+pela fonte: rotor parado no chute de 1400 µs dá 64,7 W / 6,47 A na fonte a
+10 V e 93,1 W / 7,76 A a 12 V. Subida de 3 s, chute de 2 s e descida a
+42 µs/s até o alvo inicial de 1200 µs dão pico de 1692 RPM a 10 V e
+1964 RPM a 12 V. Os dois casos excedem os critérios de fase/potência do
+bloqueador D; a 12 V também excedem 1800 RPM. Revisar o perfil antes do ensaio
+com rotor e recalcular para o alvo utilizado. Referência reproduzível:
+`Hologram_Orbiter_v3_0/reports/FISICA.json`, campo `drive.startup_kick`.
+
 A 1800 RPM, com 10–12 V, o motor está a 16–20 % da rotação a vazio: o duty mais
 baixo piora a comutação em baixa rotação, e o mesmo pulso gira mais rápido. O
 teto de regime é medido com tacômetro na tensão em uso (05 §8.2; pendência C9).

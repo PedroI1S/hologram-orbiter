@@ -76,7 +76,7 @@ Não informados: pulso exato em que a peça arrancou na partida 8, pico de corre
 
 Tomadas pelo usuário a partir deste ensaio:
 
-- **Fonte do ESC em 10–12 V**, com limite de corrente de ~3 A, no lugar de 6–7 V. Documentos 01 a 07 atualizados.
+- **Fonte do ESC em 10–12 V**, com limite de corrente de 30 A, no lugar de 6–7 V. **Correção documental em 27/10/2026:** este item dizia ~3 A, mas a premissa registrada em `../Hologram_Orbiter_v3_0/CAD/parameters.json` é 30 A (Pedro, 20/10/2026). As menções a 3 A nas condições dos ensaios de 19/10 acima são o registro original; não foram reclassificadas como medições do ajuste real.
 - **Partida com chute** no firmware da ESP32 da base (versão 0.2.0): subida de 1148 a 1400 µs em 3 s, chute de 2 s (0 a 5 s pelo console; a tecla `k` o encerra ao ver o rotor girar) e descida ao alvo, 1200 µs ao ligar, a 42 µs/s. A base não mede rotação, por isso o chute acaba pelo tempo ou pela tecla.
 - **Teto de regime em 1320 µs**, estimado para 10–12 V (~1790 RPM a 12 V pelo modelo do `config.rs`); 1400 µs ficam só no chute, por tempo limitado. Medir com tacômetro.
 - **Parada suave** (`d`): desce ao acelerador zero a 21 µs/s antes do pulso de parada. Espaço, `p` e o botão D33 continuam parando na hora.

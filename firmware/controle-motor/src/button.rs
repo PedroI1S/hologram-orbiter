@@ -83,6 +83,12 @@ impl Panel {
     pub fn stop_pressed(&self) -> bool {
         self.stop.pressed()
     }
+
+    /// Vale também para a partida serial. A leitura crua bloqueia durante o
+    /// repique; a filtrada exige que a parada tenha sido solta por completo.
+    pub fn allows_start(&self, stop_raw: bool) -> bool {
+        !stop_raw && !self.stop.pressed()
+    }
 }
 
 #[cfg(test)]
@@ -124,11 +130,15 @@ mod tests {
         let got: Vec<_> = (100..300).filter_map(|t| p.update(true, true, t)).collect();
         assert_eq!(got, vec![Request::Stop]);
         // Solta a parada com a partida ainda pressionada: nada (sem nova borda).
-        let got: Vec<_> = (300..500).filter_map(|t| p.update(true, false, t)).collect();
+        let got: Vec<_> = (300..500)
+            .filter_map(|t| p.update(true, false, t))
+            .collect();
         assert!(got.is_empty());
         // Solta e pressiona a partida de novo.
         (500..600).for_each(|t| assert_eq!(p.update(false, false, t), None));
-        let got: Vec<_> = (600..700).filter_map(|t| p.update(true, false, t)).collect();
+        let got: Vec<_> = (600..700)
+            .filter_map(|t| p.update(true, false, t))
+            .collect();
         assert_eq!(got, vec![Request::Start]);
     }
 
@@ -138,5 +148,24 @@ mod tests {
         (0..100).for_each(|t| assert_eq!(p.update(false, false, t), None));
         let first = (100..200).find(|&t| p.update(false, true, t).is_some());
         assert_eq!(first, Some(110));
+    }
+
+    #[test]
+    fn start_interlock_covers_boot_raw_stop_and_release_debounce() {
+        let mut p = Panel::new(50, 10, 0);
+        assert!(!p.allows_start(false));
+        for t in 0..100 {
+            p.update(false, false, t);
+        }
+        assert!(p.allows_start(false));
+        // Bloqueia antes de a parada completar o filtro de 10 ms.
+        p.update(false, true, 100);
+        assert!(!p.allows_start(true));
+        p.update(false, true, 110);
+        assert!(!p.allows_start(false));
+        p.update(false, false, 111);
+        assert!(!p.allows_start(false));
+        p.update(false, false, 121);
+        assert!(p.allows_start(false));
     }
 }

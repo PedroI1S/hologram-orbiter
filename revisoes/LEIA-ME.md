@@ -18,6 +18,8 @@ aqui.
 
 | Arquivo | Escopo | Estado |
 |---|---|---|
+| [`2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md`](2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md) | partida fácil com rampa e ruptura de braço durante oscilação na frenagem automática da partida | relato registrado; causa em investigação e novos giros suspensos pela R02 |
+| [`2026-10-27-UNIFICACAO-FONTE-ESC.md`](2026-10-27-UNIFICACAO-FONTE-ESC.md) | fonte 10–12 V com limite de 30 A e consequências para a partida | documentos operacionais alinhados; perfil de partida ainda não aprovado |
 | [`2026-09-21-PROPOSTA-SPI-QUAD.md`](2026-09-21-PROPOSTA-SPI-QUAD.md) | dados das três fitas: cadeia do 05 ou SPI quad, com ensaio de bancada | proposta, não adotada; decisão na 06 C10 |
 | [`2026-09-14-CORRECAO-RAIZES-E-FIACAO.md`](2026-09-14-CORRECAO-RAIZES-E-FIACAO.md) | saliências internas e entradas de fios da aranha, revisão CAD 3.0.5 | corrigidas; sondagem da malha e regressão com os defeitos antigos |
 | [`2026-09-03-REVISAO-DAS-RATIFICACOES.md`](2026-09-03-REVISAO-DAS-RATIFICACOES.md) | pacote na revisão de CAD 3.0.3, depois das ratificações B'3, C2 e C9 | aplicada; o que sobrou está na §7 |

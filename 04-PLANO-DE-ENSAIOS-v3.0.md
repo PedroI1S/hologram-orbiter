@@ -7,6 +7,21 @@ correções digitais não liberam a estrutura para girar; resolver antes as
 pendências mecânicas da revisão completa. Em 21/09/2026 entrou o ensaio do
 enlace de imagem, que não é bloqueador de rotação.
 
+**Atualização documental de 27/10/2026:** fonte do ESC em 10–12 V com limite
+de **30 A**, conforme `Hologram_Orbiter_v3_0/CAD/parameters.json`. O perfil de partida atual excede
+os critérios do bloqueador D no modelo; revisar antes do ensaio com rotor.
+
+**Evidência física recebida em 27/10/2026:** Pedro informou partida fácil com
+rampa, seguida de oscilação do corpo e ruptura de um braço da aranha na
+frenagem automática dentro da sequência de partida. **Novos giros suspensos**
+até tratar a pendência R02 do documento 06. A ruptura foi na raiz do braço,
+junto ao cubo central; a configuração exata ainda precisa ser identificada.
+A oscilação pareceu lateral e a hipótese de solicitação vertical permanece
+sem confirmação. O relato não fecha os bloqueadores C ou D.
+O usuário informou também fixação da base a uma chapa de madeira por apenas
+dois parafusos opostos, por falta de espaço; registrar essa condição como
+possível fator contribuinte e revisar o apoio antes de retomar os ensaios.
+
 > **Por que este plano é diferente do da v2.1.** O critério antigo era
 > `I ≤ 5,8 A`, um número cuja derivação estava numa planilha que se perdeu, e que
 > além disso exige instrumentação apropriada à corrente comutada de fase. A
@@ -37,9 +52,11 @@ na fonte de bancada** e calcular a potência de entrada.
 
 A fonte do ESC passou de 6–7 V para **10–12 V** em 20/10/2026: a 7,0 V, com
 alvo de até 1300 µs, o rotor não partiu, e só partiu com 1400 µs e a fonte em
-10,4 V (bloqueador D). A potência não depende da tensão; a corrente
-na fonte é `P/V`. Ler a tensão na fonte junto com a corrente: com limite de
-corrente, a tensão cai (em 19/10, de 10,4 V para 8,4 V a 2,48 A).
+10,4 V (bloqueador D). A premissa vigente é limite de corrente de **30 A**;
+ele não atua na partida prevista pelo modelo. Para o mesmo ponto mecânico e
+as mesmas perdas assumidas, a potência calculada é a mesma e a corrente na
+fonte é `P/V`. Ler tensão e corrente juntas; a queda observada em 19/10
+(de 10,4 V para 8,4 V a 2,48 A) não comprova um limite ajustado de 3 A.
 
 **Critério de aceite:** P_entrada **≤ 20 W** a 1800 RPM, em regime estável.
 
@@ -122,7 +139,17 @@ e se há caminho de ar passando pelo motor. Só depois reduzir RPM.
 
 **O que mudou:** a v2.1 media ζ do coxim. Como o isolador está indefinido e a
 montagem inicial é rígida, o que importa agora é a **vibração residual da
-estrutura**, que é consequência direta do balanceamento.
+estrutura**. O balanceamento é parte da avaliação; o relato de oscilação e
+ruptura durante a frenagem automática da partida exige investigar também
+esse transiente, sem atribuir sua causa somente ao desbalanceamento.
+
+**Após a falha relatada:** preservar a fratura, inspecionar o conjunto e
+revisar a aranha e a descida automática do comando antes de retomar C0/C1 ou
+qualquer ensaio de giro. Depois dessa revisão, incluir no protocolo o registro
+sincronizado de comando, rotação e vibração durante a transição do chute ao
+alvo. Definir patamares e limites de interrupção antes do ensaio; inspecionar
+fixações e peças antes e depois. Os limites de vibração em regime abaixo não
+constituem validação da resistência durante a frenagem. Ver 06, R02.
 
 **Método, em duas partes.**
 
@@ -157,7 +184,11 @@ dois.
 
 O que a conta também não cobre é o **balanço da base sobre a mesa**: ela apoia, e
 é presa só pelas quatro abas de grampo nos cantos do anel. Medir grampeada e
-solta. Se a medição der **fn < 45 Hz**, reforce antes de montar o motor: piso
+solta. Registrar a configuração da fixação: no ensaio com ruptura relatado em
+27/10, foram usados somente dois parafusos opostos sobre uma chapa de madeira.
+Inspecionar contato e possíveis movimentos da base e da chapa com o conjunto
+desenergizado; a resposta dessa montagem não valida a montagem prevista.
+Se a medição der **fn < 45 Hz**, reforce antes de montar o motor: piso
 100 % sólido num raio de 40 mm em torno da torre e 4 a 8 gussets da torre para a
 parede da baia, que hoje não trabalha.
 
@@ -220,45 +251,68 @@ admissível) ou empeno de painel.
 
 ## Bloqueador D — partida
 
+**Resultado relatado em 27/10/2026:** a partida com rampa funcionou facilmente.
+O dano ocorreu na frenagem automática ainda dentro da sequência de partida.
+Registrar versão, parâmetros e log para identificar a transição efetivamente
+executada; a evidência de partida bem-sucedida não demonstra 10 de 10 partidas
+nem os limites de potência e rotação. Novos ensaios dependem da R02 do documento 06.
+
 **Bloqueador novo.** O rotor tem **1,55 g·m²**, cerca de **100 vezes** a inércia
 de uma hélice 1045. ESCs sensorless são sintonizados para hélice, e partida com
 inércia alta é o modo de falha clássico: o motor perde sincronismo e trava.
 
-**Método.** Com o rotor completo, fonte em 10–12 V com limite de corrente de
-~3 A, grampo ou resistor de descarga no barramento do ESC (05 §8.2) e o alvo no
-teto de regime, executar 10 partidas consecutivas do repouso até 1800 RPM com a
-partida do firmware: subida de 3 s ao chute de 1400 µs, chute de 2 s (a tecla
-`k` o encerra ao ver o rotor girar) e descida ao alvo a 42 µs/s.
+**Método, após revisar o perfil.** Com o rotor completo, fonte em 10–12 V com
+limite de corrente de **30 A**, grampo ou resistor de descarga no barramento
+do ESC (05 §8.2) e o alvo no teto de regime, executar 10 partidas consecutivas
+do repouso até 1800 RPM. Registrar o perfil efetivamente usado e suas medições.
+O firmware atual sobe em 3 s ao chute de 1400 µs, segura 2 s (a tecla `k` o
+encerra antes) e desce ao alvo a 42 µs/s. **Esse perfil ainda não atende aos
+critérios abaixo no modelo e precisa ser revisto antes do ensaio com rotor.**
 
 **Por que chute, e não rampa longa.** Em 19/10/2026 a rampa de 12 s até 1200 µs
 não deu partida: o ESC fazia três tentativas, cada uma mais forte que a
 anterior porque o acelerador ainda subia, e desistia antes de chegar a ~4 % de
 acelerador. O rotor só partiu com 1400 µs e a fonte em 10,4 V
 (`esc_blheli_s_2026-10-19/registro.md`). Com o chute, a aceleração deixa de ser
-imposta pela rampa: no início quem limita é o Startup Power do ESC, e depois o
-limite de corrente da fonte. Pelo modelo deste plano, com o rotor parado no
-chute e a fonte limitada a 3 A, a tensão cai a ~4,6 V e a corrente de fase
-fica em ~7,7 A, perto do teto de 8 A: **não subir o limite de corrente da
-fonte**. Pelo mesmo modelo, chute de 2 s seguido da descida dá pico de
-~1620 RPM a 12 V; 3 s dariam ~1760 RPM. Sustentado, 1400 µs passariam de
-2000 RPM. Confirmar a curva de RPM com tacômetro.
+imposta pela rampa. O Startup Power do ESC pode restringir a partida real,
+mas não está representado no modelo médio; a resistência da fonte e dos
+cabos também não está. Com limite de 30 A, a fonte não limita nos casos
+calculados em `Hologram_Orbiter_v3_0/reports/FISICA.json`:
+
+| Fonte | Fase, rotor parado no chute | Corrente na fonte nesse ponto | Potência na fonte nesse ponto | Pico de RPM, chute de 2 s e descida até 1200 µs |
+|---|---:|---:|---:|---:|
+| 10 V | 16,7 A | 6,47 A | 64,7 W | 1692 |
+| 12 V | 20,0 A | 7,76 A | 93,1 W | 1964 |
+
+Os dois casos excedem os tetos de 8 A de fase e 32,1 W na fonte; a 12 V,
+também excedem 1800 RPM. Os picos acima usam o alvo inicial de **1200 µs**,
+não o teto de regime exigido no ensaio: recalcular para o alvo e perfil
+revisados. Sustentado, 1400 µs dariam ~2060 RPM a 10 V e ~2350 RPM a 12 V.
+Essas são estimativas, não medições; conferir a curva real com tacômetro e
+registro de tensão e corrente. Os antigos ~7,7 A de fase e ~1620 RPM a 12 V
+dependiam de um limite de 3 A e não descrevem a premissa vigente.
 
 **Critérios de aceite:**
+
 - 10 de 10 partidas bem-sucedidas, sem travamento nem ruído de dessincronismo;
 - pico de potência na fonte durante a partida ≤ **32,1 W** (3,2 A a 10 V,
-  2,7 A a 12 V; a mesma linha da tabela do bloqueador A, estimativa
-  equivalente a 8,0 A de fase nesse modelo, não uma medição de corrente de
-  fase);
+  2,7 A a 12 V). É o valor de referência calculado para 8,0 A de fase a
+  1800 RPM na tabela do bloqueador A; durante a aceleração, a leitura de
+  potência na fonte não comprova sozinha o teto de corrente de fase;
 - rotação durante a partida ≤ 1800 RPM, medida com tacômetro;
 - tensão no barramento do ESC ≤ 16,8 V em todas as paradas;
 - nenhum evento de proteção do ESC.
 
 **Se falhar:**
-1. Alongar o chute (`c3` a `c5`) ou a subida (`r`), sem passar de 1800 RPM no
-   tacômetro.
-2. Subir o Startup Power do ESC: 0,25 (gravado em 19/10/2026) → 0,38 → 0,50,
-   o original. A falha de 19/10 foi de potência insuficiente — a 0,125 o motor
-   só tremia, com menos de 1 A —, não de perda de sincronismo por excesso.
+
+1. Se houver excesso de potência ou rotação, interromper e revisar a amplitude,
+   a duração do chute e a descida ao alvo. Alongar o chute aumenta a rotação
+   prevista; não usar `c3` a `c5` como correção automática. Recalcular antes
+   de ensaiar, sem alterar os critérios de aceite para acomodar o perfil.
+2. Se houver falha de partida por potência insuficiente, avaliar o Startup
+   Power do ESC: 0,25 (gravado em 19/10/2026) → 0,38 → 0,50, o original,
+   somente após revisar os picos previstos. A 0,125 o motor só tremia, com
+   menos de 1 A; isso não comprova margem para aumentar a potência a 12 V.
 3. A fonte já está em 10–12 V (decisão de 20/10/2026): a 7,0 V, com alvo de
    até 1300 µs, a partida não saiu. Em troca, o mesmo pulso gira mais rápido (teto de regime menor) e a
    resolução de comutação em baixa rotação piora.
@@ -404,7 +458,11 @@ Não são formalidade. O rotor guarda **27,6 J** e um painel solto sai a
   quando for preciso.
 - **Subir em patamares** com inspeção entre eles. Nunca ir direto a 1800.
 - Após qualquer reimpressão ou remontagem, **refazer o balanceamento**.
-- **Grampear a base à bancada** pelas abas externas do anel (quatro, nos
-  cantos; três bastam) antes de qualquer ensaio de rotação. Ela tem 321 g e
-  caminha se o contato for ruim.
+- **Fixar a base à bancada** pelas quatro abas externas previstas. Se usar
+  três pontos, distribuí-los pelo perímetro e verificar o apoio; não repetir
+  a configuração de somente dois pontos opostos do ensaio com ruptura.
+  Antes de energizar, conferir contato da base, aperto e ausência de balanço.
+  Havendo chapa intermediária, conferir também sua rigidez e sua fixação à
+  bancada. Registrar posições e montagem no ensaio; corrigir a fixação não
+  encerra a investigação estrutural da R02.
 - Óculos de proteção, sempre.
