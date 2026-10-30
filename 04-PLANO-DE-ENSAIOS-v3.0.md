@@ -151,6 +151,15 @@ alvo. Definir patamares e limites de interrupção antes do ensaio; inspecionar
 fixações e peças antes e depois. Os limites de vibração em regime abaixo não
 constituem validação da resistência durante a frenagem. Ver 06, R02.
 
+**Montagem atual, confirmada em 30/10/2026:** torre **maciça em PETG, sem
+furo central de Ø22 mm**, rotor de **179,5 g sem circuito** e fonte de **10,4 V**.
+As contas tubulares de 63/46 Hz abaixo ficam como histórico do projeto original.
+Para a torre maciça, os cenários preliminares dão 53,7–63,5 Hz (58,8 Hz com
+E = 1,8 GPa), sem constituir limites garantidos ou medição. Ver hipóteses e
+cálculo no [registro atualizado](revisoes/2026-10-30-TORRE-MACICA-PETG.md).
+No C0, representar a massa e a distribuição da configuração que será ensaiada;
+os ~280 g do protocolo original representam o rotor completo, não o atual.
+
 **Método, em duas partes.**
 
 **C0 — ensaio de impacto, antes de energizar o motor.** Com a base impressa na
@@ -163,7 +172,7 @@ dispararia e o ensaio passaria sempre. Fixe no eixo uma **massa fictícia de
 ~280 g** na altura do plano dos painéis (um disco de aço na porca M6 serve), ou
 monte o rotor real parado, e só então bata na torre.
 
-O tubo Ø30 × 4 × 150 dá **k ≈ 50 N/mm**. Com a massa concentrada **no topo do
+**Histórico do projeto tubular em ABS, não da torre atual:** o tubo Ø30 × 4 × 150 dá **k ≈ 50 N/mm**. Com a massa concentrada **no topo do
 tubo** isso daria fn ≈ 63 Hz, e é esse o número que os documentos vinham
 publicando — mas a massa não está no topo. O CG do conjunto (rotor 279 g +
 motor 52 + chapa 18 = **349 g**, e não os 322 g da base, que é outra peça) fica

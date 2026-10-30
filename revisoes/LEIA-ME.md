@@ -18,6 +18,8 @@ aqui.
 
 | Arquivo | Escopo | Estado |
 |---|---|---|
+| [`2026-10-30-TORRE-MACICA-PETG.md`](2026-10-30-TORRE-MACICA-PETG.md) | torre maciça em PETG confirmada, estimativa de frequência natural e rotações de coincidência | registro da montagem construída; pendências de fiação e caracterização em aberto |
+| [`2026-10-30-TABELA-ROTACAO-VIBRACAO-PETG.md`](2026-10-30-TABELA-ROTACAO-VIBRACAO-PETG.md) | tabela calculada de pulso, RPM e frequências 1×/2×/3× para a torre maciça em 10,4 V | estimativas calculadas; medição por impacto requerida pelo C0 |
 | [`2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md`](2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md) | partida fácil com rampa e ruptura de braço durante oscilação na frenagem automática da partida | relato registrado; causa em investigação e novos giros suspensos pela R02 |
 | [`2026-10-27-UNIFICACAO-FONTE-ESC.md`](2026-10-27-UNIFICACAO-FONTE-ESC.md) | fonte 10–12 V com limite de 30 A e consequências para a partida | documentos operacionais alinhados; perfil de partida ainda não aprovado |
 | [`2026-09-21-PROPOSTA-SPI-QUAD.md`](2026-09-21-PROPOSTA-SPI-QUAD.md) | dados das três fitas: cadeia do 05 ou SPI quad, com ensaio de bancada | proposta, não adotada; decisão na 06 C10 |

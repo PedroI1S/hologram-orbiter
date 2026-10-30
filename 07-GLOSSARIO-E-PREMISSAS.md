@@ -260,7 +260,7 @@ Dois ajustes que valem para o nosso caso, e que o manual descreve:
 | Colar e rosca do eixo | O desenho não fecha a soma (5 + 7 ≠ 14). A fixação vale nas duas leituras: porca fina de 3 mm sobre arruela de 2, sobram 3 mm de rosca com a ponta em 14 e 1 mm com 12. Medir antes de comprar a porca. |
 | Polaridade do ímã | O A3144 é unipolar. Validar em bancada com VCC=5 V e pull-up para 3,3 V; só interpretar polaridade depois de confirmar alimentação e componente. |
 | Campo do motor no sensor hall | Estático em relação ao sensor. Verificar com o motor montado, antes de colar. |
-| Frequência natural da parte fixa | Com a massa no topo do tubo daria 63 Hz, mas o CG fica 31 mm acima dele: a conta corrigida dá **≈ 46 Hz** (plano de ensaios, C0). O que não se sabe é o balanço da base sobre a mesa, e o ensaio de impacto resolve em uma tarde. |
+| Frequência natural da parte fixa | Torre construída **maciça em PETG, sem furo Ø22**, confirmada em 30/10/2026. Com rotor de 179,5 g sem circuito: cenários preliminares de **53,7–63,5 Hz**, não limites garantidos; dependem do módulo e CG assumidos. Os 63/46 Hz eram do projeto tubular original. Medir por impacto com a fixação real; ver [registro](revisoes/2026-10-30-TORRE-MACICA-PETG.md). |
 
 ---
 

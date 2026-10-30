@@ -397,9 +397,15 @@ bateria sem desmontar o rotor.
 
 **Massa alvo:** ≤ 12 g (só a pele de 1,6 mm em Ø82 tem 8,8 g; o CAD dá 10,1).
 
-### 5.4 Base e torre — peça única, ABS
+### 5.4 Base e torre — projeto original e montagem construída
 
-Impressa integrada, sem separar no fatiador.
+**Montagem construída, confirmada em 30/10/2026:** a torre já é **maciça em
+PETG, sem furo central de Ø22 mm**. A descrição tubular em ABS abaixo é a
+referência original ainda presente no CAD, não a torre usada nos ensaios.
+Ver [registro da torre construída](revisoes/2026-10-30-TORRE-MACICA-PETG.md).
+O trajeto real da fiação e as propriedades do PETG precisam ser registrados.
+
+Projeto original: impressão integrada, sem separar no fatiador.
 
 | Feature | Cota |
 |---|---|
@@ -407,10 +413,10 @@ Impressa integrada, sem separar no fatiador.
 | Pista externa | anel de Ø260 a Ø280, 8 mm de altura |
 | Baia central | Ø100 externo, parede 4 mm, 80 mm de altura, piso 4 mm |
 | Nervuras radiais | 8 unidades, 8 × 8 mm, da baia até a pista |
-| Torre | Ø30 externo, parede 4 mm, 150 mm a partir do piso |
+| Torre | Construída: maciça, PETG, sem furo Ø22; referência dimensional Ø30 × 150 mm. CAD original: Ø30 externo, parede 4 mm |
 | Flange inferior e superior | Ø60 × 8 mm |
 | Furos das flanges | 4 × Ø4 em PCD 40, a 0°, 90°, 180° e 270°, **só na flange superior** |
-| Passagem de fiação | furo central da torre + janela lateral |
+| Passagem de fiação | CAD original: furo central + janela lateral; trajeto na torre maciça construída ainda não registrado |
 | Furos periféricos | removidos — as abas de grampo fazem a fixação |
 | **Contato com a mesa** | sem balanço; folga ≤ 0,2 mm em 3 pontos a 120° na pista |
 | Perpendicularidade da torre | ≤ 1° |

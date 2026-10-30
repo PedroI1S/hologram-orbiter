@@ -8,6 +8,12 @@ A cinemática prevê 90 passagens por segundo; desempenho óptico ainda depende 
 
 ## Estado
 
+**Montagem de ensaio confirmada em 30/10/2026:** torre já **maciça em PETG,
+sem furo central de Ø22 mm**; rotor de **179,5 g sem circuito**; fonte em
+**10,4 V**. A torre tubular em ABS ainda descrita no CAD é a referência
+original e difere da peça construída. Ver [registro e estimativas de
+vibração](revisoes/2026-10-30-TORRE-MACICA-PETG.md).
+
 **Não liberado para girar nem para a fabricação definitiva dos painéis.**
 **Relato recebido em 27/10/2026:** a partida com rampa funcionou facilmente;
 na frenagem automática dentro da sequência de partida, o corpo oscilou e um
