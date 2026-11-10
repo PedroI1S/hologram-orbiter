@@ -1,0 +1,123 @@
+
+HOST 1372484.130: b'p'
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6240
+load:0x40078000,len:15820
+load:0x40080400,len:3964
+entry 0x40080640
+I (27) boot: ESP-IDF v6.1-beta1-497-g14f663f003e 2nd stage bootloader
+I (27) boot: Multicore bootloader
+I (28) boot: chip revision: v3.1
+I (29) boot.esp32: SPI Speed      : 40MHz
+I (33) boot.esp32: SPI Mode       : DIO
+I (36) boot.esp32: SPI Flash Size : 4MB
+I (40) boot: Enabling RNG early entropy source...
+I (45) boot: Partition Table:
+I (47) boot: ## Label            Usage          Type ST Offset   Length
+I (53) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (60) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (67) boot:  2 factory          factory app      00 00 00010000 003f0000
+I (73) boot: End of partition table
+I (76) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=04af4h ( 19188) map
+I (91) esp_image: segment 1: paddr=00014b1c vaddr=3ffb0000 size=01c08h (  7176) load
+I (94) esp_image: segment 2: paddr=0001672c vaddr=40080000 size=0181ch (  6172) load
+I (101) esp_image: segment 3: paddr=00017f50 vaddr=00000000 size=080c8h ( 32968) 
+I (118) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=0a960h ( 43360) map
+I (135) boot: Loaded app from partition at offset 0x10000
+I (135) boot: Disabling RNG early entropy source...
+
+# ESP32 da base: gerador do ESC, 0.3.0
+# reinício: Some(ChipPowerOn)
+# ESC: PPM 1148–1832 µs · parada 1000 µs · 50 Hz
+# faixa de alvos 1150–1350 µs
+# teto de regime 1350 µs (ESTIMADO, não medido com tacômetro) · watchdog 500 ms
+# partida padrão: linear até o alvo em 3,0 s; l/o selecionam linear/overshoot
+# overshoot opcional: subida de 3,0 s ao chute de 1350 µs, chute de 2,0 s, descida a 33 µs/s
+# ajustes em giro e parada suave (d) a 16 µs/s; espaço, p e D33 param na hora
+# armando: 1000 µs por 2 s
+# Teclas (115200 8N1; comandos de uma tecla não precisam de Enter):
+#   g                        PARTIDA (também pelo botão D32)
+#   l / o                    perfil linear / overshoot (só parado; padrão linear)
+#   espaço, p, Esc, Ctrl-C   PARAR na hora (a qualquer momento)
+#   d                        parada suave: desce ao acelerador zero e para
+#   k                        encerra o chute agora (ao ver o rotor girar)
+#   1250 Enter               alvo em µs (entre mínimo e teto configurados)
+#   + / -                    alvo ±5 µs      > / <  alvo ±1 µs
+#   r3 Enter                 subida até alvo/chute em s (3 a 30; só parado)
+#   c2 Enter                 duração do chute do overshoot (0 a 5 s; só parado)
+#   s                        estado          h ou ?  esta ajuda
+#   W (maiúsculo)            trava o laço de propósito: ensaio do WATCHDOG
+# D;t_ms;estado;pulso_us;acel_%;alvo_us;giro_s
+D;116;ARMANDO;1000,1;0,0;1200;
+# armado: 1000 µs por 2 s; partida por g ou botão D32
+D;2116;PARADO;1000,1;0,0;1200;
+
+HOST 1372487.132: b's'
+# PARADO · perfil linear · pulso 1000,0 µs · alvo 1200 µs · subida 3 s · chute (só overshoot) 1350 µs por 2 s · teto 1350 µs (estimado) · partidas 0
+# botões: partida solto, parada solto
+
+HOST 1372487.672: b'l'
+
+HOST 1372487.674: b'1200\r'
+
+HOST 1372487.675: b'r3\r'
+
+HOST 1372487.676: b's'
+# perfil de partida: linear
+1200
+# alvo 1200 µs
+r3
+# subida até o alvo/chute: 3 s
+# PARADO · perfil linear · pulso 1000,0 µs · alvo 1200 µs · subida 3 s · chute (só overshoot) 1350 µs por 2 s · teto 1350 µs (estimado) · partidas 0
+# botões: partida solto, parada solto
+
+HOST 1372488.221: b'g'
+# PARTIDA 1 linear: de 1148 ao alvo 1200 µs em 3,0 s
+D;3939;RAMPA;1148,1;0,0;1200;0,0
+D;4139;RAMPA;1151,4;0,5;1200;0,2
+D;4339;RAMPA;1154,8;1,0;1200;0,4
+D;4539;RAMPA;1158,4;1,5;1200;0,6
+D;4739;RAMPA;1161,8;2,0;1200;0,8
+D;4939;RAMPA;1165,5;2,5;1200;1,0
+D;5139;RAMPA;1168,8;3,0;1200;1,2
+D;5339;RAMPA;1172,2;3,5;1200;1,4
+D;5539;RAMPA;1175,8;4,0;1200;1,6
+D;5739;RAMPA;1179,2;4,5;1200;1,8
+D;5939;RAMPA;1182,6;5,0;1200;2,0
+D;6139;RAMPA;1186,2;5,5;1200;2,2
+D;6339;RAMPA;1189,6;6,0;1200;2,4
+D;6539;RAMPA;1192,9;6,5;1200;2,6
+D;6739;RAMPA;1196,6;7,0;1200;2,8
+D;6939;RAMPA;1200,0;7,6;1200;3,0
+# REGIME em 1200 µs: 3,0 s de movimento, 3,0 s desde a partida
+D;6940;REGIME;1200,0;7,6;1200;3,0
+D;7140;REGIME;1200,0;7,6;1200;3,2
+D;7340;REGIME;1200,0;7,6;1200;3,4
+D;7540;REGIME;1200,0;7,6;1200;3,6
+D;7740;REGIME;1200,0;7,6;1200;3,8
+D;7940;REGIME;1200,0;7,6;1200;4,0
+D;8140;REGIME;1200,0;7,6;1200;4,2
+D;8340;REGIME;1200,0;7,6;1200;4,4
+D;8540;REGIME;1200,0;7,6;1200;4,6
+D;8740;REGIME;1200,0;7,6;1200;4,8
+D;8940;REGIME;1200,0;7,6;1200;5,0
+D;9140;REGIME;1200,0;7,6;1200;5,2
+D;9340;REGIME;1200,0;7,6;1200;5,4
+D;9540;REGIME;1200,0;7,6;1200;5,6
+D;9740;REGIME;1200,0;7,6;1200;5,8
+D;9940;REGIME;1200,0;7,6;1200;6,0
+
+HOST 1372494.251: b'p'
+# PARADO pela serial em 1200,0 µs, após 6,0 s de giro
+D;9969;PARADO;1000,1;0,0;1200;
+
+HOST 1372494.794: b'1200\rs'
+1200
+# alvo 1200 µs
+# PARADO · perfil linear · pulso 1000,0 µs · alvo 1200 µs · subida 3 s · chute (só overshoot) 1350 µs por 2 s · teto 1350 µs (estimado) · partidas 1
+# botões: partida solto, parada solto

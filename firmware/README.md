@@ -1,5 +1,14 @@
 # Firmware
 
+**Teto de teste sem aranha: 1831 µs (30/10/2026).** Por solicitação do operador,
+a faixa de alvos foi elevada para 1150–1831 µs, 1 µs abaixo do máximo do ESC
+configurado em 1832 µs. O chute opcional acompanha esse teto; padrão linear,
+alvo inicial 1200 µs e parada 1000 µs. Este teto não foi validado para o rotor
+completo. A calibração manual do ESC não foi confirmada por releitura.
+Gravação e verificação desta alteração: ver `../esc_blheli_s_2026-10-30/teste-teto-esc.md`.
+
+## Registro anterior: teto 1350 µs
+
 **Faixa atual de alvos: 1150–1350 µs (30/10/2026).** O chute também está
 limitado a 1350 µs. A armação e a parada continuam em 1000 µs; o alvo ao
 ligar continua em 1200 µs. O PPM mínimo gravado no ESC permanece em
@@ -17,8 +26,12 @@ Confirmar as rotações com tacômetro. Equação usada, igual à de `CAD/physic
 `duty = (pulso_us − 1148)/684` e `Kt = 60/(2π × 920)`.
 
 Esta alteração passou em 39 testes, Clippy e compilação para ESP32.
-**Ainda não gravada: a placa estava desconectada.** O registro de gravação
-abaixo corresponde à configuração anterior de 1400 µs.
+**Gravada em 30/10/2026 às 18:54 UTC (15:54 em São Paulo)** na ESP32
+revisão v3.1, 4 MB, pela porta `/dev/cu.usbserial-A5069RR4`, com verificação
+do espflash. Conferidos pela serial: faixa 1150–1350 µs, aceitação dos dois
+extremos e recusa de 1149/1351 µs. Ao terminar: `PARADO`, perfil linear,
+alvo restaurado para 1200 µs e zero partidas. Nenhum comando de partida foi
+enviado. O registro de 1400 µs abaixo corresponde à gravação anterior.
 
 **Versão 0.3.0, 30/10/2026: partida linear por padrão e partida pelo terminal.**
 O perfil linear sobe de 1148 µs diretamente ao alvo em 3 s, sem chute e sem

@@ -1,0 +1,35 @@
+{
+  "board_mm": [
+    15,
+    20,
+    1.6
+  ],
+  "max_corner_radius_mm": 37.61980861195336,
+  "enclosure_inner_radius_mm": 39.0,
+  "minimum_radial_corner_gap_mm": 1.38019138804664,
+  "mounting_centers_rotor_mm": [
+    [
+      21.5,
+      -3
+    ],
+    [
+      32.5,
+      -3
+    ],
+    [
+      32.5,
+      13
+    ],
+    [
+      21.5,
+      13
+    ]
+  ],
+  "component_courtyard_issues": [],
+  "assumptions": [
+    "Nominal printed CAD, actual printed part not measured",
+    "PCB underside at Z=6; 1.6mm board plus SOIC height under 8mm total envelope",
+    "19 wire bends and external power harness still require physical check",
+    "Heads must fit reserved diameter 3.5mm; underside must remain insulated"
+  ]
+}

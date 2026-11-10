@@ -1,0 +1,20 @@
+Marcacao_B_Silk,Grupo,Pino,Rede,X_mm,Y_mm,Observacao
+01,J1,1,+5V,0.85,15,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+02,J1,2,GND,4.2,19.15,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+03,J1,3,+3V3,10.8,19.15,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+04,J1,4,CLK_3V3,0.85,5,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+05,J1,5,DATA_3V3,0.85,7.5,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+06,J1,6,HALL,8.6,19.15,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+07,J1,7,VBAT_ADC,6.4,19.15,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+08,J1,8,D1_3V3,14.15,10,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+09,J1,9,D2_3V3,14.15,7.5,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+10,J2,1,+5V,10.8,0.8,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+11,J2,2,GND,14.15,15,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+12,J2,3,HALL,14.15,12.5,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+13,J3,1,CLK1_5V,4.2,0.8,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+14,J3,2,D0_5V,0.85,10,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+15,J5,1,CLK2_5V,5.85,0.8,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+16,J5,2,D1_5V,0.85,12.5,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+17,J6,1,CLK3_5V,7.5,0.8,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+18,J6,2,D2_5V,14.15,5,Fio soldado apos montagem SMD; AWG28; furo 0.5mm
+19,J4,1,VBAT_SW,9.15,0.8,Fio soldado apos montagem SMD; AWG28; furo 0.5mm

@@ -1,6 +1,7 @@
 [package]
 edition      = "2024"
 name         = "esp32-base"
+default-run  = "esp32-base"
 rust-version = "1.95"
 version      = "0.3.0"
 description  = "ESP32 da base: sinal do ESC com armação, rampa, teto e watchdog (esquema 05 §8)"

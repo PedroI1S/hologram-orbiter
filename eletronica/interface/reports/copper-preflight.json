@@ -1,0 +1,8 @@
+{
+  "open_nets": [],
+  "minimum_inter_net_clearance_mm": 0.1816660382040507,
+  "clearance_issues": [],
+  "edge_clearance_issues": [],
+  "pads_without_track_contact": [],
+  "filled_zones_included": false
+}

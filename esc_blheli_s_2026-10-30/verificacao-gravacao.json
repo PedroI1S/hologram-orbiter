@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-10-30T19:21:19.836083+00:00",
+  "port": "/dev/cu.usbmodem101",
+  "firmware": "BLHeli_S 16.7",
+  "layout": "A-H-25",
+  "address": "0x1A00",
+  "size": 112,
+  "before_sha256": "1fa034b01f8db18787f3a8ad6198e4b6de4e7eb4bc92ca28d040d99271fbe8e6",
+  "after_sha256": "91ec40d1476cd4c9875f33138aae326409d2f14029fa53abb4c9b426175fa106",
+  "changes": [
+    {
+      "offset": 11,
+      "before": 1,
+      "after": 2
+    }
+  ],
+  "readback_confirmations": 2,
+  "startup_power": "0.75",
+  "motor_direction": "Reversed",
+  "physical_direction_verified": false
+}

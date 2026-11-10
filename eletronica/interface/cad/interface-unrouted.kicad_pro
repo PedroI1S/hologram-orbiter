@@ -1,0 +1,56 @@
+{
+  "board": {
+    "design_settings": {
+      "rules": {
+        "min_clearance": 0.153,
+        "min_track_width": 0.153,
+        "min_via_diameter": 0.6,
+        "min_through_hole_diameter": 0.3,
+        "min_via_annular_width": 0.15,
+        "min_hole_clearance": 0.25,
+        "min_copper_edge_clearance": 0.25
+      },
+      "defaults": {
+        "board_outline_line_width": 0.05,
+        "copper_line_width": 0.2
+      },
+      "track_widths": [
+        0,
+        0.2,
+        0.25
+      ],
+      "via_dimensions": [
+        {
+          "diameter": 0.6,
+          "drill": 0.3
+        }
+      ]
+    }
+  },
+  "net_settings": {
+    "classes": [
+      {
+        "name": "Default",
+        "clearance": 0.18,
+        "track_width": 0.2,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.2,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "bus_width": 12,
+        "line_style": 0,
+        "wire_width": 6,
+        "priority": 2147483647
+      }
+    ],
+    "netclass_assignments": {},
+    "netclass_patterns": []
+  },
+  "meta": {
+    "filename": "interface.kicad_pro",
+    "version": 1
+  }
+}

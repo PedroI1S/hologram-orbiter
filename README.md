@@ -70,6 +70,8 @@ o subtotal CAD não comprova a margem até 280 g.
 | Painel solto | ~7,9 J e 18,9 m/s na referência de 44,5 g / r=100 mm |
 | Desbalanceamento de referência | 8,4 g·mm usando 252 g; recalcular com a massa final e medir em dois planos |
 
+A PCB de interface SPI quad está em [eletronica/interface](eletronica/interface/README.md), com projeto KiCad, Gerbers e arquivos de montagem para cotação. A revisão r0.2 ainda depende de ensaio elétrico e conferência física dos chicotes.
+
 ## Documentos
 
 | Uso | Arquivo |

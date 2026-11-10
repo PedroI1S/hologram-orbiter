@@ -1,0 +1,4 @@
+sexpdata==1.0.2
+shapely==2.2.0
+cairosvg==2.9.1
+gerbonara==1.6.3

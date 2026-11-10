@@ -54,6 +54,14 @@ até um alvo também pode atravessar as faixas. O plano 04 prevê impacto com o
 motor desenergizado e a montagem/fixação reais para medir a frequência natural;
 o relato de ruptura e a pendência R02 continuam sem liberação por esta tabela.
 
+## Observação posterior de bancada
+
+Pedro relatou pouca oscilação visual em 1200 µs e oscilação persistente na
+aceleração até 1300 µs, exigindo interrupção. Ainda sem RPM ou vibração medidas,
+e sem confirmar se 1300 µs foi atingido e mantido. Isso impede interpretar as
+linhas sem marcação como faixas liberadas. Ver [relato e interpretação
+provisória](2026-10-30-OSCILACAO-ALVO-1300US.md).
+
 ## Modelo e limites
 
 Usa-se o arrasto do rotor completo do CAD: 4,95 A a 1800 RPM, motor de

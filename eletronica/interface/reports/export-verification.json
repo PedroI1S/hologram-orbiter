@@ -1,0 +1,49 @@
+{
+  "gerber_layers": [
+    [
+      "top",
+      "copper"
+    ],
+    [
+      "top",
+      "mask"
+    ],
+    [
+      "top",
+      "silk"
+    ],
+    [
+      "top",
+      "paste"
+    ],
+    [
+      "bottom",
+      "copper"
+    ],
+    [
+      "bottom",
+      "mask"
+    ],
+    [
+      "bottom",
+      "silk"
+    ],
+    [
+      "mechanical",
+      "outline"
+    ]
+  ],
+  "outline_centerline_size_mm": [
+    15,
+    20
+  ],
+  "plated_drill_hits": 29,
+  "nonplated_drill_hits": 4,
+  "smd_positions": 17,
+  "bom_matches_positions": true,
+  "parser_notes": [
+    "/Users/pedro/Documents/8_Semestre/OficinaDeIntegracao/eletronica/interface/fabricacao/gerbers/interface-NPTH.drl:12 \"G90\": G90 header statement found after end of header",
+    "/Users/pedro/Documents/8_Semestre/OficinaDeIntegracao/eletronica/interface/fabricacao/gerbers/interface-PTH.drl:14 \"G90\": G90 header statement found after end of header",
+    "Layer \"bottom paste\" not found. Found layers: top copper, top mask, top silk, top paste, bottom copper, bottom mask, bottom silk, mechanical outline"
+  ]
+}

@@ -1,0 +1,24 @@
+Drill report for interface.kicad_pcb
+Created on 2026-10-30T20:24:14
+
+Copper Layer Stackup:
+    =============================================================
+    L1 :  F.Cu                      front
+    L2 :  B.Cu                      back
+
+
+Drill file 'interface-PTH.drl' contains
+    plated through holes:
+    =============================================================
+    T1  0.300mm  0.0118"  (10 holes))
+    T2  0.500mm  0.0197"  (19 holes))
+
+    Total plated holes count 29
+
+
+Drill file 'interface-NPTH.drl' contains
+    unplated through holes:
+    =============================================================
+    T1  2.200mm  0.0866"  (4 holes))
+
+    Total unplated holes count 4

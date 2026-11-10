@@ -18,6 +18,7 @@ aqui.
 
 | Arquivo | Escopo | Estado |
 |---|---|---|
+| [`2026-10-30-OSCILACAO-ALVO-1300US.md`](2026-10-30-OSCILACAO-ALVO-1300US.md) | relato de oscilação na aceleração até 1300 µs e correção sobre ausência de rotação do estator | relato registrado; causa pendente de inspeção e medição |
 | [`2026-10-30-TORRE-MACICA-PETG.md`](2026-10-30-TORRE-MACICA-PETG.md) | torre maciça em PETG confirmada, estimativa de frequência natural e rotações de coincidência | registro da montagem construída; pendências de fiação e caracterização em aberto |
 | [`2026-10-30-TABELA-ROTACAO-VIBRACAO-PETG.md`](2026-10-30-TABELA-ROTACAO-VIBRACAO-PETG.md) | tabela calculada de pulso, RPM e frequências 1×/2×/3× para a torre maciça em 10,4 V | estimativas calculadas; medição por impacto requerida pelo C0 |
 | [`2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md`](2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md) | partida fácil com rampa e ruptura de braço durante oscilação na frenagem automática da partida | relato registrado; causa em investigação e novos giros suspensos pela R02 |

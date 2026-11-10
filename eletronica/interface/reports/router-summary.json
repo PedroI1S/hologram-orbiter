@@ -1,0 +1,7 @@
+{
+  "segments": 189,
+  "vias": 9,
+  "all_placements_preserved": true,
+  "router": "Freerouting 2.1.0",
+  "validation": "KiCad DRC must follow"
+}

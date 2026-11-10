@@ -1,0 +1,365 @@
+
+HOST 1372619.557: b'p'
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+0,1;0,0;1200;
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6240
+load:0x40078000,len:15820
+load:0x40080400,len:3964
+entry 0x40080640
+I (27) boot: ESP-IDF v6.1-beta1-497-g14f663f003e 2nd stage bootloader
+I (27) boot: Multicore bootloader
+I (28) boot: chip revision: v3.1
+I (29) boot.esp32: SPI Speed      : 40MHz
+I (33) boot.esp32: SPI Mode       : DIO
+I (36) boot.esp32: SPI Flash Size : 4MB
+I (40) boot: Enabling RNG early entropy source...
+I (45) boot: Partition Table:
+I (47) boot: ## Label            Usage          Type ST Offset   Length
+I (53) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (60) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (67) boot:  2 factory          factory app      00 00 00010000 003f0000
+I (73) boot: End of partition table
+I (76) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=04af4h ( 19188) map
+I (91) esp_image: segment 1: paddr=00014b1c vaddr=3ffb0000 size=01c08h (  7176) load
+I (94) esp_image: segment 2: paddr=0001672c vaddr=40080000 size=0181ch (  6172) load
+I (101) esp_image: segment 3: paddr=00017f50 vaddr=00000000 size=080c8h ( 32968) 
+I (118) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=0a960h ( 43360) map
+I (135) boot: Loaded app from partition at offset 0x10000
+I (135) boot: Disabling RNG early entropy source...
+
+# ESP32 da base: gerador do ESC, 0.3.0
+# reinício: Some(ChipPowerOn)
+# ESC: PPM 1148–1832 µs · parada 1000 µs · 50 Hz
+# faixa de alvos 1150–1350 µs
+# teto de regime 1350 µs (ESTIMADO, não medido com tacômetro) · watchdog 500 ms
+# partida padrão: linear até o alvo em 3,0 s; l/o selecionam linear/overshoot
+# overshoot opcional: subida de 3,0 s ao chute de 1350 µs, chute de 2,0 s, descida a 33 µs/s
+# ajustes em giro e parada suave (d) a 16 µs/s; espaço, p e D33 param na hora
+# armando: 1000 µs por 2 s
+# Teclas (115200 8N1; comandos de uma tecla não precisam de Enter):
+#   g                        PARTIDA (também pelo botão D32)
+#   l / o                    perfil linear / overshoot (só parado; padrão linear)
+#   espaço, p, Esc, Ctrl-C   PARAR na hora (a qualquer momento)
+#   d                        parada suave: desce ao acelerador zero e para
+#   k                        encerra o chute agora (ao ver o rotor girar)
+#   1250 Enter               alvo em µs (entre mínimo e teto configurados)
+#   + / -                    alvo ±5 µs      > / <  alvo ±1 µs
+#   r3 Enter                 subida até alvo/chute em s (3 a 30; só parado)
+#   c2 Enter                 duração do chute do overshoot (0 a 5 s; só parado)
+#   s                        estado          h ou ?  esta ajuda
+#   W (maiúsculo)            trava o laço de propósito: ensaio do WATCHDOG
+# D;t_ms;estado;pulso_us;acel_%;alvo_us;giro_s
+D;116;ARMANDO;1000,1;0,0;1200;
+# armado: 1000 µs por 2 s; partida por g ou botão D32
+D;2116;PARADO;1000,1;0,0;1200;
+
+HOST 1372622.579: b's'
+# PARADO · perfil linear · pulso 1000,0 µs · alvo 1200 µs · subida 3 s · chute (só overshoot) 1350 µs por 2 s · teto 1350 µs (estimado) · partidas 0
+# botões: partida solto, parada solto
+
+HOST 1372623.115: b'l'
+
+HOST 1372623.117: b'1200\r'
+
+HOST 1372623.118: b'r3\r'
+
+HOST 1372623.119: b's'
+# perfil de partida: linear
+1200
+# alvo 1200 µs
+r3
+# subida até o alvo/chute: 3 s
+# PARADO · perfil linear · pulso 1000,0 µs · alvo 1200 µs · subida 3 s · chute (só overshoot) 1350 µs por 2 s · teto 1350 µs (estimado) · partidas 0
+# botões: partida solto, parada solto
+
+HOST 1372623.659: b'g'
+# PARTIDA 1 linear: de 1148 ao alvo 1200 µs em 3,0 s
+D;3950;RAMPA;1148,1;0,0;1200;0,0
+D;4150;RAMPA;1151,4;0,5;1200;0,2
+D;4350;RAMPA;1154,8;1,0;1200;0,4
+D;4550;RAMPA;1158,4;1,5;1200;0,6
+D;4750;RAMPA;1161,8;2,0;1200;0,8
+D;4950;RAMPA;1165,5;2,5;1200;1,0
+D;5150;RAMPA;1168,8;3,0;1200;1,2
+D;5350;RAMPA;1172,2;3,5;1200;1,4
+D;5550;RAMPA;1175,8;4,0;1200;1,6
+D;5750;RAMPA;1179,2;4,5;1200;1,8
+D;5950;RAMPA;1182,6;5,0;1200;2,0
+D;6150;RAMPA;1186,2;5,5;1200;2,2
+D;6350;RAMPA;1189,6;6,0;1200;2,4
+D;6550;RAMPA;1192,9;6,5;1200;2,6
+D;6750;RAMPA;1196,6;7,0;1200;2,8
+D;6950;RAMPA;1200,0;7,6;1200;3,0
+# REGIME em 1200 µs: 3,0 s de movimento, 3,0 s desde a partida
+D;6951;REGIME;1200,0;7,6;1200;3,0
+D;7151;REGIME;1200,0;7,6;1200;3,2
+D;7351;REGIME;1200,0;7,6;1200;3,4
+D;7551;REGIME;1200,0;7,6;1200;3,6
+D;7751;REGIME;1200,0;7,6;1200;3,8
+D;7951;REGIME;1200,0;7,6;1200;4,0
+D;8151;REGIME;1200,0;7,6;1200;4,2
+D;8351;REGIME;1200,0;7,6;1200;4,4
+D;8551;REGIME;1200,0;7,6;1200;4,6
+D;8751;REGIME;1200,0;7,6;1200;4,8
+D;8951;REGIME;1200,0;7,6;1200;5,0
+D;9151;REGIME;1200,0;7,6;1200;5,2
+D;9351;REGIME;1200,0;7,6;1200;5,4
+D;9551;REGIME;1200,0;7,6;1200;5,6
+D;9751;REGIME;1200,0;7,6;1200;5,8
+D;9951;REGIME;1200,0;7,6;1200;6,0
+
+HOST 1372629.674: b'1300\rs'
+1300
+# alvo 1300 µs
+# RAMPA · perfil linear · pulso 1200,0 µs · alvo 1300 µs · subida 3 s · chute (só overshoot) 1350 µs por 2 s · teto 1350 µs (estimado) · partidas 1
+# botões: partida solto, parada solto
+D;9966;RAMPA;1200,0;7,6;1300;6,0
+D;10166;RAMPA;1203,3;8,0;1300;6,2
+D;10366;RAMPA;1206,7;8,5;1300;6,4
+D;10566;RAMPA;1210,0;9,0;1300;6,6
+D;10766;RAMPA;1213,4;9,5;1300;6,8
+D;10966;RAMPA;1216,7;10,0;1300;7,0
+D;11166;RAMPA;1220,1;10,5;1300;7,2
+D;11366;RAMPA;1223,5;11,0;1300;7,4
+D;11566;RAMPA;1226,8;11,5;1300;7,6
+D;11766;RAMPA;1230,2;12,0;1300;7,8
+D;11966;RAMPA;1233,5;12,5;1300;8,0
+D;12166;RAMPA;1237,2;13,0;1300;8,2
+D;12366;RAMPA;1240,5;13,5;1300;8,4
+D;12566;RAMPA;1243,9;14,0;1300;8,6
+D;12766;RAMPA;1247,3;14,4;1300;8,8
+D;12966;RAMPA;1250,6;14,9;1300;9,0
+D;13166;RAMPA;1254,0;15,4;1300;9,2
+D;13366;RAMPA;1257,3;15,9;1300;9,4
+D;13566;RAMPA;1260,7;16,4;1300;9,6
+D;13766;RAMPA;1264,0;16,9;1300;9,8
+D;13966;RAMPA;1267,4;17,4;1300;10,0
+D;14166;RAMPA;1270,8;17,9;1300;10,2
+D;14366;RAMPA;1274,1;18,4;1300;10,4
+D;14566;RAMPA;1277,5;18,9;1300;10,6
+D;14766;RAMPA;1280,8;19,4;1300;10,8
+D;14966;RAMPA;1284,2;19,9;1300;11,0
+D;15166;RAMPA;1287,5;20,3;1300;11,2
+D;15366;RAMPA;1290,9;20,8;1300;11,4
+D;15566;RAMPA;1294,3;21,3;1300;11,6
+D;15766;RAMPA;1297,6;21,8;1300;11,8
+# REGIME em 1300 µs: 5,9 s de movimento, 11,9 s desde a partida
+D;15907;REGIME;1300,0;22,2;1300;11,9
+D;16107;REGIME;1300,0;22,2;1300;12,1
+D;16307;REGIME;1300,0;22,2;1300;12,3
+D;16507;REGIME;1300,0;22,2;1300;12,5
+D;16707;REGIME;1300,0;22,2;1300;12,7
+D;16907;REGIME;1300,0;22,2;1300;12,9
+D;17107;REGIME;1300,0;22,2;1300;13,1
+D;17307;REGIME;1300,0;22,2;1300;13,3
+D;17507;REGIME;1300,0;22,2;1300;13,5
+D;17707;REGIME;1300,0;22,2;1300;13,7
+D;17907;REGIME;1300,0;22,2;1300;13,9
+D;18107;REGIME;1300,0;22,2;1300;14,1
+D;18307;REGIME;1300,0;22,2;1300;14,3
+D;18507;REGIME;1300,0;22,2;1300;14,5
+D;18707;REGIME;1300,0;22,2;1300;14,7
+D;18907;REGIME;1300,0;22,2;1300;14,9
+
+HOST 1372638.702: b'p'
+# PARADO pela serial em 1300,0 µs, após 15,0 s de giro
+D;18993;PARADO;1000,1;0,0;1300;
+
+HOST 1372639.245: b'1200\rs'
+1200
+# alvo 1200 µs
+# PARADO · perfil linear · pulso 1000,0 µs · alvo 1200 µs · subida 3 s · chute (só overshoot) 1350 µs por 2 s · teto 1350 µs (estimado) · partidas 1
+# botões: partida solto, parada solto

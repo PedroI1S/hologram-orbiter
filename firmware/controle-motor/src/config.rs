@@ -29,16 +29,17 @@ pub const TARGET_MIN_US: u16 = 1150;
 ///
 /// O valor final é o pulso que dá 1800 RPM com o rotor completo, medido com
 /// o tacômetro na tensão de fonte em uso; sem governor, o mesmo pulso gira
-/// mais rápido com mais tensão. Teto ajustado para 1350 µs em 30/10/2026,
-/// por solicitação do operador; ainda sem calibração com tacômetro.
+/// mais rápido com mais tensão. Em 30/10/2026, teto de teste sem aranha
+/// elevado a 1831 µs por solicitação do operador: 1 µs abaixo do máximo
+/// configurado do ESC. Não é um teto validado para o rotor completo.
 /// Registrar pulso, tensão e RPM medidos antes de marcar [`CEILING_MEASURED`].
-pub const CEILING_US: u16 = 1350;
+pub const CEILING_US: u16 = PPM_MAX_US - 1;
 /// Passa a `true` junto com o [`CEILING_US`] medido; enquanto for `false`,
 /// o firmware avisa na energização.
 pub const CEILING_MEASURED: bool = false;
 
 /// CHUTE: pulso da partida opcional, limitado ao mesmo teto de regime.
-/// O máximo de 1350 µs vale também no overshoot.
+/// O teto de teste também vale no overshoot; o padrão continua linear.
 pub const KICK_US: u16 = CEILING_US;
 /// Duração do chute no modo overshoot; ignorada no modo linear (padrão).
 /// A tecla `k` o encerra antes.
