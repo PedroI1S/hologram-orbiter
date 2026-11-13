@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-13T18:00:41.433210+00:00",
+  "generated_at_utc": "2026-11-13T21:21:05.488607+00:00",
   "inputs": {
     "parameters": {
       "path": "/Users/pedro/Documents/8_Semestre/OficinaDeIntegracao/Hologram_Orbiter_v3_0/CAD/parameters_paralelogramo.json",
-      "sha256": "0b233a0420023b2b69ab53aa482ab157787b694d6b17c0a2500aa23417a5cb2b"
+      "sha256": "8ffa91b9c402c4e751bd887bcd9dc73b0284b0d081f062d72ba81cbe5dc1a603"
     },
     "code": [
       {
@@ -58,194 +58,194 @@
   "artifacts": [
     {
       "path": "exports/fonte/Hologram_Orbiter_v3_0.blend",
-      "sha256": "ed25b8c1e690f4deee5f15368ac6a996c1d774367be09f278f6a6bd75d6979d6",
-      "bytes": 2421425,
+      "sha256": "ed561e4a982fca9e50d0d7f73bf063e7b234979b9dc652162803855e2be7f701",
+      "bytes": 2423018,
       "preserved": false
     },
     {
       "path": "exports/preview/aranha_baixo.png",
-      "sha256": "efc901cd5514a9ddfef2433ebd2ee1c433e8b0990dedf403d17d597b2add68a2",
-      "bytes": 997554,
+      "sha256": "671aba595d01df25e3f734ea6355fabac60a217aec202ab222a7ebffaced9b70",
+      "bytes": 998641,
       "preserved": false
     },
     {
       "path": "exports/preview/aranha_baixo_perspectiva.png",
-      "sha256": "8f74ccfe367ed324d4932a2e06cbceac16ea5f13706cc1b8a5679df91162012f",
-      "bytes": 1116996,
+      "sha256": "5527a3c79e5cf2bdd8eaf0a97a7b1e154d6c5ddbab30e9d41cf01ebadbab8c2d",
+      "bytes": 1120577,
       "preserved": false
     },
     {
       "path": "exports/preview/aranha_berco.png",
-      "sha256": "d6dc6ac80585601c61fd2a3e834636c4b45fa1d9152bd53825f30b4ee5201486",
-      "bytes": 1675757,
+      "sha256": "8a42c1d4cfc561c33ea5b5513b7f48244f5843508f09c82e65df742b55299864",
+      "bytes": 1674913,
       "preserved": false
     },
     {
       "path": "exports/preview/aranha_entrada_fios.png",
-      "sha256": "c57ec6b57597058ae93610f59f21b00802e410a61e680c6626b2e830d72816bd",
-      "bytes": 1497872,
+      "sha256": "ec3d6ed04c9cf99618fb906e5a96c36503453e167fe97234e9dafa868503d705",
+      "bytes": 1512597,
       "preserved": false
     },
     {
       "path": "exports/preview/aranha_perspectiva.png",
-      "sha256": "c6bc53b8a2f981782cd15ba7f1a2f78c6407fa1db5a8f8628f3449f0fbf6f82e",
-      "bytes": 1091904,
+      "sha256": "93ca8e840353929514aba4f60a707ef18634afefa062922fa5a0e8ff71b016ec",
+      "bytes": 1095854,
       "preserved": false
     },
     {
       "path": "exports/preview/aranha_raiz_fiacao.png",
-      "sha256": "195696e6b6a24bfe1b3e2a4e97651837d09de1506382a5e2935c395c7bfc82eb",
-      "bytes": 1558363,
+      "sha256": "6705c92405804cd212a50b5d31b96ce074036141aa083b9a158913367f72e4b0",
+      "bytes": 1556606,
       "preserved": false
     },
     {
       "path": "exports/preview/aranha_raiz_gusset.png",
-      "sha256": "a3b3ed4c05b65436864e8118dca1f8d50606e1e750df75ceb7d331c837c6d097",
-      "bytes": 1396290,
+      "sha256": "fbe7df7455d2ed9766c8fd41f3938e1ae1b9dc480a08953fdebe99d198a45fc2",
+      "bytes": 1395844,
       "preserved": false
     },
     {
       "path": "exports/preview/aranha_topo.png",
-      "sha256": "eab078391be41bc01c73e2e1ca77bd07dc5132a3e9152b2792aa30cc43f9f86a",
-      "bytes": 1028738,
+      "sha256": "69cfb91d538e6f21d979d3f910744b90bd215f96e58a7238c6856b27d035700c",
+      "bytes": 1029821,
       "preserved": false
     },
     {
       "path": "exports/preview/base_fixa_batente_eva.png",
-      "sha256": "4acb85cc50095f35ba64a869b6490690c0b3775d447244ad0fa71b122574fe8a",
+      "sha256": "1092331b60cdccdcaa750e7ea9c512264c4aa87f1b600f2639af641715757bf0",
       "bytes": 1297422,
       "preserved": false
     },
     {
       "path": "exports/preview/base_fixa_como_impressa.png",
-      "sha256": "45aa12a9c980b70ce47a5e8244d49ec178cdade265573161a7c5971bb3de0789",
+      "sha256": "e63e1094e1cc1425522c9b90ea50a5c09fa4ea2f370bcd6b61050a806244b6c1",
       "bytes": 1023671,
       "preserved": false
     },
     {
       "path": "exports/preview/base_fixa_janela_assento.png",
-      "sha256": "1cae30c5ab5725bafc004fc7e065a18c5cc358492ef21417a5f1b9a3d97b8fb7",
+      "sha256": "e7fb4a4c4b3c1bbb1834ee7fe768447990de3e1ad1eca22db96ac0ca58447a97",
       "bytes": 1499477,
       "preserved": false
     },
     {
       "path": "exports/preview/base_fixa_topo.png",
-      "sha256": "28cdbe5b400012c173970aff3f8f7487d8aefe68a874b4cc40202e53652d1206",
+      "sha256": "965b6faaa2baaed2b44d583eb0a02e9317e4ea39dec99dcbb21e87404d4d7105",
       "bytes": 1097394,
       "preserved": false
     },
     {
       "path": "exports/preview/cupom_canal_led.png",
-      "sha256": "07c83de21008d3b77210304fc10657ea78f6e55427c5fae6db4fc3f7e1933cd4",
+      "sha256": "66268091a113688cb2235c45f0a718d239c929a9938e99ff91d70fcf679525a2",
       "bytes": 1389339,
       "preserved": false
     },
     {
       "path": "exports/preview/cupom_canal_led_secao.png",
-      "sha256": "f62417c3e723202f55d8b4eed3b61174f75c23c0b00c608dd3c2b435649003f5",
+      "sha256": "140af4b11c15e2db97ab2a0229216f6771dffd3eb13eaaafe649301f12bcd6b8",
       "bytes": 1341774,
       "preserved": false
     },
     {
       "path": "exports/preview/hastes_8x.png",
-      "sha256": "4a8f165f0f6b850708d661fc309f6bf9c13379336314fa58a43a7f5c152d98e7",
+      "sha256": "e01cca69ddb04ea78299f05ec66e0db560b271cd13341d6b60a1d3cc75a2dfd1",
       "bytes": 1121886,
       "preserved": false
     },
     {
       "path": "exports/preview/montagem.png",
-      "sha256": "c40a25c9e201d85db5023828b0ad31aa9acf6e3c1b17e63c95a4d62461c022a7",
-      "bytes": 1567659,
+      "sha256": "b089ce6891e7a38816fd2d9ea75cc1def6d35c7c0dd3a64dc12c9f6d53ec2c6c",
+      "bytes": 1567464,
       "preserved": false
     },
     {
       "path": "exports/preview/montagem_baia.png",
-      "sha256": "f5f267c9d6cf1e08df6b2b1a0841ec0cb20583d9346d2756a991c77c3f86ece8",
-      "bytes": 1726632,
+      "sha256": "ff8e61ecb782d1e2ba87a1643661c3757d1067003cebe956dd99de5f4145e573",
+      "bytes": 1721519,
       "preserved": false
     },
     {
       "path": "exports/preview/painel_boss_cauda.png",
-      "sha256": "3c47059c2bcf72c3a498b2fe43b49be1e7350ad59ee08c264845adff7be7b4b7",
+      "sha256": "bedef4e06336e72ef315bfa7b91dd4104954a138ed89fd003d7e912748d87e66",
       "bytes": 1414785,
       "preserved": false
     },
     {
       "path": "exports/preview/painel_boss_face_contato.png",
-      "sha256": "0cff446d88ed63ea3d73cebd794a394437ff1a67bef0a83a0cb1c58618e197d3",
+      "sha256": "043fe3e6d10d61584ed37983af012439ac91fe0018d7d0ed1618ed1cb4b8eaf9",
       "bytes": 1303064,
       "preserved": false
     },
     {
       "path": "exports/preview/painel_boss_lado.png",
-      "sha256": "14ced21550cc97a230a87e9441e1f64e720cafee8f29b5c4fd125b1a868f9c1b",
+      "sha256": "351422bd9d80e0586d296b12e49612acfa22a7a8ff12553d900ef3306122dea7",
       "bytes": 1091254,
       "preserved": false
     },
     {
       "path": "exports/preview/painel_boss_nariz.png",
-      "sha256": "1fcd63cdc6288cefc98c165b5bf77d9b059dbc9c3c2570bb1b13ad5ef5d8dff9",
+      "sha256": "daf024046e268c8681dbca777fa741f570a7d0610dc87b5b4266b394b7a6d940",
       "bytes": 1383615,
       "preserved": false
     },
     {
       "path": "exports/preview/painel_completo.png",
-      "sha256": "37c6f743ee80e3c38b21346a67100136240a713dd8eb49ce80d6f5a2addad87a",
+      "sha256": "b16a29fad1004d61adf6673ec3e4f0268232777f239d78b90eee0e2eeac43aa5",
       "bytes": 838532,
       "preserved": false
     },
     {
       "path": "exports/preview/painel_ponta_inferior_canal.png",
-      "sha256": "77b34ea8fe27acd8bfb4ba11570e34d41e062c9ef83ec441f7068d1b9f95a5aa",
+      "sha256": "c512dd704828dbd165900bb073d78547a5c0758f5e38e1d6e2f3120ce16de111",
       "bytes": 1297399,
       "preserved": false
     },
     {
       "path": "exports/preview/palco_aro_assento.png",
-      "sha256": "0244e26ef99902e4e39f7b4f9d6e2aa1736b1ef34c2ca3e3cf68aa5e2a94a78b",
+      "sha256": "c81cda1c111b64cdf102aa15c569003985465b3703ba1fc626ea9c7dd42196bf",
       "bytes": 1437440,
       "preserved": false
     },
     {
       "path": "exports/preview/palco_flange_superior.png",
-      "sha256": "7ea72a8c0fb2be8cd7f4b508bdbc5ced358557de4e84eb675855b6dc7d297cfd",
+      "sha256": "cbc83d97f0a41b35c5ed4273e6e922cb48889a9f28ca4b9689d1cd6b5f7e2475",
       "bytes": 1198342,
       "preserved": false
     },
     {
       "path": "exports/preview/palco_perspectiva.png",
-      "sha256": "ee88cce3757aaf760e9bec10b5866002302b06f70ed01a0d77b5d6acf9c3c867",
+      "sha256": "1a3826fd8ff83e89007f3472ebc8f327fdfca068658d2eb7f1fbb488ddf39db1",
       "bytes": 1050398,
       "preserved": false
     },
     {
       "path": "exports/preview/palco_topo.png",
-      "sha256": "a7bedc31237fb431a75f303764db66dc365bdce110ac6d5cb51ed83b9bd1bbf2",
+      "sha256": "3bbd3787697ceb3e812e2289ebafe5ada2b1783b39e67edad0bfa231543b4658",
       "bytes": 1060242,
       "preserved": false
     },
     {
       "path": "exports/preview/suporte_ima.png",
-      "sha256": "fce8c9ae228e529d6bf77b4af42f42fa6cf3e5afc1fbf619f23c4e1f6ae9c2cf",
+      "sha256": "f5184ab4a89cf15a3d4ceb0acc51d508e09204db5b45efb4626b81f796bceded",
       "bytes": 1066503,
       "preserved": false
     },
     {
       "path": "exports/preview/suporte_ima_topo.png",
-      "sha256": "1ff09f127c46fc1f720f2821301c7b92a1b77ebb65d488ffcb89f76c19ad22c2",
+      "sha256": "030129a3283c9e0193d3bb2507589c7eabd93783da9f4bec8b04a06fb11c35ac",
       "bytes": 890215,
       "preserved": false
     },
     {
       "path": "exports/preview/tampa_topo.png",
-      "sha256": "1dbe6a97a160039115bfe98de32788f321a7fee1fcb4a921393489acdca8e46f",
-      "bytes": 1596085,
+      "sha256": "f5fb837b97fccadd4481859ae011141096a77df2c093e5d169ab6c4a8d5d9aa8",
+      "bytes": 1597193,
       "preserved": false
     },
     {
       "path": "exports/stl/01_aranha_PETG.stl",
-      "sha256": "7da0cf5a03f05655f79542bc89946155d98f369a558a41f9299000e7b96912f4",
-      "bytes": 590184,
+      "sha256": "848d712087819afb7576f502912504ac684735159c930df52ce1dc9997fcc29f",
+      "bytes": 589984,
       "preserved": false
     },
     {
@@ -262,8 +262,8 @@
     },
     {
       "path": "exports/stl/03_tampa_baia_PETG.stl",
-      "sha256": "d6ca1f200801080be8f9d73e3561c5491560ea3199541d3d0f5237371b6ce8b2",
-      "bytes": 326984,
+      "sha256": "52255210408f0d6dcb9305bc7d0d1b41eea37454d5ce96226eb27b52f49de23e",
+      "bytes": 327484,
       "preserved": false
     },
     {
@@ -340,31 +340,31 @@
     },
     {
       "path": "reports/ACEITACAO.md",
-      "sha256": "c4fd844a4180217376c8ee46fd1e52506e3e09d4e19cc44778eaeb1b249dd2ad",
-      "bytes": 11929,
+      "sha256": "8adbc30493226d228c4d86ae4b5eaba2d23db58a19b137abd081be9fb4a37663",
+      "bytes": 11930,
       "preserved": false
     },
     {
       "path": "reports/FISICA.json",
-      "sha256": "f7b91c86ebcc1d7dc2e2b347d11505e58a800be6df71271877a8f26c2cbf57d7",
-      "bytes": 19056,
+      "sha256": "049abd4a34b2c79859c6f2bd2a200e8b4f0cd27d00056d4c60a6f515f8c2c0b1",
+      "bytes": 19063,
       "preserved": false
     },
     {
       "path": "reports/RELATORIO_VALIDACAO.md",
-      "sha256": "acc4d586e4aede1a2ba0e16057028acaad0cea4df164436d7b6a5e1b2b5b6c49",
-      "bytes": 4173,
+      "sha256": "f0496e6bbe6a798c1eee65d29a54d22340e5d03dea16dfd0020c4429292fa045",
+      "bytes": 4174,
       "preserved": false
     },
     {
       "path": "reports/geometry_report.json",
-      "sha256": "fcd072af6bd5e7153610795d5fbd4c246a60f0a5d367e0fcae0df38bb33ed915",
-      "bytes": 74736,
+      "sha256": "3af43916cae6fa4ae83c846b6f07d93682e2574d5d1f89ff9398c4a40d6b9b40",
+      "bytes": 74760,
       "preserved": false
     },
     {
       "path": "reports/stl_validation.json",
-      "sha256": "22a382f38164a94c14c6ca5335b70d3720595ea266ccd0a171aa7cbfc58bd073",
+      "sha256": "30c0e0bc28eec9d3ccd97471cde304671c0c52a26bfdf0db61d7b7c2748dbd07",
       "bytes": 14136,
       "preserved": false
     },

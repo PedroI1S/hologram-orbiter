@@ -340,14 +340,14 @@
   "arm_root": {
     "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
     "cut_radius_mm": 47.5,
-    "area_mm2": 200.99017287213547,
-    "I_vertical_bending_mm4": 10051.256653511065,
-    "I_chordwise_bending_mm4": 1895.6571256603459,
-    "Ixy_mm4": 1688.1385786032706,
-    "section_modulus_vertical_mm3": 525.7066301111364,
+    "area_mm2": 202.5099548219142,
+    "I_vertical_bending_mm4": 10342.53710489592,
+    "I_chordwise_bending_mm4": 1904.0241956428529,
+    "Ixy_mm4": 1714.1500537898569,
+    "section_modulus_vertical_mm3": 535.6805497443878,
     "z_extent_mm": [
       -5.741379263768325,
-      19.91044762411215
+      20.153846275273395
     ],
     "panel_mass_g": 45.0,
     "rpm": 1800.0,
@@ -357,13 +357,13 @@
         "tilt_deg": 4.0,
         "cross_force_n": 11.153194564365789,
         "moment_n_mm": 585.5427146292039,
-        "max_bending_stress_mpa": 1.1138202965129391
+        "max_bending_stress_mpa": 1.0930819028404315
       },
       {
         "tilt_deg": 10.0,
         "cross_force_n": 27.764188860391446,
         "moment_n_mm": 1457.619915170551,
-        "max_bending_stress_mpa": 2.7726869544376957
+        "max_bending_stress_mpa": 2.721061863952476
       }
     ]
   },
@@ -371,14 +371,14 @@
     {
       "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
       "cut_radius_mm": 47.5,
-      "area_mm2": 200.99017287213547,
-      "I_vertical_bending_mm4": 10051.256653511065,
-      "I_chordwise_bending_mm4": 1895.6571256603459,
-      "Ixy_mm4": 1688.1385786032706,
-      "section_modulus_vertical_mm3": 525.7066301111364,
+      "area_mm2": 202.5099548219142,
+      "I_vertical_bending_mm4": 10342.53710489592,
+      "I_chordwise_bending_mm4": 1904.0241956428529,
+      "Ixy_mm4": 1714.1500537898569,
+      "section_modulus_vertical_mm3": 535.6805497443878,
       "z_extent_mm": [
         -5.741379263768325,
-        19.91044762411215
+        20.153846275273395
       ],
       "panel_mass_g": 45.0,
       "rpm": 1800.0,
@@ -388,27 +388,27 @@
           "tilt_deg": 4.0,
           "cross_force_n": 11.153194564365789,
           "moment_n_mm": 585.5427146292039,
-          "max_bending_stress_mpa": 1.1138202965129391
+          "max_bending_stress_mpa": 1.0930819028404315
         },
         {
           "tilt_deg": 10.0,
           "cross_force_n": 27.764188860391446,
           "moment_n_mm": 1457.619915170551,
-          "max_bending_stress_mpa": 2.7726869544376957
+          "max_bending_stress_mpa": 2.721061863952476
         }
       ]
     },
     {
       "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
       "cut_radius_mm": 60.0,
-      "area_mm2": 161.0932767342332,
-      "I_vertical_bending_mm4": 4964.4756866241105,
-      "I_chordwise_bending_mm4": 1537.5240849273275,
-      "Ixy_mm4": 875.2735557872675,
-      "section_modulus_vertical_mm3": 354.98218549054263,
+      "area_mm2": 161.8867697077427,
+      "I_vertical_bending_mm4": 5058.97336902805,
+      "I_chordwise_bending_mm4": 1541.8042415809555,
+      "Ixy_mm4": 885.7998777482942,
+      "section_modulus_vertical_mm3": 359.1229754791418,
       "z_extent_mm": [
         -4.4482758374625115,
-        16.179104405191325
+        16.30769237184255
       ],
       "panel_mass_g": 45.0,
       "rpm": 1800.0,
@@ -418,27 +418,27 @@
           "tilt_deg": 4.0,
           "cross_force_n": 11.153194564365789,
           "moment_n_mm": 446.12778257463157,
-          "max_bending_stress_mpa": 1.2567610455103169
+          "max_bending_stress_mpa": 1.2422702334190898
         },
         {
           "tilt_deg": 10.0,
           "cross_force_n": 27.764188860391446,
           "moment_n_mm": 1110.567554415658,
-          "max_bending_stress_mpa": 3.12851630253216
+          "max_bending_stress_mpa": 3.092443620277814
         }
       ]
     },
     {
       "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
       "cut_radius_mm": 73.5,
-      "area_mm2": 136.71385941322924,
-      "I_vertical_bending_mm4": 2020.4555593875334,
-      "I_chordwise_bending_mm4": 1532.3239467094388,
-      "Ixy_mm4": 494.3624605243855,
-      "section_modulus_vertical_mm3": 209.9722343684267,
+      "area_mm2": 136.74183546392896,
+      "I_vertical_bending_mm4": 2022.2626577379094,
+      "I_chordwise_bending_mm4": 1532.5303719838653,
+      "Ixy_mm4": 494.77431196742396,
+      "section_modulus_vertical_mm3": 210.0693722501945,
       "z_extent_mm": [
         -3.0517241370522323,
-        12.149253728756833
+        12.153846156137234
       ],
       "panel_mass_g": 45.0,
       "rpm": 1800.0,
@@ -448,13 +448,13 @@
           "tilt_deg": 4.0,
           "cross_force_n": 11.153194564365789,
           "moment_n_mm": 295.5596559556934,
-          "max_bending_stress_mpa": 1.407613043908897
+          "max_bending_stress_mpa": 1.406962151549057
         },
         {
           "tilt_deg": 10.0,
           "cross_force_n": 27.764188860391446,
           "moment_n_mm": 735.7510048003733,
-          "max_bending_stress_mpa": 3.50403950795414
+          "max_bending_stress_mpa": 3.5024192099935787
         }
       ]
     },
@@ -498,22 +498,22 @@
       "min_radial_gap_mm": 5.5,
       "oil_volume_ml_per_cup": 4.14,
       "lateral_damping_n_s_per_m": 6.290483916083915,
-      "translation_damping_ratio": 0.12027524452352213,
+      "translation_damping_ratio": 0.12012525430492507,
       "yaw_damping_nm_s_per_rad": 0.010892461292307691,
-      "yaw_damping_ratio": 0.04862519329090452
+      "yaw_damping_ratio": 0.048611833811399476
     },
-    "moving_mass_kg": 0.94969,
-    "moving_cg_z_mm": 116.29958997146439,
+    "moving_mass_kg": 0.9515399999999999,
+    "moving_cg_z_mm": 116.45065640960969,
     "moving_mass_breakdown_g": {
-      "rotor": 350.29,
+      "rotor": 352.14,
       "stage_and_tower": 494.4,
       "motor_plate_fasteners": 105.0
     },
-    "transverse_inertia_kg_m2": 0.0065153758696507354,
+    "transverse_inertia_kg_m2": 0.006526523258870406,
     "fin_tip_stiffness_n_per_mm": 202.02678696996009,
     "tower_free_length_mm": 69.0,
     "tower_tube_inertia_mm4": 125663.70614359173,
-    "tower_bending_frequency_hz": 169.29556799938507,
+    "tower_bending_frequency_hz": 168.9526595767463,
     "operating_rpm_range": [
       600.0,
       1800.0
@@ -523,28 +523,28 @@
       {
         "name": "macia_1p5",
         "rod_side_mm": 1.5,
-        "lateral_stiffness_n_per_mm": 0.7200684111110487,
+        "lateral_stiffness_n_per_mm": 0.7204642431655941,
         "lateral_elastic_n_per_mm": 0.516869630634685,
-        "lateral_gravity_n_per_mm": 0.20319878047636364,
-        "translation_frequency_hz": 4.38244100737357,
-        "translation_critical_rpm": 262.9464604424142,
-        "lowest_operating_to_critical_ratio": 2.2818333397243094,
-        "orbit_amplification_at_lowest_rpm": 1.2377124423758141,
+        "lateral_gravity_n_per_mm": 0.20359461253090907,
+        "translation_frequency_hz": 4.379381935931262,
+        "translation_critical_rpm": 262.7629161558757,
+        "lowest_operating_to_critical_ratio": 2.2834272384314276,
+        "orbit_amplification_at_lowest_rpm": 1.2373019741395959,
         "rod_axial_stiffness_n_per_mm": 80.66037735849056,
         "rod_plus_fin_axial_stiffness_n_per_mm": 57.64519557239876,
         "rocking_stiffness_nm_per_rad": 2851.23282855505,
-        "rocking_frequency_hz": 105.28505673498488,
-        "rocking_to_top_1x_ratio": 3.5095018911661624,
+        "rocking_frequency_hz": 105.19510416435158,
+        "rocking_to_top_1x_ratio": 3.5065034721450528,
         "tilt_deg_per_10n_at_rotor": 0.04380863334404429,
         "stage_tilt_deg_per_10n_at_rotor": 0.03064501182870115,
-        "coupled_rocking_tower_frequency_hz": 89.40585873944353,
+        "coupled_rocking_tower_frequency_hz": 89.30023389886604,
         "rod_buckling_load_n": 11.265368142040852,
-        "rotor_side_force_at_first_buckling_n": 36.25346868957621,
-        "yaw_frequency_hz": 12.652279472807725,
+        "rotor_side_force_at_first_buckling_n": 36.26008319461883,
+        "yaw_frequency_hz": 12.655756565833364,
         "rod_bending_stress_at_stop_mpa": 9.131363474546102,
-        "rod_tension_stress_mpa": 0.5174043021388889,
-        "yaw_stiffness_nm_per_rad": 8.903962733489006,
-        "yaw_deg_per_0p1_nm": 0.6434862906331038
+        "rod_tension_stress_mpa": 0.5184122078333333,
+        "yaw_stiffness_nm_per_rad": 8.908857371009564,
+        "yaw_deg_per_0p1_nm": 0.6431327512272148
       }
     ],
     "limits": "rigid body, linear rods, no damping, no gyroscopic coupling; printed-PETG modulus assumed; motor cables and EVA pads add stiffness when they touch"

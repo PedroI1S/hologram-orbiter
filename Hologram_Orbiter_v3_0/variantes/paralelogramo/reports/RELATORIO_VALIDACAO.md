@@ -10,9 +10,9 @@ A validação dos STL exportados aparece em stl_validation.json; o build só pub
 
 | Peça | Massa CAD (g) | Dimensões (mm) | Triângulos |
 |---|---:|---|---:|
-| spider | 115.3 | [148.763, 171.777, 53.0] | 11802 |
+| spider | 116.53 | [148.763, 171.777, 53.0] | 11798 |
 | panel_each | 31.94 | [30.0, 50.0, 208.0] | 3988 |
-| lid | 12.36 | [82.0, 82.0, 5.0] | 6538 |
+| lid | 12.94 | [84.0, 84.0, 5.0] | 6548 |
 | base_tower | 494.4 | [225.4, 225.4, 145.0] | 7924 |
 | magnet_bracket | 2.55 | [38.926, 31.233, 26.5] | 1578 |
 | base_frame | 425.75 | [280.0, 280.0, 79.0] | 9974 |
@@ -53,8 +53,8 @@ Modelo médio, sem o Startup Power do ESC nem a resistência da fonte e dos cabo
 ## Montagem e orçamento nominal
 
 Interseções da eletrônica com aranha: [{'component': 'interface', 'intersection_mm3': 0.0}, {'component': 'esp32c3', 'intersection_mm3': 0.0}, {'component': 'buck', 'intersection_mm3': 0.0}, {'component': 'capacitor', 'intersection_mm3': 0.0}, {'component': 'placa_principal', 'intersection_mm3': 0.0}].
-Contrapesos nominais: [{'pocket_center_deg': 180.0, 'mass_g': 2.09, 'radius_mm': 33.0}, {'pocket_center_deg': 300.0, 'mass_g': 0.92, 'radius_mm': 33.0}].
-Subtotal do rotor: 350.29 g, limite 420 g.
+Contrapesos nominais: [{'pocket_center_deg': 180.0, 'mass_g': 2.06, 'radius_mm': 33.0}, {'pocket_center_deg': 300.0, 'mass_g': 0.99, 'radius_mm': 33.0}].
+Subtotal do rotor: 352.14 g, limite 420 g.
 Ferragens por painel4g permanecem estimativa anterior. Chicote de seis condutores precisa ser pesado e reconciliado com estas ferragens antes de declarar massa total; o subtotal nominal nao garante o teto280g.
 
 | Referência global | Z (mm) |

@@ -51,14 +51,14 @@
         85.888,
         47.0
       ],
-      "volume_cm3": 90.79,
-      "estimated_mass_g": 115.3,
+      "volume_cm3": 91.753,
+      "estimated_mass_g": 116.53,
       "centroid_mm": [
-        -0.107,
-        0.076,
-        8.289
+        -0.11,
+        0.079,
+        8.301
       ],
-      "triangles": 11802,
+      "triangles": 11798,
       "non_manifold_edges": 0
     },
     "panel_each": {
@@ -89,28 +89,28 @@
     },
     "lid": {
       "dimensions_mm": [
-        82.0,
-        82.0,
+        84.0,
+        84.0,
         5.0
       ],
       "bounds_min_mm": [
-        -41.0,
-        -41.0,
+        -42.0,
+        -42.0,
         0.0
       ],
       "bounds_max_mm": [
-        41.0,
-        41.0,
+        42.0,
+        42.0,
         5.0
       ],
-      "volume_cm3": 9.736,
-      "estimated_mass_g": 12.36,
+      "volume_cm3": 10.187,
+      "estimated_mass_g": 12.94,
       "centroid_mm": [
-        -0.947,
+        -0.905,
         0.0,
-        1.229
+        1.219
       ],
-      "triangles": 6538,
+      "triangles": 6548,
       "non_manifold_edges": 0
     },
     "base_tower": {
@@ -691,14 +691,14 @@
       "arm_root": {
         "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
         "cut_radius_mm": 47.5,
-        "area_mm2": 200.99017287213547,
-        "I_vertical_bending_mm4": 10051.256653511065,
-        "I_chordwise_bending_mm4": 1895.6571256603459,
-        "Ixy_mm4": 1688.1385786032706,
-        "section_modulus_vertical_mm3": 525.7066301111364,
+        "area_mm2": 202.5099548219142,
+        "I_vertical_bending_mm4": 10342.53710489592,
+        "I_chordwise_bending_mm4": 1904.0241956428529,
+        "Ixy_mm4": 1714.1500537898569,
+        "section_modulus_vertical_mm3": 535.6805497443878,
         "z_extent_mm": [
           -5.741379263768325,
-          19.91044762411215
+          20.153846275273395
         ],
         "panel_mass_g": 45.0,
         "rpm": 1800.0,
@@ -708,13 +708,13 @@
             "tilt_deg": 4.0,
             "cross_force_n": 11.153194564365789,
             "moment_n_mm": 585.5427146292039,
-            "max_bending_stress_mpa": 1.1138202965129391
+            "max_bending_stress_mpa": 1.0930819028404315
           },
           {
             "tilt_deg": 10.0,
             "cross_force_n": 27.764188860391446,
             "moment_n_mm": 1457.619915170551,
-            "max_bending_stress_mpa": 2.7726869544376957
+            "max_bending_stress_mpa": 2.721061863952476
           }
         ]
       },
@@ -722,14 +722,14 @@
         {
           "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
           "cut_radius_mm": 47.5,
-          "area_mm2": 200.99017287213547,
-          "I_vertical_bending_mm4": 10051.256653511065,
-          "I_chordwise_bending_mm4": 1895.6571256603459,
-          "Ixy_mm4": 1688.1385786032706,
-          "section_modulus_vertical_mm3": 525.7066301111364,
+          "area_mm2": 202.5099548219142,
+          "I_vertical_bending_mm4": 10342.53710489592,
+          "I_chordwise_bending_mm4": 1904.0241956428529,
+          "Ixy_mm4": 1714.1500537898569,
+          "section_modulus_vertical_mm3": 535.6805497443878,
           "z_extent_mm": [
             -5.741379263768325,
-            19.91044762411215
+            20.153846275273395
           ],
           "panel_mass_g": 45.0,
           "rpm": 1800.0,
@@ -739,27 +739,27 @@
               "tilt_deg": 4.0,
               "cross_force_n": 11.153194564365789,
               "moment_n_mm": 585.5427146292039,
-              "max_bending_stress_mpa": 1.1138202965129391
+              "max_bending_stress_mpa": 1.0930819028404315
             },
             {
               "tilt_deg": 10.0,
               "cross_force_n": 27.764188860391446,
               "moment_n_mm": 1457.619915170551,
-              "max_bending_stress_mpa": 2.7726869544376957
+              "max_bending_stress_mpa": 2.721061863952476
             }
           ]
         },
         {
           "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
           "cut_radius_mm": 60.0,
-          "area_mm2": 161.0932767342332,
-          "I_vertical_bending_mm4": 4964.4756866241105,
-          "I_chordwise_bending_mm4": 1537.5240849273275,
-          "Ixy_mm4": 875.2735557872675,
-          "section_modulus_vertical_mm3": 354.98218549054263,
+          "area_mm2": 161.8867697077427,
+          "I_vertical_bending_mm4": 5058.97336902805,
+          "I_chordwise_bending_mm4": 1541.8042415809555,
+          "Ixy_mm4": 885.7998777482942,
+          "section_modulus_vertical_mm3": 359.1229754791418,
           "z_extent_mm": [
             -4.4482758374625115,
-            16.179104405191325
+            16.30769237184255
           ],
           "panel_mass_g": 45.0,
           "rpm": 1800.0,
@@ -769,27 +769,27 @@
               "tilt_deg": 4.0,
               "cross_force_n": 11.153194564365789,
               "moment_n_mm": 446.12778257463157,
-              "max_bending_stress_mpa": 1.2567610455103169
+              "max_bending_stress_mpa": 1.2422702334190898
             },
             {
               "tilt_deg": 10.0,
               "cross_force_n": 27.764188860391446,
               "moment_n_mm": 1110.567554415658,
-              "max_bending_stress_mpa": 3.12851630253216
+              "max_bending_stress_mpa": 3.092443620277814
             }
           ]
         },
         {
           "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
           "cut_radius_mm": 73.5,
-          "area_mm2": 136.71385941322924,
-          "I_vertical_bending_mm4": 2020.4555593875334,
-          "I_chordwise_bending_mm4": 1532.3239467094388,
-          "Ixy_mm4": 494.3624605243855,
-          "section_modulus_vertical_mm3": 209.9722343684267,
+          "area_mm2": 136.74183546392896,
+          "I_vertical_bending_mm4": 2022.2626577379094,
+          "I_chordwise_bending_mm4": 1532.5303719838653,
+          "Ixy_mm4": 494.77431196742396,
+          "section_modulus_vertical_mm3": 210.0693722501945,
           "z_extent_mm": [
             -3.0517241370522323,
-            12.149253728756833
+            12.153846156137234
           ],
           "panel_mass_g": 45.0,
           "rpm": 1800.0,
@@ -799,13 +799,13 @@
               "tilt_deg": 4.0,
               "cross_force_n": 11.153194564365789,
               "moment_n_mm": 295.5596559556934,
-              "max_bending_stress_mpa": 1.407613043908897
+              "max_bending_stress_mpa": 1.406962151549057
             },
             {
               "tilt_deg": 10.0,
               "cross_force_n": 27.764188860391446,
               "moment_n_mm": 735.7510048003733,
-              "max_bending_stress_mpa": 3.50403950795414
+              "max_bending_stress_mpa": 3.5024192099935787
             }
           ]
         },
@@ -849,22 +849,22 @@
           "min_radial_gap_mm": 5.5,
           "oil_volume_ml_per_cup": 4.14,
           "lateral_damping_n_s_per_m": 6.290483916083915,
-          "translation_damping_ratio": 0.12027524452352213,
+          "translation_damping_ratio": 0.12012525430492507,
           "yaw_damping_nm_s_per_rad": 0.010892461292307691,
-          "yaw_damping_ratio": 0.04862519329090452
+          "yaw_damping_ratio": 0.048611833811399476
         },
-        "moving_mass_kg": 0.94969,
-        "moving_cg_z_mm": 116.29958997146439,
+        "moving_mass_kg": 0.9515399999999999,
+        "moving_cg_z_mm": 116.45065640960969,
         "moving_mass_breakdown_g": {
-          "rotor": 350.29,
+          "rotor": 352.14,
           "stage_and_tower": 494.4,
           "motor_plate_fasteners": 105.0
         },
-        "transverse_inertia_kg_m2": 0.0065153758696507354,
+        "transverse_inertia_kg_m2": 0.006526523258870406,
         "fin_tip_stiffness_n_per_mm": 202.02678696996009,
         "tower_free_length_mm": 69.0,
         "tower_tube_inertia_mm4": 125663.70614359173,
-        "tower_bending_frequency_hz": 169.29556799938507,
+        "tower_bending_frequency_hz": 168.9526595767463,
         "operating_rpm_range": [
           600.0,
           1800.0
@@ -874,28 +874,28 @@
           {
             "name": "macia_1p5",
             "rod_side_mm": 1.5,
-            "lateral_stiffness_n_per_mm": 0.7200684111110487,
+            "lateral_stiffness_n_per_mm": 0.7204642431655941,
             "lateral_elastic_n_per_mm": 0.516869630634685,
-            "lateral_gravity_n_per_mm": 0.20319878047636364,
-            "translation_frequency_hz": 4.38244100737357,
-            "translation_critical_rpm": 262.9464604424142,
-            "lowest_operating_to_critical_ratio": 2.2818333397243094,
-            "orbit_amplification_at_lowest_rpm": 1.2377124423758141,
+            "lateral_gravity_n_per_mm": 0.20359461253090907,
+            "translation_frequency_hz": 4.379381935931262,
+            "translation_critical_rpm": 262.7629161558757,
+            "lowest_operating_to_critical_ratio": 2.2834272384314276,
+            "orbit_amplification_at_lowest_rpm": 1.2373019741395959,
             "rod_axial_stiffness_n_per_mm": 80.66037735849056,
             "rod_plus_fin_axial_stiffness_n_per_mm": 57.64519557239876,
             "rocking_stiffness_nm_per_rad": 2851.23282855505,
-            "rocking_frequency_hz": 105.28505673498488,
-            "rocking_to_top_1x_ratio": 3.5095018911661624,
+            "rocking_frequency_hz": 105.19510416435158,
+            "rocking_to_top_1x_ratio": 3.5065034721450528,
             "tilt_deg_per_10n_at_rotor": 0.04380863334404429,
             "stage_tilt_deg_per_10n_at_rotor": 0.03064501182870115,
-            "coupled_rocking_tower_frequency_hz": 89.40585873944353,
+            "coupled_rocking_tower_frequency_hz": 89.30023389886604,
             "rod_buckling_load_n": 11.265368142040852,
-            "rotor_side_force_at_first_buckling_n": 36.25346868957621,
-            "yaw_frequency_hz": 12.652279472807725,
+            "rotor_side_force_at_first_buckling_n": 36.26008319461883,
+            "yaw_frequency_hz": 12.655756565833364,
             "rod_bending_stress_at_stop_mpa": 9.131363474546102,
-            "rod_tension_stress_mpa": 0.5174043021388889,
-            "yaw_stiffness_nm_per_rad": 8.903962733489006,
-            "yaw_deg_per_0p1_nm": 0.6434862906331038
+            "rod_tension_stress_mpa": 0.5184122078333333,
+            "yaw_stiffness_nm_per_rad": 8.908857371009564,
+            "yaw_deg_per_0p1_nm": 0.6431327512272148
           }
         ],
         "limits": "rigid body, linear rods, no damping, no gyroscopic coupling; printed-PETG modulus assumed; motor cables and EVA pads add stiffness when they touch"
@@ -975,7 +975,7 @@
       "method": "Estimativa por tabela de razao de finura (Hoerner), nao CFD. Area frontal = largura radial do boss x altura das torres."
     },
     "spider": {
-      "mass_g": 115.3,
+      "mass_g": 116.53,
       "mass_limit_g": 135.0,
       "shoulder_radius_measured_mm": [
         74.0,
@@ -1019,7 +1019,7 @@
       "counterbore_depth_measured_mm": 0.0,
       "hub_under_washer_measured_mm": 6.0,
       "pocket_skin_measured_mm": 2.0,
-      "cooling_free_area_mm2": 475.6,
+      "cooling_free_area_mm2": 343.6,
       "hub_rim_outside_slots_mm": 1.0,
       "bay_wall_to_slot_mm": 0.5,
       "nut_top_above_hub_mm": 6.0,
@@ -1034,7 +1034,7 @@
       "battery_top_z_mm": 27.0,
       "bay_internal_height_mm": 47.0,
       "battery_half_diagonal_mm": 32.26,
-      "bay_inner_radius_mm": 39.0,
+      "bay_inner_radius_mm": 40.0,
       "winding_scan": {
         "pitch_mm": 1.5,
         "rays": 19240,
@@ -1044,11 +1044,11 @@
       }
     },
     "lid": {
-      "mass_g": 12.36,
+      "mass_g": 12.94,
       "mass_limit_g": 14.0,
       "winding_scan": {
         "pitch_mm": 1.0,
-        "rays": 7885,
+        "rays": 8245,
         "bad_winding_segments": 0,
         "thin_solid_segments": 0,
         "examples": []
@@ -1244,8 +1244,8 @@
           "label": "Buck 5 V / 5 A mini560 (22 x 17 x 6), em pe numa ranhura na parede",
           "mass_g_estimate": 2.0,
           "center_xy_mm": [
-            -25.71,
-            21.574
+            -26.495,
+            22.232
           ],
           "z_range_mm": [
             0.0,
@@ -1335,24 +1335,24 @@
         {
           "id": "eletrônica da baia",
           "mass_g": 29.0,
-          "u_g_mm": 74.0,
-          "azimuth_deg": 12.2
+          "u_g_mm": 72.8,
+          "azimuth_deg": 13.5
         },
         {
           "id": "aranha (malha)",
-          "mass_g": 115.3,
+          "mass_g": 116.53,
           "centroid_xy_mm": [
-            -0.107,
-            0.076
+            -0.11,
+            0.079
           ],
-          "u_g_mm": 15.1,
-          "azimuth_deg": 144.6
+          "u_g_mm": 15.8,
+          "azimuth_deg": 144.3
         },
         {
           "id": "tampa (malha)",
-          "mass_g": 12.36,
+          "mass_g": 12.94,
           "centroid_xy_mm": [
-            -0.947,
+            -0.905,
             0.0
           ],
           "u_g_mm": 11.7,
@@ -1366,29 +1366,29 @@
         }
       ],
       "unbalance_vector_g_mm": [
-        53.7,
-        26.4
+        51.7,
+        28.2
       ],
-      "unbalance_g_mm": 59.9,
-      "unbalance_azimuth_deg": 26.2,
+      "unbalance_g_mm": 58.9,
+      "unbalance_azimuth_deg": 28.6,
       "admissible_g_mm": 8.4,
-      "counterweight_azimuth_deg": 206.2,
+      "counterweight_azimuth_deg": 208.6,
       "counterweight_placement": [
         {
           "pocket_center_deg": 180.0,
-          "mass_g": 2.09,
+          "mass_g": 2.06,
           "radius_mm": 33.0
         },
         {
           "pocket_center_deg": 300.0,
-          "mass_g": 0.92,
+          "mass_g": 0.99,
           "radius_mm": 33.0
         }
       ],
-      "counterweight_mass_g": 3.01,
+      "counterweight_mass_g": 3.05,
       "counterweight_split": true,
       "counterweight_radius_mm": 33.0,
-      "residual_g_mm": 0.11,
+      "residual_g_mm": 0.14,
       "residual_within_admissible": true,
       "pocket_capacity_g": 13.9,
       "counterweight_fits_pockets": true,
@@ -1422,23 +1422,23 @@
       }
     },
     "rotor": {
-      "cad_mass_g": 223.48,
-      "total_mass_estimate_g": 350.29,
-      "total_without_counterweight_g": 347.28,
+      "cad_mass_g": 225.29,
+      "total_mass_estimate_g": 352.14,
+      "total_without_counterweight_g": 349.09,
       "limit_g": 420.0,
       "mass_budget_complete": false,
       "mass_budget_note": "Ferragens por painel4g permanecem estimativa anterior. Chicote de seis condutores precisa ser pesado e reconciliado com estas ferragens antes de declarar massa total; o subtotal nominal nao garante o teto280g.",
       "components": {
-        "spider": 115.3,
+        "spider": 116.53,
         "panels_bare_x3": 95.82,
-        "lid": 12.36,
+        "lid": 12.94,
         "strips_x3": 18.6,
         "hardware_x3": 12.0,
         "battery": 50.0,
         "nut_washer": 3.0,
         "electronics_allowance": 40.0,
         "hall_sensor": 0.2,
-        "counterweight_planned": 3.01
+        "counterweight_planned": 3.05
       }
     },
     "assembly": {
@@ -1517,22 +1517,22 @@
           "min_radial_gap_mm": 5.5,
           "oil_volume_ml_per_cup": 4.14,
           "lateral_damping_n_s_per_m": 6.290483916083915,
-          "translation_damping_ratio": 0.12027524452352213,
+          "translation_damping_ratio": 0.12012525430492507,
           "yaw_damping_nm_s_per_rad": 0.010892461292307691,
-          "yaw_damping_ratio": 0.04862519329090452
+          "yaw_damping_ratio": 0.048611833811399476
         },
-        "moving_mass_kg": 0.94969,
-        "moving_cg_z_mm": 116.29958997146439,
+        "moving_mass_kg": 0.9515399999999999,
+        "moving_cg_z_mm": 116.45065640960969,
         "moving_mass_breakdown_g": {
-          "rotor": 350.29,
+          "rotor": 352.14,
           "stage_and_tower": 494.4,
           "motor_plate_fasteners": 105.0
         },
-        "transverse_inertia_kg_m2": 0.0065153758696507354,
+        "transverse_inertia_kg_m2": 0.006526523258870406,
         "fin_tip_stiffness_n_per_mm": 202.02678696996009,
         "tower_free_length_mm": 69.0,
         "tower_tube_inertia_mm4": 125663.70614359173,
-        "tower_bending_frequency_hz": 169.29556799938507,
+        "tower_bending_frequency_hz": 168.9526595767463,
         "operating_rpm_range": [
           600.0,
           1800.0
@@ -1542,28 +1542,28 @@
           {
             "name": "macia_1p5",
             "rod_side_mm": 1.5,
-            "lateral_stiffness_n_per_mm": 0.7200684111110487,
+            "lateral_stiffness_n_per_mm": 0.7204642431655941,
             "lateral_elastic_n_per_mm": 0.516869630634685,
-            "lateral_gravity_n_per_mm": 0.20319878047636364,
-            "translation_frequency_hz": 4.38244100737357,
-            "translation_critical_rpm": 262.9464604424142,
-            "lowest_operating_to_critical_ratio": 2.2818333397243094,
-            "orbit_amplification_at_lowest_rpm": 1.2377124423758141,
+            "lateral_gravity_n_per_mm": 0.20359461253090907,
+            "translation_frequency_hz": 4.379381935931262,
+            "translation_critical_rpm": 262.7629161558757,
+            "lowest_operating_to_critical_ratio": 2.2834272384314276,
+            "orbit_amplification_at_lowest_rpm": 1.2373019741395959,
             "rod_axial_stiffness_n_per_mm": 80.66037735849056,
             "rod_plus_fin_axial_stiffness_n_per_mm": 57.64519557239876,
             "rocking_stiffness_nm_per_rad": 2851.23282855505,
-            "rocking_frequency_hz": 105.28505673498488,
-            "rocking_to_top_1x_ratio": 3.5095018911661624,
+            "rocking_frequency_hz": 105.19510416435158,
+            "rocking_to_top_1x_ratio": 3.5065034721450528,
             "tilt_deg_per_10n_at_rotor": 0.04380863334404429,
             "stage_tilt_deg_per_10n_at_rotor": 0.03064501182870115,
-            "coupled_rocking_tower_frequency_hz": 89.40585873944353,
+            "coupled_rocking_tower_frequency_hz": 89.30023389886604,
             "rod_buckling_load_n": 11.265368142040852,
-            "rotor_side_force_at_first_buckling_n": 36.25346868957621,
-            "yaw_frequency_hz": 12.652279472807725,
+            "rotor_side_force_at_first_buckling_n": 36.26008319461883,
+            "yaw_frequency_hz": 12.655756565833364,
             "rod_bending_stress_at_stop_mpa": 9.131363474546102,
-            "rod_tension_stress_mpa": 0.5174043021388889,
-            "yaw_stiffness_nm_per_rad": 8.903962733489006,
-            "yaw_deg_per_0p1_nm": 0.6434862906331038
+            "rod_tension_stress_mpa": 0.5184122078333333,
+            "yaw_stiffness_nm_per_rad": 8.908857371009564,
+            "yaw_deg_per_0p1_nm": 0.6431327512272148
           }
         ],
         "limits": "rigid body, linear rods, no damping, no gyroscopic coupling; printed-PETG modulus assumed; motor cables and EVA pads add stiffness when they touch"
@@ -1700,7 +1700,7 @@
       ],
       "requisito": "0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm",
       "passa": true,
-      "nota": "7885 raios, passo 1.0 mm"
+      "nota": "8245 raios, passo 1.0 mm"
     },
     {
       "criterio": "Enrolamento por raios — base",
@@ -1798,7 +1798,7 @@
     {
       "criterio": "Berço da bateria dentro da baia (meia-diagonal)",
       "valor": 32.26,
-      "requisito": "≤ 39 mm",
+      "requisito": "≤ 40 mm",
       "passa": true,
       "nota": "abas de topo inclusas"
     },
@@ -1865,19 +1865,19 @@
     {
       "criterio": "Contrapeso planejado do layout",
       "valor": [
-        2.09,
-        0.92
+        2.06,
+        0.99
       ],
       "requisito": "cabe nos alívios (≤ 13.9 g cada) e deixa resíduo ≤ 8.4 g·mm",
       "passa": true,
-      "nota": "desbalanceamento nominal 59.9 g·mm a 26.2° (admissível 8.4); correção a 206.2° repartida em 2.09 g no alívio de 180°, 0.92 g no alívio de 300°; resíduo 0.11 g·mm. Fontes: eletrônica da baia 74.0 g·mm a 12°; aranha (malha) 15.1 g·mm a 145°; tampa (malha) 11.7 g·mm a 180°; sensor hall nu 5.8 g·mm a 20°"
+      "nota": "desbalanceamento nominal 58.9 g·mm a 28.6° (admissível 8.4); correção a 208.6° repartida em 2.06 g no alívio de 180°, 0.99 g no alívio de 300°; resíduo 0.14 g·mm. Fontes: eletrônica da baia 72.8 g·mm a 14°; aranha (malha) 15.8 g·mm a 144°; tampa (malha) 11.7 g·mm a 180°; sensor hall nu 5.8 g·mm a 20°"
     },
     {
       "criterio": "Área livre de ventilação do cubo",
-      "valor": 475.6,
+      "valor": 343.6,
       "requisito": "≥ 300 mm², sem abrir a baia",
       "passa": true,
-      "nota": "3 rasgos de 60° fora da baia (r 41.5–45.0)"
+      "nota": "3 rasgos de 60° fora da baia (r 42.5–45.0)"
     },
     {
       "criterio": "A × Cd do boss carenado",
@@ -1898,21 +1898,21 @@
     },
     {
       "criterio": "Subtotal nominal do rotor",
-      "valor": 350.29,
+      "valor": 352.14,
       "requisito": "≤ 420.00 g",
       "passa": true,
       "nota": "Inclui Hall e contrapeso; completar orçamento dos chicotes antes do aceite de massa"
     },
     {
       "criterio": "Massa da aranha",
-      "valor": 115.3,
+      "valor": 116.53,
       "requisito": "≤ 135 g (alvo)",
       "passa": true,
       "nota": "alvo para cubo Ø92 e baia de 29 mm"
     },
     {
       "criterio": "Massa da tampa",
-      "valor": 12.36,
+      "valor": 12.94,
       "requisito": "≤ 14 g (alvo)",
       "passa": true,
       "nota": "alvo revisto para Ø82"
@@ -2090,14 +2090,14 @@
     },
     {
       "criterio": "Modo combinado balanço + torre acima de 2× (estimativa)",
-      "valor": 89.4,
+      "valor": 89.3,
       "requisito": "≥ 66 Hz (2 × 1800 RPM, com 10% de margem)",
       "passa": true,
-      "nota": "balanço e flexão da torre em série; 3× cruza este modo perto de 1788 RPM: se o ensaio de impacto der menos de 95 Hz, limitar a 1645 RPM"
+      "nota": "balanço e flexão da torre em série; 3× cruza este modo perto de 1786 RPM: se o ensaio de impacto der menos de 95 Hz, limitar a 1643 RPM"
     },
     {
       "criterio": "Balanço (rocking) do palco acima de 1× (estimativa)",
-      "valor": 105.3,
+      "valor": 105.2,
       "requisito": "≥ 39 Hz (1,3 × 1800 RPM)",
       "passa": true,
       "nota": "hastes em série com as aletas; 0.044° de inclinação por 10 N no rotor. Torre acima das aletas: 169 Hz. Não medido"
@@ -2126,7 +2126,7 @@
     {
       "criterio": "Braço da aranha: flexão vertical com o eixo inclinado (estimativa)",
       "valor": [
-        2.8,
+        2.7,
         3.1,
         3.5,
         9.7

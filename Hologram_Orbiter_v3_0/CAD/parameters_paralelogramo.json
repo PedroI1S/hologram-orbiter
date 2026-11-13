@@ -477,10 +477,10 @@
     "counterbore_diameter": 21.0,
     "counterbore_depth": 0.0,
     "counterbore_note": "SEM rebaixo (profundidade 0 desativa o corte). O colar Ø8 do eixo sobe 5-7 mm acima da campanula e o cubo tem 6: qualquer rebaixo deixaria o fundo abaixo do topo do colar e a arruela assentaria no aco, nao no ABS. A arruela Ø20 x Ø8,5 (furo maior que o colar) assenta no topo do cubo. A spec secao 5.2 pedia Ø13 x 2 para arruela Ø20 — nem cabia nem passava pelo colar.",
-    "electronics_bay_od": 82.0,
-    "electronics_bay_id": 78.0,
+    "electronics_bay_od": 84.0,
+    "electronics_bay_id": 80.0,
     "electronics_bay_height": 47.0,
-    "lid_post_spacing": 70.0,
+    "lid_post_spacing": 72.0,
     "lid_post_axis": "y",
     "lid_post_spacing_note": "Postes encostados na parede interna da baia (r 30,7 a 39,3 com o transpasse), no eixo y (azimutes 90 e 270 graus), entre os bracos. Os58mm eram da baia66; com 58 os postes ficariam soltos no meio da baia, 6 mm longe da parede. No eixo x o poste de +x caia sobre a raiz do braco 1 (r 38-39,3) e a tangencia gerava aresta nao-manifold.",
     "lid_post_diameter": 8.0,
@@ -532,8 +532,8 @@
       ],
       "chord": 15.0,
       "height": 6.0,
-      "root_radius": 39.0,
-      "root_radius_note": "Raiz tangente ao raio interno da baia (39 mm), ainda fundida à parede até r=41 e ao alargamento da raiz. Remove o aerofólio que sobressaía dentro da baia em r=38.",
+      "root_radius": 40.0,
+      "root_radius_note": "Raiz tangente ao raio interno da baia (40 mm desde 13/11/2026), fundida a parede ate r=42 e ao alargamento da raiz.",
       "shoulder_radius": 74.0,
       "tenon_tip_radius": 96.0,
       "tenon_width": 11.0,
@@ -541,11 +541,11 @@
       "tenon_overlap_into_beam": 0.2,
       "root_blend_xy": [
         [
-          39.0,
+          40.0,
           -14.0
         ],
         [
-          41.0,
+          42.0,
           -13.5
         ],
         [
@@ -557,15 +557,15 @@
           7.5
         ],
         [
-          41.0,
+          42.0,
           13.5
         ],
         [
-          39.0,
+          40.0,
           14.0
         ]
       ],
-      "root_blend_note": "Alargamento da raiz em planta, sobre o disco, da parede da baia (r 39-41) ate a borda do cubo (r 46). Aumenta a area colada ao disco e a rigidez no plano. Fica fora dos rasgos de refrigeracao (que comecam em 30 graus).",
+      "root_blend_note": "Alargamento da raiz em planta, sobre o disco, da parede da baia (r 40-42 desde 13/11/2026; era 39-41) ate a borda do cubo (r 46). Aumenta a area colada ao disco e a rigidez no plano. Fica fora dos rasgos de refrigeracao (que comecam em 30 graus).",
       "root_gusset": {
         "enabled": true,
         "radial_run": 6.0,
@@ -585,7 +585,7 @@
             0.6,
             5.6
           ],
-          "root_radius": 40.5,
+          "root_radius": 41.5,
           "end_radius": 74.0,
           "root_top_z": 22.0,
           "end_top_z": 12.0
@@ -625,11 +625,11 @@
     },
     "cooling_slots": {
       "count": 3,
-      "inner_radius": 41.5,
+      "inner_radius": 42.5,
       "outer_radius": 45.0,
       "arc_deg": 60.0,
       "first_center_deg": 60.0,
-      "note": "3 rasgos de 60 graus entre os bracos, fora da baia (parede em r 39-41) e a 1 mm da borda do cubo (r 46). Spec secao 5.2: r 41,5-45."
+      "note": "3 rasgos de 60 graus entre os bracos, fora da baia (parede em r 40-42 desde 13/11/2026) e a 1 mm da borda do cubo (r 46): r 42,5-45."
     },
     "lightening_pockets": {
       "count": 3,
@@ -652,8 +652,8 @@
     },
     "wire_route": {
       "bay_window_radial": [
-        37.0,
-        42.0
+        38.0,
+        43.0
       ],
       "bay_window_y": [
         -10.0,
@@ -664,7 +664,7 @@
         5.8
       ],
       "root_pocket_radial": [
-        41.3,
+        42.3,
         48.0
       ],
       "root_pocket_y": [
@@ -680,7 +680,7 @@
         0.0
       ],
       "groove_floor_z": 2.3,
-      "note": "Janela na parede da baia: corte local x=37..42, y=-10..-5,5, z=0,8..5,8. Começa antes da face interna curva em toda a largura, eliminando a película que restava com x=38,5. Bolso largo no topo da raiz (r 41,3-48) e sulco 4,4 x ~3 mm na face superior do braço, lado de fuga, de r=48 a 70 (4 mm antes do ombro). A espiga não é furada."
+      "note": "Janela na parede da baia: corte local x=37..42, y=-10..-5,5, z=0,8..5,8. Começa antes da face interna curva em toda a largura, eliminando a película que restava com x=38,5. Bolso largo no topo da raiz (r 41,3-48) e sulco 4,4 x ~3 mm na face superior do braço, lado de fuga, de r=48 a 70 (4 mm antes do ombro). A espiga não é furada. 13/11/2026: baia Ø80 -> janela r 38-43 e bolso da raiz a partir de 42,3 (tudo +1)."
     },
     "battery_cradle": {
       "pack_length_y": 58.0,
@@ -943,14 +943,15 @@
       ],
       "radial_depth": 6.0,
       "width": 7.0,
-      "screw_radius": 35.5,
+      "screw_radius": 36.5,
       "pilot_hole_diameter": 1.6,
       "pilot_hole_depth": 5.0,
-      "note": "Quatro misulas a 45 graus na parede da baia, topo em Z=28 (2 mm acima da bateria), com furo piloto para M2. A placa propria apoia nelas, acima da bateria; para tirar a bateria solta-se a placa."
-    }
+      "note": "Quatro misulas a 45 graus na parede da baia, topo em Z=28 (2 mm acima da bateria), com furo piloto para M2. A placa propria apoia nelas, acima da bateria; para tirar a bateria solta-se a placa. 13/11/2026: baia Ø80, parafusos em r = 36,5: retangulo de furos 63,2 x 36,5 (a 50/110/230/290 graus)."
+    },
+    "electronics_bay_diameter_note": "13/11/2026: Ø78/82 -> Ø80/84 (parede r 40-42) a pedido do Pedro, folga para os cabos. Cubo Ø92 inalterado; tampa, postes, raizes, janela dos fios, rasgos e prateleira acompanham +1 mm de raio."
   },
   "lid": {
-    "diameter": 82.0,
+    "diameter": 84.0,
     "height": 5.0,
     "skin_thickness": 1.6,
     "rim_wall": 1.6,

@@ -25,7 +25,7 @@
   "files": [
     {
       "file": "01_aranha_PETG.stl",
-      "triangle_count": 11802,
+      "triangle_count": 11798,
       "dimensions_mm": [
         148.7631,
         171.7769,
@@ -41,7 +41,7 @@
         85.8884,
         53.0
       ],
-      "signed_volume_cm3": 90.7899,
+      "signed_volume_cm3": 91.7529,
       "degenerate_triangles": 0,
       "non_two_manifold_edges": 0,
       "connected_components": 1,
@@ -133,31 +133,31 @@
     },
     {
       "file": "03_tampa_baia_PETG.stl",
-      "triangle_count": 6538,
+      "triangle_count": 6548,
       "dimensions_mm": [
-        82.0,
-        82.0,
+        84.0,
+        84.0,
         5.0
       ],
       "bounds_min_mm": [
-        -41.0,
-        -41.0,
+        -42.0,
+        -42.0,
         0.0
       ],
       "bounds_max_mm": [
-        41.0,
-        41.0,
+        42.0,
+        42.0,
         5.0
       ],
-      "signed_volume_cm3": 9.7356,
+      "signed_volume_cm3": 10.1866,
       "degenerate_triangles": 0,
       "non_two_manifold_edges": 0,
       "connected_components": 1,
       "watertight": true,
       "outward_orientation": true,
       "ray_winding": {
-        "pitch_mm": 0.68,
-        "rays": 17080,
+        "pitch_mm": 0.7,
+        "rays": 16714,
         "bad_winding_segments": 0,
         "thin_solid_segments": 0,
         "examples": []

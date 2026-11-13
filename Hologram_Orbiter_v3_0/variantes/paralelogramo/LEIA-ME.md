@@ -76,7 +76,7 @@ contra a bandeja, em todo o curso, sem nenhuma interferência.
 | Braço da aranha | 15 × 6 mm, 103 mm³ na raiz | aleta + alma da raiz até o ombro (r = 74); 498 mm³ na raiz |
 | Tensão a 10° de inclinação, 1800 RPM | 14,2 MPa na raiz | 2,9 MPa na raiz; 9,7 MPa na espiga 11 × 6, que passa a ser o limite |
 | Inclinação máxima possível do palco | sem limite | 0,24° a 0,34° conforme o eixo (limitador sobre as orelhas) |
-| Baia da aranha | 29 mm | 47 mm, com prateleira em Z = 28 para a placa própria |
+| Baia da aranha | Ø78 × 29 mm | Ø80 × 47 mm, com prateleira em Z = 28 para a placa própria |
 | Material das peças grandes | ABS | PETG (painéis continuam ABS) |
 | Motor | A2212 920KV, cubo na campânula, colar Ø8 + M6 | AX-2810Q 750KV medido em 13/11: cubo na base serrilhada Ø13 do adaptador, furo Ø6 com a bucha de 6 mm do motor, M4; mesma cruz 16/19 na chapa R01 |
 
@@ -247,3 +247,12 @@ da chapa. A de PLA (2 mm) é provisória: aperto leve, sobra ~2 mm de rosca acim
 
 STLs separados no próprio build (`motor_plate.printed_replica`): `exports/stl/R01P_suporte_motor_PLA_provisorio.stl`
 e `exports/stl/R01P_arruela_eixo_M4_PLA_provisoria.stl`, validados com as demais peças. A 3.0.5 não os gera.
+
+## 13/11/2026 — baia Ø80
+
+A fiação real ocupou mais que o previsto. A baia passou de Ø78/82 para **Ø80/84**
+(parede em r 40–42), dentro do mesmo cubo Ø92: braços, painéis e balanceamento não mudam.
+Acompanharam +1 mm de raio: tampa Ø84, postes da tampa (72 entre centros), raiz e
+alargamento dos braços, raiz da aleta, janela dos fios (r 38–43), bolso da raiz, início
+dos rasgos de ventilação (42,5–45) e parafusos da prateleira (r 36,5: furos da placa
+própria em retângulo **63,2 × 36,5 mm**). Aranha 115,3 → 116,5 g; tampa 12,4 → 12,9 g. 69/69.
