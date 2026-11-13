@@ -28,6 +28,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--stl-dir", type=Path, default=ROOT / "exports" / "stl")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "exports" / "preview")
+    parser.add_argument("--parameters", type=Path, default=ROOT / "CAD" / "parameters.json")
     return parser.parse_args(argv)
 
 
@@ -112,11 +113,17 @@ def main() -> None:
     clear()
     setup_scene()
     stl = ARGS.stl_dir
+    import json
+    params = json.loads(ARGS.parameters.read_text(encoding="utf-8"))
+    names = {"spider": "01_aranha_ABS.stl", "lid": "03_tampa_baia_ABS.stl",
+             "base_tower": "04_05_base_torre_ABS_integradas.stl", "magnet_bracket": "06_suporte_ima_ABS.stl",
+             **params.get("export_names", {})}
+    suspension = params["base_tower"].get("suspension") or {}
     panel = import_stl(stl / "02_painel_LED_ABS_1x.stl")
-    spider = import_stl(stl / "01_aranha_ABS.stl")
-    base = import_stl(stl / "04_05_base_torre_ABS_integradas.stl")
-    lid = import_stl(stl / "03_tampa_baia_ABS.stl")
-    bracket = import_stl(stl / "06_suporte_ima_ABS.stl")
+    spider = import_stl(stl / names["spider"])
+    base = import_stl(stl / names["base_tower"])
+    lid = import_stl(stl / names["lid"])
+    bracket = import_stl(stl / names["magnet_bracket"])
     coupon = import_stl(stl / "C02_cupom_canal_LED.stl")
     cap_path = stl / "07_tampa_contencao_ABS.stl"
     cap = import_stl(cap_path) if cap_path.exists() else None
@@ -154,12 +161,35 @@ def main() -> None:
     spider.rotation_euler[0] = 0.0
 
     show_only(base)
-    render("base_perspectiva", (310, -390, 270), (0, 0, 60), lens=40)
-    render("base_topo", (0, 0, 900), (0, 0, 0), ortho_scale=330)
-    render("base_baia_torre", (140, -170, 150), (0, 0, 70), lens=50)
-    tab = Vector((149 * math.cos(math.radians(-45)), 149 * math.sin(math.radians(-45)), 4.0))
-    render("base_aba_grampo", (tab.x + 70, tab.y - 70, 60), tab, lens=80)
-    render("base_flange_superior", (90, -110, 200), (0, 0, 150), lens=70)
+    if suspension.get("enabled"):
+        # Variante 3.1-P: palco + torre, base fixa (como impressa, invertida) e hastes.
+        render("palco_perspectiva", (260, -330, 250), (0, 0, 60), lens=40)
+        render("palco_topo", (0, 0, 900), (0, 0, 0), ortho_scale=260)
+        render("palco_aro_assento", (150, -40, 60), (110, 0, 6), lens=80)
+        render("palco_flange_superior", (90, -110, 200), (0, 0, 146), lens=70)
+        frame = import_stl(stl / names["base_frame"])
+        show_only(frame)
+        render("base_fixa_como_impressa", (330, -400, 260), (0, 0, 35), lens=40)
+        render("base_fixa_topo", (0, 0, 900), (0, 0, 0), ortho_scale=330)
+        render("base_fixa_janela_assento", (175, -55, 45), (112, 0, 8), lens=80)
+        frame.rotation_euler[0] = math.pi
+        az = math.radians(suspension["stops"]["azimuths_deg"][0])
+        # Girada de volta à posição de uso: o batente fica em Z = 9 - topo da base.
+        top = suspension["hanger_ring"]["top_z"]
+        stop = Vector((121 * math.cos(az), 121 * math.sin(az), 9.0 - top))
+        render("base_fixa_batente_eva", (stop.x * 0.35, stop.y * 0.35 - 25, stop.z + 30), stop, lens=45)
+        frame.rotation_euler[0] = 0.0
+        first = next(iter(suspension["rod"]["variants"]))
+        rods = import_stl(stl / names["flexure_batch"].format(name=first))
+        show_only(rods)
+        render("hastes_8x", (70, -120, 110), (0, 0, 2), lens=60)
+    else:
+        render("base_perspectiva", (310, -390, 270), (0, 0, 60), lens=40)
+        render("base_topo", (0, 0, 900), (0, 0, 0), ortho_scale=330)
+        render("base_baia_torre", (140, -170, 150), (0, 0, 70), lens=50)
+        tab = Vector((149 * math.cos(math.radians(-45)), 149 * math.sin(math.radians(-45)), 4.0))
+        render("base_aba_grampo", (tab.x + 70, tab.y - 70, 60), tab, lens=80)
+        render("base_flange_superior", (90, -110, 200), (0, 0, 150), lens=70)
 
     show_only(lid)
     render("tampa_topo", (35, -60, 90), (0, 0, 2), lens=60)

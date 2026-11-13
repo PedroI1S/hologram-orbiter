@@ -140,6 +140,12 @@ def build(args: argparse.Namespace) -> None:
             if args.no_render:
                 command.append("--no-render")
             run(command)
+            replica = parameters["motor_plate"].get("printed_replica") or {}
+            if replica.get("enabled"):
+                # Réplica impressa da chapa R01 e da arruela do eixo, provisórias até o alumínio/aço.
+                run([blender, "-b", "--python-exit-code", "1", "--python", str(ROOT / "scripts" / "r01_placa_teste.py"), "--",
+                     "--stl-parts", str(exports / "stl" / replica["plate_name"]), str(exports / "stl" / replica["washer_name"]),
+                     "--parameters", str(snapshot)])
             run([sys.executable, str(ROOT / "scripts" / "validate_stl.py"), str(exports / "stl"),
                  "--parameters", str(snapshot), "--output", str(reports / "stl_validation.json")])
             require_reports(reports, exports / "stl", parameters)
@@ -147,7 +153,8 @@ def build(args: argparse.Namespace) -> None:
                  "--output-dir", str(fabrication)])
             if not args.no_render:
                 run([blender, "-b", "--python-exit-code", "1", "--python", str(ROOT / "scripts" / "render_views.py"), "--",
-                     "--stl-dir", str(exports / "stl"), "--output-dir", str(exports / "preview")])
+                     "--stl-dir", str(exports / "stl"), "--output-dir", str(exports / "preview"),
+                     "--parameters", str(snapshot)])
             elif (exports / "preview").exists():
                 shutil.rmtree(exports / "preview")
             if not (exports / "fonte" / "Hologram_Orbiter_v3_0.blend").is_file():

@@ -120,15 +120,33 @@ def passes(result: dict) -> bool:
 
 def expected_stl_files(parameters: dict) -> set[str]:
     names = {
-        "01_aranha_ABS.stl", "02_painel_LED_ABS_1x.stl",
-        "02_painel_LED_ABS_3x_mesma_mesa.stl", "03_tampa_baia_ABS.stl",
-        "04_05_base_torre_ABS_integradas.stl", "06_suporte_ima_ABS.stl",
+        "spider": "01_aranha_ABS.stl", "lid": "03_tampa_baia_ABS.stl",
+        "base_tower": "04_05_base_torre_ABS_integradas.stl",
+        "magnet_bracket": "06_suporte_ima_ABS.stl",
+    }
+    overrides = parameters.get("export_names", {})
+    names.update({k: v for k, v in overrides.items() if k in names})
+    result = set(names.values()) | {
+        "02_painel_LED_ABS_1x.stl", "02_painel_LED_ABS_3x_mesma_mesa.stl",
         "C01_cupom_junta.stl", "C02_cupom_canal_LED.stl",
         "R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl",
     }
+    replica = parameters["motor_plate"].get("printed_replica") or {}
+    if replica.get("enabled"):
+        result |= {replica["plate_name"], replica["washer_name"]}
     if parameters["containment_cap"]["enabled"]:
-        names.add("07_tampa_contencao_ABS.stl")
-    return names
+        result.add("07_tampa_contencao_ABS.stl")
+    suspension = parameters["base_tower"].get("suspension") or {}
+    if suspension.get("enabled"):
+        result.add(overrides["base_frame"])
+        for name in suspension["rod"]["variants"]:
+            result.add(overrides["flexure_single"].format(name=name))
+            result.add(overrides["flexure_batch"].format(name=name))
+        if suspension.get("lock", {}).get("enabled"):
+            result.add(overrides["lock_spacer"])
+        if suspension.get("oil_damper", {}).get("enabled"):
+            result.add(overrides["oil_tray"])
+    return result
 
 
 def main() -> int:
@@ -143,6 +161,14 @@ def main() -> int:
     actual = {path.name for path in files}
     missing, unexpected = sorted(expected - actual), sorted(actual - expected)
     results = []
+    # Mesas com várias cópias da mesma peça (hastes da variante suspensa).
+    suspension = parameters["base_tower"].get("suspension") or {}
+    batches = {}
+    if suspension.get("enabled"):
+        template = parameters["export_names"]["flexure_batch"]
+        batches = {template.format(name=name): int(suspension["rod"]["count"]) for name in suspension["rod"]["variants"]}
+        if suspension.get("lock", {}).get("enabled"):
+            batches[parameters["export_names"]["lock_spacer"]] = len(suspension["lock"]["azimuths_deg"])
     failed = bool(missing or unexpected)
     if missing:
         print("FALHA Inventário: STL ausentes: " + ", ".join(missing), file=sys.stderr)
@@ -154,7 +180,7 @@ def main() -> int:
         except Exception as exc:
             result = {"file": path.name, "error": str(exc), "watertight": False}
         results.append(result)
-        expected_components = 3 if path.name == "02_painel_LED_ABS_3x_mesma_mesa.stl" else 1
+        expected_components = 3 if path.name == "02_painel_LED_ABS_3x_mesma_mesa.stl" else batches.get(path.name, 1)
         result["expected_connected_components"] = expected_components
         result["component_count_ok"] = result.get("connected_components") == expected_components
         ok = passes(result) and result["component_count_ok"]

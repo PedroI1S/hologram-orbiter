@@ -335,3 +335,229 @@ def calculate_physics(parameters, panel_triangles=None):
             checks.append({"z_mm": z, "measured": measured, "matches_parameters": matches})
         result["stl_section_checks"] = checks
     return result
+
+
+def section_cut(triangles, axis, value):
+    """Section of a closed mesh on the plane ``axis = value``.
+
+    In-plane coordinates are the two remaining axes in cyclic order (u, v), so
+    a cut at x = const returns u = y and v = z. ``Ixx_mm4`` is the second moment
+    about the u axis (bending by a load along v). Cut away from vertices.
+    """
+    order = [(axis+1) % 3, (axis+2) % 3, axis]
+    tri = np.asarray(triangles, dtype=float)[:, :, order]
+    result = section_from_triangles(tri, value)
+    points = []
+    for t3 in tri:
+        for a, b in zip(t3, np.roll(t3, -1, axis=0)):
+            if min(a[2], b[2]) < value < max(a[2], b[2]):
+                points.append((a+(value-a[2])/(b[2]-a[2])*(b-a))[:2])
+    result["boundary_uv"] = np.asarray(points)
+    return result
+
+
+def arm_root_estimate(parameters, spider_triangles, cut_radius_mm=47.5,
+                      tilts_deg=(4., 10.)):
+    """Vertical bending of one spider arm root when the spin axis is tilted.
+
+    A panel of mass m at radius r pulls with m*omega²*r perpendicular to the
+    TRUE spin axis; with the rotor tilted by theta the component across the arm
+    is m*omega²*r*sin(theta), applied at the panel mid-plane. Steady synchronous
+    whirl is assumed: an oscillating tilt reverses the same load every cycle.
+    Geometry is measured on the mesh (arm 1 along +x); FDM strength, layer
+    adhesion and the stress raiser at the hub wall are NOT represented.
+    """
+    p = parameters
+    section = section_cut(spider_triangles, 0, cut_radius_mm)
+    boundary = section.pop("boundary_uv")
+    ixx, iyy, ixy = section["Ixx_mm4"], section["Iyy_mm4"], section["Ixy_mm4"]
+    cu, cv = section["centroid_x_mm"], section["centroid_y_mm"]
+    det = ixx*iyy-ixy*ixy
+    # Unit moment about u (vertical load): unsymmetric bending.
+    unit = max(abs((iyy*(v-cv)-ixy*(u-cu))/det) for u, v in boundary)
+    omega = p["operating_point"]["rpm"]*2*math.pi/60
+    radius = p["operating_point"]["panel_mid_plane_radius_mm"]
+    mass = p["panel"]["mass_limit_assembled_g"]/1000
+    force = mass*omega**2*radius/1000
+    cases = []
+    for tilt in tilts_deg:
+        moment = force*math.sin(math.radians(tilt))*(radius-cut_radius_mm)
+        cases.append({"tilt_deg": tilt, "cross_force_n": force*math.sin(math.radians(tilt)),
+                      "moment_n_mm": moment, "max_bending_stress_mpa": moment*unit})
+    return {"status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL", "cut_radius_mm": cut_radius_mm,
+            "area_mm2": section["area_mm2"], "I_vertical_bending_mm4": ixx,
+            "I_chordwise_bending_mm4": iyy, "Ixy_mm4": ixy,
+            "section_modulus_vertical_mm3": 1/unit,
+            "z_extent_mm": [float(boundary[:, 1].min()), float(boundary[:, 1].max())],
+            "panel_mass_g": mass*1000, "rpm": p["operating_point"]["rpm"],
+            "centrifugal_force_n": force, "tilt_cases": cases}
+
+
+def inertia_about_z(triangles, density_g_cm3):
+    """Polar moment of inertia about the Z axis of a closed mesh, in kg·m²."""
+    tri = np.asarray(triangles, dtype=float)
+    a, b, c = tri[:, 0], tri[:, 1], tri[:, 2]
+    volume = np.einsum("ij,ij->i", a, np.cross(b, c))/6
+    total = 0.
+    for k in (0, 1):
+        x, y, z = a[:, k], b[:, k], c[:, k]
+        total += (volume/10*(x*x+y*y+z*z+x*y+x*z+y*z)).sum()
+    return abs(total)*density_g_cm3*1e-12  # mm^5 * g/cm³ -> kg·m²
+
+
+def suspension_estimate(parameters, rotor_mass_g, stage_mass_g, stage_centroid_z_mm,
+                        datum_b_z_mm, stage_yaw_inertia_kg_m2=None):
+    """Rigid-body estimates for the hanging parallelogram base (variant 3.1-P).
+
+    Eight square rods, built in at both ends, carry the stage in tension. They
+    bend in an S, so the stage translates without tilting; gravity adds the
+    geometric stiffness 6W/(5L). Rocking is resisted by the rods' axial stiffness
+    in series with the stage fins. Printed-PETG modulus, damping, joint
+    compliance, gyroscopic coupling and cable stiffness are NOT represented:
+    confirm by tap test (plan 04, C0) before spinning.
+    """
+    bt = parameters["base_tower"]
+    s = bt["suspension"]
+    rod, fin, stops = s["rod"], s["fin"], s["stops"]
+    modulus, count = rod["modulus_mpa"], rod["count"]
+    # Each blend stiffens the rod end: count the thin section as free length
+    # minus one blend length (independent FE check, review of 11/11/2026).
+    span = rod["free_length"]
+    length = span-rod.get("blend_length", 0.)
+    radius = rod["seat_face_radius"]
+    extra = sum(s["moving_mass_extra_g"].values())
+    stage = stage_mass_g*s.get("infill_mass_factor", 1.)
+    mass = (rotor_mass_g+stage+extra)/1000
+    weight = mass*9.80665
+    geometric = 1.2*weight/span  # N/mm
+
+    # Fin as a tapered cantilever from the tower wall to the rod.
+    r0 = bt["tower_od"]/2
+    zb = s["stage_bottom_z"]
+    slope = (fin["tip_z"]-fin["top_z_at_tower"])/(fin["tip_radius"]-fin["inner_radius"])
+    steps = 400
+    compliance = 0.
+    for i in range(steps):
+        r = r0+(radius-r0)*(i+.5)/steps
+        top = fin["top_z_at_tower"]+slope*(min(r, fin["tip_radius"])-fin["inner_radius"])
+        inertia = fin["thickness"]*(top-zb)**3/12
+        compliance += (radius-r)**2/(modulus*inertia)*(radius-r0)/steps
+    fin_stiffness = 1/compliance
+
+    # Transverse inertia about the moving body's own centre of mass: with the
+    # translation this soft, rocking happens about the CG, not about the base.
+    tower_top = s["stage_top_z"]+bt["tower_total_height_from_floor"]
+    rotor_z = datum_b_z_mm+s["rotor_cg_above_tower_top_mm"]-(datum_b_z_mm-tower_top)
+    items = [(rotor_mass_g/1000, rotor_z), (stage/1000, stage_centroid_z_mm),
+             (extra/1000, tower_top+10.)]
+    cg = sum(m*z for m, z in items)/mass
+    polar = parameters["loads_from_spec"]["rotor_inertia_g_m2"]/1000
+    panel = parameters["panel"]
+    own = polar/2+3*panel["mass_limit_assembled_g"]/1000*(panel["height"]/1000)**2/12
+    own += stage/1000*(tower_top/1000)**2/12
+    transverse = sum(m*((z-cg)/1000)**2 for m, z in items)+own
+
+    # Tower above the fins: tube cantilever with the rotor CG overhung.
+    od, wall = bt["tower_od"], bt["tower_wall"]
+    tube = math.pi*(od**4-(od-2*wall)**4)/64
+    free = tower_top-fin["top_z_at_tower"]
+    overhang = rotor_z-tower_top
+    factor = 1+3*overhang/free+3*(overhang/free)**2
+    tower_stiffness = 3*modulus*tube/(free**3*factor)
+    top_mass = (rotor_mass_g+extra)/1000
+    tower_frequency = math.sqrt(tower_stiffness*1000/top_mass)/(2*math.pi)
+    # Slope at the tower top for 10 N applied `overhang` above it.
+    tower_tilt_per_10n = math.degrees(10*(free**2/2+overhang*free)/(modulus*tube))
+    low, high = s["operating_rpm_range"]
+
+    variants = []
+    for name, side in rod["variants"].items():
+        inertia = side**4/12
+        elastic = count*12*modulus*inertia/length**3
+        lateral = elastic+geometric
+        f_lat = math.sqrt(lateral*1000/mass)/(2*math.pi)
+        axial = modulus*side*side/length
+        series = 1/(1/axial+1/fin_stiffness)
+        rocking = count/2*radius**2*series/1000  # N·m/rad
+        f_rock = math.sqrt(rocking/transverse)/(2*math.pi)
+        # Gravity stiffens yaw exactly as it stiffens translation (review of 11/11/2026).
+        yaw = lateral*radius**2/1000  # N·m/rad
+        yaw_inertia = (stage_yaw_inertia_kg_m2 or stage/1000*(radius/1000)**2/2)*s.get("infill_mass_factor", 1.)
+        # Static lever: lateral force at the rotor reacted at mid-height of the rods.
+        rod_mid = s["rim"]["z_range"][1]+span/2
+        lever = (rotor_z-rod_mid)/1000
+        buckling = 4*math.pi**2*modulus*inertia/length**2
+        preload = weight/count
+        variants.append({
+            "name": name, "rod_side_mm": side,
+            "lateral_stiffness_n_per_mm": lateral,
+            "lateral_elastic_n_per_mm": elastic, "lateral_gravity_n_per_mm": geometric,
+            "translation_frequency_hz": f_lat, "translation_critical_rpm": f_lat*60,
+            "lowest_operating_to_critical_ratio": low/(f_lat*60),
+            "orbit_amplification_at_lowest_rpm": (low/(f_lat*60))**2/((low/(f_lat*60))**2-1)
+                if low > f_lat*60 else None,
+            "rod_axial_stiffness_n_per_mm": axial,
+            "rod_plus_fin_axial_stiffness_n_per_mm": series,
+            "rocking_stiffness_nm_per_rad": rocking, "rocking_frequency_hz": f_rock,
+            "rocking_to_top_1x_ratio": f_rock/(high/60),
+            "tilt_deg_per_10n_at_rotor": math.degrees(10*lever/rocking)+tower_tilt_per_10n,
+            "stage_tilt_deg_per_10n_at_rotor": math.degrees(10*lever/rocking),
+            # Rocking and tower bending act in series: Dunkerley estimate of the real lowest mode.
+            "coupled_rocking_tower_frequency_hz": 1/math.sqrt(1/f_rock**2+1/tower_frequency**2),
+            "rod_buckling_load_n": buckling,
+            "rotor_side_force_at_first_buckling_n": (buckling+preload)*4*radius/1000/lever,
+            "yaw_frequency_hz": math.sqrt(yaw/yaw_inertia)/(2*math.pi),
+            "rod_bending_stress_at_stop_mpa": 3*modulus*side*stops["travel"]/length**2,
+            "rod_tension_stress_mpa": weight/count/side**2,
+            "yaw_stiffness_nm_per_rad": yaw,
+            "yaw_deg_per_0p1_nm": math.degrees(.1/yaw),
+        })
+    damper = None
+    od = s.get("oil_damper", {})
+    if od.get("enabled"):
+        # Four paddles in oil cups, each with its plane normal to the radius.
+        # Normal motion squeezes oil around the plate (~ mu*depth*(width/gap)^3);
+        # in-plane motion shears it (mu*area*(1/g1+1/g2)). Order of magnitude only.
+        pd, cup = od["paddle"], od["cup"]
+        mu = od["oil_viscosity_pa_s"]
+        depth = (cup["oil_level_z"]-s["rim"]["z_range"][0])/1000
+        width = pd["width"]/1000
+        g_in = (pd["inner_radius"]-cup["cavity_radial"][0])/1000
+        g_out = (cup["cavity_radial"][1]-pd["inner_radius"]-pd["thickness"])/1000
+        gap = (g_in+g_out)/2
+        normal = mu*depth*(width/gap)**3
+        shear = mu*depth*width*(1/g_in+1/g_out)
+        n = len(od["azimuths_deg"])
+        c_lat = n/2*(normal+shear)  # two paddles normal, two in-plane, any direction
+        r_p = (pd["inner_radius"]+pd["thickness"]/2)/1000
+        c_yaw = n*shear*r_p**2
+        first = variants[0]
+        yaw_inertia = (stage_yaw_inertia_kg_m2 or 0.)*s.get("infill_mass_factor", 1.)
+        damper = {
+            "status": "ORDER_OF_MAGNITUDE_ONLY (factor ~3 either way); zero without oil",
+            "oil_viscosity_pa_s": mu, "immersed_depth_mm": depth*1000,
+            "min_radial_gap_mm": min(g_in, g_out)*1000,
+            "oil_volume_ml_per_cup": (cup["cavity_radial"][1]-cup["cavity_radial"][0])
+                * 2*cup["cavity_half_width"]*(cup["oil_level_z"]-cup["floor"])/1000,
+            "lateral_damping_n_s_per_m": c_lat,
+            "translation_damping_ratio": c_lat/(2*math.sqrt(first["lateral_stiffness_n_per_mm"]*1000*mass)),
+            "yaw_damping_nm_s_per_rad": c_yaw,
+            "yaw_damping_ratio": c_yaw/(2*math.sqrt(first["yaw_stiffness_nm_per_rad"]*yaw_inertia))
+                if yaw_inertia else None,
+        }
+    return {
+        "status": "ESTIMATE_NOT_MEASURED",
+        "oil_damper": damper,
+        "moving_mass_kg": mass, "moving_cg_z_mm": cg,
+        "moving_mass_breakdown_g": {"rotor": rotor_mass_g, "stage_and_tower": stage,
+                                    "motor_plate_fasteners": extra},
+        "transverse_inertia_kg_m2": transverse,
+        "fin_tip_stiffness_n_per_mm": fin_stiffness,
+        "tower_free_length_mm": free, "tower_tube_inertia_mm4": tube,
+        "tower_bending_frequency_hz": tower_frequency,
+        "operating_rpm_range": [low, high],
+        "selected_variant_side_mm": rod["side"],
+        "variants": variants,
+        "limits": "rigid body, linear rods, no damping, no gyroscopic coupling; printed-PETG "
+                  "modulus assumed; motor cables and EVA pads add stiffness when they touch",
+    }

@@ -46,7 +46,7 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 from probe import MeshProbe  # noqa: E402
 from parameters import load_parameters  # noqa: E402
-from physics import calculate_physics  # noqa: E402
+from physics import arm_root_estimate, calculate_physics, inertia_about_z, suspension_estimate  # noqa: E402
 from spider_checks import measure_bay_entries  # noqa: E402
 
 
@@ -66,6 +66,35 @@ P = load_parameters(ARGS.parameters)
 
 SEGMENTS = int(P["quality"]["curve_segments"])
 BOOL_SOLVER = P["quality"]["boolean_solver"]
+# Variante 3.1-P: base suspensa em paralelogramo (parameters_paralelogramo.json).
+SUSP = P["base_tower"].get("suspension") or {}
+SUSPENDED = bool(SUSP.get("enabled"))
+
+DEFAULT_EXPORT_NAMES = {
+    "spider": "01_aranha_ABS.stl",
+    "lid": "03_tampa_baia_ABS.stl",
+    "base_tower": "04_05_base_torre_ABS_integradas.stl",
+    "magnet_bracket": "06_suporte_ima_ABS.stl",
+}
+
+
+def export_name(key: str, **fmt) -> str:
+    name = {**DEFAULT_EXPORT_NAMES, **P.get("export_names", {})}[key]
+    return name.format(**fmt) if fmt else name
+
+
+def density_for(part: str) -> float:
+    """Densidade por peça; sem mapa na parametrização, tudo é ABS (pacote 3.0.5)."""
+    return P["material"].get("part_density_g_cm3", {}).get(part, P["material"]["abs_density_g_cm3"])
+
+
+def tower_base_z() -> float:
+    """Z em que a torre nasce: piso da baia (3.0.5) ou topo do palco suspenso."""
+    return SUSP["stage_top_z"] if SUSPENDED else P["base_tower"]["central_floor_thickness"]
+
+
+def tower_top_z() -> float:
+    return tower_base_z() + P["base_tower"]["tower_total_height_from_floor"]
 
 
 # --------------------------------------------------------------------------
@@ -143,6 +172,14 @@ def box_xyz(name: str, x: tuple[float, float], y: tuple[float, float], z: tuple[
     )
 
 
+def frustum(name: str, r_bottom: float, r_top: float, z0: float, z1: float) -> bpy.types.Object:
+    bpy.ops.mesh.primitive_cone_add(vertices=SEGMENTS, radius1=r_bottom, radius2=r_top, depth=z1 - z0,
+                                    end_fill_type="NGON", location=(0.0, 0.0, (z0 + z1) / 2))
+    obj = bpy.context.object
+    obj.name = name
+    return apply_transform(obj)
+
+
 def cylinder(
     name: str,
     radius: float,
@@ -193,6 +230,15 @@ def mesh_prism_z(name: str, points_xy: list[tuple[float, float]], z0: float, z1:
 def mesh_prism_x(name: str, points_yz: list[tuple[float, float]], x0: float, x1: float) -> bpy.types.Object:
     count = len(points_yz)
     vertices = [(x0, y, z) for y, z in points_yz] + [(x1, y, z) for y, z in points_yz]
+    return _prism(name, vertices, count, flip=False)
+
+
+def mesh_loft_x(name: str, prof0: list[tuple[float, float]], prof1: list[tuple[float, float]], x0: float, x1: float) -> bpy.types.Object:
+    """Sólido regrado entre dois perfis (y, z) de mesma contagem de vértices, em x0 e x1."""
+    if len(prof0) != len(prof1):
+        raise ValueError(f"{name}: perfis com contagens diferentes")
+    count = len(prof0)
+    vertices = [(x0, y, z) for y, z in prof0] + [(x1, y, z) for y, z in prof1]
     return _prism(name, vertices, count, flip=False)
 
 
@@ -591,6 +637,55 @@ def build_arm(index: int) -> bpy.types.Object:
             g["width"] / 2,
         )
         parts.append(gusset)
+    rf = a.get("reinforcement", {})
+    if rf.get("enabled"):
+        # Aleta sobre o braço (lado +y, fora do sulco dos fios) e alma por baixo.
+        # Ambas terminam antes do ombro: a face de contato do painel não muda.
+        fin = rf["fin"]
+        web = rf["web"]
+        fr = rf.get("fairing", {})
+        if fr.get("enabled"):
+            # Reforço carenado (pedido de 13/11/2026): a aleta retangular tinha a face larga
+            # contra o vento (Cd ≈ 2). Aleta em "D": costas retas em y0 (o sulco dos fios em
+            # y < 0 continua livre), nariz em quarto de elipse até o bordo de ataque (+y).
+            # Alma: perfil de asa invertido em toda a corda, nariz arredondado e cauda afilada.
+            n = int(fr.get("arc_points", 10))
+            y0, y_nose, z_floor = fin["y_range"][0], fr["fin_nose_y"], fr["fin_floor_z"]
+
+            def fin_profile(top_z: float) -> list[tuple[float, float]]:
+                a_, b_ = y_nose - y0, top_z - z_floor
+                e = 2.0 / fr.get("fin_superellipse_exponent", 2.0)  # > 2: perfil mais cheio no topo
+                arc = []
+                for k in range(n + 1):
+                    t = math.radians(90.0 - 90.0 * k / n)
+                    arc.append((y0 + a_ * math.cos(t) ** e, z_floor + b_ * math.sin(t) ** e))
+                return [(y0, z_floor)] + arc
+
+            parts.append(mesh_loft_x(f"arm_{index}_fin", fin_profile(fin["root_top_z"]), fin_profile(fin["end_top_z"]),
+                                     fin["root_radius"], fin["end_radius"]))
+            y_tail, z_tail = fr["web_tail_yz"]
+            y_flat0, y_flat1 = fr["web_flat_y"]
+            z_top_nose = fr["web_nose_top_z"]
+
+            def web_profile(bottom_z: float) -> list[tuple[float, float]]:
+                a_, b_ = y_nose - y_flat1, z_top_nose - bottom_z
+                pts = [(y_tail, z_tail), (y_flat0, bottom_z)]
+                pts += [(y_flat1 + a_ * math.sin(math.radians(90.0 * k / n)), z_top_nose - b_ * math.cos(math.radians(90.0 * k / n))) for k in range(n + 1)]
+                return pts
+
+            parts.append(mesh_loft_x(f"arm_{index}_web", web_profile(web["root_bottom_z"]), web_profile(web.get("end_bottom_z", 0.3)),
+                                     web["root_radius"], web["end_radius"]))
+        else:
+            parts.append(mesh_prism_y(
+                f"arm_{index}_fin",
+                [(fin["root_radius"], a["height"] - 0.3), (fin["end_radius"], a["height"] - 0.3),
+                 (fin["end_radius"], fin["end_top_z"]), (fin["root_radius"], fin["root_top_z"])],
+                fin["y_range"][0], fin["y_range"][1]))
+            parts.append(mesh_prism_y(
+                f"arm_{index}_web",
+                [(web["root_radius"], web["root_bottom_z"]), (web["end_radius"], web.get("end_bottom_z", 0.3)),
+                 (web["end_radius"], 0.3), (web["root_radius"], 0.3)],
+                -web["width"] / 2, web["width"] / 2))
     arm = union_all(parts, f"arm_{index}")
     return rotate_about_z(arm, index * 120.0)
 
@@ -669,6 +764,9 @@ def bay_layout_components() -> list[dict]:
             comp["center_xy"] = [round(cx, 3), round(cy, 3)]
             comp["plan"] = rotated_rect(cx, cy, depth, width, az)
             comp["z_range"] = [zb, zb + height]
+        elif "polygon_xy" in c:
+            comp["plan"] = [tuple(pt) for pt in c["polygon_xy"]]
+            comp["z_range"] = [zb, zb + c["height"]]
         elif "diameter" in c:
             cx, cy = c["center_xy"]
             comp["plan"] = circle_rect(cx, cy, c["diameter"] / 2)
@@ -809,7 +907,9 @@ def measure_bay_intersections(spider: bpy.types.Object) -> dict:
             continue
         cx, cy = c["center_xy"]
         z0, z1 = c["z_range"]
-        if "diameter" in c:
+        if "polygon_xy" in c:
+            envelope = mesh_prism_z("audit_envelope", [tuple(pt) for pt in c["polygon_xy"]], z0, z1)
+        elif "diameter" in c:
             envelope = cylinder("audit_envelope", c["diameter"] / 2, z1 - z0,
                                 (cx, cy, (z0 + z1) / 2), vertices=32)
         else:
@@ -995,6 +1095,20 @@ def build_bay_mounts() -> tuple[list[bpy.types.Object], list[bpy.types.Object]]:
             r_id = c["diameter"] / 2 + rf["clearance"]
             fence = ring(f"ring_fence_{c['id']}", r_id + rf["wall"], r_id, -0.1, rf["height"])
             solids.append(translate(fence, cx, cy, 0.0))
+    bs = sp.get("board_shelf", {})
+    if bs.get("enabled"):
+        # Mísulas a 45° na parede da baia: apoio da placa própria acima da bateria.
+        r_wall = sp["electronics_bay_id"] / 2 + 0.5
+        r_in = sp["electronics_bay_id"] / 2 - bs["radial_depth"]
+        for k, az in enumerate(bs["azimuths_deg"]):
+            corbel = mesh_prism_y(
+                f"board_corbel_{k}",
+                [(r_wall, bs["z"] - (r_wall - r_in) - 0.5), (r_wall, bs["z"]), (r_in, bs["z"]), (r_in, bs["z"] - 0.5)],
+                -bs["width"] / 2, bs["width"] / 2)
+            solids.append(rotate_about_z(corbel, az))
+            px, py = polar(bs["screw_radius"], az)
+            cutters.append(cylinder(f"board_corbel_pilot_{k}", bs["pilot_hole_diameter"] / 2, bs["pilot_hole_depth"] + 0.2,
+                                    (px, py, bs["z"] - bs["pilot_hole_depth"] / 2 + 0.1), vertices=16))
     return solids, cutters
 
 
@@ -1389,6 +1503,511 @@ def build_base_tower() -> bpy.types.Object:
 
 
 # --------------------------------------------------------------------------
+# Variante 3.1-P — base suspensa em paralelogramo
+# --------------------------------------------------------------------------
+
+def cylinder_radial(name: str, radius: float, r0: float, r1: float, az_deg: float, z: float) -> bpy.types.Object:
+    """Cilindro com o eixo na direção radial `az_deg`, de r0 a r1, na cota z."""
+    x, y = polar((r0 + r1) / 2, az_deg)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=radius, depth=r1 - r0, end_fill_type="NGON",
+                                        location=(x, y, z), rotation=(0.0, math.pi / 2, math.radians(az_deg)))
+    obj = bpy.context.object
+    obj.name = name
+    return apply_transform(obj)
+
+
+def suspension_layout() -> dict:
+    """Cotas derivadas da suspensão: blocos de baixo no aro do palco, de cima no anel fixo."""
+    rod, blk, rim, hr = SUSP["rod"], SUSP["block"], SUSP["rim"], SUSP["hanger_ring"]
+    z_bot0 = rim["z_range"][0]
+    z_bot1 = z_bot0 + blk["height"]
+    z_top0 = z_bot1 + rod["free_length"]
+    z_top1 = z_top0 + blk["height"]
+    if abs(z_top1 - hr["top_z"]) > 1e-6 or abs(z_bot1 - rim["z_range"][1]) > 1e-6:
+        raise ValueError("Suspensão: blocos, haste e anéis não fecham em Z")
+    st = SUSP["stops"]
+    eva = st["eva"]
+    hard_r = st["lug_tip_radius"] + st["travel"]
+    return {
+        "azimuths": [rod["first_azimuth_deg"] + i * 360.0 / rod["count"] for i in range(rod["count"])],
+        "z_bot": (z_bot0, z_bot1), "z_top": (z_top0, z_top1),
+        "face_r": rod["seat_face_radius"],
+        "hard_stop_radius": hard_r,
+        "pocket_depth": eva["pad_thickness"] - (st["travel"] - eva["engage_gap"]),
+        "slot_width": st["lug_width"] + 2 * st["side_gap"],
+    }
+
+
+def seat_features(prefix: str, az: float, z_range: tuple[float, float], top_z: float, face: float | None = None, rails: bool = True) -> tuple[list[bpy.types.Object], list[bpy.types.Object]]:
+    """Assento plano de um bloco: calço, guias laterais, furo radial M3 e rasgo da porca aberto para cima."""
+    seat = SUSP["seat"]
+    face = suspension_layout()["face_r"] if face is None else face
+    zc = (z_range[0] + z_range[1]) / 2
+    height = z_range[1] - z_range[0]
+    solids = [cube_polar(f"{prefix}_pad", (4.0, seat["width"], height), face - 2.0, az, zc)]
+    if rails:
+        # Guias: o bloco entra num canal e não gira em torno do parafuso único.
+        channel = SUSP["block"]["width"] + 2 * seat["block_side_clearance"]
+        rail_w = (seat["width"] - channel) / 2
+        cx, cy = polar(face + seat["rail_proud"] / 2 - 0.25, az)
+        tx, ty = polar(1.0, az + 90.0)
+        for k, sign in enumerate((-1.0, 1.0)):
+            off = sign * (channel / 2 + rail_w / 2)
+            solids.append(cube(f"{prefix}_rail_{k}", (seat["rail_proud"] + 0.5, rail_w, height), (cx + off * tx, cy + off * ty, zc), rotation_z_deg=az))
+    # Furo passante: terminar o furo rente à face interna do anel deixaria uma película.
+    bore = cylinder_radial(f"{prefix}_bore", seat["bore_diameter"] / 2, SUSP["rim"]["inner_radius"] - 1.5, face + 0.5, az, zc)
+    n0, n1 = seat["nut_slot_radial"]
+    z0 = zc - seat["nut_slot_below_axis"]
+    slot = cube_polar(f"{prefix}_nut_slot", (n1 - n0, seat["nut_slot_width"], top_z + 0.2 - z0), face - (n0 + n1) / 2, az, (z0 + top_z + 0.2) / 2)
+    return solids, [bore, slot]
+
+
+def cable_hook_layout(hk: dict, tower_r: float) -> dict:
+    """Cotas dos ganchos dos fios do motor no referencial local (x radial, y tangencial)."""
+    d = hk["wire_od"]
+    depth = d + hk["radial_clearance"]           # bolso: uma camada de fios encostada na torre
+    width = hk["wire_count"] * d + hk["side_clearance"]
+    x_in = tower_r - 2.5                          # raiz enterrada na torre
+    x_pocket = tower_r + depth                    # face interna do dedo
+    x_out = x_pocket + hk["finger_thickness"]
+    y_tip = width / 2
+    # Entrada sob o farpão, medida até a superfície REAL da torre no ponto da ponta (cilindro).
+    tower_x_at_tip = math.sqrt(tower_r ** 2 - y_tip ** 2)
+    barb = max(0.0, x_pocket - tower_x_at_tip - (d - hk["barb_interference"]))
+    entry = x_pocket - barb - tower_x_at_tip
+    span = width + hk["post_thickness"]
+    height = span + hk["finger_min_height"]       # base a 45° nas duas direções: sem suporte
+    count = int((hk["z_last"] - hk["z_first"]) // hk["pitch"]) + 1
+    return {"depth": depth, "width": width, "x_in": x_in, "x_pocket": x_pocket, "x_out": x_out,
+            "barb": barb, "entry": entry, "height": height, "count": count,
+            "z0": [hk["z_first"] + i * hk["pitch"] for i in range(count)]}
+
+
+def build_cable_hooks(hk: dict, tower_r: float) -> list[bpy.types.Object]:
+    """Ganchos alternados para os três fios de fase, ao longo da torre (pedido de 13/11/2026).
+
+    Cada gancho é um L em planta (poste radial + dedo tangencial) com farpão na ponta.
+    Os ganchos abrem para lados alternados: o fio entra de lado e não tem por onde sair.
+    A face de baixo sobe a 45° a partir da raiz, em x e em y: imprime em pé sem suporte.
+    """
+    lay = cable_hook_layout(hk, tower_r)
+    w, tp = lay["width"], hk["post_thickness"]
+    out = []
+    for i, z0 in enumerate(lay["z0"]):
+        s = 1.0 if i % 2 == 0 else -1.0           # +1: poste em -y, abre para +y
+        z1 = z0 + lay["height"]
+        y_post = (-w / 2 - tp, -w / 2) if s > 0 else (w / 2, w / 2 + tp)
+        y_fing = (-w / 2 - tp, w / 2) if s > 0 else (-w / 2, w / 2 + tp)
+        pieces = [
+            box_xyz(f"hook_{i}_post", (lay["x_in"], lay["x_out"]), y_post, (z0, z1)),
+            box_xyz(f"hook_{i}_finger", (lay["x_pocket"] - 0.05, lay["x_out"]), y_fing, (z0, z1)),
+        ]
+        if lay["barb"] > 0.05:
+            yb = (w / 2 - hk["barb_length"], w / 2) if s > 0 else (-w / 2, -w / 2 + hk["barb_length"])
+            pieces.append(box_xyz(f"hook_{i}_barb", (lay["x_pocket"] - lay["barb"], lay["x_pocket"] + 0.05), yb, (z0, z1)))
+        hook = union_all(pieces, f"cable_hook_{i}")
+        # Corte a 45° em x (balanço radial a partir da torre) e em y (dedo a partir do poste).
+        xr = tower_r - 1.0
+        cut_x = mesh_prism_y(f"hook_{i}_cut_x", [(xr - 10.0, z0 - 1.0), (lay["x_out"] + 1.0, z0 - 1.0), (lay["x_out"] + 1.0, z0 + lay["x_out"] + 1.0 - xr), (xr - 10.0, z0 - 10.0)], -w - tp - 2.0, w + tp + 2.0)
+        yr = y_post[0] if s > 0 else y_post[1]
+        far = yr + s * (w + tp + 2.0)
+        cut_y = mesh_prism_x(f"hook_{i}_cut_y", [(yr - s * 1.0, z0 - 1.0), (far, z0 - 1.0), (far, z0 + abs(far - yr))], lay["x_in"] - 1.0, lay["x_out"] + 1.0)
+        hook = boolean(hook, cut_x, "DIFFERENCE", f"hook_{i}_45x")
+        hook = boolean(hook, cut_y, "DIFFERENCE", f"hook_{i}_45y")
+        out.append(rotate_about_z(hook, hk["azimuth_deg"]))
+    return out
+
+
+def build_suspended_stage() -> bpy.types.Object:
+    """Palco móvel: disco, 8 aletas que contraventam a torre, aro com assentos e orelhas, torre e flange."""
+    q = P["base_tower"]
+    lay = suspension_layout()
+    zb, zt = SUSP["stage_bottom_z"], SUSP["stage_top_z"]
+    top = tower_top_z()
+    fin, rim, st = SUSP["fin"], SUSP["rim"], SUSP["stops"]
+    hub = cylinder("stage_hub", SUSP["stage_hub_radius"], zt - zb, (0.0, 0.0, (zb + zt) / 2))
+    tower = cylinder("tower_outer", q["tower_od"] / 2, top - zb - 0.2, (0.0, 0.0, (zb + top) / 2 + 0.1))
+    upper_flange = cylinder("tower_upper_flange", q["flange_diameter"] / 2, q["flange_thickness"], (0.0, 0.0, top - q["flange_thickness"] / 2))
+    parts = [hub, tower, upper_flange]
+    cone_h = SUSP.get("flange_cone_height", 0.0)
+    if cone_h > 0:
+        # Cone a 45° sob a flange: sem ele a face inferior é um balanço plano de 10 mm.
+        zf = top - q["flange_thickness"]
+        parts.append(frustum("tower_flange_cone", q["tower_od"] / 2 - 0.5, q["tower_od"] / 2 - 0.5 + cone_h + 0.5, zf - cone_h - 0.5, zf + 0.1))
+    for i in range(fin["count"]):
+        blade = mesh_prism_y(
+            f"stage_fin_{i}",
+            [(fin["inner_radius"], zb), (fin["tip_radius"], zb), (fin["tip_radius"], fin["tip_z"]), (fin["inner_radius"], fin["top_z_at_tower"])],
+            -fin["thickness"] / 2, fin["thickness"] / 2)
+        parts.append(rotate_about_z(blade, fin["first_azimuth_deg"] + i * 360.0 / fin["count"]))
+    parts.append(ring("stage_rim", rim["outer_radius"], rim["inner_radius"], rim["z_range"][0], rim["z_range"][1]))
+    cutters: list[bpy.types.Object] = []
+    for i, az in enumerate(lay["azimuths"]):
+        solids, cut = seat_features(f"stage_seat_{i}", az, lay["z_bot"], rim["z_range"][1])
+        parts.extend(solids)
+        cutters.extend(cut)
+    lock = SUSP.get("lock", {})
+    if lock.get("enabled"):
+        # Ressaltos da trava: mesmo assento com porca, sem guias, para o parafuso radial que vem da pista.
+        for i, az in enumerate(lock["azimuths_deg"]):
+            solids, cut = seat_features(f"stage_lock_{i}", az, lay["z_bot"], rim["z_range"][1], face=lock["boss_face_radius"], rails=False)
+            parts.extend(solids)
+            cutters.extend(cut)
+    zc = (rim["z_range"][0] + rim["z_range"][1]) / 2
+    for i, az in enumerate(st["azimuths_deg"]):
+        r0 = rim["outer_radius"] - 1.0
+        parts.append(cube_polar(f"stage_lug_{i}", (st["lug_tip_radius"] - r0, st["lug_width"], rim["z_range"][1] - rim["z_range"][0]), (r0 + st["lug_tip_radius"]) / 2, az, zc))
+    cc = SUSP.get("cable_channel", {})
+    z_flange = top - q["flange_thickness"]
+    if cc.get("enabled"):
+        # Calha em C para os fios do motor, por fora da torre (o cabo sai pela lateral do motor).
+        r0 = q["tower_od"] / 2 - 1.0
+        parts.append(cube_polar("cable_channel", (cc["outer_radius"] - r0, cc["width"], z_flange + 0.2 - zt), (r0 + cc["outer_radius"]) / 2, cc["azimuth_deg"], (zt + z_flange + 0.2) / 2 - 0.1))
+        cutters.append(cube_polar("cable_channel_void", (cc["inner_outer_radius"] - cc["inner_radius"], cc["inner_width"], z_flange - zt), (cc["inner_radius"] + cc["inner_outer_radius"]) / 2, cc["azimuth_deg"], (zt + z_flange) / 2))
+        cutters.append(cube_polar("cable_channel_slot", (q["flange_diameter"] / 2 + 1.0 - cc["inner_outer_radius"] + 0.5, cc["slot_width"], z_flange - zt), (cc["inner_outer_radius"] - 0.5 + q["flange_diameter"] / 2 + 1.0) / 2, cc["azimuth_deg"], (zt + z_flange) / 2))
+    hk = SUSP.get("cable_hooks", {})
+    if hk.get("enabled"):
+        parts.extend(build_cable_hooks(hk, q["tower_od"] / 2))
+    od = SUSP.get("oil_damper", {})
+    if od.get("enabled"):
+        # Pás do amortecedor: coluna que nasce na mesa e ponte até o aro (L invertido).
+        pd = od["paddle"]
+        z0, z1 = rim["z_range"]
+        for i, az in enumerate(od["azimuths_deg"]):
+            parts.append(cube_polar(f"damper_paddle_{i}", (pd["thickness"], pd["width"], z1 - z0), pd["inner_radius"] + pd["thickness"] / 2, az, (z0 + z1) / 2))
+            # Ponte da coluna até a face INTERNA do aro (pá pendurada para dentro).
+            r0 = pd["inner_radius"]
+            r1 = rim["inner_radius"] + 1.0
+            parts.append(cube_polar(f"damper_arm_{i}", (r1 - r0, pd["width"], pd["arm_z"][1] - pd["arm_z"][0]), (r0 + r1) / 2, az, sum(pd["arm_z"]) / 2))
+    stage = union_all(parts, "palco_torre")
+
+    bore_r = q["tower_od"] / 2 - q["tower_wall"]
+    if bore_r > 0.5:
+        bore_z0 = SUSP["tower_bore_start_z"]
+        cutters.append(cylinder("tower_bore", bore_r, top - bore_z0 + 1.0, (0.0, 0.0, (bore_z0 + top) / 2 + 0.5)))
+    ww = SUSP["tower_wire_window"]
+    if ww.get("enabled", True):
+        r_w0, r_w1 = bore_r - 2.0, q["tower_od"] / 2 + 4.0
+        cutters.append(cube_polar("tower_wire_window", (r_w1 - r_w0, ww["width"], ww["z_range"][1] - ww["z_range"][0]), (r_w0 + r_w1) / 2, ww["azimuth_deg"], (ww["z_range"][0] + ww["z_range"][1]) / 2))
+    h_z0 = top - q["flange_thickness"] - 1.0
+    for i in range(4):
+        x, y = polar(q["flange_hole_pcd"] / 2, q["flange_hole_angle_offset_deg"] + i * 90.0)
+        cutters.append(cylinder(f"flange_hole_{i}", q["flange_hole_diameter"] / 2, top + 1.0 - h_z0, (x, y, (h_z0 + top + 1.0) / 2)))
+    fmr = q.get("flange_motor_recess", {"enabled": False})
+    if fmr.get("enabled"):
+        cutters.append(cylinder("flange_motor_head_recess", fmr["diameter"] / 2, fmr["depth"] + 1.0, (0.0, 0.0, top - fmr["depth"] / 2 + 0.5)))
+    stage = subtract_each(stage, cutters, "stage_opening")
+    stage.name = "05_palco_torre"
+    return stage
+
+
+def build_suspension_frame() -> bpy.types.Object:
+    """Base fixa: anel da pista, casca cônica, anel superior com os assentos e batentes com bolso de EVA.
+
+    Modelada na posição de uso (pista em Z = 0). Imprime INVERTIDA, com o teto na
+    mesa: todos os balanços ficam em 45° ou menos e as janelas viram pontes de 14 mm.
+    """
+    q = P["base_tower"]
+    lay = suspension_layout()
+    sh, hr, st = SUSP["shell"], SUSP["hanger_ring"], SUSP["stops"]
+    r_out = q["footprint_diameter"] / 2
+    r_in = q["outer_ring_inner_diameter"] / 2
+    h = q["outer_ring_height"]
+    zc, zt = sh["chamfer_top_z"], hr["top_z"]
+    r_cone_bot = r_in + sh["wall"]
+    r_cone_top = sh["top_outer_radius"]
+    track = cylinder("frame_track", r_out, h + 0.1, (0.0, 0.0, h / 2 - 0.05))
+    chamfer = frustum("frame_chamfer", r_out, r_cone_bot, h - 0.05, zc)
+    cone = frustum("frame_cone", r_cone_bot, r_cone_top, zc - 0.05, zt)
+    shell = union_all([track, chamfer, cone], "frame_shell")
+    z_roof = zt - sh["roof_thickness"]
+    r_cav_top = r_in + (r_cone_top - sh["wall"] - r_in) * (z_roof - zc) / (zt - zc)
+    shell = subtract_each(shell, [
+        cylinder("frame_cavity_low", r_in, zc + 1.0, (0.0, 0.0, zc / 2 - 0.5)),
+        frustum("frame_cavity_cone", r_in, r_cav_top, zc - 0.05, z_roof),
+        cylinder("frame_roof_opening", hr["inner_radius"], sh["roof_thickness"] + 1.0, (0.0, 0.0, zt - sh["roof_thickness"] / 2)),
+    ], "frame_cavity")
+    parts = [shell, ring("frame_hanger_ring", hr["outer_radius"], hr["inner_radius"], zt - hr["height"], zt)]
+
+    # Perfil da casca, para enterrar na parede tudo o que é prisma plano encostado nela.
+    # Um prisma de faces planas tem os cantos mais longe do eixo que o centro
+    # (sqrt(x² + y²)); se o perfil não for seguido, a face plana aflora na casca
+    # (retângulo dos batentes) ou a aresta interna fica de pé fora do cone
+    # (espigão e entalhe em V das mãos-francesas) — relato de 12/11/2026.
+    def outer_r(z: float) -> float:
+        if z <= h:
+            return r_out
+        if z <= zc:
+            return r_out + (r_cone_bot - r_out) * (z - h) / (zc - h)
+        return r_cone_bot + (r_cone_top - r_cone_bot) * (z - zc) / (zt - zc)
+
+    def inner_r(z: float) -> float:
+        return r_in if z <= zc else r_in + (r_cav_top - r_in) * (z - zc) / (z_roof - zc)
+
+    def buried_x(z: float, half_w: float, margin: float) -> float:
+        """Raio local (no eixo do prisma) que põe o canto a `margin` para dentro da face externa."""
+        return math.sqrt((outer_r(z) - margin) ** 2 - half_w ** 2)
+
+    def meet_profile(p0: tuple[float, float], p1: tuple[float, float], half_w: float, margin: float) -> tuple[float, float]:
+        """Ponto do segmento p0→p1 (p0 fora, p1 dentro) onde o canto cruza a casca recuada de `margin`."""
+        def outside(t: float) -> bool:
+            x, z = p0[0] + t * (p1[0] - p0[0]), p0[1] + t * (p1[1] - p0[1])
+            return math.hypot(x, half_w) > outer_r(z) - margin
+        if not outside(0.0) or outside(1.0):
+            raise ValueError("Base fixa: segmento não cruza o perfil da casca")
+        lo, hi = 0.0, 1.0
+        for _ in range(60):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if outside(mid) else (lo, mid)
+        return (p0[0] + hi * (p1[0] - p0[0]), p0[1] + hi * (p1[1] - p0[1]))
+
+    bury = SUSP["shell"].get("bury_margin", 0.6)
+    cutters: list[bpy.types.Object] = []
+    for i, az in enumerate(lay["azimuths"]):
+        solids, cut = seat_features(f"frame_seat_{i}", az, lay["z_top"], zt)
+        parts.extend(solids)
+        cutters.extend(cut)
+        # Rampa de entrada sob o calço: o bloco sobe por baixo sem topar na aresta.
+        li = SUSP["seat"]["lead_in"]
+        ramp = mesh_prism_y(f"frame_seat_ramp_{i}", [(lay["face_r"] - li, lay["z_top"][0] - li), (lay["face_r"], lay["z_top"][0] + 0.1), (lay["face_r"] - li, lay["z_top"][0] + 0.1)], -SUSP["seat"]["width"] / 2, SUSP["seat"]["width"] / 2)
+        parts.append(rotate_about_z(ramp, az))
+        zb_mid = sum(lay["z_bot"]) / 2
+        cutters.append(cylinder_radial(f"frame_access_{i}", sh["access_hole_diameter"] / 2, r_in - 3.0, r_out + 2.0, az, zb_mid))
+        # A janela começa DEPOIS das guias; entre a face e o fim das guias só o canal do bloco é aberto
+        # (a janela larga começando na face apagava as guias de cima — reverificação de 11/11/2026).
+        seat = SUSP["seat"]
+        r_rail = lay["face_r"] + seat["rail_proud"]
+        r1 = sh["window_outer_radius"]
+        zw = (sh["window_bottom_z"] + zt + 1.0) / 2
+        hw = zt + 1.0 - sh["window_bottom_z"]
+        cutters.append(cube_polar(f"frame_window_{i}", (r1 - r_rail, sh["window_width"], hw), (r_rail + r1) / 2, az, zw))
+        channel = SUSP["block"]["width"] + 2 * seat["block_side_clearance"]
+        cutters.append(cube_polar(f"frame_window_channel_{i}", (seat["rail_proud"] + 0.2, channel, hw), lay["face_r"] + seat["rail_proud"] / 2 + 0.05, az, zw))
+
+    ct = q["clamp_tabs"]
+    if ct["enabled"]:
+        r0, r1 = r_out - 1.0, r_out + ct["radial_length"]
+        gh = SUSP["clamp_tab_gusset_height"]
+        for i in range(ct["count"]):
+            az = ct["angle_offset_deg"] + i * 360.0 / ct["count"]
+            parts.append(cube_polar(f"clamp_tab_{i}", (r1 - r0, ct["width"], h + 0.1), (r0 + r1) / 2, az, h / 2 - 0.05))
+            # Duas mãos-francesas nas bordas da aba: apoio a 45° na impressão invertida,
+            # deixando livre a região do furo para a cabeça do parafuso ou o grampo.
+            for k, (y0, y1) in enumerate(((-ct["width"] / 2, -ct["width"] / 2 + 4.0), (ct["width"] / 2 - 4.0, ct["width"] / 2))):
+                rw = r_in + 0.3  # raiz enterrada na casca
+                # Aresta de cima a 45° até entrar na casca; dali a raiz desce pelo meio da parede.
+                # Antes a raiz era uma aresta vertical em rw até Z = h + gh + (r0 - rw): acima de
+                # Z ≈ 23 o cone recua para dentro de rw e a raiz ficava de pé fora da casca.
+                p_out = (r1 - 0.3, h - 0.1)
+                apex = (rw, h + gh + (r0 - rw))
+                deep = (p_out[0] + 2.0 * (apex[0] - p_out[0]), p_out[1] + 2.0 * (apex[1] - p_out[1]))
+                xm, zm = meet_profile(p_out, deep, ct["width"] / 2, bury)
+                if zm <= zc:
+                    raise ValueError("Base fixa: mão-francesa entra na casca abaixo do chanfro")
+                x_mid = (inner_r(zm) + outer_r(zm)) / 2 - 0.2
+                web = mesh_prism_y(f"clamp_tab_web_{i}_{k}", [(rw, h - 2.0), (r1 - 0.3, h - 2.0), p_out, (xm, zm), (x_mid, zm), (rw, zc)], y0, y1)
+                parts.append(rotate_about_z(web, az))
+            x, y = polar(ct["hole_radius"], az)
+            cutters.append(cylinder(f"clamp_tab_hole_{i}", ct["hole_diameter"] / 2, h + 0.6, (x, y, h / 2)))
+
+    eva = st["eva"]
+    for i, az in enumerate(st["azimuths_deg"]):
+        r_a, r_b = st["cheek_inner_radius"], st["block_outer_radius"]
+        low = st["block_low_z"]
+        # Face externa do bloco segue o chanfro e o cone por dentro da parede (cantos em ±block_width/2
+        # a `bury` da face externa). Antes era plana em r_b até zc e o teto a 45° terminava em r_b - 2,5:
+        # os cantos aforavam 0,1 a 0,5 mm na casca e apareciam como um retângulo plano.
+        hw_b = st["block_width"] / 2
+        z_knee = h + (r_out - (math.hypot(r_b, hw_b) + bury)) / (r_out - r_cone_bot) * (zc - h)
+        z_knee = min(max(z_knee, h), zc)
+        top_far = (r_b + 20.0, low + (r_b + 20.0 - r_a))
+        x_top, z_top = meet_profile(top_far, (r_a, low), hw_b, bury)
+        if z_top <= zc:
+            raise ValueError("Base fixa: teto do batente encontra a casca abaixo do chanfro")
+        outline = [(r_a, -0.1), (r_b, -0.1), (r_b, z_knee), (buried_x(zc, hw_b, bury), zc)]
+        outline += [(buried_x(z, hw_b, bury), z) for z in (zc + 0.5 * (z_top - zc),) ]
+        outline += [(x_top, z_top), (r_a, low)]
+        wedge = mesh_prism_y(f"frame_stop_{i}", outline, -hw_b, hw_b)
+        parts.append(rotate_about_z(wedge, az))
+        hard = lay["hard_stop_radius"]
+        # O rasgo termina lip_gap acima da orelha: o próprio batente vira limitador de inclinação.
+        z_roof_slot = SUSP["rim"]["z_range"][1] + st["lip_gap"]
+        cutters.append(cube_polar(f"frame_stop_slot_{i}", (hard - r_a + 0.5, lay["slot_width"], z_roof_slot + 5.0), (hard + r_a - 0.5) / 2, az, (z_roof_slot - 5.0) / 2))
+        js = st.get("jack_screw", {})
+        if js.get("enabled"):
+            jx, jy = polar(js["radius"], az)
+            z_under = SUSP["rim"]["z_range"][1]
+            cutters.append(cylinder(f"frame_jack_pilot_{i}", js["pilot_diameter"] / 2, 30.0, (jx, jy, z_under + 15.0), vertices=16))
+            cutters.append(cylinder(f"frame_jack_access_{i}", js["access_diameter"] / 2, zt + 1.0 - 36.0, (jx, jy, (36.0 + zt + 1.0) / 2), vertices=24))
+        depth = lay["pocket_depth"]
+        cutters.append(cube_polar(f"frame_eva_pocket_{i}", (depth + 0.2, lay["slot_width"], eva["pad_height"]), hard + depth / 2 - 0.1, az, eva["pocket_z0"] + eva["pad_height"] / 2))
+
+    lock = SUSP.get("lock", {})
+    if lock.get("enabled"):
+        zl = sum(lay["z_bot"]) / 2
+        for i, az in enumerate(lock["azimuths_deg"]):
+            cutters.append(cylinder_radial(f"frame_lock_hole_{i}", lock["hole_diameter"] / 2, r_in - 3.0, r_out + 2.0, az, zl))
+            cutters.append(cylinder_radial(f"frame_lock_counterbore_{i}", lock["counterbore_diameter"] / 2, lock["counterbore_from_radius"], r_out + 2.0, az, zl))
+    ce = SUSP.get("cable_exit", {})
+    if ce.get("enabled"):
+        cutters.append(cube_polar("frame_cable_exit", (r_out + 2.0 - (r_in - 3.0), ce["width"], ce["height"] + 1.0), (r_out + 2.0 + r_in - 3.0) / 2, ce["azimuth_deg"], (ce["height"] - 1.0) / 2))
+    frame = union_all(parts, "base_fixa")
+    frame = boolean(frame, cube("frame_bottom_trim", (q["footprint_diameter"] + 80.0, q["footprint_diameter"] + 80.0, 20.0), (0.0, 0.0, -9.9999)), "DIFFERENCE", "frame_flatten_bottom")
+    if containment_geometry()["enabled"]:
+        raise ValueError("Variante suspensa: o chanfro da casca cobre a pista; desligue base_tower.containment_seat.enabled")
+    frame = subtract_each(frame, cutters, "frame_feature")
+    frame.name = "04_base_fixa"
+    return frame
+
+
+def build_flexure(side: float, name: str) -> bpy.types.Object:
+    """Haste flexível com um bloco em cada ponta, na posição de uso do azimute 0.
+
+    A face de assento (x = raio do assento) é a face que vai na mesa: a haste de
+    seção quadrada sai nas primeiras camadas, com os fios ao longo do comprimento.
+    """
+    lay = suspension_layout()
+    blk, rod = SUSP["block"], SUSP["rod"]
+    face = lay["face_r"]
+    parts = []
+    for tag, (z0, z1) in (("bot", lay["z_bot"]), ("top", lay["z_top"])):
+        parts.append(box_xyz(f"flexure_{name}_block_{tag}", (face, face + blk["thickness"]), (-blk["width"] / 2, blk["width"] / 2), (z0, z1)))
+    zb, zt = lay["z_bot"][1], lay["z_top"][0]
+    parts.append(box_xyz(f"flexure_{name}_rod", (face, face + side), (-side / 2, side / 2), (zb - 0.2, zt + 0.2)))
+    bl = rod["blend_length"]
+    half = blk["width"] / 2
+    parts.append(mesh_prism_x(f"flexure_{name}_blend_bot", [(-half, zb - 0.1), (half, zb - 0.1), (side / 2, zb + bl), (-side / 2, zb + bl)], face, face + side))
+    parts.append(mesh_prism_x(f"flexure_{name}_blend_top", [(-side / 2, zt - bl), (side / 2, zt - bl), (half, zt + 0.1), (-half, zt + 0.1)], face, face + side))
+    flexure = union_all(parts, f"haste_{name}")
+    cutters = [cylinder_radial(f"flexure_{name}_hole_{tag}", blk["hole_diameter"] / 2, face - 0.5, face + blk["thickness"] + 0.5, 0.0, (z0 + z1) / 2)
+               for tag, (z0, z1) in (("bot", lay["z_bot"]), ("top", lay["z_top"]))]
+    flexure = subtract_each(flexure, cutters, "flexure_hole")
+    flexure.name = f"08_haste_flexivel_{name}"
+    return flexure
+
+
+def build_lock_spacer() -> bpy.types.Object:
+    """Espaçador da trava: tubo entre a pista da base fixa e o ressalto do aro do palco."""
+    lock = SUSP["lock"]
+    length = P["base_tower"]["outer_ring_inner_diameter"] / 2 - lock["boss_face_radius"] - lock["spacer_clearance"]
+    del length
+    # Bucha com flange: entra por fora pela pista, a flange assenta no rebaixo e o corpo encosta no ressalto do aro.
+    body_len = lock["counterbore_from_radius"] - lock["boss_face_radius"] - lock["spacer_clearance"]
+    ft = lock["flange_thickness"]
+    flange = cylinder("lock_bush_flange", lock["flange_diameter"] / 2, ft, (0.0, 0.0, ft / 2), vertices=48)
+    body = cylinder("lock_bush_body", lock["spacer_od"] / 2, body_len + 0.1, (0.0, 0.0, ft + body_len / 2 - 0.05), vertices=48)
+    spacer = boolean(flange, body, "UNION", "lock_bush_union")
+    spacer = boolean(spacer, cylinder("lock_bush_bore", lock["screw_hole_diameter"] / 2, ft + body_len + 2.0, (0.0, 0.0, (ft + body_len) / 2), vertices=32), "DIFFERENCE", "lock_bush_bore")
+    spacer.name = "09_bucha_trava"
+    return spacer
+
+
+def build_oil_tray() -> bpy.types.Object:
+    """Bandeja do amortecedor viscoso: anel fino com quatro cubas e quatro linguetas de localização.
+
+    Fica na mesa, sob o palco (que flutua a 4 mm). As linguetas entram por baixo nos
+    rasgos dos batentes e encostam no fundo deles: centram a bandeja e a impedem de girar.
+    """
+    od = SUSP["oil_damper"]
+    cup, tray = od["cup"], od["tray"]
+    c0, c1 = cup["cavity_radial"]
+    hw, w, fl = cup["cavity_half_width"], cup["wall"], cup["floor"]
+    parts = [ring("oil_tray_ring", c1 + w, c0 - w, 0.0, fl)]
+    cutters = []
+    r_end = suspension_layout()["hard_stop_radius"] - tray["tongue_end_clearance"]
+    for i, az in enumerate(od["azimuths_deg"]):
+        # Setores de anel: nenhum canto passa do raio externo da cuba.
+        ha = cup["cavity_half_angle_deg"]
+        wa = math.degrees(w / c0)
+        parts.append(annular_sector(f"oil_cup_body_{i}", c0 - w, c1 + w, az - ha - wa, az + ha + wa, fl - 0.1, cup["wall_top_z"]))
+        cutters.append(annular_sector(f"oil_cup_cavity_{i}", c0, c1, az - ha, az + ha, fl, cup["wall_top_z"] + 1.0))
+        parts.append(cube_polar(f"oil_tray_tongue_{i}", (r_end - c1, tray["tongue_width"], fl), (r_end + c1) / 2, az, fl / 2))
+    part = subtract_each(union_all(parts, "bandeja_amortecedor"), cutters, "oil_tray_cavity")
+    part.name = "10_bandeja_amortecedor"
+    return part
+
+
+def measure_suspension(frame: bpy.types.Object, stage: bpy.types.Object) -> dict:
+    """Curso, folgas e assentos medidos nas malhas finais da base fixa e do palco."""
+    lay = suspension_layout()
+    st, eva, hr = SUSP["stops"], SUSP["stops"]["eva"], SUSP["hanger_ring"]
+    fr = MeshProbe(triangles_of(frame))
+    sg = MeshProbe(triangles_of(stage))
+    out: dict = {}
+    az = st["azimuths_deg"][0]
+    dx, dy = polar(1.0, az)
+    tx, ty = -dy, dx
+    z_lug = sum(SUSP["rim"]["z_range"]) / 2
+    r_start = SUSP["rim"]["outer_radius"] + 1.0
+    # Orelha do palco: último material ao longo do raio do batente.
+    runs = sg.solid_runs((dx * 100.0, dy * 100.0, z_lug), (dx, dy, 0.0), 40.0)
+    lug_tip = 100.0 + runs[-1][1] if runs else None
+    # Batente rígido: primeiro material acima do bolso de EVA; fundo do bolso na cota da orelha.
+    # Sondado NA ALTURA DA ORELHA, acima do bolso: é ali que a orelha encosta sem EVA.
+    z_hard = SUSP["rim"]["z_range"][1] - 1.0
+    if not eva["pocket_z0"] + eva["pad_height"] < z_hard:
+        raise ValueError("Bolso de EVA cobre a orelha inteira: o batente rígido ficaria inalcançável")
+    runs = fr.solid_runs((dx * r_start, dy * r_start, z_hard), (dx, dy, 0.0), 30.0)
+    hard = r_start + runs[0][0] if runs else None
+    z_pocket = eva["pocket_z0"] + eva["pad_height"] / 2
+    runs = fr.solid_runs((dx * r_start, dy * r_start, z_pocket), (dx, dy, 0.0), 30.0)
+    pocket = r_start + runs[0][0] if runs else None
+    # Limitador de inclinação: teto do rasgo acima da orelha.
+    r_lip = st["lug_tip_radius"] - 2.0
+    # Deslocado 2,5 mm na tangente: no centro fica o furo do parafuso de trava vertical.
+    runs = fr.solid_runs((dx * r_lip + tx * 2.5, dy * r_lip + ty * 2.5, SUSP["rim"]["z_range"][1] + 0.01), (0.0, 0.0, 1.0), 20.0)
+    out["tilt_lip_gap_mm"] = round(runs[0][0] + 0.01, 3) if runs else None
+    # Pior eixo: a 45° dos batentes, onde o braço de alavanca das orelhas cai para r·cos 45°.
+    out["tilt_cap_deg"] = round(math.degrees(math.atan((runs[0][0] + 0.01) / (st["lug_tip_radius"] * math.cos(math.radians(45.0))))), 3) if runs else None
+    out["cheek_overlap_at_full_travel_mm"] = round(st["lug_tip_radius"] - st["travel"] - st["cheek_inner_radius"], 3)
+    r_mid = st["lug_tip_radius"] - 2.0
+    runs = fr.solid_runs((dx * r_mid, dy * r_mid, z_lug), (tx, ty, 0.0), 20.0)
+    cheek = runs[0][0] if runs else None
+    runs = sg.solid_runs((dx * r_mid - tx * 10.0, dy * r_mid - ty * 10.0, z_lug), (tx, ty, 0.0), 20.0)
+    lug_half = (runs[0][1] - runs[0][0]) / 2 if runs else None
+    out["lug_tip_radius_mm"] = round(lug_tip, 3) if lug_tip is not None else None
+    out["hard_stop_radius_mm"] = round(hard, 3) if hard is not None else None
+    out["eva_pocket_floor_radius_mm"] = round(pocket, 3) if pocket is not None else None
+    if None not in (lug_tip, hard, pocket, cheek, lug_half):
+        out["radial_travel_mm"] = round(hard - lug_tip, 3)
+        out["eva_engage_gap_mm"] = round(pocket - eva["pad_thickness"] - lug_tip, 3)
+        out["tangential_gap_mm"] = round(cheek - lug_half, 3)
+    # Furos dos assentos livres, em cima (base) e em baixo (palco), em todos os azimutes.
+    seat = SUSP["seat"]
+    free_top, free_bot = [], []
+    for a in lay["azimuths"]:
+        ux, uy = polar(1.0, a)
+        r0 = lay["face_r"] - seat["bore_depth"] + 0.6
+        length = seat["bore_depth"] - 1.0
+        free_top.append(fr.is_void((ux * r0, uy * r0, sum(lay["z_top"]) / 2), (ux, uy, 0.0), length))
+        free_bot.append(sg.is_void((ux * r0, uy * r0, sum(lay["z_bot"]) / 2), (ux, uy, 0.0), length))
+    # Canal entre as guias, medido em cima (base fixa) e em baixo (palco), no primeiro azimute.
+    ux, uy = polar(1.0, lay["azimuths"][0])
+    vx, vy = -uy, ux
+    r_ch = lay["face_r"] + seat["rail_proud"] / 2
+    widths = []
+    for probe, z in ((fr, sum(lay["z_top"]) / 2), (sg, sum(lay["z_bot"]) / 2)):
+        halves = []
+        for sign in (1.0, -1.0):
+            runs = probe.solid_runs((ux * r_ch, uy * r_ch, z), (sign * vx, sign * vy, 0.0), 12.0)
+            halves.append(runs[0][0] if runs else None)
+        widths.append(round(halves[0] + halves[1], 3) if None not in halves else None)
+    out["seat_channel_width_top_bottom_mm"] = widths
+    out["frame_seat_bores_free"] = free_top
+    out["stage_seat_bores_free"] = free_bot
+    # Passagem do palco por baixo: maior raio do palco fora das orelhas contra o menor raio dos batentes.
+    out["stage_rim_outer_radius_mm"] = SUSP["rim"]["outer_radius"]
+    out["frame_top_z_mm"] = round(float(fr.hi[2]), 3)
+    out["frame_extent_xy_mm"] = [round(float(fr.hi[0] - fr.lo[0]), 3), round(float(fr.hi[1] - fr.lo[1]), 3)]
+    ct = P["base_tower"]["clamp_tabs"]
+    if ct["enabled"]:
+        cx, cy = polar(ct["hole_radius"], ct["angle_offset_deg"])
+        out["clamp_tab_hole_free"] = fr.is_void((cx + 0.2, cy + 0.3, -1.0), (0, 0, 1), P["base_tower"]["outer_ring_height"] + 2.0)
+    out["frame_winding_scan"] = fr.full_scan(3.0)
+    return out
+
+
+# --------------------------------------------------------------------------
 # 07 — Tampa do cilindro de contenção (fora de escopo; só se enabled)
 # --------------------------------------------------------------------------
 
@@ -1445,13 +2064,11 @@ def build_containment_cap() -> bpy.types.Object:
 # --------------------------------------------------------------------------
 
 def datum_b_z() -> float:
-    bt = P["base_tower"]
-    return bt["central_floor_thickness"] + bt["tower_total_height_from_floor"] + P["motor_plate"]["thickness"] + P["unverified_interfaces"]["motor_stack"]["plate_top_to_datum_b"]
+    return tower_top_z() + P["motor_plate"]["thickness"] + P["unverified_interfaces"]["motor_stack"]["plate_top_to_datum_b"]
 
 
 def plate_top_z() -> float:
-    bt = P["base_tower"]
-    return bt["central_floor_thickness"] + bt["tower_total_height_from_floor"] + P["motor_plate"]["thickness"]
+    return tower_top_z() + P["motor_plate"]["thickness"]
 
 
 def magnet_post_height() -> float:
@@ -1773,14 +2390,14 @@ def measure_base(base: bpy.types.Object) -> dict:
     q = P["base_tower"]
     pr = MeshProbe(triangles_of(base))
     out: dict = {}
-    tower_top = q["central_floor_thickness"] + q["tower_total_height_from_floor"]
+    tower_top = tower_top_z()
     hx, hy = polar(q["flange_hole_pcd"] / 2, q["flange_hole_angle_offset_deg"])
     runs = pr.solid_runs((hx + 0.2, hy + 0.2, -1.0), (0, 0, 1), tower_top + 2.0)
     first = _first_run(runs)
     out["floor_under_flange_bolt_solid_mm"] = [round(first[0] - 1.0, 3), round(first[1] - 1.0, 3)] if first else None
     out["upper_flange_hole_free"] = pr.is_void((hx + 0.2, hy + 0.2, tower_top - q["flange_thickness"] - 0.5), (0, 0, 1), q["flange_thickness"] + 1.0)
     ct = q["clamp_tabs"]
-    if ct["enabled"]:
+    if ct["enabled"] and not SUSPENDED:
         tx, ty = polar(ct["hole_radius"], ct["angle_offset_deg"])
         out["clamp_tab_hole_free"] = pr.is_void((tx + 0.2, ty + 0.3, -1.0), (0, 0, 1), q["outer_ring_height"] + 2.0)
     # Revisão 08, item 3: rebaixo para as cabeças dos M3 do motor, medido na
@@ -1949,6 +2566,19 @@ def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, rend
 
     base = duplicate(parts["base_tower"], "MONTAGEM_base_torre")
     assign_material(base, abs_mat)
+    if SUSPENDED:
+        frame_mat = material("PETG base fixa", (0.20, 0.22, 0.26, 1.0))
+        rod_mat = material("Hastes", (0.85, 0.45, 0.10, 1.0))
+        frame = duplicate(parts["base_frame"], "MONTAGEM_base_fixa")
+        assign_material(frame, frame_mat)
+        chosen = next((n for n, side in SUSP["rod"]["variants"].items() if abs(side - SUSP["rod"]["side"]) < 1e-9), next(iter(SUSP["rod"]["variants"])))
+        for i, az in enumerate(suspension_layout()["azimuths"]):
+            rod = duplicate(parts[f"flexure_{chosen}"], f"MONTAGEM_haste_{i + 1}")
+            rod.rotation_euler[2] = math.radians(az)
+            assign_material(rod, rod_mat)
+        if "oil_cup" in parts:
+            tray = duplicate(parts["oil_cup"], "MONTAGEM_bandeja_amortecedor")
+            assign_material(tray, rod_mat)
     plate = duplicate(parts["motor_plate"], "MONTAGEM_suporte_motor_ref")
     plate.location.z = plate_top_z() - P["motor_plate"]["thickness"]
     assign_material(plate, metal_mat)
@@ -1975,23 +2605,23 @@ def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, rend
 
     # Referências visuais de hardware (não impressas), com as cotas medidas.
     motor = ui["motor"]
-    motor_ref = cylinder("MONTAGEM_motor_A2212_ref", motor["body_diameter"] / 2, motor["body_height"], (0.0, 0.0, plate_top_z() + motor["body_height"] / 2))
+    motor_ref = cylinder("MONTAGEM_motor_%s_ref" % motor["model"].split()[0], motor["body_diameter"] / 2, motor["body_height"], (0.0, 0.0, plate_top_z() + motor["body_height"] / 2))
     assign_material(motor_ref, metal_mat)
     shaft = ui["shaft"]
     bell_top = plate_top_z() + ui["motor_stack"]["plate_top_to_bell_face"]
     datum_a = rotor_z - sp["hub_thickness"]
     # Eixo conforme o desenho do datasheet: ressalto, colar Ø8 e rosca M6.
-    boss_ref = cylinder("MONTAGEM_eixo_ressalto_ref", shaft["boss_diameter"] / 2, shaft["boss_height"], (0.0, 0.0, bell_top + shaft["boss_height"] / 2))
+    boss_ref = cylinder("MONTAGEM_%s_ref" % shaft.get("boss_label", "eixo_ressalto"), shaft["boss_diameter"] / 2, shaft["boss_height"], (0.0, 0.0, bell_top + shaft["boss_height"] / 2))
     assign_material(boss_ref, metal_mat)
-    collar_ref = cylinder("MONTAGEM_eixo_colar_ref", shaft["collar_diameter"] / 2, shaft["collar_height"], (0.0, 0.0, bell_top + shaft["boss_height"] + shaft["collar_height"] / 2))
+    collar_ref = cylinder("MONTAGEM_%s_ref" % shaft.get("collar_label", "eixo_colar"), shaft["collar_diameter"] / 2, shaft["collar_height"], (0.0, 0.0, bell_top + shaft["boss_height"] + shaft["collar_height"] / 2))
     assign_material(collar_ref, metal_mat)
-    thread_ref = cylinder("MONTAGEM_eixo_rosca_M6_ref", 3.0, shaft["thread_length"], (0.0, 0.0, bell_top + shaft["collar_top_above_bell"] + shaft["thread_length"] / 2))
+    thread_ref = cylinder("MONTAGEM_eixo_rosca_%s_ref" % shaft["thread"], shaft.get("thread_diameter", 6.0) / 2, shaft["thread_length"], (0.0, 0.0, bell_top + shaft["collar_top_above_bell"] + shaft["thread_length"] / 2))
     assign_material(thread_ref, metal_mat)
     nut = ui["m6_nut"]
     washer_z0 = rotor_z - sp["counterbore_depth"]
     washer = ring("MONTAGEM_arruela_ref", nut["washer_od"] / 2, nut["washer_id"] / 2, washer_z0, washer_z0 + nut["washer_thickness"])
     assign_material(washer, metal_mat)
-    nut_ref = cylinder("MONTAGEM_porca_fina_M6_ref", nut["across_flats"] / math.sqrt(3.0), nut["height"], (0.0, 0.0, washer_z0 + nut["washer_thickness"] + nut["height"] / 2), vertices=6)
+    nut_ref = cylinder("MONTAGEM_%s_ref" % nut.get("ref_label", "porca_fina_" + shaft["thread"]), nut["across_flats"] / math.sqrt(3.0), nut["height"], (0.0, 0.0, washer_z0 + nut["washer_thickness"] + nut["height"] / 2), vertices=6)
     assign_material(nut_ref, metal_mat)
     # Envelopes dos componentes da baia (layout D2), na cor de referência.
     comp_mat = material("Eletrônica (envelope)", (0.78, 0.52, 0.10, 1.0))
@@ -2003,6 +2633,8 @@ def assemble_and_save(parts: dict[str, bpy.types.Object], output_dir: Path, rend
         if c.get("mount") == "wall_slot":
             depth, width, height = c["size_xyz"]
             ref = cube(f"MONTAGEM_baia_{c['id']}", (depth, width, height), (cx, cy, rotor_z + (z0 + z1) / 2), rotation_z_deg=c["wall_azimuth_deg"])
+        elif "polygon_xy" in c:
+            ref = mesh_prism_z(f"MONTAGEM_baia_{c['id']}", [tuple(pt) for pt in c["polygon_xy"]], rotor_z + z0, rotor_z + z1)
         elif "diameter" in c:
             ref = cylinder(f"MONTAGEM_baia_{c['id']}", c["diameter"] / 2, z1 - z0, (cx, cy, rotor_z + (z0 + z1) / 2), vertices=32)
         else:
@@ -2141,8 +2773,12 @@ def compute_report(stats: dict, measured: dict, assembly: dict, physics: dict) -
     # Ponta do eixo acima do topo do cubo, nas duas leituras do desenho cotado
     # (14 e 12 mm sobre a campânula). É contra ela que o fundo do pack tem folga.
     sh = P["unverified_interfaces"]["shaft"]
-    shaft_tip_hi = sh["protrusion_above_bell"] - sp["hub_thickness"]
-    shaft_tip_lo = sh.get("protrusion_alt_mm", sh["protrusion_above_bell"]) - sp["hub_thickness"]
+    # Altura do fundo do cubo sobre a campânula: 0 no A2212 (cubo na campânula); 5 no
+    # AX-2810Q, cujo cubo assenta na base serrilhada do adaptador de hélice.
+    ms = P["unverified_interfaces"]["motor_stack"]
+    seat = ms["plate_top_to_datum_b"] - ms["plate_top_to_bell_face"] - sp["hub_thickness"]
+    shaft_tip_hi = sh["protrusion_above_bell"] - seat - sp["hub_thickness"]
+    shaft_tip_lo = sh.get("protrusion_alt_mm", sh["protrusion_above_bell"]) - seat - sp["hub_thickness"]
 
     deflections = [case["tip_deflection_mm"] for case in physics["flexure"]["acceptance_limit_cases"]]
     deflection_worst = max(deflections)
@@ -2304,6 +2940,9 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     b = q["boss"]
     sp = P["spider"]
     checks = []
+    # Lido de P aqui dentro: os testes executam esta função isolada, só com P no escopo.
+    susp = P["base_tower"].get("suspension") or {}
+    suspended = bool(susp.get("enabled"))
 
     def add(name, value, criterion, ok, note=""):
         checks.append({"criterio": name, "valor": value, "requisito": criterion, "passa": bool(ok), "nota": note})
@@ -2436,7 +3075,8 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     )
     # -- ventilação, arrasto --
     add("Área livre de ventilação do cubo", rs["cooling_free_area_mm2"], "≥ 300 mm², sem abrir a baia", rs["cooling_free_area_mm2"] >= 300.0 and rs["bay_wall_to_slot_mm"] >= 0.0, "3 rasgos de 60° fora da baia (r %.1f–%.1f)" % (sp["cooling_slots"]["inner_radius"], sp["cooling_slots"]["outer_radius"]))
-    add("Área livre de ventilação da base", rb["lateral_vent_area_mm2"], "≥ 600 mm², na lateral", rb["lateral_vent_area_mm2"] >= 600.0, "8 janelas na parede lateral da baia")
+    if not suspended:
+        add("Área livre de ventilação da base", rb["lateral_vent_area_mm2"], "≥ 600 mm², na lateral", rb["lateral_vent_area_mm2"] >= 600.0, "8 janelas na parede lateral da baia")
     a_cd_hi = report["boss_drag"]["a_cd_range_mm2"][1]
     add("A × Cd do boss carenado", report["boss_drag"]["a_cd_range_mm2"], "≤ %.1f mm²" % P["drag_estimate"]["target_a_cd_mm2"], a_cd_hi <= P["drag_estimate"]["target_a_cd_mm2"], "estimativa por razão de finura, não CFD")
 
@@ -2457,7 +3097,8 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
     base_xy = [stats["base_tower"]["dimensions_mm"][i] + 2 * P["fdm_rules"]["brim_mm"] for i in (0, 1)]
     add("Base + brim cabe na mesa", base_xy, "≤ %s mm (X e Y)" % bed, all(v <= limit for v, limit in zip(base_xy, bed)), "envelope medido em cada eixo, com o brim configurado")
     fl = rb["floor_under_flange_bolt_solid_mm"]
-    add("Piso da baia íntegro sob os furos da flange", fl, "sólido de Z = 0 até a flange inferior (12)", fl is not None and abs(fl[0]) < 0.05 and fl[1] >= P["base_tower"]["central_floor_thickness"] + P["base_tower"]["flange_thickness"] - 0.05, "06-PENDENCIAS B3; furos só na flange superior: %s" % rb["upper_flange_hole_free"])
+    if not suspended:
+        add("Piso da baia íntegro sob os furos da flange", fl, "sólido de Z = 0 até a flange inferior (12)", fl is not None and abs(fl[0]) < 0.05 and fl[1] >= P["base_tower"]["central_floor_thickness"] + P["base_tower"]["flange_thickness"] - 0.05, "06-PENDENCIAS B3; furos só na flange superior: %s" % rb["upper_flange_hole_free"])
     # NOVO (revisão de 03/09, item 3). As cabeças dos M3 do motor ficam entre a chapa
     # e a flange; sem rebaixo a chapa apoia nelas e o Datum B sai alto.
     rec_d = rb.get("flange_motor_recess_depth_mm")
@@ -2498,6 +3139,45 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
         add("Folga radial rotor → cilindro encomendado", cg["radial_clearance_mm"], "≥ 10 mm após deflexão", cg["radial_clearance_mm"] >= 10.0, "informativo: raio dinâmico %.1f contra Ø int %.0f" % (cg["rotor_dynamic_radius_mm"], cg["cylinder_inner_diameter_mm"]))
         margin = report["assembly"]["containment_vertical_margin_mm"]
         add("Folga vertical topo do rotor → borda do cilindro encomendado", margin, "≥ 10 mm", margin >= 10.0, "informativo: cilindro de %.0f mm apoiado em Z=%.0f" % (cg["cylinder_height_mm"], cg["rest_z_mm"]))
+    if suspended:
+        su = report["suspension"]
+        est = su["estimate"]
+        sq = susp
+        chosen = next(v for v in est["variants"] if abs(v["rod_side_mm"] - est["selected_variant_side_mm"]) < 1e-9)
+        scan = measured["suspension"]["frame_winding_scan"]
+        add("Enrolamento por raios — base fixa", [scan["bad_winding_segments"], scan["thin_solid_segments"]], "0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm", scan["bad_winding_segments"] == 0 and scan["thin_solid_segments"] == 0, "%d raios, passo %.1f mm" % (scan["rays"], scan["pitch_mm"]))
+        for name, m in measured["flexures"].items():
+            scan = m["winding_scan"]
+            add("Enrolamento por raios — haste %s" % name, [scan["bad_winding_segments"], scan["thin_solid_segments"]], "0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm", scan["bad_winding_segments"] == 0 and scan["thin_solid_segments"] == 0, "%d raios, passo %.1f mm" % (scan["rays"], scan["pitch_mm"]))
+        travel = sq["stops"]["travel"]
+        add("Curso radial do palco até o batente impresso", su.get("radial_travel_mm"), "%.1f ±0,1 mm" % travel, num_ok(su.get("radial_travel_mm"), travel - 0.1, travel + 0.1), "medido nas malhas: orelha do palco em r = %s, batente em r = %s" % (su["lug_tip_radius_mm"], su["hard_stop_radius_mm"]))
+        gap = sq["stops"]["eva"]["engage_gap"]
+        add("Calço de EVA entra antes do batente rígido", su.get("eva_engage_gap_mm"), "folga de %.1f ±0,1 mm até o calço de %.0f mm" % (gap, sq["stops"]["eva"]["pad_thickness"]), num_ok(su.get("eva_engage_gap_mm"), gap - 0.1, gap + 0.1), "fundo do bolso medido em r = %s; sem EVA vale só o batente impresso" % su["eva_pocket_floor_radius_mm"])
+        lip = sq["stops"]["lip_gap"]
+        add("Limitador de inclinação sobre as orelhas", su.get("tilt_lip_gap_mm"), "%.1f ±0,1 mm acima da orelha" % lip, num_ok(su.get("tilt_lip_gap_mm"), lip - 0.1, lip + 0.1), "medido na malha; se uma haste flambar ou romper a inclinação para em %s°; sobreposição orelha/batente com o palco todo deslocado: %s mm" % (su.get("tilt_cap_deg"), su.get("cheek_overlap_at_full_travel_mm")))
+        add("Batente de giro (yaw) do palco", su.get("tangential_gap_mm"), "%.1f ±0,1 mm de cada lado da orelha" % sq["stops"]["side_gap"], num_ok(su.get("tangential_gap_mm"), sq["stops"]["side_gap"] - 0.1, sq["stops"]["side_gap"] + 0.1), "medido; limita a torção das hastes na partida")
+        channel = sq["block"]["width"] + 2 * sq["seat"]["block_side_clearance"]
+        add("Guias dos assentos: canal do bloco em cima e em baixo", su.get("seat_channel_width_top_bottom_mm"), "%.1f ±0,15 mm nos dois" % channel, all(num_ok(w, channel - 0.15, channel + 0.15) for w in su.get("seat_channel_width_top_bottom_mm", [None])), "medido nas malhas da base fixa e do palco; bloco de %.0f mm" % sq["block"]["width"])
+        add("Furos M3 dos assentos livres (base fixa e palco)", [sum(su["frame_seat_bores_free"]), sum(su["stage_seat_bores_free"])], "%d em cima e %d em baixo" % (sq["rod"]["count"], sq["rod"]["count"]), all(su["frame_seat_bores_free"]) and all(su["stage_seat_bores_free"]), "raio ao longo do eixo de cada parafuso")
+        clear = report["assembly"]["rotor_z_min_mm"] - su["frame_top_z_mm"]
+        add("Folga vertical painéis → topo da base fixa", round(clear, 2), "≥ 5 mm", clear >= 5.0, "ponta inferior dos painéis em Z = %.1f; topo da base fixa medido em Z = %.1f" % (report["assembly"]["rotor_z_min_mm"], su["frame_top_z_mm"]))
+        frame_xy = [v + 2 * P["fdm_rules"]["brim_mm"] for v in su["frame_extent_xy_mm"]]
+        add("Base fixa + brim cabe na mesa", frame_xy, "≤ %s mm (X e Y)" % bed, all(v <= limit for v, limit in zip(frame_xy, bed)), "imprime invertida, teto na mesa")
+        if su.get("clamp_tab_hole_free") is not None:
+            add("Abas de grampo com furo livre", su["clamp_tab_hole_free"], "livre", su["clamp_tab_hole_free"], "na base fixa")
+        lo_rpm, hi_rpm = est["operating_rpm_range"]
+        add("Translação do palco abaixo da faixa de giro (estimativa)", round(chosen["translation_frequency_hz"], 2), "≤ %.1f Hz (metade de %.0f RPM)" % (lo_rpm / 120.0, lo_rpm), chosen["translation_frequency_hz"] <= lo_rpm / 120.0, "haste de %.1f mm, massa móvel %.2f kg, %.2f N/mm; crítica em %.0f RPM. Não medido" % (chosen["rod_side_mm"], est["moving_mass_kg"], chosen["lateral_stiffness_n_per_mm"], chosen["translation_critical_rpm"]))
+        coupled = chosen["coupled_rocking_tower_frequency_hz"]
+        add("Modo combinado balanço + torre acima de 2× (estimativa)", round(coupled, 1), "≥ %.0f Hz (2 × %.0f RPM, com 10%% de margem)" % (2.2 * hi_rpm / 60.0, hi_rpm), coupled >= 2.2 * hi_rpm / 60.0, "balanço e flexão da torre em série; 3× cruza este modo perto de %.0f RPM: se o ensaio de impacto der menos de 95 Hz, limitar a %.0f RPM" % (coupled * 20.0, coupled * 20.0 * 0.92))
+        add("Balanço (rocking) do palco acima de 1× (estimativa)", round(chosen["rocking_frequency_hz"], 1), "≥ %.0f Hz (1,3 × %.0f RPM)" % (1.3 * hi_rpm / 60.0, hi_rpm), chosen["rocking_frequency_hz"] >= 1.3 * hi_rpm / 60.0, "hastes em série com as aletas; %.3f° de inclinação por 10 N no rotor. Torre acima das aletas: %.0f Hz. Não medido" % (chosen["tilt_deg_per_10n_at_rotor"], est["tower_bending_frequency_hz"]))
+        add("Flambagem das hastes do lado comprimido (estimativa)", round(chosen["rotor_side_force_at_first_buckling_n"], 1), "≥ 25 N de força lateral no rotor (5 g a 100 mm e 1800 RPM dão 17,8 N)", chosen["rotor_side_force_at_first_buckling_n"] >= 25.0, "carga crítica %.1f N por haste (biengastada, sem deslocamento lateral relativo); acima disso vale o limitador de inclinação" % chosen["rod_buckling_load_n"])
+        add("Modo de giro (yaw) do palco — informativo", round(chosen["yaw_frequency_hz"], 1), "registrado; não é excitado pelo desbalanceamento (força passa pelo eixo)", True, "%.0f RPM em 1×, DENTRO da faixa %.0f–%.0f RPM e sem amortecimento: observar no ensaio; travar o palco elimina o modo" % (chosen["yaw_frequency_hz"] * 60.0, lo_rpm, hi_rpm))
+        add("Tensão de flexão da haste no batente (estimativa)", round(chosen["rod_bending_stress_at_stop_mpa"], 1), "≤ 12 MPa", chosen["rod_bending_stress_at_stop_mpa"] <= 12.0, "E = %.0f MPa assumido; tração pelo peso %.2f MPa" % (sq["rod"]["modulus_mpa"], chosen["rod_tension_stress_mpa"]))
+    sections = report["physics"].get("arm_sections")
+    if sections:
+        # Todas as seções entre a raiz e a espiga, não só a raiz: o reforço desloca o ponto fraco.
+        worst = max(sections, key=lambda sec: sec["tilt_cases"][-1]["max_bending_stress_mpa"])
+        add("Braço da aranha: flexão vertical com o eixo inclinado (estimativa)", [round(sec["tilt_cases"][-1]["max_bending_stress_mpa"], 1) for sec in sections], "≤ 12 MPa a %g° em todas as seções (r = %s mm), %.0f RPM, painel de %.0f g" % (worst["tilt_cases"][-1]["tilt_deg"], ", ".join("%g" % sec["cut_radius_mm"] for sec in sections), worst["rpm"], worst["panel_mass_g"]), worst["tilt_cases"][-1]["max_bending_stress_mpa"] <= 12.0, "seções medidas na malha; a pior é r = %.1f (módulo resistente %.0f mm³): a espiga 11 × 6 dentro do painel é o limite. Sem concentração de tensão nem propriedades FDM" % (worst["cut_radius_mm"], worst["section_modulus_vertical_mm3"]))
     cap = report["containment_cap"]
     if cap["enabled"]:
         qc = P["containment_cap"]
@@ -2509,7 +3189,7 @@ def acceptance(report: dict, stats: dict, measured: dict) -> list[dict]:
 
 def write_acceptance_md(checks: list[dict], path: Path) -> None:
     lines = [
-        "# Critérios de aceitação — Hologram Orbiter v3.0",
+        "# Critérios de aceitação — Hologram Orbiter v%s" % P["project"]["version"],
         "",
         "Verificação automática a partir do modelo (spec §9). Gerado por `CAD/generate.py`.",
         "Valores marcados como medidos vêm de traçado de raios na malha final (`CAD/probe.py`),",
@@ -2552,7 +3232,11 @@ def main() -> None:
     print("[3/9] Modelando tampa...")
     lid = build_lid()
     print("[4/9] Modelando base + torre...")
-    base_tower = build_base_tower()
+    base_tower = build_suspended_stage() if SUSPENDED else build_base_tower()
+    base_frame = build_suspension_frame() if SUSPENDED else None
+    flexures = {name: build_flexure(side, name) for name, side in SUSP["rod"]["variants"].items()} if SUSPENDED else {}
+    lock_spacer = build_lock_spacer() if SUSPENDED and SUSP.get("lock", {}).get("enabled") else None
+    oil_cup = build_oil_tray() if SUSPENDED and SUSP.get("oil_damper", {}).get("enabled") else None
     print("[5/9] Modelando suporte do ímã, cupons e chapa de referência...")
     magnet_bracket = build_magnet_bracket()
     containment_cap = build_containment_cap() if P["containment_cap"]["enabled"] else None
@@ -2572,6 +3256,14 @@ def main() -> None:
     }
     if containment_cap is not None:
         parts["containment_cap"] = containment_cap
+    if SUSPENDED:
+        parts["base_frame"] = base_frame
+        for name, obj in flexures.items():
+            parts[f"flexure_{name}"] = obj
+        if lock_spacer is not None:
+            parts["lock_spacer"] = lock_spacer
+        if oil_cup is not None:
+            parts["oil_cup"] = oil_cup
     for obj in parts.values():
         apply_location(obj)  # malha em coordenadas do mundo: medição e centróide corretos
         cleanup_mesh(obj)
@@ -2585,12 +3277,26 @@ def main() -> None:
     stale_post = stl_dir / "06_poste_ima_ABS.stl"
     if stale_post.exists():
         stale_post.unlink()
-    export_stl(spider, stl_dir / "01_aranha_ABS.stl")
+    export_stl(spider, stl_dir / export_name("spider"))
     export_stl(panel, stl_dir / "02_painel_LED_ABS_1x.stl", rotate_y_deg=pp["rotate_y_deg"])
     export_stl(panel, stl_dir / "02_painel_LED_ABS_3x_mesma_mesa.stl", rotate_y_deg=pp["rotate_y_deg"], copies=[(0.0, -s, 0.0), (0.0, 0.0, 0.0), (0.0, s, 0.0)])
-    export_stl(lid, stl_dir / "03_tampa_baia_ABS.stl")
-    export_stl(base_tower, stl_dir / "04_05_base_torre_ABS_integradas.stl")
-    export_stl(magnet_bracket, stl_dir / "06_suporte_ima_ABS.stl")
+    export_stl(lid, stl_dir / export_name("lid"))
+    export_stl(base_tower, stl_dir / export_name("base_tower"))
+    export_stl(magnet_bracket, stl_dir / export_name("magnet_bracket"))
+    if SUSPENDED:
+        # Base fixa: teto na mesa. Hastes: deitadas, face de assento na mesa.
+        export_stl(base_frame, stl_dir / export_name("base_frame"), rotate_x_deg=180.0)
+        pitch = SUSP["block"]["width"] + 4.0
+        count = SUSP["rod"]["count"]
+        for name, obj in flexures.items():
+            export_stl(obj, stl_dir / export_name("flexure_single", name=name), rotate_y_deg=-90.0)
+            export_stl(obj, stl_dir / export_name("flexure_batch", name=name), rotate_y_deg=-90.0,
+                       copies=[(0.0, (i - (count - 1) / 2) * pitch, 0.0) for i in range(count)])
+        if lock_spacer is not None:
+            n_lock = len(SUSP["lock"]["azimuths_deg"])
+            export_stl(lock_spacer, stl_dir / export_name("lock_spacer"), copies=[((i - (n_lock - 1) / 2) * 14.0, 0.0, 0.0) for i in range(n_lock)])
+        if oil_cup is not None:
+            export_stl(oil_cup, stl_dir / export_name("oil_tray"))
     if containment_cap is not None:
         export_stl(containment_cap, stl_dir / "07_tampa_contencao_ABS.stl", rotate_x_deg=180.0)
     export_stl(joint_coupon, stl_dir / "C01_cupom_junta.stl")
@@ -2601,11 +3307,15 @@ def main() -> None:
     abs_density = P["material"]["abs_density_g_cm3"]
     al_density = P["material"]["aluminium_density_g_cm3"]
     stats = {
-        "spider": object_stats(spider, abs_density),
+        "spider": object_stats(spider, density_for("spider")),
         "panel_each": object_stats(panel, abs_density),
-        "lid": object_stats(lid, abs_density),
-        "base_tower": object_stats(base_tower, abs_density),
-        "magnet_bracket": object_stats(magnet_bracket, abs_density),
+        "lid": object_stats(lid, density_for("lid")),
+        "base_tower": object_stats(base_tower, density_for("base_tower")),
+        "magnet_bracket": object_stats(magnet_bracket, density_for("magnet_bracket")),
+        **({"base_frame": object_stats(base_frame, density_for("base_frame"))} if SUSPENDED else {}),
+        **{f"flexure_{name}": object_stats(obj, density_for("flexure")) for name, obj in flexures.items()},
+        **({"lock_spacer": object_stats(lock_spacer, density_for("flexure"))} if lock_spacer is not None else {}),
+        **({"oil_cup": object_stats(oil_cup, density_for("flexure"))} if oil_cup is not None else {}),
         **({"containment_cap": object_stats(containment_cap, abs_density)} if containment_cap is not None else {}),
         "joint_coupon": object_stats(joint_coupon, abs_density),
         "led_coupon": object_stats(led_coupon, abs_density),
@@ -2619,6 +3329,9 @@ def main() -> None:
         "magnet_bracket": measure_simple(magnet_bracket, 0.5),
         "bay_intersections": measure_bay_intersections(spider),
     }
+    if SUSPENDED:
+        measured["suspension"] = measure_suspension(base_frame, base_tower)
+        measured["flexures"] = {name: measure_simple(obj, 0.5) for name, obj in flexures.items()}
     shoulders = [v for v in measured["spider"]["shoulder_radius_mm"] if v is not None]
     panel_radius = (sum(shoulders) / len(shoulders) - P["panel"]["boss"]["contact_face_x"]) if shoulders else P["assembly"]["panel_radius"]
 
@@ -2627,7 +3340,21 @@ def main() -> None:
 
     print("[9/9] Escrevendo relatórios...")
     physics = calculate_physics(P, triangles_of(panel))
+    physics["arm_root"] = arm_root_estimate(P, triangles_of(spider))
+    radii = P["spider"]["arm"].get("reinforcement", {}).get("check_radii_mm")
+    if radii:
+        physics["arm_sections"] = [arm_root_estimate(P, triangles_of(spider), r) for r in radii]
     derived = compute_report(stats, measured, assembly, physics)
+    if SUSPENDED:
+        derived["suspension"] = {
+            **{k: v for k, v in measured["suspension"].items() if k != "frame_winding_scan"},
+            "frame_mass_g": stats["base_frame"]["estimated_mass_g"],
+            "stage_mass_g": stats["base_tower"]["estimated_mass_g"],
+            "estimate": suspension_estimate(P, derived["rotor"]["total_mass_estimate_g"], stats["base_tower"]["estimated_mass_g"],
+                                            stats["base_tower"]["centroid_mm"][2], assembly["datum_b_z_mm"],
+                                            inertia_about_z(triangles_of(base_tower), density_for("base_tower"))),
+        }
+        physics["suspension"] = derived["suspension"]["estimate"]
     checks = acceptance(derived, stats, measured)
     report = {
         "project": P["project"],
@@ -2661,7 +3388,7 @@ def write_validation_summary(report: dict, path: Path) -> None:
     physics = d["physics"]
     section = physics["section"]
     checks = report["acceptance"]
-    rows = ["# Relatório de validação CAD — v3.0.5", "",
+    rows = ["# Relatório de validação CAD — v%s" % report["project"]["revision"].split(" ")[0], "",
             "Gerado por CAD/generate.py na mesma execução de geometry_report.json e FISICA.json.",
             "**PROVISÓRIO: não libera operação nem fabricação definitiva dos painéis.**", "",
             "## Geometria", "",

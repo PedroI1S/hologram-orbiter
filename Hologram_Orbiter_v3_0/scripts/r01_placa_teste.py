@@ -4,12 +4,15 @@
     python3 scripts/r01_placa_teste.py            # G-code + STL (chama o Blender para o STL)
     python3 scripts/r01_placa_teste.py --no-stl   # só o G-code
     python3 scripts/r01_placa_teste.py --furo-central 7   # outro alívio central
+    python3 scripts/r01_placa_teste.py --material PLA --parameters CAD/parameters_paralelogramo.json
+    Blender -b --python scripts/r01_placa_teste.py -- --stl-parts chapa.stl arruela.stl --parameters P.json
+        (chapa e arruela separadas; o build faz isso quando motor_plate.printed_replica.enabled)
 
-Lê CAD/parameters.json (chapa, flange, arruela). Diferenças em relação à R01 de alumínio:
+Lê CAD/parameters.json (ou `--parameters`: chapa, flange, arruela). Diferenças em relação à R01 de alumínio:
 
 - Mesma furação da R01: motor em cruz (diagonais 16 e 19, furos em (±8, 0) e (0, ±9,5)),
   flange M4 em PCD 40 e alívio central Ø8 (lido de `motor_plate.center_clearance_diameter`).
-- Furos com folga de impressão em ABS: M3 Ø3,4, M4 Ø4,3, arruela Ø8,7.
+- Furos com folga de impressão: M3 Ø3,4, M4 Ø4,3, arruela = furo do parameters + 0,2 (Ø8,7 na 3.0.5, Ø4,5 na 3.1-P/M4).
 
 O G-code é fatiado aqui mesmo (a peça é uma chapa com furos): ABS 250/100 °C, bico 0,4,
 camada 0,2, 100 % maciço, 3 paredes, brim de 5 mm, comandos padrão (Klipper/K1 e Marlin).
@@ -28,19 +31,22 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 OUT_DIR = ROOT / "teste_impresso"  # fora de fabricacao/: o build republica aquela pasta inteira
 NAME = "R01T_placa_teste_ABS_2mm"
+PARAMS = ROOT / "CAD" / "parameters.json"
+MATERIAL = "ABS"
 
 # Folgas de impressão (ABS, furo vertical encolhe ~0,2 mm)
 M3_HOLE = 3.4
 M4_HOLE = 4.3
 CENTER_HOLE: float | None = None  # None: usa o Ø do parameters.json
-WASHER_HOLE = 8.7
+WASHER_CLEARANCE = 0.2  # furo da arruela = motor_plate.washer_blank.hole_diameter + folga (8,5 -> 8,7 na 3.0.5)
 WASHER_X = 55.0  # centro da arruela, à direita da placa, na mesma mesa
 
 # Posição na mesa (cabe em mesa de 220 mm ou maior)
 BED_X0, BED_Y0 = 100.0, 100.0
 
-# Processo
+# Processo (ABS; set_material troca para PLA)
 NOZZLE_T, BED_T = 250, 100
+FAN_FROM_L2 = 38  # ABS: 15 %
 FIL_D = 1.75
 H = 0.2
 W = 0.45
@@ -59,8 +65,21 @@ def set_center_hole(d: float | None) -> None:
     CENTER_HOLE = d
 
 
+def set_material(m: str) -> None:
+    global MATERIAL, NAME, NOZZLE_T, BED_T, FAN_FROM_L2
+    MATERIAL = m.upper()
+    NAME = f"R01T_placa_teste_{MATERIAL}_2mm"
+    if MATERIAL == "PLA":
+        NOZZLE_T, BED_T, FAN_FROM_L2 = 210, 60, 255
+
+
+def set_params(path: Path) -> None:
+    global PARAMS
+    PARAMS = path if path.is_absolute() else Path.cwd() / path
+
+
 def load_geometry() -> dict:
-    p = json.loads((ROOT / "CAD" / "parameters.json").read_text(encoding="utf-8"))
+    p = json.loads(PARAMS.read_text(encoding="utf-8"))
     q, motor, bt = p["motor_plate"], p["unverified_interfaces"]["motor"], p["base_tower"]
     holes = []
     dx, dy = motor["base_bolt_diagonal_x"] / 2, motor["base_bolt_diagonal_y"] / 2  # cruz
@@ -77,13 +96,14 @@ def load_geometry() -> dict:
         "half_y": q["depth"] / 2,
         "thickness": q["thickness"],
         "holes": holes,
-        "washer": (WASHER_X, 0.0, wb["outer_diameter"] / 2, WASHER_HOLE / 2),
+        "washer": (WASHER_X, 0.0, wb["outer_diameter"] / 2, (wb["hole_diameter"] + WASHER_CLEARANCE) / 2),
     }
 
 
 # --------------------------------------------------------------------------- STL (Blender)
 
-def build_stl_in_blender(out: Path) -> None:
+def build_stl_in_blender(out: Path, washer_out: Path | None = None) -> None:
+    """Uma mesa (chapa + arruela) em `out`; com `washer_out`, chapa e arruela em arquivos separados."""
     import bpy  # noqa: PLC0415
 
     g = load_geometry()
@@ -114,9 +134,20 @@ def build_stl_in_blender(out: Path) -> None:
     washer = cyl(wx, wy, ro, t, "arruela")
     cut(washer, cyl(wx, wy, ri, t + 2, "furo_arruela"))
 
-    for o in bpy.data.objects:
-        o.select_set(True)
-    bpy.ops.wm.stl_export(filepath=str(out), export_selected_objects=True, apply_modifiers=True)
+    if washer_out is None:
+        for o in bpy.data.objects:
+            o.select_set(True)
+        bpy.ops.wm.stl_export(filepath=str(out), export_selected_objects=True, apply_modifiers=True)
+        return
+    washer.location.x -= wx  # arruela centrada na origem no arquivo próprio
+    bpy.ops.object.select_all(action="DESELECT")
+    bpy.context.view_layer.objects.active = washer
+    washer.select_set(True)
+    bpy.ops.object.transform_apply(location=True)
+    for path, obj in ((out, plate), (washer_out, washer)):
+        bpy.ops.object.select_all(action="DESELECT")
+        obj.select_set(True)
+        bpy.ops.wm.stl_export(filepath=str(path), export_selected_objects=True, apply_modifiers=True)
 
 
 # --------------------------------------------------------------------------- G-code
@@ -260,9 +291,10 @@ def build_gcode(g) -> GCode:
 
     gc.emit(f"; {NAME} — simula a chapa R01 (alumínio 2 mm) para testes em baixa rotação")
     gc.emit("; Gerado por Hologram_Orbiter_v3_0/scripts/r01_placa_teste.py")
-    gc.emit(f"; ABS {NOZZLE_T}/{BED_T} C, bico 0.4, camada {H}, largura {W}, {WALLS} paredes, 100% macico, brim 5 mm")
+    gc.emit(f"; {MATERIAL} {NOZZLE_T}/{BED_T} C, bico 0.4, camada {H}, largura {W}, {WALLS} paredes, 100% macico, brim 5 mm")
     gc.emit(f"; Furos do motor em cruz: 16 e 19 mm nas diagonais. Peca em X{BED_X0 - 35:.0f}-{BED_X0 + WASHER_X + 15:.0f} Y{BED_Y0 - 35:.0f}-{BED_Y0 + 35:.0f}")
-    gc.emit("; G-code padrao (Klipper/Creality K1 e Marlin). Feche a camara: ABS.")
+    gc.emit("; G-code padrao (Klipper/Creality K1 e Marlin)." + (" Feche a camara: ABS." if MATERIAL == "ABS" else ""))
+    gc.emit(f"; parametros: {PARAMS.name}")
     gc.emit("G90")
     gc.emit("M83")
     gc.emit(f"M140 S{BED_T}")
@@ -324,7 +356,7 @@ def build_gcode(g) -> GCode:
             gc.path(circle_pts(wx, wy, r, math.pi), v, flow)
 
         if layer == 1:
-            gc.emit("M106 S38")  # ABS: ventilação mínima (15 %) a partir da 2a camada
+            gc.emit(f"M106 S{FAN_FROM_L2}")  # ABS 15 %, PLA 100 %, a partir da 2a camada
 
     gc.emit("; fim")
     gc.emit(f"G1 E-{RETRACT:.2f} F{RETRACT_F}")
@@ -369,9 +401,13 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=OUT_DIR)
     ap.add_argument("--no-stl", action="store_true")
     ap.add_argument("--furo-central", type=float, default=CENTER_HOLE, help="Ø do alívio central, mm (padrão: parameters.json)")
+    ap.add_argument("--material", choices=["ABS", "PLA", "abs", "pla"], default="ABS")
+    ap.add_argument("--parameters", type=Path, default=PARAMS)
     ap.add_argument("--blender", default="/Applications/Blender.app/Contents/MacOS/Blender")
     args = ap.parse_args()
     set_center_hole(args.furo_central)
+    set_material(args.material)
+    set_params(args.parameters)
     args.out.mkdir(parents=True, exist_ok=True)
 
     g = load_geometry()
@@ -381,7 +417,7 @@ def main() -> None:
         print("\n".join(errs[:20]), file=sys.stderr)
         sys.exit(f"{len(errs)} extrusões fora da peça")
     mass = gc.e_total * math.pi * (FIL_D / 2) ** 2 * 1.04e-3
-    gc.lines.insert(5, f"; filamento ~{gc.e_total / 1000:.2f} m ({mass:.1f} g ABS), tempo estimado ~{gc.time / 60:.0f} min")
+    gc.lines.insert(5, f"; filamento ~{gc.e_total / 1000:.2f} m ({mass:.1f} g {MATERIAL}), tempo estimado ~{gc.time / 60:.0f} min")
     gcode_path = args.out / f"{NAME}_Creality.gcode"
     gcode_path.write_text("\n".join(gc.lines) + "\n", encoding="utf-8")
     print(f"G-code: {gcode_path} — {len(gc.lines)} linhas, {gc.e_total / 1000:.2f} m, {mass:.1f} g, ~{gc.time / 60:.0f} min")
@@ -389,7 +425,7 @@ def main() -> None:
 
     if not args.no_stl:
         stl = args.out / f"{NAME}.stl"
-        subprocess.run([args.blender, "-b", "--python-exit-code", "1", "--python", __file__, "--", "--stl", str(stl)] + (["--furo-central", str(args.furo_central)] if args.furo_central else []),
+        subprocess.run([args.blender, "-b", "--python-exit-code", "1", "--python", __file__, "--", "--stl", str(stl)] + (["--furo-central", str(args.furo_central)] if args.furo_central else []) + ["--parameters", str(PARAMS)],
                        check=True, capture_output=True)
         print(f"STL: {stl}")
 
@@ -398,6 +434,13 @@ if __name__ == "__main__":
     if "--stl" in sys.argv:
         if "--furo-central" in sys.argv:
             set_center_hole(float(sys.argv[sys.argv.index("--furo-central") + 1]))
+        if "--parameters" in sys.argv:
+            set_params(Path(sys.argv[sys.argv.index("--parameters") + 1]))
         build_stl_in_blender(Path(sys.argv[sys.argv.index("--stl") + 1]))
+    elif "--stl-parts" in sys.argv:
+        i = sys.argv.index("--stl-parts")
+        if "--parameters" in sys.argv:
+            set_params(Path(sys.argv[sys.argv.index("--parameters") + 1]))
+        build_stl_in_blender(Path(sys.argv[i + 1]), Path(sys.argv[i + 2]))
     else:
         main()

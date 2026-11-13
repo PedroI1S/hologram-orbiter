@@ -1,0 +1,1430 @@
+{
+  "project": {
+    "name": "Hologram Orbiter",
+    "version": "3.1-P",
+    "revision": "3.1-P.2 — 11/11/2026: VARIANTE com base suspensa em paralelogramo, revista em duas rodadas por seis analises independentes (dinamica, alternativas, falhas, amortecimento, reverificacao de geometria e de dinamica): batente rigido corrigido, limitador de inclinacao, assentos com guias, haste uniforme, trava para operar rigida, saida de cabo, reforco do braco ate o ombro. Desenvolvida em paralelo ao pacote 3.0.5, que permanece intacto em CAD/parameters.json.",
+    "units": "mm",
+    "source_spec": "../../01-ESPECIFICACAO-CAD-v3.0.md",
+    "generated_with": "Blender 5.2 LTS, gerador CAD/generate.py",
+    "note": "Toda cota nasce aqui. STL nunca e editado a mao. Valores com verified=false sao provisorios e estao listados em docs/MEDICOES_DE_ENTRADA.md.",
+    "variant_of": "CAD/parameters.json (3.0.5)"
+  },
+  "status": "PROVISORIO_REVISAO_ESTRUTURAL_E_ENSAIOS_PENDENTES",
+  "operating_point": {
+    "panel_mid_plane_radius_mm": 100.0,
+    "rpm": 1800.0,
+    "omega_rad_s": 188.4956,
+    "rps": 30.0,
+    "image_rate_hz": 90.0,
+    "image_cylinder_diameter_mm": 208.0,
+    "image_cylinder_height_mm": 201.0,
+    "resolution": "29 px vertical x 180 colunas",
+    "phase_current_a": 4.04,
+    "motor_temperature_c": 46.0,
+    "phase_current_best_case_a": 3.62,
+    "motor_temperature_best_case_c": 43.0,
+    "operating_point_note": "REVISAO 03/09 item 7 (ver 06-PENDENCIAS-ABERTAS): o par publicado era 4,44 A / 43 C, que e a linha Cd_boss = 0,20 da tabela de sensibilidade da spec secao 10.1. O proprio CAD estima o boss em Cd 0,30-0,40 (drag_estimate.cd_range_frontal) e o relatorio da A x Cd = 238-317 mm2. O ponto de projeto passa a ser a linha Cd_boss = 0,35 da mesma tabela — 4,95 A / 46 C — e 4,44 A / 43 C fica registrado como MELHOR CASO. Nada muda no criterio P <= 20 W nem no limite de 55 C do Bloqueador B; muda a margem que os documentos anunciam.",
+    "stretch_rpm_not_target": 2000.0,
+    "rotation_sense": "anti-horario visto de +Z; bordo de ataque em +y",
+    "variant_note": "Mesma estimativa de torque de arrasto do 3.0.5, convertida para Kt do AX-2810Q (corrente x 750/920). Temperaturas herdadas, nao recalculadas para este motor."
+  },
+  "loads_from_spec": {
+    "note": "Consequencias do ponto de operacao, recalculadas para painel montado de 44,5 g (spec v3.0 secao 2.1 e 10). Energia do painel solto no par unico da spec secao 10 (velocidade no CG, r = 100). REVISAO 03/09 item 26 (ver 06-PENDENCIAS-ABERTAS): os 7,4 J publicados usavam 42,1 g (massa estimada) enquanto o resto das cargas usa o teto de 44,5 g; 0,5 x 0,0445 x 18,85^2 = 7,9 J.",
+    "panel_assembled_mass_g": 44.5,
+    "centrifugal_force_per_panel_n": 158.1,
+    "tip_deflection_mm": 3.83,
+    "tip_deflection_range_mm": [
+      3.83,
+      7.83
+    ],
+    "tip_deflection_note": "Referencia recalculada em 08/09. Valores efetivos sao gerados por CAD/physics.py desde a secao da malha: Iyy589,8846mm4, cx-0,53095mm, casos L86/99 E2300/2000. Estimativa de viga simplificada, nao liberacao estrutural; a folga usa o maximo calculado em cada build. Folga radial usa teto de aceite45g:7,83mm. Referencia44,5g permanece para comparacao da auditoria.",
+    "bending_stress_mpa": 29.11,
+    "safety_factor_bending": 1.03,
+    "rotor_kinetic_energy_j": 27.6,
+    "loose_panel_energy_j": 7.9,
+    "loose_panel_speed_m_s": 18.9,
+    "rotor_inertia_g_m2": 1.55,
+    "admissible_unbalance_g_mm": 8.4,
+    "delta_mass_between_panels_g": 0.084,
+    "battery_eccentricity_limit_mm": 0.17,
+    "startup_kick_stall_phase_current_a": 20.0,
+    "startup_note": "Partida com CHUTE (05 secao 8.2, firmware 0.2.0), nao rampa: a rampa de 12 s ate 1200 us nao partiu em 19/10/2026. Fonte 10-12 V com limite de 30 A (nao 3 A; Pedro, 20/10/2026): a fonte nao limita, e com o rotor parado no chute o modelo medio da 16,7 A de fase a 10 V e 20,0 A a 12 V (173-208 mN.m), acima do teto de 8 A. O modelo ignora o Startup Power do ESC e a resistencia da fonte e dos cabos. Valores em FISICA.json (drive.startup_kick); confirmar RPM com tacometro."
+  },
+  "material": {
+    "abs_density_g_cm3": 1.04,
+    "aluminium_density_g_cm3": 2.7,
+    "petg_density_g_cm3": 1.27,
+    "part_density_g_cm3": {
+      "spider": 1.27,
+      "lid": 1.27,
+      "base_tower": 1.27,
+      "base_frame": 1.27,
+      "flexure": 1.27,
+      "magnet_bracket": 1.27
+    },
+    "part_density_note": "Variante 3.1-P: pecas grandes em PETG (1,27 g/cm3) por decisao de 11/11/2026 (ABS so para pecas pequenas). Paineis continuam ABS (1,04). As hastes podem sair em ABS; a massa e desprezivel."
+  },
+  "non_cad_masses_g": {
+    "note": "Massas que giram e nao sao impressas. Entram no orcamento do rotor (criterio <= 280 g).",
+    "battery_pack": 50.0,
+    "led_strip_per_panel": 6.2,
+    "hardware_per_panel": 4.0,
+    "m6_nut_and_washer": 3.0,
+    "hall_sensor_bare": 0.2,
+    "hall_sensor_bare_note": "A3144 em TO-92 dessoldado do modulo HW-477, colado no bolso da face inferior do cubo em r = 29. Entra no vetor de desbalanceamento (revisao 08 item 11): 0,2 g x 29 = 5,8 g.mm sozinho, contra 8,4 admissiveis.",
+    "m6_nut_and_washer_note": "arruela Ø20 x Ø8,5 x 2 em aluminio (1,4 g) + porca M6 fina DIN 439B (1,2 g), arredondado",
+    "onboard_electronics_allowance": 40.0,
+    "battery_verified": true,
+    "battery_source": "pack LiFe 2S 800 mAh comprado, 50 g (glossario secao 2, 02/09/2026)",
+    "electronics_allowance_verified": false,
+    "electronics_allowance_note": "Variante 3.1-P: folga ampliada para a placa propria (14 g estimados) com o motor AX-2810Q. Nao pesado.",
+    "panel_hardware_and_wiring_verified": false,
+    "panel_mass_budget_note": "Ferragens por painel4g permanecem estimativa anterior. Chicote de seis condutores precisa ser pesado e reconciliado com estas ferragens antes de declarar massa total; o subtotal nominal nao garante o teto280g."
+  },
+  "quality": {
+    "curve_segments": 96,
+    "boolean_solver": "MANIFOLD",
+    "boolean_strategy": "cada cortador e subtraido isoladamente (DIFFERENCE um a um). NUNCA concatenar cortadores com object.join antes da diferenca: onde dois se sobrepoem o operando fica com enrolamento 2 e o resultado 1-2 = -1 (casca invertida, 06-PENDENCIAS A1).",
+    "abs_shrink_compensation_percent": 0.0,
+    "joint_xy_clearance_each_side": 0.1,
+    "joint_bottom_clearance": 0.5,
+    "fdm_bore_compensation_mm": 0.0,
+    "fdm_bore_compensation_note": "Furo central do cubo modelado em 8,00 nominal (H8) para o trecho liso Ø8 do eixo. Se a impressora fechar o furo, alargar com broca/alargador de 8 mm ou ajustar aqui. Um furo maior que o eixo nao tem conserto e desloca 250 g do centro.",
+    "winding_scan_pitch_mm": 1.0
+  },
+  "fdm_rules": {
+    "nozzle_mm": 0.4,
+    "layer_mm": 0.2,
+    "min_structural_wall_mm": 0.8,
+    "min_feature_mm": 1.2,
+    "min_hole_mm": 2.0,
+    "max_bridge_mm": 15.0,
+    "max_overhang_deg": 45.0,
+    "printer_bed_mm": [
+      300.0,
+      300.0
+    ],
+    "brim_mm": 8.0
+  },
+  "unverified_interfaces": {
+    "motor": {
+      "model": "AX-2810Q 750KV",
+      "body_diameter": 35.0,
+      "body_height": 26.0,
+      "body_verified": false,
+      "body_source": "HobbyKing (B 26 corpo, C 35 lata, E 46 total, eixo 4); Pedro mediu em 13/11/2026 o topo e a furacao. Altura do corpo 26 ainda e de catalogo.",
+      "mass_g": 72.0,
+      "base_bolt_diagonal_x": 16.0,
+      "base_bolt_diagonal_y": 19.0,
+      "base_bolt_pattern_note": "Padrao em CRUZ: 16 e 19 mm sao as diagonais (distancia entre furos opostos), furos em (+-8, 0) e (0, +-9,5). Corrigido em 14/10/2026; ate entao o modelo tratava os valores como lados de um retangulo 16 x 19 (furos em r = 12,42), e a chapa cortada por aquele DXF nao encaixava no motor.",
+      "base_bolt_hole_diameter": 3.2,
+      "base_bolt_head_diameter": 5.5,
+      "base_bolt_head_height": 3.0,
+      "base_bolt_head_note": "Pior caso: M3 cilindrico ISO 4762 (cabeca O5,5 x 3,0). Um M3 panela (O5,6 x 2,4) tambem cabe no rebaixo O32 x 3,5 da flange. As cabecas ficam sob a chapa R01, em r = 8 e 9,5 (cruz 16/19): a borda externa (ate r = 12,25) fica sobre o piso do rebaixo, o resto sobre o furo O22 da torre.",
+      "base_pattern_verified": true,
+      "base_pattern_source": "medido pelo Pedro em 13/11/2026: cruz 16/19, igual ao A2212 (chapa R01 inalterada)",
+      "variant_note": "AX-2810Q medido em 13/11/2026: base serrilhada Ø13 x ~5, trecho liso Ø4 x 5, rosca M4 x 10; 3 fios de Ø3. O cubo assenta na base serrilhada, como uma helice."
+    },
+    "motor_stack": {
+      "plate_top_to_bell_face": 26.0,
+      "plate_top_to_datum_b": 35.0,
+      "verified": false,
+      "seat_assumption_verified": false,
+      "note": "AX-2810Q: chapa->topo da base serrilhada MEDIDO 29 mm pelo Pedro (13/11/2026), motor apoiado pela base. A divisao sino/serrilhado nao foi medida: modelado o caso mais apertado, campanula 26 (catalogo B) + serrilhado 3, que da a menor folga cubo-campanula; acima do assento eixo liso e rosca nao dependem da divisao. + cubo 6 = 35. Torre +2 (135->137) para manter o Datum B em 186.",
+      "seat_measured": true
+    },
+    "shaft": {
+      "diameter_through_hub": 6.0,
+      "boss_diameter": 13.0,
+      "boss_height": 3.0,
+      "collar_diameter": 4.0,
+      "collar_height": 5.0,
+      "collar_top_above_bell": 8.0,
+      "thread": "M4",
+      "thread_length": 10.0,
+      "protrusion_above_bell": 18.0,
+      "protrusion_alt_mm": 18.0,
+      "verified": "medido pelo Pedro em 13/11/2026: liso 5, rosca 10, topo do serrilhado a 29 da base do motor (serrilhado modelado com 3)",
+      "note": "AX-2810Q (13/11/2026): 'ressalto' = base serrilhada Ø13 x 3 (29 medido - 26 de catalogo) do adaptador de helice, onde o cubo assenta; 'colar' = trecho liso Ø4 x 5 (3 a 8 sobre a campanula); rosca M4 de 8 a 18. O cubo usa a bucha de 6 mm que vem com o motor sobre o trecho liso (furo Ø6). Ponta do eixo 9 mm acima do topo do cubo.",
+      "thread_diameter": 4.0,
+      "boss_label": "base_serrilhada_adaptador",
+      "collar_label": "eixo_liso_M4"
+    },
+    "bell_seat": {
+      "useful_seat_diameter": 13.0,
+      "verified": true,
+      "source": "desenho do datasheet (03/09/2026): face superior plana com 5 raios; o unico relevo central e o ressalto/colar do eixo, que entra no furo Ø8 do cubo",
+      "note": "AX-2810Q: o cubo assenta na base serrilhada Ø13 do adaptador (como a helice), nao na campanula. Escolha do Pedro em 13/11/2026."
+    },
+    "adapter_bolt_pattern": {
+      "enabled": true,
+      "count": 4,
+      "pcd": 19.0,
+      "hole_diameter": 3.2,
+      "angle_offset_deg": 45.0,
+      "verified": false,
+      "note": "Furos de provisao no cubo para parafusar a aranha num adaptador de helice, se um dia for preciso. Ficam dentro do rebaixo da arruela larga (Ø21), o que nao os inutiliza: os parafusos entram por cima com a arruela removida."
+    },
+    "m6_nut": {
+      "type": "Porca M4 autotravante DIN 985 (anel de nylon, 5 mm) sobre arruela larga DIN 9021 M4 (12 x 4,3 x 1,0). Ou a porca-ogiva que vem com o motor, se couber sob a bateria.",
+      "height": 5.0,
+      "across_flats": 7.0,
+      "washer_od": 12.0,
+      "washer_id": 4.3,
+      "washer_thickness": 1.0,
+      "washer_material": "aco DIN 9021 M4 (12 x 4,3 x 1,0)",
+      "torque_nm": 1.0,
+      "verified": false,
+      "note": "Variante AX-2810Q: arruela 0-1, porca 1-6 sobre o topo do cubo; rosca ate +9, sobram 3 mm. A chave 'm6_nut' foi mantida por compatibilidade com o gerador; o conteudo e M4.",
+      "ref_label": "porca_autotravante_M4"
+    },
+    "led_strip": {
+      "width": 12.0,
+      "thickness": 2.0,
+      "pcb_thickness": 0.4,
+      "led_package_xy": [
+        5.0,
+        5.0
+      ],
+      "led_package_height": 1.6,
+      "pitch": 6.944,
+      "leds_per_panel": 29,
+      "strip_length": 201.4,
+      "verified": true,
+      "source": "medida em 02/09/2026: 12,0 x 2,0 (PCB ~0,4 + encapsulamento 5050 de 1,6). Canal unico 12,4 x 2,0 em panel.led_channel; o canal em degrau foi abandonado em 03/09/2026 (ver a nota la)."
+    },
+    "battery": {
+      "length": 58.0,
+      "width": 30.0,
+      "height": 17.0,
+      "mass_g": 50.0,
+      "chemistry": "LiFe (LiFePO4) 2S, 800 mAh, 6,6 V nominal, 20C",
+      "verified": true,
+      "source": "comprada e medida, 02/09/2026 (glossario secao 2): 58 x 30 x 17 mm, 50 g",
+      "note": "Deitada ao longo de y no berco (spider.battery_cradle). Quimica LiFe: 3,3 V/celula nominal, 3,6 de carga, 2,5-2,8 de corte. O esquema eletrico (05) ja foi convertido para LiFe (06-PENDENCIAS B'8)."
+    },
+    "hall_sensor": {
+      "package": "HW-477: modulo de 18 x 15 mm com sensor 3144 em TO-92 vertical, LED e pull-up para VCC",
+      "module_board_xy": [
+        18.0,
+        15.0
+      ],
+      "module_board_thickness": 1.6,
+      "body_width": 4.0,
+      "body_height": 3.0,
+      "body_thickness": 1.5,
+      "module_verified": true,
+      "mounting_decided": true,
+      "note": "Decisao 06-PENDENCIAS C1: dessoldar o A3144 do modulo e montar o TO-92 nu no bolso da face inferior do cubo, com pull-up de 10 k para 3,3 V. O modulo inteiro nao sobe no rotor: o pull-up dele vai para VCC (5 V na saida queima o ESP32-C3) e 1,5-2,5 g em r = 29 valem 43-72 g.mm."
+    },
+    "magnet": {
+      "diameter": 4.0,
+      "height": 2.0,
+      "grade": "N35",
+      "polarity": "face positiva do ima aponta para o sensor (repulsao)",
+      "polarity_decided_by": "Pedro, 03/09/2026 (pendencia C2)",
+      "polarity_bench_confirmed": false,
+      "polarity_note": "ATENCAO antes de colar: o A3144 e unipolar e comuta com o polo SUL apresentado a face MARCADA do TO-92 (familia A314x). 'Face positiva' costuma designar o NORTE do ima. Se as duas convencoes valerem ao pe da letra, o ima fica invertido e nao ha pulso de indice — falha cujo sintoma parece firmware. A nomenclatura nao resolve porque 'positiva' e 'repulsao' dependem do ima de referencia usado no teste. RESOLVER NA BANCADA: A3144 com VCC=5 V e pull-up de 10 k para 3,3 V, aproximar a face escolhida da face marcada do TO-92 a ~3 mm; a saida tem de ir a nivel BAIXO. So entao colar. Ver 06-PENDENCIAS C2, C3 e C8; B_OP maximo35mT a25C,45mT na faixa termica.",
+      "verified": false
+    },
+    "panel_wiring": {
+      "conductors": 6,
+      "power_gauge": "AWG 24 (5 V e GND)",
+      "signal_gauge": "AWG 28: DATA/CLK entrada e retorno",
+      "bundle_width_mm": 3.7,
+      "bundle_height_mm": 2.35,
+      "verified": false,
+      "source": "Estimativa geometrica do esquema05; medir isolacao e chicote pronto de seis condutores, igual nos3paineis"
+    },
+    "containment": {
+      "inner_diameter": 266.0,
+      "wall": 4.0,
+      "height": 305.0,
+      "has_floor": false,
+      "has_top_cap": true,
+      "source": "cota_de_encomenda",
+      "verified": true,
+      "in_scope": false,
+      "material": "PMMA ou PC - ensaio de dobra numa sobra ainda pendente",
+      "note": "Involucro FORA DO ESCOPO desde 02/09/2026 (06-PENDENCIAS, secao 'Fora de escopo'). A canaleta 4,4 x 3 em r = 135 fica na base como provisao porque nao pode ser acrescentada depois de imprimir. A tampa impressa 07 foi removida (B7); containment_cap.enabled = true a devolve."
+    },
+    "lid_access_window": {
+      "enabled": true,
+      "verified": false,
+      "note": "Janela na tampa (x 19-29, y +-12) sobre a placa de interface do layout (spider.bay_layout): chave slide e conector JST-XH montados no topo da placa dentro dessa faixa. Confirmar quando a placa existir."
+    }
+  },
+  "panel": {
+    "height": 208.0,
+    "chord": 30.0,
+    "max_thickness": 8.0,
+    "shell_wall": 2.0,
+    "end_skin": 2.0,
+    "profile_outer_xy": [
+      [
+        -1.0,
+        -15.0
+      ],
+      [
+        1.0,
+        -15.0
+      ],
+      [
+        4.0,
+        -5.0
+      ],
+      [
+        4.0,
+        11.0
+      ],
+      [
+        3.696,
+        12.531
+      ],
+      [
+        2.828,
+        13.828
+      ],
+      [
+        1.531,
+        14.696
+      ],
+      [
+        0.0,
+        15.0
+      ],
+      [
+        -1.531,
+        14.696
+      ],
+      [
+        -2.828,
+        13.828
+      ],
+      [
+        -3.696,
+        12.531
+      ],
+      [
+        -4.0,
+        11.0
+      ],
+      [
+        -4.0,
+        -5.0
+      ]
+    ],
+    "profile_cavity_xy": [
+      [
+        0.0,
+        -11.0
+      ],
+      [
+        2.0,
+        -5.0
+      ],
+      [
+        2.0,
+        11.0
+      ],
+      [
+        1.848,
+        11.765
+      ],
+      [
+        1.414,
+        12.414
+      ],
+      [
+        0.765,
+        12.848
+      ],
+      [
+        0.0,
+        13.0
+      ],
+      [
+        -0.765,
+        12.848
+      ],
+      [
+        -1.414,
+        12.414
+      ],
+      [
+        -1.848,
+        11.765
+      ],
+      [
+        -2.0,
+        11.0
+      ],
+      [
+        -2.0,
+        -5.0
+      ]
+    ],
+    "profile_note": "Coordenadas validadas da spec secao 5.1. O gerador insere na cavidade o recuo da parede local do canal (led_channel.local_wall) na faixa |y| <= width/2 + local_wall_band_margin.",
+    "ribs": {
+      "thickness": 1.0,
+      "z_positions": [
+        -70.0,
+        -35.0,
+        0.0,
+        35.0,
+        70.0
+      ],
+      "scale_xy": [
+        1.08,
+        1.015
+      ],
+      "wire_gap_y": [
+        -1.5,
+        2.5
+      ],
+      "wire_gap_note": "Cada diafragma e cortado em duas metades (dianteira e traseira) para deixar passar o feixe de fios pela cavidade. Cada metade continua travando as duas paredes."
+    },
+    "led_channel": {
+      "width": 12.4,
+      "depth": 2.0,
+      "local_wall": 2.8,
+      "local_wall_band_margin": 1.0,
+      "bottom_skin": 2.0,
+      "wire_pocket_height": 3.5,
+      "wire_pocket_width": 8.0,
+      "wire_pocket_overlap": 0.2,
+      "note": "Canal unico 12,4 x 2,0 na face externa: o PCB (0,4) cola no fundo e os LEDs 5050 (1,5-1,6) ficam rentes a face. A parede da lamina engrossa de 2,0 para 2,8 (cavidade recua de x = 2,0 para 1,2) numa faixa de 14,4 mm (canal + local_wall_band_margin de cada lado), deixando piso de 0,8 mm em ponte de 12,4 — a mesma ponte do canal original de 1,2. O 'canal em degrau' da spec secao 5.1 (PCB num canal raso, LEDs num rasgo mais fundo) foi abandonado em 03/09/2026: a fita e um PCB plano com os LEDs EM CIMA; o degrau so funcionaria com a fita de cabeca para baixo, e com os LEDs para fora eles sobressairiam 1,4 mm da face. Custo do canal de 2,0 com a faixa engrossada: +0,3 g por painel contra o canal de 1,2. Bolso passante 8 x 3,5 abaixo da ponta da fita invade o canal em wire_pocket_overlap para nao deixar faces coincidentes (06-PENDENCIAS A2)."
+    },
+    "boss": {
+      "contact_face_x": -26.0,
+      "sleeve_length": 24.0,
+      "sleeve_width_y": 15.2,
+      "sleeve_height_z": 10.2,
+      "screw_x_positions": [
+        -20.0,
+        -10.0
+      ],
+      "screw_hole_diameter": 3.2,
+      "tower_diameter": 10.0,
+      "tower_height": 36.0,
+      "nut_hex_circumradius": 3.35,
+      "nut_pocket_depth": 2.8,
+      "web_thickness": 2.4,
+      "web_x_range": [
+        -26.0,
+        -2.5
+      ],
+      "web_note": "Alma central em y=0 que liga flanco da carenagem, torres, luva e parede da lamina em toda a altura (faz o papel dos gussets Z=+-4,8..+-18 da spec).",
+      "socket_dimensions_note": "Derivadas por CAD/parameters.py: largura/altura=espiga+2*joint_xy_clearance_each_side; profundidade=tenon_tip_radius-shoulder_radius+joint_bottom_clearance. Nao duplicar cotas."
+    },
+    "fairing": {
+      "wall": 0.8,
+      "half_height": 18.0,
+      "flat_flank_x": -26.0,
+      "flat_flank_y_half": 7.6,
+      "nose_center_xy": [
+        -14.9,
+        7.6
+      ],
+      "nose_semi_axes": [
+        11.1,
+        6.4
+      ],
+      "blade_overlap": 0.2,
+      "blade_flat_face_x": -4.0,
+      "blade_flat_y_range": [
+        -5.0,
+        11.0
+      ],
+      "blade_taper_end_xy": [
+        -1.0,
+        -15.0
+      ],
+      "tail_xy": [
+        -13.5,
+        -35.0
+      ],
+      "end_caps": false,
+      "wire_window_y": [
+        -7.4,
+        -2.6
+      ],
+      "wire_window_z": [
+        5.4,
+        10.0
+      ],
+      "blade_wire_hole_y": [
+        -6.2,
+        -2.6
+      ],
+      "blade_wire_hole_z": [
+        6.0,
+        9.5
+      ],
+      "note": "Casca em gota, extrudada em Z, aberta em Z=+-18 para acesso aos parafusos. Flanco interno plano em x=-26 (face de contato), nariz eliptico em +y, cauda em y=-35. Lado da lamina e a propria parede interna da lamina."
+    },
+    "print": {
+      "rotate_y_deg": 90.0,
+      "batch_spacing_y": 60.0
+    },
+    "mass_limit_assembled_g": 45.0
+  },
+  "spider": {
+    "hub_diameter": 92.0,
+    "hub_thickness": 6.0,
+    "bore_diameter": 6.0,
+    "bore_note": "Ø6 para a bucha de 6 mm que vem com o AX-2810Q, sobre o trecho liso Ø4 (13/11/2026). Alargar com broca de 6 se fechar; nunca alem da bucha.",
+    "counterbore_diameter": 21.0,
+    "counterbore_depth": 0.0,
+    "counterbore_note": "SEM rebaixo (profundidade 0 desativa o corte). O colar Ø8 do eixo sobe 5-7 mm acima da campanula e o cubo tem 6: qualquer rebaixo deixaria o fundo abaixo do topo do colar e a arruela assentaria no aco, nao no ABS. A arruela Ø20 x Ø8,5 (furo maior que o colar) assenta no topo do cubo. A spec secao 5.2 pedia Ø13 x 2 para arruela Ø20 — nem cabia nem passava pelo colar.",
+    "electronics_bay_od": 82.0,
+    "electronics_bay_id": 78.0,
+    "electronics_bay_height": 47.0,
+    "lid_post_spacing": 70.0,
+    "lid_post_axis": "y",
+    "lid_post_spacing_note": "Postes encostados na parede interna da baia (r 30,7 a 39,3 com o transpasse), no eixo y (azimutes 90 e 270 graus), entre os bracos. Os58mm eram da baia66; com 58 os postes ficariam soltos no meio da baia, 6 mm longe da parede. No eixo x o poste de +x caia sobre a raiz do braco 1 (r 38-39,3) e a tangencia gerava aresta nao-manifold.",
+    "lid_post_diameter": 8.0,
+    "lid_post_hole_diameter": 2.8,
+    "lid_post_hole_depth": 12.0,
+    "lid_post_ring_overlap": 0.3,
+    "arm": {
+      "airfoil_yz": [
+        [
+          -7.5,
+          3.0
+        ],
+        [
+          -4.5,
+          1.0
+        ],
+        [
+          2.5,
+          0.0
+        ],
+        [
+          4.6,
+          0.5
+        ],
+        [
+          6.3,
+          1.7
+        ],
+        [
+          7.5,
+          3.0
+        ],
+        [
+          6.3,
+          4.3
+        ],
+        [
+          4.6,
+          5.5
+        ],
+        [
+          2.5,
+          6.0
+        ],
+        [
+          -4.5,
+          5.0
+        ]
+      ],
+      "chord": 15.0,
+      "height": 6.0,
+      "root_radius": 39.0,
+      "root_radius_note": "Raiz tangente ao raio interno da baia (39 mm), ainda fundida à parede até r=41 e ao alargamento da raiz. Remove o aerofólio que sobressaía dentro da baia em r=38.",
+      "shoulder_radius": 74.0,
+      "tenon_tip_radius": 96.0,
+      "tenon_width": 11.0,
+      "tenon_height": 6.0,
+      "tenon_overlap_into_beam": 0.2,
+      "root_blend_xy": [
+        [
+          39.0,
+          -14.0
+        ],
+        [
+          41.0,
+          -13.5
+        ],
+        [
+          46.0,
+          -7.5
+        ],
+        [
+          46.0,
+          7.5
+        ],
+        [
+          41.0,
+          13.5
+        ],
+        [
+          39.0,
+          14.0
+        ]
+      ],
+      "root_blend_note": "Alargamento da raiz em planta, sobre o disco, da parede da baia (r 39-41) ate a borda do cubo (r 46). Aumenta a area colada ao disco e a rigidez no plano. Fica fora dos rasgos de refrigeracao (que comecam em 30 graus).",
+      "root_gusset": {
+        "enabled": true,
+        "radial_run": 6.0,
+        "drop": 6.0,
+        "width": 11.0,
+        "note": "Cunha a 45 graus sob o braco, da borda inferior do disco (r = 46, Z = -6) ate a face inferior do braco em r = 52. E o fillet cubo->braco pedido em 06-PENDENCIAS B11: remove o canto reentrante onde o braco deixa o disco, no ponto que carrega 158 N. A 45 graus imprime sem suporte."
+      },
+      "screw_radii": [
+        80.0,
+        90.0
+      ],
+      "screw_hole_diameter": 3.2,
+      "reinforcement": {
+        "enabled": true,
+        "fin": {
+          "y_range": [
+            0.6,
+            5.6
+          ],
+          "root_radius": 40.5,
+          "end_radius": 74.0,
+          "root_top_z": 22.0,
+          "end_top_z": 12.0
+        },
+        "web": {
+          "width": 11.0,
+          "root_radius": 45.0,
+          "end_radius": 74.0,
+          "root_bottom_z": -6.0,
+          "end_bottom_z": -3.0
+        },
+        "note": "Reforco da raiz (falha de 27/10/2026, R02): aleta vertical sobre o braco, do lado +y (o sulco dos fios fica em y<0), encostada por fora na parede da baia, e alma triangular por baixo, do fundo do cubo (z=-6) ate a face inferior do braco. Nada entra na baia nem passa do ombro (r=74): paineis e espiga 11x6 inalterados. A face inferior do cubo continua plana para a mesa. Revisao 3.1-P.1: aleta e alma vao ate o ombro (r=74); o trecho nu de 1 mm que restava era a secao mais fraca. A espiga 11x6, dentro do painel, passa a ser o limite.",
+        "check_radii_mm": [
+          47.5,
+          60.0,
+          73.5,
+          77.0
+        ],
+        "fairing": {
+          "enabled": true,
+          "fin_nose_y": 7.3,
+          "fin_floor_z": 3.0,
+          "web_tail_yz": [
+            -6.0,
+            2.2
+          ],
+          "web_flat_y": [
+            -2.0,
+            3.0
+          ],
+          "web_nose_top_z": 3.0,
+          "arc_points": 10,
+          "note": "Pedido de 13/11/2026 (escoamento): a aleta 5 mm com a face larga contra o vento (Cd ~2) somava 0,5-2,2 W a 1800 RPM. Agora aleta em D (costas retas em y = 0,6 para nao cobrir o sulco dos fios, nariz em quarto de elipse ate o bordo de ataque +y) e alma em perfil de asa invertido em toda a corda. Mesma altura nas mesmas raios; Cd estimado ~1,0-1,2 na aleta. Secoes medidas na malha pelo criterio do braco.",
+          "fin_superellipse_exponent": 4.0
+        }
+      }
+    },
+    "cooling_slots": {
+      "count": 3,
+      "inner_radius": 41.5,
+      "outer_radius": 45.0,
+      "arc_deg": 60.0,
+      "first_center_deg": 60.0,
+      "note": "3 rasgos de 60 graus entre os bracos, fora da baia (parede em r 39-41) e a 1 mm da borda do cubo (r 46). Spec secao 5.2: r 41,5-45."
+    },
+    "lightening_pockets": {
+      "count": 3,
+      "inner_radius": 17.0,
+      "outer_radius": 36.0,
+      "half_angle_deg": 18.0,
+      "first_center_deg": 60.0,
+      "depth": 4.0,
+      "note": "Do lado inferior do disco, pele superior de 2 mm, sob o piso da baia. Dobram como bolsos de massa adesiva para balanceamento (plano 1). Meio-angulo de 18 graus deixa 7 graus (3,7 mm em r=29) ate o bolso do sensor hall."
+    },
+    "hall_sensor": {
+      "radius": 29.0,
+      "azimuth_deg": 20.0,
+      "pocket_tangential": 4.8,
+      "pocket_radial": 3.6,
+      "pocket_depth": 1.7,
+      "lead_slot_radial": 1.4,
+      "lead_slot_tangential": 4.8,
+      "note": "Bolso na face inferior do cubo para o TO-92 nu, face sensivel para baixo, terminais sobem por rasgo ate a baia, debaixo da placa de interface (onde esta o pull-up). Ima fixo no suporte 06 em r=29, mesmo azimute (20 graus) na base: pulso de indice quando o braco 1 esta em +x da base. Era 30 graus; 20 tira o rasgo de cima de um pilar da placa e fica a 17 graus do alivio de massa."
+    },
+    "wire_route": {
+      "bay_window_radial": [
+        37.0,
+        42.0
+      ],
+      "bay_window_y": [
+        -10.0,
+        -5.5
+      ],
+      "bay_window_z": [
+        0.8,
+        5.8
+      ],
+      "root_pocket_radial": [
+        41.3,
+        48.0
+      ],
+      "root_pocket_y": [
+        -10.0,
+        0.0
+      ],
+      "groove_radial": [
+        48.0,
+        70.0
+      ],
+      "groove_y": [
+        -4.4,
+        0.0
+      ],
+      "groove_floor_z": 2.3,
+      "note": "Janela na parede da baia: corte local x=37..42, y=-10..-5,5, z=0,8..5,8. Começa antes da face interna curva em toda a largura, eliminando a película que restava com x=38,5. Bolso largo no topo da raiz (r 41,3-48) e sulco 4,4 x ~3 mm na face superior do braço, lado de fuga, de r=48 a 70 (4 mm antes do ombro). A espiga não é furada."
+    },
+    "battery_cradle": {
+      "pack_length_y": 58.0,
+      "pack_width_x": 30.0,
+      "pack_height": 17.0,
+      "clearance": 0.25,
+      "rail_x_positions": [
+        -12.0,
+        12.0
+      ],
+      "rail_width": 3.0,
+      "rail_length_y": 52.0,
+      "rail_height": 10.0,
+      "side_wall_thickness": 2.0,
+      "side_wall_length_y": 30.0,
+      "side_wall_height": 21.0,
+      "end_tab_thickness": 2.0,
+      "end_tab_width_x": 16.0,
+      "end_tab_height": 19.0,
+      "note": "Pack LiFe 58 x 30 x 17 (medido) deitado ao longo de y, apoiado em dois trilhos a Z=9. Topo do pack em Z=26, dentro dos 29 da baia. Paredes laterais e abas de topo centram o pack. Nao conta para o balanceamento. REVISAO 03/09 item 1 (ver 06-PENDENCIAS-ABERTAS): os trilhos estavam em Z=6 e a PONTA DO EIXO fica em Z=+8 acima do topo do cubo (protrusao de 14 sobre a campanula, cubo de 6) — o pack encostava 2 mm no eixo na leitura de 14 e com folga zero na de 12. Nenhum dos 51 criterios comparava o eixo com a bateria: um comparava trilho com porca e outro exigia rosca sobrando ACIMA da porca. Trilhos a 9 dao 1 mm de folga na leitura de 14 e 3 mm na de 12, valendo para as duas leituras sem depender da medicao pendente. Custo: +3 mm de baia e ~4 g. REVISAO 03/09 item 2 (ver 06-PENDENCIAS-ABERTAS): rail_x_positions era +-11 e com rail_width 3 punha a aresta interna em x = 9,5, dentro do raio 10 da arruela O20 — a arruela apoiava nos cantos dos trilhos e a porca apertava torto. +-12 poe a aresta em 10,5.",
+      "rail_height_note": "10 (era 9) para 1 mm sobre a ponta do eixo M4 do AX-2810Q, que fica em +9."
+    },
+    "bay_layout": {
+      "note": "Esboco de layout da baia (06-PENDENCIAS D2) com os envelopes documentados na lista de componentes e no esquema eletrico. Massas ESTIMADAS, nao pesadas: o gerador confere envelope, interferencias, faixas livres para os feixes no piso, soma contra a folga de 15 g e calcula o desbalanceamento estatico nominal e o contrapeso que o corrige. Coordenadas do rotor: origem no eixo, Z = 0 no topo do cubo, braco 1 em +x. Componentes elevados em pilares de 6 mm deixam o piso livre para os feixes dos paineis (janelas da baia em Z 0,8-5,8).",
+      "standoff": {
+        "diameter": 3.5,
+        "pilot_hole_diameter": 1.6,
+        "pilot_hole_depth": 4.0,
+        "corner_inset": 2.0,
+        "note": "Quatro pilares por placa, nos cantos recuados de corner_inset; furo piloto para parafuso M2 ou cola."
+      },
+      "wall_slot": {
+        "guide_thickness": 1.2,
+        "guide_depth": 6.5,
+        "guide_height": 22.0,
+        "board_clearance": 0.4,
+        "wall_gap": 1.5,
+        "note": "Duas guias radiais fundidas a parede da baia formam uma ranhura em que a placa desce em pe; retencao por atrito e um ponto de cola ou abracadeira. Revisao3.0.4: folga radial1,5mm (era0,3), recua buck/guia1,2mm para dentro e elimina interferencia com a raiz sem aproximar do ESP32."
+      },
+      "ring_fence": {
+        "wall": 1.0,
+        "height": 3.0,
+        "clearance": 0.3
+      },
+      "wire_lane": {
+        "radial_from": 28.0,
+        "y_margin": 0.5,
+        "z_top": 6.0,
+        "note": "Faixa no piso, do centro ate a janela de cada braco, que nada com Z_bottom < 6 pode ocupar."
+      },
+      "components": [
+        {
+          "id": "interface",
+          "label": "Placa de interface: 74AHCT125, pull-up 10 k, divisor 150k/47k, polyfuse 7,5 A, chave slide, JST-XH 3 vias (perfboard 20 x 15)",
+          "mass_g": 5.5,
+          "size_xyz": [
+            15.0,
+            20.0,
+            8.0
+          ],
+          "center_xy": [
+            27.0,
+            5.0
+          ],
+          "z_bottom": 6.0,
+          "mount": "standoffs",
+          "note": "Sob a janela da tampa (x 19-29, y +-12): chave e conector no topo da placa, dentro dessa faixa. Os terminais do hall sobem pelo rasgo em r=28,2, 20 graus (26,5, 9,6), debaixo desta placa, onde esta o pull-up. Deslocada +5 em y para o pilar nao invadir a faixa do feixe do braco 1."
+        },
+        {
+          "id": "esp32c3",
+          "label": "ESP32-C3 Super Mini (22,5 x 18 x 5)",
+          "mass_g": 3.0,
+          "size_xyz": [
+            18.0,
+            22.5,
+            5.0
+          ],
+          "center_xy": [
+            -27.0,
+            0.0
+          ],
+          "z_bottom": 6.0,
+          "mount": "standoffs",
+          "note": "USB-C para -y; acesso com a tampa removida. Posicao praticamente unica: 0,75 mm da parede do berco e 1,3 mm da parede da baia."
+        },
+        {
+          "id": "buck",
+          "label": "Buck 5 V / 5 A mini560 (22 x 17 x 6), em pe numa ranhura na parede",
+          "mass_g": 2.0,
+          "size_xyz": [
+            6.0,
+            17.0,
+            22.0
+          ],
+          "wall_azimuth_deg": 140.0,
+          "z_bottom": 0.0,
+          "mount": "wall_slot",
+          "note": "Indutor para dentro. Envelope e guias recuados1,2mm radialmente (wall_gap1,5) para livrar raiz do braco. Nao trocar por XL4015 sem refazer layout e massas; conferir modulo real."
+        },
+        {
+          "id": "capacitor",
+          "label": "Eletrolitico 1000 uF / 10 V, Ø10 x 20, em pe",
+          "mass_g": 2.5,
+          "diameter": 10.0,
+          "height": 20.0,
+          "center_xy": [
+            22.5,
+            -22.0
+          ],
+          "z_bottom": 0.0,
+          "mount": "ring_fence",
+          "note": "Na saida do buck; posicionado no lado +x para reduzir o desbalanceamento do conjunto."
+        },
+        {
+          "id": "wiring",
+          "label": "Fios internos, solda, termorretratil",
+          "mass_g": 2.0,
+          "center_xy": [
+            0.0,
+            0.0
+          ],
+          "mount": "none"
+        },
+        {
+          "id": "placa_principal",
+          "label": "Placa propria (envelope MAXIMO reservado): disco Ø74 com dois chanfros retos em y=±30 (postes da tampa), 16 mm de altura acima da prateleira Z=28",
+          "mass_g": 14.0,
+          "polygon_xy": [
+            [
+              -21.656,
+              30.0
+            ],
+            [
+              -26.096,
+              26.23
+            ],
+            [
+              -29.889,
+              21.809
+            ],
+            [
+              -32.942,
+              16.848
+            ],
+            [
+              -35.177,
+              11.469
+            ],
+            [
+              -36.542,
+              5.807
+            ],
+            [
+              -37.0,
+              0.0
+            ],
+            [
+              -36.542,
+              -5.807
+            ],
+            [
+              -35.177,
+              -11.469
+            ],
+            [
+              -32.942,
+              -16.848
+            ],
+            [
+              -29.889,
+              -21.809
+            ],
+            [
+              -26.096,
+              -26.23
+            ],
+            [
+              -21.656,
+              -30.0
+            ],
+            [
+              21.656,
+              -30.0
+            ],
+            [
+              26.096,
+              -26.23
+            ],
+            [
+              29.889,
+              -21.809
+            ],
+            [
+              32.942,
+              -16.848
+            ],
+            [
+              35.177,
+              -11.469
+            ],
+            [
+              36.542,
+              -5.807
+            ],
+            [
+              37.0,
+              -0.0
+            ],
+            [
+              36.542,
+              5.807
+            ],
+            [
+              35.177,
+              11.469
+            ],
+            [
+              32.942,
+              16.848
+            ],
+            [
+              29.889,
+              21.809
+            ],
+            [
+              26.096,
+              26.23
+            ],
+            [
+              21.656,
+              30.0
+            ]
+          ],
+          "height": 16.0,
+          "center_xy": [
+            0.0,
+            0.0
+          ],
+          "z_bottom": 28.0,
+          "mount": "board_shelf",
+          "note": "Contorno nao decidido (11/11/2026): reserva maxima. Furos M2 em r=35,5 nos azimutes de board_shelf. Massa estimada, nao pesada."
+        }
+      ],
+      "counterweight": {
+        "putty_density_g_cm3": 11.0,
+        "pocket_radius_offset_mm": 3.0,
+        "note": "Massa adesiva de tungstenio (ou fita de chumbo) no alivio inferior do cubo oposto ao desbalanceamento nominal, na ponta externa do alivio (raio externo - offset). Plano 1; o ajuste fino vai nos copos da tampa (plano 2)."
+      }
+    },
+    "mass_limit_g": 135.0,
+    "mass_limit_note": "Alvo75g para cubo92/baia29; teto do rotor280g permanece, massas reais pendentes.",
+    "board_shelf": {
+      "enabled": true,
+      "z": 28.0,
+      "azimuths_deg": [
+        50.0,
+        110.0,
+        230.0,
+        290.0
+      ],
+      "radial_depth": 6.0,
+      "width": 7.0,
+      "screw_radius": 35.5,
+      "pilot_hole_diameter": 1.6,
+      "pilot_hole_depth": 5.0,
+      "note": "Quatro misulas a 45 graus na parede da baia, topo em Z=28 (2 mm acima da bateria), com furo piloto para M2. A placa propria apoia nelas, acima da bateria; para tirar a bateria solta-se a placa."
+    }
+  },
+  "lid": {
+    "diameter": 82.0,
+    "height": 5.0,
+    "skin_thickness": 1.6,
+    "rim_wall": 1.6,
+    "screw_hole_diameter": 3.0,
+    "balance_cups": {
+      "count": 6,
+      "radius": 34.0,
+      "first_center_deg": 0.0,
+      "outer_diameter": 8.0,
+      "inner_diameter": 6.4,
+      "height": 3.0,
+      "note": "Copos para massa adesiva no topo da tampa: plano 2 de balanceamento (binario), a 0, 60, ... 300 graus (fora dos furos dos postes em 90/270). Volume 96 mm3 cada: ~1 g de massa de tungstenio (34 g.mm em r=34) ou ~0,14 g de massa adesiva comum."
+    },
+    "access_window": {
+      "x_range": [
+        19.0,
+        29.0
+      ],
+      "y_range": [
+        -12.0,
+        12.0
+      ]
+    },
+    "mass_limit_g": 14.0,
+    "mass_limit_note": "Alvo. Os 8 g da spec secao 5.3 sao anteriores ao Ø82: so a pele de 1,6 mm em Ø82 ja tem 8,8 g."
+  },
+  "base_tower": {
+    "footprint_diameter": 280.0,
+    "footprint_verified": false,
+    "outer_ring_inner_diameter": 260.0,
+    "outer_ring_height": 8.0,
+    "central_bay_od": 100.0,
+    "central_bay_wall": 4.0,
+    "central_bay_height": 80.0,
+    "central_floor_thickness": 4.0,
+    "radial_rib_count": 8,
+    "radial_rib_width": 8.0,
+    "radial_rib_height": 8.0,
+    "tower_total_height_from_floor": 137.0,
+    "tower_od": 40.0,
+    "tower_wall": 20.0,
+    "tower_bore_start_z": 6.0,
+    "flange_diameter": 60.0,
+    "flange_thickness": 8.0,
+    "flange_motor_recess": {
+      "enabled": true,
+      "diameter": 32.0,
+      "depth": 3.5,
+      "note": "REVISAO 03/09 item 3 (ver 06-PENDENCIAS-ABERTAS): rebaixo no TOPO da flange superior para as cabecas dos 4 x M3 que prendem o motor. Os M3 entram por baixo da chapa R01 (o motor tem furo roscado na base), logo as cabecas ficam ENTRE a chapa e a flange, em r = 8 e 9,5 (cruz de diagonais 16 e 19; ate 14/10/2026 o modelo usava por engano um retangulo 16 x 19, r = 12,42). A face superior da flange era um anel solido de r = 11 (furo da torre O22) a r = 30: as cabecas O5,5 (r 5,25 a 12,25) assentavam nela pela borda externa, a chapa nao encostava, o motor ficava 2-3 mm alto apoiado em quatro cabecas e o Datum B = 186 saia errado no mesmo valor. O rebaixo O32 x 3,5 abre r <= 16 (3,75 mm de folga radial sobre a cabeca mais externa) e 0,5 mm de folga sobre uma cabeca cilindrica de 3,0. Os 4 furos M4 em PCD 40 (r = 20) ficam FORA do rebaixo: a chapa continua assentando no anel r 16-30 da face original, que e o assento que define o Datum B. Nao cria balanco novo: o piso do rebaixo olha para cima. Alternativa descartada: M3 escareado na chapa de 2 mm (cabe, mas depende da chapa ser cortada e escareada certo e some do modelo)."
+    },
+    "flange_hole_pcd": 40.0,
+    "flange_hole_diameter": 4.0,
+    "flange_hole_angle_offset_deg": 0.0,
+    "flange_hole_angle_note": "Furos M4 a 0, 90, 180 e 270 graus, na mesma linha dos M3 do motor (cruz). Ate 15/10/2026 ficavam a 45 graus, e os fios de fase do motor, que saem numa diagonal, sempre cobriam um deles.",
+    "flange_holes_upper_only": true,
+    "flange_holes_note": "Os 4 furos M4 so atravessam a flange superior (chapa do motor). Antes o cortador ia de Z=-1 ao topo e abria 4 furos inuteis no piso da baia, sob a torre (06-PENDENCIAS B3).",
+    "peripheral_holes": {
+      "enabled": false,
+      "count": 4,
+      "diameter": 4.0,
+      "pcd": 240.0,
+      "angle_offset_deg": 0.0,
+      "note": "REMOVIDOS por decisao de 02/09/2026: a canaleta (r 132,8-137,2) deixa 2,8 mm de cada lado da pista, sem lugar para furo de 4 mm. A fixacao a bancada passou para as abas de grampo (clamp_tabs). Se voltarem, enabled=true os abre em pcd (240 = atravessando as nervuras)."
+    },
+    "clamp_tabs": {
+      "enabled": true,
+      "count": 4,
+      "angle_offset_deg": 45.0,
+      "radial_length": 16.0,
+      "width": 20.0,
+      "hole_diameter": 5.0,
+      "hole_radius": 149.0,
+      "note": "Abas na face externa do anel, altura da pista (8 mm), furo Ø5 para grampo ou parafuso na bancada (spec secao 5.4, 06-PENDENCIAS B5). Sao 4 a 90 graus e nao 3 a 120 porque so os cantos da mesa de 300 x 300 tem lugar: uma aba a 165 graus chegaria a x = -151 e nao caberia nem sem brim. Nos cantos (45 graus) a aba termina em |x| = |y| = 110 e o brim de 8 mm fica em 118 << 150. Tres delas bastam para grampear."
+    },
+    "wire_window": {
+      "size_xyz": [
+        20.0,
+        12.0,
+        12.0
+      ],
+      "center_xyz": [
+        10.0,
+        0.0,
+        20.0
+      ]
+    },
+    "lateral_vents": {
+      "count": 8,
+      "width": 12.0,
+      "height": 12.0,
+      "z_bottom": 14.0,
+      "angle_offset_deg": 22.5,
+      "note": "Janelas na parede lateral da baia, entre as nervuras. Nada no piso."
+    },
+    "containment_seat": {
+      "enabled": false,
+      "groove_width": 4.4,
+      "groove_depth": 3.0,
+      "groove_center_radius": 135.0,
+      "min_lip": 1.2,
+      "note": "Provisao para o involucro (fora de escopo): canaleta de assento na pista externa, largura 4,4 (parede 4 + 0,2 de folga por lado), profundidade 3, piso em Z = 5, centrada em r = 135. Custa nada e nao pode ser acrescentada depois de imprimir.",
+      "variant_note": "Desligada na variante 3.1-P: a casca conica nasce sobre a pista (chanfro a 45 graus para imprimir invertida) e cobre o lugar da canaleta. O involucro continua fora de escopo."
+    },
+    "mass_limit_g": null,
+    "mass_note": "Variante: sem alvo de massa; palco e base sao relatados separadamente.",
+    "suspension": {
+      "enabled": true,
+      "note": "Base em paralelogramo: o palco (disco + aletas + aro + torre) fica PENDURADO em 8 hastes verticais de secao quadrada, presas em cima ao anel da base fixa e em baixo ao aro do palco. As hastes dobram em S: o palco translada em X/Y sem inclinar. Batentes impressos limitam o curso; bolsos opcionais recebem calcos de EVA.",
+      "stage_bottom_z": 4.0,
+      "stage_top_z": 12.0,
+      "stage_hub_radius": 34.0,
+      "tower_bore_start_z": 14.0,
+      "tower_wire_window": {
+        "azimuth_deg": 22.5,
+        "width": 10.0,
+        "z_range": [
+          16.0,
+          30.0
+        ],
+        "enabled": false
+      },
+      "fin": {
+        "count": 8,
+        "first_azimuth_deg": 0.0,
+        "thickness": 4.0,
+        "inner_radius": 17.0,
+        "top_z_at_tower": 80.0,
+        "tip_radius": 104.0,
+        "tip_z": 14.0
+      },
+      "rim": {
+        "inner_radius": 103.2,
+        "outer_radius": 110.9,
+        "z_range": [
+          4.0,
+          14.0
+        ]
+      },
+      "rod": {
+        "count": 8,
+        "first_azimuth_deg": 0.0,
+        "seat_face_radius": 111.2,
+        "free_length": 55.0,
+        "side": 1.5,
+        "variants": {
+          "macia_1p5": 1.5
+        },
+        "modulus_mpa": 1900.0,
+        "modulus_note": "PETG impresso deitado, ao longo dos fios; valor de catalogo, nao medido.",
+        "blend_length": 2.0,
+        "azimuth_note": "Hastes nos mesmos azimutes das aletas: a carga axial desce direto pela aleta ate a torre.",
+        "variant_note": "Revisao 3.1-P.1: haste unica de 1,5 mm. A de 2,0 saiu (critica ~500 RPM, perto demais de 600) e a de 1,6 ficava no limite de 5 Hz depois de corrigido o comprimento efetivo. A concordancia caiu de 5 para 2 mm."
+      },
+      "block": {
+        "width": 12.0,
+        "height": 10.0,
+        "thickness": 4.0,
+        "hole_diameter": 3.2
+      },
+      "seat": {
+        "width": 15.6,
+        "bore_diameter": 3.2,
+        "bore_depth": 8.0,
+        "nut_slot_radial": [
+          2.4,
+          5.2
+        ],
+        "nut_slot_width": 5.8,
+        "nut_slot_below_axis": 3.2,
+        "screw": "M3 x 10 cabeca cilindrica ou panela + porca M3 (16 + 16)",
+        "bore_note": "Furo Ø3,2 passante pelo anel (7,7 mm); bore_depth so define o trecho sondado no aceite.",
+        "rail_proud": 1.5,
+        "block_side_clearance": 0.2,
+        "lead_in": 4.0,
+        "rail_note": "Duas guias laterais por assento impedem o bloco de girar no parafuso unico; furo do bloco Ø3,2 justo no M3 para nao deixar folga em Z (oito hastes sao hiperestaticas: 0,17 mm de diferenca flamba uma)."
+      },
+      "hanger_ring": {
+        "inner_radius": 103.2,
+        "outer_radius": 110.9,
+        "top_z": 79.0,
+        "height": 12.0
+      },
+      "shell": {
+        "wall": 2.4,
+        "top_outer_radius": 119.5,
+        "chamfer_top_z": 18.0,
+        "roof_thickness": 2.0,
+        "window_width": 16.0,
+        "window_outer_radius": 124.0,
+        "window_bottom_z": 65.0,
+        "note": "Casca conica continua entre o anel da pista e o anel superior: rigida a torcao e a cisalhamento, imprime INVERTIDA (teto na mesa) sem suporte. Janelas nos azimutes das hastes dao acesso aos parafusos de cima.",
+        "access_hole_diameter": 7.0,
+        "access_note": "Furos radiais Ø7 na pista, na cota dos parafusos de baixo, para reapertar as hastes com o palco ja dentro."
+      },
+      "stops": {
+        "azimuths_deg": [
+          22.5,
+          112.5,
+          202.5,
+          292.5
+        ],
+        "travel": 3.0,
+        "lug_width": 8.0,
+        "lug_tip_radius": 120.0,
+        "side_gap": 3.0,
+        "cheek_inner_radius": 115.0,
+        "block_outer_radius": 132.0,
+        "block_width": 24.0,
+        "block_low_z": 17.0,
+        "eva": {
+          "pad_thickness": 6.0,
+          "pad_height": 6.0,
+          "pocket_z0": 6.0,
+          "engage_gap": 1.5,
+          "note": "Calco de EVA firme 14 x 6 x 6 colado no fundo do bolso: fica a 1,5 mm da orelha. O bolso e mais baixo que a orelha (Z 6-12 contra 4-14): sem EVA a orelha para no batente impresso em 3 mm. NAO deixar o EVA em contato permanente: levaria a ressonancia para dentro da faixa de giro."
+        },
+        "lip_gap": 0.5,
+        "lip_note": "O teto do rasgo fica 0,5 mm acima da orelha: se uma haste flambar ou romper, a inclinacao do palco para em ~0,25 grau em vez de ~2 graus (mesa).",
+        "jack_screw": {
+          "enabled": true,
+          "radius": 118.0,
+          "pilot_diameter": 2.5,
+          "access_diameter": 6.0,
+          "note": "Trava vertical: um M3 x 10 rosqueado no teto de cada batente EMPURRA a orelha para baixo. As hastes ficam tracionadas e o palco preso entre elas e os quatro parafusos, sem levantar nem flambar haste. Com os quatro parafusos radiais da pista forma a trava completa (4 + 4). Acesso por cima, por um furo Ø7 no teto da casca."
+        }
+      },
+      "clamp_tab_gusset_height": 17.0,
+      "operating_rpm_range": [
+        600.0,
+        1800.0
+      ],
+      "moving_mass_extra_g": {
+        "motor": 72.0,
+        "motor_plate": 18.0,
+        "fasteners_and_wires": 15.0
+      },
+      "rotor_cg_above_tower_top_mm": 45.0,
+      "infill_mass_factor": 1.0,
+      "infill_note": "Massas de solido macico (CAD). Com infill parcial o palco fica mais leve e a frequencia de translacao sobe um pouco: conferir pesando.",
+      "cable_channel": {
+        "enabled": false,
+        "azimuth_deg": 157.5,
+        "outer_radius": 28.0,
+        "width": 12.0,
+        "inner_radius": 20.5,
+        "inner_outer_radius": 26.0,
+        "inner_width": 8.0,
+        "slot_width": 3.5,
+        "note": "Calha em C ao longo da torre, entre duas aletas, do disco do palco ate a flange: os tres fios do motor entram um a um pela fenda de 3,5 mm e saem pela mesma fenda junto ao palco. Secao constante em Z: imprime sem suporte.",
+        "disabled_note": "Desligada em 13/11/2026: ficava sob a flange Ø60 (os fios teriam de entrar por baixo dela) e a fenda de 3,5 mm era mais larga que o fio, sem reter nada. Substituída por cable_hooks."
+      },
+      "cable_exit": {
+        "enabled": true,
+        "azimuth_deg": 168.75,
+        "width": 14.0,
+        "height": 10.0,
+        "note": "Passagem do cabo do motor pela pista da base fixa (entalhe aberto para a mesa). Deixar laçada frouxa entre a torre e a casca."
+      },
+      "lock": {
+        "enabled": true,
+        "azimuths_deg": [
+          67.5,
+          157.5,
+          247.5,
+          337.5
+        ],
+        "boss_face_radius": 114.0,
+        "boss_width": 12.0,
+        "hole_diameter": 8.6,
+        "counterbore_diameter": 12.4,
+        "counterbore_from_radius": 137.0,
+        "spacer_od": 8.0,
+        "spacer_clearance": 0.2,
+        "screw": "4 x M3 x 40 + porca (radiais, aprovado em 11/11/2026) e 4 x M3 x 10 (verticais, nos batentes)",
+        "note": "Trava para operar RIGIDO com as mesmas pecas. Radial: bucha impressa com flange enfiada POR FORA pelo furo Ø8,4 da pista ate encostar no ressalto do aro; o M3 x 40 passa por dentro dela e aperta na porca do aro. Vertical: ver stops.jack_screw. Travado, o conjunto e uma torre contraventada presa a base; solto, e a suspensao.",
+        "screw_hole_diameter": 3.4,
+        "flange_diameter": 12.0,
+        "flange_thickness": 2.0
+      },
+      "flange_cone_height": 10.0,
+      "oil_damper": {
+        "enabled": true,
+        "azimuths_deg": [
+          22.5,
+          112.5,
+          202.5,
+          292.5
+        ],
+        "paddle": {
+          "inner_radius": 86.5,
+          "thickness": 3.0,
+          "width": 24.0,
+          "arm_z": [
+            11.0,
+            14.0
+          ]
+        },
+        "cup": {
+          "floor": 1.6,
+          "wall": 1.6,
+          "wall_top_z": 9.5,
+          "cavity_radial": [
+            81.0,
+            96.0
+          ],
+          "cavity_half_width": 20.0,
+          "oil_level_z": 8.5,
+          "cavity_half_angle_deg": 13.5,
+          "shape_note": "Cubas em setor de anel (acompanham o aro): cubas retangulares tinham os cantos a 3,2 mm do aro e batiam na diagonal."
+        },
+        "tray": {
+          "tongue_width": 12.0,
+          "tongue_end_clearance": 0.3
+        },
+        "oil_viscosity_pa_s": 9.7,
+        "note": "Provisao (decisao de 11/11/2026: modelar agora, decidir o oleo depois). Quatro pas em L invertido penduradas PARA DENTRO do aro do palco mergulham nas quatro cubas de uma bandeja unica, apoiada na mesa sob o palco. Quatro linguetas da bandeja entram por baixo nos rasgos dos batentes e a centram e impedem de girar. Folga de 5,5 mm radial e 8 mm tangencial para as pas (o giro soma com a translacao na tangente): o curso e de 3 mm por eixo, 4,24 mm na diagonal, mais o giro ate os batentes (conferido por teste de colisao booleano nas malhas). Com ~2 mL de oleo de silicone 10 000 cSt por cuba da amortecimento viscoso em translacao e giro, sem rigidez e sem acoplar inclinacao. Seco, nao faz nada. A primeira versao (cubas por fora do aro) batia no palco e foi descartada na reverificacao."
+      },
+      "cable_hooks": {
+        "enabled": true,
+        "azimuth_deg": 157.5,
+        "wire_od": 3.0,
+        "wire_od_verified": true,
+        "wire_count": 3,
+        "radial_clearance": 0.6,
+        "side_clearance": 1.0,
+        "finger_thickness": 1.8,
+        "post_thickness": 2.0,
+        "finger_min_height": 2.4,
+        "barb_interference": 0.3,
+        "barb_length": 1.2,
+        "z_first": 82.0,
+        "z_last": 113.0,
+        "pitch": 15.5,
+        "note": "Pedido de 13/11/2026: ganchos alternados ao longo da torre para os tres fios de fase. Bolso de uma camada (largura 3 x Ø + 1,0; profundidade Ø + 0,6), farpao na ponta que deixa a entrada 0,3 mm menor que o fio (PETG cede e o fio estala para dentro). Base a 45 graus em x e y: imprime em pe sem suporte. wire_od 2,5 e PALPITE ate a medicao do Pedro (fios de silicone do AX-2810Q); recalcula sozinho. Os fios descem da borda da chapa R01 (r ~32) com uma curva em S suave ate o primeiro gancho, abaixo do cone da flange, e saem por cima do disco do palco ate o entalhe da pista (168,75 graus).",
+        "placement_note": "13/11/2026, fio Ø3: ganchos so ACIMA das aletas do palco (topo das aletas na torre em Z ~ 77). Entre as aletas sobraria 1,7 mm do lado aberto do gancho ate a aleta, pouco para passar um fio de 3 mm. Abaixo de Z = 80 os fios ficam no vao de 45 graus entre as aletas de 135 e 180 graus, que ja os impede de andar de lado. Ultimo gancho termina a ~1 mm do cone da flange."
+      }
+    },
+    "tower_note": "Torre MACICA Ø40 (decisao de 11/11/2026): o cabo do motor sai pela lateral, nao por baixo; furo central e janela na base removidos por serem ponto fraco onde a flexao e maxima.",
+    "tower_total_height_note_variant": "135 (era 142): conjunto do AX-2810Q tem 37 mm da chapa ao Datum B contra 30 do A2212; Datum B continua em 186."
+  },
+  "containment_cap": {
+    "enabled": false,
+    "outer_diameter": 280.0,
+    "plate_thickness": 3.0,
+    "seat_depth": 3.0,
+    "vent_center_hole_diameter": 28.0,
+    "vent_ring_hole_count": 12,
+    "vent_ring_hole_diameter": 22.0,
+    "vent_ring_pcd": 100.0,
+    "max_opening_diameter": 30.0,
+    "min_free_area_mm2": 600.0,
+    "note": "DESATIVADA em 03/09/2026 (06-PENDENCIAS B7: involucro fora de escopo). A geometria fica aqui para o caso de o involucro voltar ao projeto: enabled=true gera de novo a peca 07 (placa Ø280 sobre anel de assento com a canaleta da base, 13 furos de ventilacao)."
+  },
+  "motor_plate": {
+    "width": 60.0,
+    "depth": 60.0,
+    "thickness": 2.0,
+    "center_clearance_diameter": 11.0,
+    "center_clearance_verified": false,
+    "center_clearance_note": "Ø11 desde 13/11/2026 (variante, AX-2810Q): o Ø8 enganchava no fundo do motor. É o maior que preserva alma até os M3 do motor: furo M3 impresso Ø3,4 em r = 8 tem borda em r = 6,3, o Ø11 chega a r = 5,5 (0,8 mm de alma; 1,15 mm até o Ø3,2 do alumínio). A cabeça M3 Ø5,5 em r = 8 perde 0,25 mm de apoio na borda interna. 3.0.5 mantém Ø8.",
+    "washer_blank": {
+      "enabled": true,
+      "outer_diameter": 20.0,
+      "hole_diameter": 4.3,
+      "note": "Disco da arruela do eixo M4 (13/11/2026: era Ø20 x Ø8,5 do A2212, por onde a porca M4 passaria). Ø20 x Ø4,3 na chapa de aluminio; a replica em PLA de 2 mm (r01_placa_teste.py) sai com furo Ø4,5 e e provisoria: aperto leve, trocar pela DIN 9021 de aco 12 x 4,3 x 1,0."
+    },
+    "printed_replica": {
+      "enabled": true,
+      "material": "PLA",
+      "plate_name": "R01P_suporte_motor_PLA_provisorio.stl",
+      "washer_name": "R01P_arruela_eixo_M4_PLA_provisoria.stl",
+      "note": "13/11/2026: chapa R01 e arruela do eixo impressas em PLA 2 mm ate cortar o aluminio e comprar a DIN 9021 M4. Furos com folga de impressao (M3 3,4; M4 4,3; arruela 4,5). G-code pronto em teste_impresso/R01T_placa_teste_PLA_2mm_Creality.gcode."
+    }
+  },
+  "magnet_bracket": {
+    "tab_thickness": 2.5,
+    "arc_inner_radius": 19.6,
+    "arc_outer_radius": 25.5,
+    "arc_half_angle_deg": 58.0,
+    "bolt_hole_diameter": 4.3,
+    "bolt_azimuths_deg": [
+      0.0,
+      90.0
+    ],
+    "arc_center_azimuth_deg": 45.0,
+    "arm_width": 10.0,
+    "post_diameter": 8.0,
+    "post_radius": 29.0,
+    "post_azimuth_deg": 20.0,
+    "post_tip_radius": 33.5,
+    "air_gap": 2.5,
+    "magnet_pocket_diameter": 4.3,
+    "magnet_pocket_depth": 2.2,
+    "note": "Suporte do ima (peca 06) preso sob DOIS parafusos M4 da flange (r=20, 0 e 90 graus desde 15/10/2026; antes -45 e +45): arco de r 18,5 a 24,5 centrado em 45 graus com os furos abertos para dentro (garfo com boca de ~3 mm), mais um braco radial ate o poste em r=29, 20 graus (mesmo azimute do sensor no cubo). Dois pontos de fixacao impedem a rotacao da aba, que era presa por um unico parafuso e definia sozinha a fase da imagem (06-PENDENCIAS B4). O arco passa a 4,6 mm da campanula (Ø27,8). Os dois M4 sob a aba precisam de 20 mm em vez de 16 (chapa 2 + aba 2,5 + flange 8 + porca). O poste continua em 20 graus, entre os dois parafusos, e a referencia de fase nao mudou. Os fios de fase do motor saem numa diagonal livre (135, 225 ou 315 graus); a de 45 graus fica sob o arco.",
+    "variant_note": "Arco afastado para livrar a lata Ø35 do AX-2810Q (folga >= 2 mm)."
+  },
+  "coupons": {
+    "joint_block": [
+      34.0,
+      24.0,
+      12.0
+    ],
+    "led_slice_z_range": [
+      -104.0,
+      -74.0
+    ],
+    "led_note": "O cupom C02 e uma fatia real da ponta inferior do painel (30 mm): pele de ponta, bolso de fios, inicio do canal 12,4 x 2,0, piso de 0,8 e cavidade atras. Testa exatamente a ponte de 12,4 mm que o lote vai imprimir, com a fita real."
+  },
+  "assembly": {
+    "panel_mid_plane_above_datum_b": 3.0,
+    "panel_radius": 100.0,
+    "note": "Datum B = piso 4 + torre 150 + chapa 2 + conjunto motor 30 (24 medidos + cubo 6) = 186 mm (calculado no gerador). Os paineis sao posicionados no raio MEDIDO na malha da aranha (ombro + 26), nao no valor nominal."
+  },
+  "drag_estimate": {
+    "cd_range_frontal": [
+      0.3,
+      0.4
+    ],
+    "target_a_cd_mm2": 350.0,
+    "desirable_a_cd_mm2": 250.0,
+    "note": "Estimativa por tabela de razao de finura (Hoerner), nao CFD. Area frontal = largura radial do boss x altura das torres."
+  },
+  "release": {
+    "operation_released": false,
+    "definitive_panel_manufacture_released": false,
+    "reason": "Secao resistente corrigida; transferencia de carga, ABS FDM, fluencia, massas reais e bloqueadores fisicos ainda nao validados."
+  },
+  "requirements": {
+    "panel_mass_max_g": 45.0,
+    "rotor_mass_max_g": 420.0,
+    "panel_radius_mm": 100.0,
+    "panel_radius_tolerance_mm": 0.1,
+    "datum_d_mm": 104.0,
+    "datum_d_tolerance_mm": 0.2,
+    "rotor_mass_note": "Variante 3.1-P: teto provisorio para o AX-2810Q 750KV (mais torque que o A2212). Nao validado em bancada."
+  },
+  "physics_assumptions": {
+    "motor_kv": 750.0,
+    "effective_resistance_ohm": 0.15,
+    "extra_loss_w": 0.7,
+    "thermal_resistance_k_w": 3.5,
+    "ambient_c": 25.0,
+    "esc_efficiency": 0.95,
+    "source_voltages_v": [
+      10.0,
+      12.0
+    ],
+    "source_current_limit_a": 30.0,
+    "phase_current_ceiling_a": 8.0,
+    "shaft_friction_mu": 0.3,
+    "shaft_friction_radius_mm": 7.0,
+    "nut_factor": 0.2,
+    "abs_strength_mpa": 30.0,
+    "motor_note": "AX-2810Q 750KV: Kv de catalogo; resistencia efetiva NAO medida (0,15 ohm e palpite de ordem de grandeza)."
+  },
+  "startup_kick": {
+    "note": "Partida do firmware 0.2.0 (firmware/controle-motor/src/config.rs; 05 secao 8.2): sobe do PPM minimo ao chute em rise_s, segura o chute kick_hold_s e desce ao alvo a fall_us_per_s. target_us e o alvo ao ligar (INITIAL_TARGET_US); o bloqueador D usa o teto de regime. Duty linear no pulso entre ppm_min_us e ppm_max_us (gravados no ESC em 16/10/2026).",
+    "ppm_min_us": 1148,
+    "ppm_max_us": 1832,
+    "rise_s": 3.0,
+    "kick_us": 1400,
+    "kick_hold_s": 2.0,
+    "fall_us_per_s": 42.0,
+    "target_us": 1200
+  },
+  "export_names": {
+    "spider": "01_aranha_PETG.stl",
+    "lid": "03_tampa_baia_PETG.stl",
+    "base_tower": "05_palco_torre_PETG.stl",
+    "base_frame": "04_base_fixa_PETG_imprimir_invertida.stl",
+    "magnet_bracket": "06_suporte_ima_PETG.stl",
+    "flexure_single": "08_haste_flexivel_{name}_1x.stl",
+    "flexure_batch": "08_hastes_flexiveis_{name}_8x.stl",
+    "lock_spacer": "09_buchas_trava_4x.stl",
+    "oil_tray": "10_bandeja_amortecedor.stl"
+  }
+}

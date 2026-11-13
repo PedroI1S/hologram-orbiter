@@ -1,0 +1,385 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-13T18:00:41.433210+00:00",
+  "inputs": {
+    "parameters": {
+      "path": "/Users/pedro/Documents/8_Semestre/OficinaDeIntegracao/Hologram_Orbiter_v3_0/CAD/parameters_paralelogramo.json",
+      "sha256": "0b233a0420023b2b69ab53aa482ab157787b694d6b17c0a2500aa23417a5cb2b"
+    },
+    "code": [
+      {
+        "path": "scripts/build.sh",
+        "sha256": "4974785d3f323df396893d611b1514a4c0a164f4c7bda573e21e558e2fe8eb05"
+      },
+      {
+        "path": "scripts/build.py",
+        "sha256": "9563af0bd6402c81d6d2bbd326eeb44e62ec809d51b1fab5dae5fa4d40649802"
+      },
+      {
+        "path": "scripts/plate_cut_reference.py",
+        "sha256": "5f2465a78eb4c5ee31457f010fb8f737ee4dfab9325bacbe6f3df19dc60d5962"
+      },
+      {
+        "path": "scripts/r01_placa_teste.py",
+        "sha256": "60db15328326c43d5d426ec84112bffe19094c84869b1725e997c2787d39f49e"
+      },
+      {
+        "path": "scripts/render_views.py",
+        "sha256": "af89fb234b3bf578c9f714344b19098b2eb6f4c6f1eb544d036d34d1c99422b8"
+      },
+      {
+        "path": "scripts/validate_stl.py",
+        "sha256": "d1a7de7f38805f8ed05e51219335386434ca56ae05bf021aefe51f7f834c6e03"
+      },
+      {
+        "path": "CAD/generate.py",
+        "sha256": "cb239f9112401979e3e825fc77672a778d15d11e574d1f132fa1ff5d89695329"
+      },
+      {
+        "path": "CAD/parameters.py",
+        "sha256": "561a151d1635da2de61ed510b0b8c1d9b004e5d437953baa25b85f434d7716df"
+      },
+      {
+        "path": "CAD/physics.py",
+        "sha256": "f69e2f58076d81763b2d1f36b49b98ba300f7aa27d2166893d8fda6e18693f7b"
+      },
+      {
+        "path": "CAD/probe.py",
+        "sha256": "0de62902729488cc77f3dfb27cacb9feef5e1e8155ff0cf464acc1e4362df566"
+      },
+      {
+        "path": "CAD/spider_checks.py",
+        "sha256": "21f7cd0771b00e058d6c0b20f01b7f473d153bba7aa092c2904e5eb49544e504"
+      }
+    ]
+  },
+  "blender_executable": "/opt/homebrew/Caskroom/blender/5.2.3/.homebrew-command-wrappers/blender",
+  "previews_generated": true,
+  "artifacts": [
+    {
+      "path": "exports/fonte/Hologram_Orbiter_v3_0.blend",
+      "sha256": "ed25b8c1e690f4deee5f15368ac6a996c1d774367be09f278f6a6bd75d6979d6",
+      "bytes": 2421425,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/aranha_baixo.png",
+      "sha256": "efc901cd5514a9ddfef2433ebd2ee1c433e8b0990dedf403d17d597b2add68a2",
+      "bytes": 997554,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/aranha_baixo_perspectiva.png",
+      "sha256": "8f74ccfe367ed324d4932a2e06cbceac16ea5f13706cc1b8a5679df91162012f",
+      "bytes": 1116996,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/aranha_berco.png",
+      "sha256": "d6dc6ac80585601c61fd2a3e834636c4b45fa1d9152bd53825f30b4ee5201486",
+      "bytes": 1675757,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/aranha_entrada_fios.png",
+      "sha256": "c57ec6b57597058ae93610f59f21b00802e410a61e680c6626b2e830d72816bd",
+      "bytes": 1497872,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/aranha_perspectiva.png",
+      "sha256": "c6bc53b8a2f981782cd15ba7f1a2f78c6407fa1db5a8f8628f3449f0fbf6f82e",
+      "bytes": 1091904,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/aranha_raiz_fiacao.png",
+      "sha256": "195696e6b6a24bfe1b3e2a4e97651837d09de1506382a5e2935c395c7bfc82eb",
+      "bytes": 1558363,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/aranha_raiz_gusset.png",
+      "sha256": "a3b3ed4c05b65436864e8118dca1f8d50606e1e750df75ceb7d331c837c6d097",
+      "bytes": 1396290,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/aranha_topo.png",
+      "sha256": "eab078391be41bc01c73e2e1ca77bd07dc5132a3e9152b2792aa30cc43f9f86a",
+      "bytes": 1028738,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/base_fixa_batente_eva.png",
+      "sha256": "4acb85cc50095f35ba64a869b6490690c0b3775d447244ad0fa71b122574fe8a",
+      "bytes": 1297422,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/base_fixa_como_impressa.png",
+      "sha256": "45aa12a9c980b70ce47a5e8244d49ec178cdade265573161a7c5971bb3de0789",
+      "bytes": 1023671,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/base_fixa_janela_assento.png",
+      "sha256": "1cae30c5ab5725bafc004fc7e065a18c5cc358492ef21417a5f1b9a3d97b8fb7",
+      "bytes": 1499477,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/base_fixa_topo.png",
+      "sha256": "28cdbe5b400012c173970aff3f8f7487d8aefe68a874b4cc40202e53652d1206",
+      "bytes": 1097394,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/cupom_canal_led.png",
+      "sha256": "07c83de21008d3b77210304fc10657ea78f6e55427c5fae6db4fc3f7e1933cd4",
+      "bytes": 1389339,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/cupom_canal_led_secao.png",
+      "sha256": "f62417c3e723202f55d8b4eed3b61174f75c23c0b00c608dd3c2b435649003f5",
+      "bytes": 1341774,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/hastes_8x.png",
+      "sha256": "4a8f165f0f6b850708d661fc309f6bf9c13379336314fa58a43a7f5c152d98e7",
+      "bytes": 1121886,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/montagem.png",
+      "sha256": "c40a25c9e201d85db5023828b0ad31aa9acf6e3c1b17e63c95a4d62461c022a7",
+      "bytes": 1567659,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/montagem_baia.png",
+      "sha256": "f5f267c9d6cf1e08df6b2b1a0841ec0cb20583d9346d2756a991c77c3f86ece8",
+      "bytes": 1726632,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/painel_boss_cauda.png",
+      "sha256": "3c47059c2bcf72c3a498b2fe43b49be1e7350ad59ee08c264845adff7be7b4b7",
+      "bytes": 1414785,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/painel_boss_face_contato.png",
+      "sha256": "0cff446d88ed63ea3d73cebd794a394437ff1a67bef0a83a0cb1c58618e197d3",
+      "bytes": 1303064,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/painel_boss_lado.png",
+      "sha256": "14ced21550cc97a230a87e9441e1f64e720cafee8f29b5c4fd125b1a868f9c1b",
+      "bytes": 1091254,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/painel_boss_nariz.png",
+      "sha256": "1fcd63cdc6288cefc98c165b5bf77d9b059dbc9c3c2570bb1b13ad5ef5d8dff9",
+      "bytes": 1383615,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/painel_completo.png",
+      "sha256": "37c6f743ee80e3c38b21346a67100136240a713dd8eb49ce80d6f5a2addad87a",
+      "bytes": 838532,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/painel_ponta_inferior_canal.png",
+      "sha256": "77b34ea8fe27acd8bfb4ba11570e34d41e062c9ef83ec441f7068d1b9f95a5aa",
+      "bytes": 1297399,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/palco_aro_assento.png",
+      "sha256": "0244e26ef99902e4e39f7b4f9d6e2aa1736b1ef34c2ca3e3cf68aa5e2a94a78b",
+      "bytes": 1437440,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/palco_flange_superior.png",
+      "sha256": "7ea72a8c0fb2be8cd7f4b508bdbc5ced358557de4e84eb675855b6dc7d297cfd",
+      "bytes": 1198342,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/palco_perspectiva.png",
+      "sha256": "ee88cce3757aaf760e9bec10b5866002302b06f70ed01a0d77b5d6acf9c3c867",
+      "bytes": 1050398,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/palco_topo.png",
+      "sha256": "a7bedc31237fb431a75f303764db66dc365bdce110ac6d5cb51ed83b9bd1bbf2",
+      "bytes": 1060242,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/suporte_ima.png",
+      "sha256": "fce8c9ae228e529d6bf77b4af42f42fa6cf3e5afc1fbf619f23c4e1f6ae9c2cf",
+      "bytes": 1066503,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/suporte_ima_topo.png",
+      "sha256": "1ff09f127c46fc1f720f2821301c7b92a1b77ebb65d488ffcb89f76c19ad22c2",
+      "bytes": 890215,
+      "preserved": false
+    },
+    {
+      "path": "exports/preview/tampa_topo.png",
+      "sha256": "1dbe6a97a160039115bfe98de32788f321a7fee1fcb4a921393489acdca8e46f",
+      "bytes": 1596085,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/01_aranha_PETG.stl",
+      "sha256": "7da0cf5a03f05655f79542bc89946155d98f369a558a41f9299000e7b96912f4",
+      "bytes": 590184,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/02_painel_LED_ABS_1x.stl",
+      "sha256": "b12e51a93eab4cb364ef86498303d6b21b37c20a7306a54690d74f24bfbef9b7",
+      "bytes": 199484,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/02_painel_LED_ABS_3x_mesma_mesa.stl",
+      "sha256": "9be70edc5258ed4508f8ea45ab855cb0ae44b3cd9fbfad39eec4ea1a5f7abc96",
+      "bytes": 598284,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/03_tampa_baia_PETG.stl",
+      "sha256": "d6ca1f200801080be8f9d73e3561c5491560ea3199541d3d0f5237371b6ce8b2",
+      "bytes": 326984,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/04_base_fixa_PETG_imprimir_invertida.stl",
+      "sha256": "4c1698d999bb2352c261c23cd1db5b17f2f1dbb8ab6ab2ec86b588784c54fb43",
+      "bytes": 498784,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/05_palco_torre_PETG.stl",
+      "sha256": "12ed2de20dcd6bde7c4b40fd8081bb93bb8f855e0b61201717ec84e700ac8ca8",
+      "bytes": 396284,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/06_suporte_ima_PETG.stl",
+      "sha256": "e01f3d5cf7a3e746b1934acc7490d458bafb58d1b3a2d9659b2bf5052a3e3b19",
+      "bytes": 78984,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/08_haste_flexivel_macia_1p5_1x.stl",
+      "sha256": "2d906467c5e5b490aaca1acbb6d8f304b6c59a201835f257d521c22d0857efbb",
+      "bytes": 14084,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/08_hastes_flexiveis_macia_1p5_8x.stl",
+      "sha256": "d4ea7d4a7b2cc4dfe24689aa033b2ae1d0ac1c2e9535a5042255b7e670fdf8d3",
+      "bytes": 112084,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/09_buchas_trava_4x.stl",
+      "sha256": "37a9d8348aefb5ca7fe0d60a7b3e0994d764c306bffc7f85605613ba69822822",
+      "bytes": 102484,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/10_bandeja_amortecedor.stl",
+      "sha256": "f5e8f6558f1a39067af22b4feffc3f3be9bbeb983756756678ea9563f7e9f16c",
+      "bytes": 144584,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/C01_cupom_junta.stl",
+      "sha256": "2894d0e773b4d7be8be70452495ee1238c3d5ace2e51478221c733593dfba56c",
+      "bytes": 3084,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/C02_cupom_canal_LED.stl",
+      "sha256": "a5bca525807daf6047973d3dfb4b15b0970ea59074cd01789a1173a45e51caff",
+      "bytes": 7784,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/R01P_arruela_eixo_M4_PLA_provisoria.stl",
+      "sha256": "47ced5de853affb20af1bb6a047ce4e4aeed8441f0c42d757c41715a425f06cc",
+      "bytes": 38484,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/R01P_suporte_motor_PLA_provisorio.stl",
+      "sha256": "9a46871ce87ec7fd1e9b97f465b7af3bb131870a6f13269f5cc803ff7db82d1d",
+      "bytes": 175384,
+      "preserved": false
+    },
+    {
+      "path": "exports/stl/R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl",
+      "sha256": "4a4f25368e6de6d5356b38fccd68a07b0509ed664b110c3acb57432e3621001a",
+      "bytes": 176084,
+      "preserved": false
+    },
+    {
+      "path": "reports/ACEITACAO.md",
+      "sha256": "c4fd844a4180217376c8ee46fd1e52506e3e09d4e19cc44778eaeb1b249dd2ad",
+      "bytes": 11929,
+      "preserved": false
+    },
+    {
+      "path": "reports/FISICA.json",
+      "sha256": "f7b91c86ebcc1d7dc2e2b347d11505e58a800be6df71271877a8f26c2cbf57d7",
+      "bytes": 19056,
+      "preserved": false
+    },
+    {
+      "path": "reports/RELATORIO_VALIDACAO.md",
+      "sha256": "acc4d586e4aede1a2ba0e16057028acaad0cea4df164436d7b6a5e1b2b5b6c49",
+      "bytes": 4173,
+      "preserved": false
+    },
+    {
+      "path": "reports/geometry_report.json",
+      "sha256": "fcd072af6bd5e7153610795d5fbd4c246a60f0a5d367e0fcae0df38bb33ed915",
+      "bytes": 74736,
+      "preserved": false
+    },
+    {
+      "path": "reports/stl_validation.json",
+      "sha256": "22a382f38164a94c14c6ca5335b70d3720595ea266ccd0a171aa7cbfc58bd073",
+      "bytes": 14136,
+      "preserved": false
+    },
+    {
+      "path": "fabricacao/R01_suporte_motor_60x60_aluminio_2mm.dxf",
+      "sha256": "5d8bd55f3a71d47570b0b1f22172b642b993b2f27d54057e2a8b28f7d5bc1686",
+      "bytes": 915,
+      "preserved": false
+    },
+    {
+      "path": "fabricacao/R01_suporte_motor_60x60_aluminio_2mm.svg",
+      "sha256": "f1a17dfaa059abebba270dedfd2f5f8d4b81982a319fdf16a437b10df18b9373",
+      "bytes": 2445,
+      "preserved": false
+    }
+  ],
+  "note": "Hashes dos artefatos desta execução, exceto o próprio manifesto; relatórios manuais preservados são identificados."
+}

@@ -80,13 +80,13 @@ def write_svg(path: Path) -> None:
     if wb:
         cx, cy, od, hole = wb
         parts.append(f'<circle cx="{cx:.3f}" cy="{-cy:.3f}" r="{od / 2:.3f}" fill="none" stroke="#000" stroke-width="0.3"><title>arruela do eixo Ø{od}</title></circle>')
-        parts.append(f'<circle cx="{cx:.3f}" cy="{-cy:.3f}" r="{hole / 2:.3f}" fill="none" stroke="#000" stroke-width="0.3"><title>furo Ø{hole} (passa pelo colar Ø8 do eixo)</title></circle>')
+        parts.append(f'<circle cx="{cx:.3f}" cy="{-cy:.3f}" r="{hole / 2:.3f}" fill="none" stroke="#000" stroke-width="0.3"><title>furo Ø{hole} (passa pelo colar Ø{P["unverified_interfaces"]["shaft"]["collar_diameter"]:g} do eixo)</title></circle>')
         parts.append(f'<text x="{cx - od / 2:.3f}" y="{od / 2 + 5:.3f}" font-size="2.4" font-family="sans-serif">arruela Ø{od} × Ø{hole}</text>')
     parts.append(f'<text x="{-w / 2}" y="{d / 2 + 6}" font-size="3.2" font-family="sans-serif">R01 suporte do motor — alumínio {q["thickness"]} mm — escala 1:1 — NÃO IMPRIMIR EM 3D</text>')
     motor = P["unverified_interfaces"]["motor"]
     parts.append(f'<text x="{-w / 2}" y="{d / 2 + 10.5}" font-size="2.6" font-family="sans-serif">4× Ø{motor["base_bolt_hole_diameter"]} motor em cruz (diagonais {motor["base_bolt_diagonal_x"]:g} e {motor["base_bolt_diagonal_y"]:g}) · 4× Ø{P["base_tower"]["flange_hole_diameter"]} flange PCD {P["base_tower"]["flange_hole_pcd"]} · centro Ø{q["center_clearance_diameter"]} (verificar)</text>')
     if wb:
-        parts.append(f'<text x="{-w / 2}" y="{d / 2 + 14.5}" font-size="2.6" font-family="sans-serif">Disco à direita: arruela do eixo na mesma chapa — o furo Ø{wb[3]} passa pelo colar Ø8; uma arruela M6 não passa.</text>')
+        parts.append(f'<text x="{-w / 2}" y="{d / 2 + 14.5}" font-size="2.6" font-family="sans-serif">Disco à direita: arruela do eixo na mesma chapa — o furo Ø{wb[3]} passa pelo colar Ø{P["unverified_interfaces"]["shaft"]["collar_diameter"]:g} do eixo.</text>')
     parts.append("</svg>")
     path.write_text("\n".join(parts) + "\n", encoding="utf-8")
 
