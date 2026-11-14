@@ -1,0 +1,21 @@
+[package]
+edition     = "2024"
+name        = "teste-fitas-c3"
+version     = "0.1.0"
+description = "Ensaio de bancada das 3 fitas HD107S pela interface 74AHCT125 (ESP32-C3 do rotor)"
+publish     = false
+
+[dependencies]
+esp-bootloader-esp-idf = { version = "0.6.0", features = ["esp32c3"] }
+esp-hal                = { version = "~1.2.2", features = ["esp32c3", "unstable"] }
+esp-println            = { version = "0.18.0", default-features = false, features = ["esp32c3", "jtag-serial", "critical-section"] }
+critical-section       = "1.2.0"
+
+[profile.dev]
+opt-level = "s"
+
+[profile.release]
+codegen-units = 1
+debug         = 2
+lto           = "fat"
+opt-level     = "s"
