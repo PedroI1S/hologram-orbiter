@@ -1,0 +1,603 @@
+{
+  "all_pass": true,
+  "inventory": {
+    "expected": [
+      "01_aranha_PETG.stl",
+      "02_painel_LED_ABS_1x.stl",
+      "02_painel_LED_ABS_3x_mesma_mesa.stl",
+      "03_tampa_baia_PETG.stl",
+      "04_base_fixa_PETG_imprimir_invertida.stl",
+      "05_palco_torre_PETG.stl",
+      "06_suporte_ima_PETG.stl",
+      "08_haste_flexivel_macia_1p5_1x.stl",
+      "08_hastes_flexiveis_macia_1p5_8x.stl",
+      "09_buchas_trava_4x.stl",
+      "10_bandeja_amortecedor.stl",
+      "C01_cupom_junta.stl",
+      "C02_cupom_canal_LED.stl",
+      "R01P_arruela_eixo_M4_PLA_provisoria.stl",
+      "R01P_suporte_motor_PLA_provisorio.stl",
+      "R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl"
+    ],
+    "missing": [],
+    "unexpected": []
+  },
+  "files": [
+    {
+      "file": "01_aranha_PETG.stl",
+      "triangle_count": 11798,
+      "dimensions_mm": [
+        148.7631,
+        171.7769,
+        53.0
+      ],
+      "bounds_min_mm": [
+        -52.7631,
+        -85.8884,
+        0.0
+      ],
+      "bounds_max_mm": [
+        96.0,
+        85.8884,
+        53.0
+      ],
+      "signed_volume_cm3": 91.7529,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 1.43,
+        "rays": 21293,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "02_painel_LED_ABS_1x.stl",
+      "triangle_count": 3988,
+      "dimensions_mm": [
+        208.0,
+        50.0,
+        30.0
+      ],
+      "bounds_min_mm": [
+        -104.0,
+        -35.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        104.0,
+        15.0,
+        30.0
+      ],
+      "signed_volume_cm3": 30.7132,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 1.73,
+        "rays": 6227,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "02_painel_LED_ABS_3x_mesma_mesa.stl",
+      "triangle_count": 11964,
+      "dimensions_mm": [
+        208.0,
+        170.0,
+        30.0
+      ],
+      "bounds_min_mm": [
+        -104.0,
+        -95.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        104.0,
+        75.0,
+        30.0
+      ],
+      "signed_volume_cm3": 92.1397,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 3,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 1.73,
+        "rays": 15939,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 3,
+      "component_count_ok": true
+    },
+    {
+      "file": "03_tampa_baia_PETG.stl",
+      "triangle_count": 6548,
+      "dimensions_mm": [
+        84.0,
+        84.0,
+        5.0
+      ],
+      "bounds_min_mm": [
+        -42.0,
+        -42.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        42.0,
+        42.0,
+        5.0
+      ],
+      "signed_volume_cm3": 10.1866,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 0.7,
+        "rays": 16714,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "04_base_fixa_PETG_imprimir_invertida.stl",
+      "triangle_count": 9974,
+      "dimensions_mm": [
+        280.0,
+        280.0,
+        78.9999
+      ],
+      "bounds_min_mm": [
+        -140.0,
+        -140.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        140.0,
+        140.0,
+        78.9999
+      ],
+      "signed_volume_cm3": 335.2373,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 2.33,
+        "rays": 22748,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "05_palco_torre_PETG.stl",
+      "triangle_count": 7924,
+      "dimensions_mm": [
+        225.4,
+        225.4,
+        145.0
+      ],
+      "bounds_min_mm": [
+        -112.7,
+        -112.7,
+        0.0
+      ],
+      "bounds_max_mm": [
+        112.7,
+        112.7,
+        145.0
+      ],
+      "signed_volume_cm3": 389.2926,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 1.88,
+        "rays": 33396,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "06_suporte_ima_PETG.stl",
+      "triangle_count": 1578,
+      "dimensions_mm": [
+        38.9261,
+        31.233,
+        26.5
+      ],
+      "bounds_min_mm": [
+        -5.7363,
+        -5.7363,
+        0.0
+      ],
+      "bounds_max_mm": [
+        33.1898,
+        25.4967,
+        26.5
+      ],
+      "signed_volume_cm3": 2.0053,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 0.5,
+        "rays": 13095,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "08_haste_flexivel_macia_1p5_1x.stl",
+      "triangle_count": 280,
+      "dimensions_mm": [
+        75.0,
+        12.0,
+        4.0
+      ],
+      "bounds_min_mm": [
+        -79.0,
+        -6.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        -4.0,
+        6.0,
+        4.0
+      ],
+      "signed_volume_cm3": 1.0501,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 0.63,
+        "rays": 3677,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "08_hastes_flexiveis_macia_1p5_8x.stl",
+      "triangle_count": 2240,
+      "dimensions_mm": [
+        75.0,
+        124.0,
+        4.0
+      ],
+      "bounds_min_mm": [
+        -79.0,
+        -62.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        -4.0,
+        62.0,
+        4.0
+      ],
+      "signed_volume_cm3": 8.4011,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 8,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 1.03,
+        "rays": 9929,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 8,
+      "component_count_ok": true
+    },
+    {
+      "file": "09_buchas_trava_4x.stl",
+      "triangle_count": 2048,
+      "dimensions_mm": [
+        54.0,
+        12.0,
+        24.8
+      ],
+      "bounds_min_mm": [
+        -27.0,
+        -6.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        27.0,
+        6.0,
+        24.8
+      ],
+      "signed_volume_cm3": 4.5784,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 4,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 0.5,
+        "rays": 9796,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 4,
+      "component_count_ok": true
+    },
+    {
+      "file": "10_bandeja_amortecedor.stl",
+      "triangle_count": 2890,
+      "dimensions_mm": [
+        231.3122,
+        231.3122,
+        9.5
+      ],
+      "bounds_min_mm": [
+        -115.6561,
+        -115.6561,
+        0.0
+      ],
+      "bounds_max_mm": [
+        115.6561,
+        115.6561,
+        9.5
+      ],
+      "signed_volume_cm3": 24.3439,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 1.93,
+        "rays": 15600,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "C01_cupom_junta.stl",
+      "triangle_count": 60,
+      "dimensions_mm": [
+        58.0,
+        24.0,
+        12.0
+      ],
+      "bounds_min_mm": [
+        -17.0,
+        -12.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        41.0,
+        12.0,
+        12.0
+      ],
+      "signed_volume_cm3": 9.6852,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 0.5,
+        "rays": 10268,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "C02_cupom_canal_LED.stl",
+      "triangle_count": 154,
+      "dimensions_mm": [
+        30.0,
+        30.0,
+        8.0
+      ],
+      "bounds_min_mm": [
+        -104.0,
+        -15.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        -74.0,
+        15.0,
+        8.0
+      ],
+      "signed_volume_cm3": 3.3978,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 0.5,
+        "rays": 6076,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "R01P_arruela_eixo_M4_PLA_provisoria.stl",
+      "triangle_count": 768,
+      "dimensions_mm": [
+        20.0,
+        20.0,
+        2.0
+      ],
+      "bounds_min_mm": [
+        -10.0,
+        -10.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        10.0,
+        10.0,
+        2.0
+      ],
+      "signed_volume_cm3": 0.5961,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 0.5,
+        "rays": 2268,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "R01P_suporte_motor_PLA_provisorio.stl",
+      "triangle_count": 3506,
+      "dimensions_mm": [
+        60.0,
+        60.0,
+        2.0
+      ],
+      "bounds_min_mm": [
+        -30.0,
+        -30.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        30.0,
+        30.0,
+        2.0
+      ],
+      "signed_volume_cm3": 6.8214,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 0.5,
+        "rays": 16348,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    },
+    {
+      "file": "R01_suporte_motor_aluminio_NAO_IMPRIMIR.stl",
+      "triangle_count": 3520,
+      "dimensions_mm": [
+        60.0,
+        60.0,
+        2.0
+      ],
+      "bounds_min_mm": [
+        -30.0,
+        -30.0,
+        0.0
+      ],
+      "bounds_max_mm": [
+        30.0,
+        30.0,
+        2.0
+      ],
+      "signed_volume_cm3": 6.8453,
+      "degenerate_triangles": 0,
+      "non_two_manifold_edges": 0,
+      "connected_components": 1,
+      "watertight": true,
+      "outward_orientation": true,
+      "ray_winding": {
+        "pitch_mm": 0.5,
+        "rays": 16348,
+        "bad_winding_segments": 0,
+        "thin_solid_segments": 0,
+        "examples": []
+      },
+      "coincident_opposite_face_pairs": 0,
+      "winding_clean": true,
+      "expected_connected_components": 1,
+      "component_count_ok": true
+    }
+  ]
+}

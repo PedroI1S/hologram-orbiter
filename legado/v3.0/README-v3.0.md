@@ -1,0 +1,97 @@
+# Hologram Orbiter
+
+Display por persistência de visão com três painéis de LEDs. Ponto de projeto:
+raio médio 100 mm, 1800 RPM, 29 LEDs por painel e 180 colunas angulares.
+A cinemática prevê 90 passagens por segundo; desempenho óptico ainda depende de firmware e ensaio.
+
+**Versão vigente: v3.0, revisão local 3.0.5 de 14/09/2026.**
+
+## Estado
+
+**Montagem de ensaio confirmada em 30/10/2026:** torre já **maciça em PETG,
+sem furo central de Ø22 mm**; rotor de **179,5 g sem circuito**; fonte em
+**10,4 V**. A torre tubular em ABS ainda descrita no CAD é a referência
+original e difere da peça construída. Ver [registro e estimativas de
+vibração](revisoes/2026-10-30-TORRE-MACICA-PETG.md).
+
+**Não liberado para girar nem para a fabricação definitiva dos painéis.**
+**Relato recebido em 27/10/2026:** a partida com rampa funcionou facilmente;
+na frenagem automática dentro da sequência de partida, o corpo oscilou e um
+braço da aranha quebrou. Novos giros ficam
+suspensos até investigar a ruptura, revisar a aranha e o procedimento de parada
+e inspecionar o conjunto. A ruptura foi na raiz, junto ao cubo central (V3.0,
+conforme usuário); rotação e parâmetros da rampa ainda precisam ser registrados.
+Ver o [relato do ensaio](revisoes/2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md)
+e a pendência R02 no documento 06.
+
+A revisão corrigiu a memória de flexão, as contas de partida e energia, os
+procedimentos de instrumentação, a parametrização das folgas e as falhas do build.
+O buck e suas guias foram recuados radialmente 1,2 mm para eliminar a colisão
+com a aranha; o novo teste verifica os envelopes contra a malha final.
+
+A revisão 3.0.5 remove a saliência dos braços dentro da baia e desobstrui
+as três entradas de fios. Os critérios geométricos passam a verificar
+também essas regiões na malha final.
+
+**Documentação elétrica unificada em 27/10/2026:** fonte do ESC em 10–12 V
+com limite de 30 A, conforme a premissa já registrada nos cálculos. O perfil
+atual de partida excede os critérios do bloqueador D no modelo e precisa de
+revisão antes do ensaio com rotor. Ver o [registro da unificação](revisoes/2026-10-27-UNIFICACAO-FONTE-ESC.md).
+
+A seção do painel tem Iyy = **589,8846 mm⁴**, abaixo dos 910 usados antes.
+O modelo uniforme dá **3,83–7,74 mm** de deflexão com 44,5 g; no teto de aceite
+45 g, chega a **7,83 mm** e ~29,1 MPa. Esses resultados corrigem a aritmética,
+mas exigem fechar a transferência de carga, as propriedades FDM e a fluência.
+
+Os relatórios automáticos são a referência da execução atual:
+
+- [Aceitação geométrica](Hologram_Orbiter_v3_0/reports/ACEITACAO.md).
+- [Validação e valores atuais](Hologram_Orbiter_v3_0/reports/RELATORIO_VALIDACAO.md).
+- [Cálculos reproduzíveis](Hologram_Orbiter_v3_0/reports/FISICA.json).
+- [Revisão completa](revisoes/2026-09-08-REVISAO-COMPLETA.md) e [correções aplicadas](revisoes/2026-09-08-CORRECOES-APLICADAS.md).
+
+Aprovação geométrica não substitui os bloqueadores físicos. Massas de catálogo,
+chicotes, bateria, ferragens e contrapesos devem ser reconciliados na pesagem real;
+o subtotal CAD não comprova a margem até 280 g.
+
+## Números de projeto
+
+| Grandeza | Valor e condição |
+|---|---|
+| Rotação / velocidade angular | 1800 RPM / 188,496 rad/s |
+| Motor / acionamento | A2212 920KV / ESC LittleBee Spring 20A |
+| Corrente de regime prevista | 4,95 A de fase; ~16,63 W na fonte (1,66 A a 10 V, 1,39 A a 12 V), com eficiência ESC assumida de 95% |
+| Temperatura prevista | ~46,4 °C, sob as hipóteses térmicas; limite de aceite <55 °C |
+| Fonte do ESC | 10–12 V com limite de corrente de 30 A, conforme premissa registrada em 20/10/2026; grampo ou resistor de descarga no barramento do ESC |
+| Perfil de partida atual, não aprovado | chute de 1400 µs: subida de 3 s, chute de 2 s, descida a 42 µs/s até o alvo inicial de 1200 µs (05 §8.2); modelo: 16,7–20,0 A de fase no chute, pico de 1692 RPM a 10 V e 1964 RPM a 12 V; excede os critérios do bloqueador D |
+| Esticada a 2000 RPM | ~6,11 A / 56,3 °C; não liberada |
+| Carga radial de referência | 158,1 N por painel de 44,5 g; ~159,9 N a 45 g |
+| Energia de projeto | ~27,5 J para J=1,55 g·m², hipótese conservadora não medida |
+| Painel solto | ~7,9 J e 18,9 m/s na referência de 44,5 g / r=100 mm |
+| Desbalanceamento de referência | 8,4 g·mm usando 252 g; recalcular com a massa final e medir em dois planos |
+
+A PCB de interface SPI quad está em [eletronica/interface](eletronica/interface/README.md), com projeto KiCad, Gerbers e arquivos de montagem para cotação. A revisão r0.2 ainda depende de ensaio elétrico e conferência física dos chicotes.
+
+## Documentos
+
+| Uso | Arquivo |
+|---|---|
+| Cotas e memória de cálculo | [01 — Especificação](01-ESPECIFICACAO-CAD-v3.0.md) |
+| Fases e portões | [02 — Plano de projeto](02-PLANO-DE-PROJETO-v3.0.md) |
+| Componentes e instrumentos | [03 — Lista de componentes](03-LISTA-DE-COMPONENTES-v3.0.md) |
+| Critérios físicos de aceite | [04 — Plano de ensaios](04-PLANO-DE-ENSAIOS-v3.0.md) |
+| Eletrônica e firmware planejado | [05 — Esquema elétrico](05-ESQUEMA-ELETRICO-v3.0.md) |
+| O que ainda falta | [06 — Pendências](06-PENDENCIAS-ABERTAS-v3.0.md) |
+| Medições e premissas | [07 — Glossário](07-GLOSSARIO-E-PREMISSAS.md) |
+| CAD, STL e montagem | [Pacote CAD](Hologram_Orbiter_v3_0/README.md) |
+
+Parâmetros do CAD governam cotas, a especificação governa requisitos e o plano
+de ensaios governa aceite físico. Divergências devem ser corrigidas; não se deve
+escolher o valor que favorece a aprovação. O legado permanece arquivado e as
+revisões históricas descrevem os resultados da data indicada.
+
+A [proposta e suas apresentações](proposta/README.md) conservam os valores da
+proposta original; para alimentação, partida e aceite, usar os documentos vigentes acima.
+
+Sentido de giro: anti-horário visto de cima; bordo de ataque em +y local.
+Balança de 0,01 g, contenção e operação remota são requisitos do ensaio.

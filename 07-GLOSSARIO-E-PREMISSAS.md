@@ -1,7 +1,8 @@
-# Glossário e premissas — Hologram Orbiter v3.0
+# Glossário e premissas — Hologram Orbiter v4.0
 
-Duas coisas que faltavam: o vocabulário do projeto, e o registro honesto de
-**o que foi medido, o que foi derivado e o que ainda é chute**.
+O vocabulário vigente do projeto e o registro explícito de **o que foi medido,
+o que foi derivado e o que ainda depende de ensaio** após a promoção da
+arquitetura em paralelogramo + motor `AX-2810Q 750KV` para **v4.0** (14/11/2026).
 
 ---
 
@@ -9,148 +10,179 @@ Duas coisas que faltavam: o vocabulário do projeto, e o registro honesto de
 
 ### Motor
 
-**Campânula** *(bell)* — a parte **girante** do motor: a "sineta" de alumínio que
-gira por fora, com os ímãs colados na face interna. É nela que a aranha se apoia
-e dela que sai o eixo. **Não confundir com o cilindro de proteção.** Neste motor
-ela é vazada, com 5 raios, e não tem furos roscados.
+**Campânula** *(bell)* — a parte **girante** externa do motor (`Ø35 mm` no
+`AX-2810Q`). Dela sai o eixo e sobre ela monta-se o adaptador de hélice onde a
+aranha assenta. **Não confundir com cilindro de proteção.**
 
-**Base do motor** — a parte **fixa**, onde saem os três fios de fase. É ela que
-parafusa na chapa de alumínio, pelo padrão de 4 × M3 em cruz: 16 e 19 mm são as
-diagonais, com furos em (±8, 0) e (0, ±9,5).
+**Base do motor** — a parte **fixa**, onde saem os três fios de fase (`Ø3,0 mm`
+medidos no `AX-2810Q`). Parafusa na chapa de alumínio `R01` pelo padrão de
+4 × M3 em cruz: diagonais **16 e 19 mm**, com furos em (±8, 0) e (0, ±9,5).
 
-**Colar do eixo** — o trecho Ø8 × 5 mm do eixo entre a campânula e a rosca M6.
-É ele que centra o cubo (furo Ø8 H8), e é por ele que a arruela precisa de furo
-Ø8,5: uma arruela M6 assentaria no colar e a porca não apertaria o cubo.
+**Base serrilhada e bucha do eixo** — no adaptador de hélice do `AX-2810Q`, o
+cubo assenta sobre uma **base serrilhada `Ø13 mm`** (como uma hélice), e não
+diretamente nos raios da campânula como no antigo A2212. Acima dela há um trecho
+liso `Ø4 × 5 mm`, onde entra a **bucha `Ø6 mm`** que centra o cubo (`furo Ø6`),
+seguida de rosca **M4 × 10 mm**.
 
-**kv** — rotação por volt sem carga. 920 kv dá 9200 RPM a vazio a 10 V e
-11 040 RPM a 12 V; a 1800 RPM o motor está a 16–20 % disso. A fonte do ESC opera
-em 10–12 V desde 20/10/2026; as tabelas antigas usavam 7 V (6440 RPM, 28 %).
+**kv** — rotação por volt sem carga. `750 kv` dá 7500 RPM a vazio a 10 V e
+9000 RPM a 12 V; a 1800 RPM o motor opera a **20–24 %** da rotação a vazio (mais
+torque específico que o antigo 920 kv).
 
-**Kt** — constante de torque, `9,5493 / kv`. Diz quanto torque sai por ampère.
+**Kt** — constante de torque, `9,5493 / kv` = **12,73 mN·m/A** no `AX-2810Q`.
 
-**ESC** — controlador do motor sem escovas. Recebe **sinal servo** (PWM de
-1–2 ms), não tensão analógica.
+**ESC** — controlador do motor sem escovas (*LittleBee Spring 20A*, `BLHeli_S`
+16.7). Recebe **sinal servo** (PWM de 1–2 ms a 50 Hz), não tensão analógica.
 
-**LVC** — corte por baixa tensão do ESC. Pode desligar o motor se ele achar que
-a bateria acabou — problema real quando se opera a fonte perto do piso da faixa.
+**LVC** — corte por baixa tensão. **Não existe** no firmware `BLHeli_S`.
 
-**Governor** — modo de malha fechada de rotação do ESC. É o que mantém a rotação
-estável quando a carga varia.
+**Governor** — controle em malha fechada de rotação. **Não existe** no
+`BLHeli_S`.
 
-### Rotor
+### Rotor e base suspensa
 
-**Aranha** — a peça central girante: cubo mais três braços radiais. Transmite o
-torque do motor para os painéis.
+**Aranha** — a peça central girante em **PETG**: cubo `Ø92`, baia **`Ø80/84 × 47 mm`**
+com **prateleira em `Z = 28 mm`** e três braços radiais reforçados (aleta
+vertical em **D** + alma inferior em **perfil de asa invertido** até `r = 74 mm`).
 
-**Longarina** — cada um dos três braços da aranha. Seção aerodinâmica de
-15 × 6 mm.
+**Longarina** — cada um dos três braços da aranha (`15 × 6 mm` no núcleo,
+reforçados da raiz até o ombro).
 
-**Espiga** *(tenon)* — a ponta retangular da longarina, 11 × 6 × 22 mm, que entra
-no painel.
+**Espiga** *(tenon)* — a ponta retangular da longarina, `11 × 6 × 22 mm`, que
+entra no painel. Na v4.0 passa a ser o limite de seção resistente (`r = 77 mm`,
+9,7 MPa a 10° de inclinação).
 
-**Socket** — o encaixe correspondente dentro do painel, 11,2 × 6,2 × 22,5 mm.
-A folga de 0,1 mm por lado e 0,5 mm de fundo é intencional: a carga radial vai
-para os parafusos, não para o fundo da espiga.
+**Socket** — o encaixe correspondente dentro do painel, `11,2 × 6,2 × 22,5 mm`.
+Folga de 0,1 mm por lado e 0,5 mm de fundo para a carga radial ir aos
+parafusos M3.
 
 **Boss** — a saliência do painel que envolve o socket e as torres dos parafusos.
-Projeta-se para dentro, na direção do cubo.
 
-**Carenagem** — a casca em gota que envolve o boss. Existe porque o boss nu
-respondia por **mais da metade de todo o arrasto do rotor**.
+**Carenagem** — a casca em gota (`0,8 mm`) que envolve o boss para reduzir o
+arrasto aerodinâmico.
 
-**Baia de eletrônica** — o compartimento cilíndrico no cubo que abriga bateria,
-controlador e conversores. Gira junto.
+**Baia de eletrônica** — compartimento cilíndrico no cubo (**`Ø80` interno /
+`Ø84` externo × `47 mm` de altura**). Abriga bateria LiFe, ESP32-C3, buck,
+capacitor de saída e placa de interface no piso/pilares (`Z = 0..27 mm`), além
+de reservar uma **prateleira em `Z = 28 mm`** para a futura placa própria
+(`Z = 28..44 mm`).
 
-**Coxim** — isolador de vibração. **Não existe no projeto atual**: a peça herdada
-tinha frequência natural de 400–620 Hz contra os ≤ 21 Hz que isolar 30 Hz exige.
-A montagem é rígida.
+**Palco suspenso** — conjunto móvel em **PETG** (`05_palco_torre_PETG.stl`):
+disco inferior, 8 aletas radiais, aro externo e torre maciça `Ø40` que sustenta
+o motor e o rotor (`~0,95 kg` móveis no total).
 
-**Contrapeso** — massa de correção do balanceamento, em dois planos: os
-alívios da face inferior do cubo (r 17–36) e os copos da tampa (r = 34). O
-layout define os valores em `reports/geometry_report.json`; usar a execução atual e refinar com as massas reais.
+**Hastes flexíveis** — 8 barras verticais em **PETG** de seção quadrada
+**`1,5 × 1,5 mm`** (`55 mm` livres, `08_hastes_flexiveis_macia_1p5_8x.stl`) que
+penduram o palco ao anel superior da base fixa. Dobram em **S** para transladar
+horizontalmente sem inclinar (`4,38 Hz`, rotação crítica **~263 RPM**),
+isolando de 24× a 40× a força transmitida à bancada a 1800 RPM.
 
-**Canal do LED** — o rebaixo de 12,4 × 2,0 mm na face externa do painel onde a
-fita cola: PCB no fundo, LEDs rentes à face. Sob ele a parede engrossa de 2,0
-para 2,8 mm numa faixa de 14,4, deixando o piso de 0,8.
+**Trava 4 + 4** — mecanismo reversível que converte a base suspensa em modo
+rígido usando as mesmas peças impressas: 4 parafusos radiais `M3 × 40` em
+buchas `09_buchas_trava_4x.stl` + 4 parafusos verticais `M3 × 10` no teto dos
+batentes.
+
+**Amortecedor viscoso** — bandeja única opcional (`10_bandeja_amortecedor.stl`)
+sob o palco com 4 cubas em setor de anel onde mergulham 4 pás em L do palco.
+Com **óleo de silicone `10 000 cSt`** (`~4,14 mL/cuba` até a cota nominal, ou
+`~2 mL` mínimo) amortece translação (`ζ ≈ 0,12`) e giro (`ζ ≈ 0,049`) sem
+adicionar rigidez; seco, não atua.
+
+**Coxim** — isolador elastomérico heredado da v2.1. **Não existe no projeto:**
+foi descartado na v3.0 (frequência natural de 400–620 Hz); na v4.0 o isolamento
+é feito exclusivamente pela suspensão em paralelogramo na base.
+
+**Contrapeso** — massa de correção do balanceamento em dois planos: alívios da
+face inferior do cubo (`r = 17..36 mm`, plano 1) e os 6 copos no topo da tampa
+(`r = 34 mm`, plano 2). Os valores nominais são recalculados a cada build em
+`reports/geometry_report.json` e devem ser ajustados após a pesagem real.
+
+**Canal do LED** — rebaixo de `12,4 × 2,0 mm` na face externa do painel onde a
+fita HD107S cola com os LEDs rentes à face, deixando piso em ponte de `0,8 mm`
+sobre parede local engrossada para `2,8 mm`.
 
 ### Geometria e fabricação
 
-**Datum** — face ou eixo de referência a partir do qual outras cotas são medidas.
-Datum D, por exemplo, é a altura do boss a partir da base do painel: 104 mm.
+**Datum** — face ou eixo de referência. **`Datum B = 186 mm`** é o topo do cubo
+a partir do piso da base fixa (`palco 12 + torre 137 + chapa 2 + motor_stack 35`);
+**`Datum D = 104 mm`** é a meia-altura do painel a partir da base do painel.
 
-**Plano médio do painel** — o cilindro imaginário em **r = 100 mm** onde a lâmina
-é centrada. É a cota que define quase toda a física do projeto.
+**Plano médio do painel** — cilindro em **`r = 100 mm`** onde a lâmina é centrada.
 
-**Cupom** — corpo de prova pequeno impresso antes do lote, para validar uma folga
-específica. Custam minutos e evitam refazer painéis de 8 a 10 horas.
+**Cupom** — corpo de prova pequeno (`C01_cupom_junta.stl`,
+`C02_cupom_canal_LED.stl`) impresso antes do lote para validar folga da junta e
+ponte do canal do LED.
 
-**Ponte** *(bridging)* — trecho que a impressora extruda no vazio, entre dois
-apoios. O piso de 0,8 mm sob o canal do LED é uma ponte de 12,4 mm.
+**Ponte** *(bridging)* — trecho extrudado no vazio entre dois apoios (ex.: piso
+de `0,8 mm` sob o canal de `12,4 mm` no painel).
 
 **Enrolamento** *(winding number)* — quantas vezes a superfície envolve um ponto.
-Enrolamento **+1** é sólido normal; **−1** é uma casca invertida, que parece
-válida em toda checagem topológica e imprime errado. Foi assim que os dois P0 do
-painel passaram por três validadores.
+**+1** é sólido normal; **−1** é casca invertida. Todos os STLs publicados pelo
+pipeline passam em sondagem por raios (`CAD/probe.py`) e validação independente
+(`scripts/validate_stl.py`).
 
-**Watertight / não-manifold** — malha fechada, com cada aresta pertencendo a
-exatamente duas faces. **Necessário, mas não suficiente**: uma casca invertida
-passa nos dois testes.
+**Watertight / não-manifold** — malha fechada com exatamente duas faces por aresta.
 
 ### Dinâmica
 
-**POV** — *persistence of vision*. O olho integra o que se move rápido; três
-painéis a 30 rps varrem cada ponto do espaço 90 vezes por segundo.
+**POV** — *persistence of vision*. Três painéis a 30 rps varrem cada ponto do
+espaço 90 vezes por segundo.
 
-**Índice / referência de fase** — o pulso, uma vez por volta, que diz ao ESP32
-onde ele está apontando. Sem ele o firmware só conta tempo, e a imagem gira.
+**Índice / referência de fase** — pulso 1× por volta gerado pelo sensor Hall
+`A3144` nu ao cruzar o ímã fixo (`r = 29 mm`, azimute `20°`).
 
-**Δm** — diferença de massa entre os três painéis. Limite atual: **0,084 g**.
+**Δm** — diferença de massa entre os três painéis montados. Limite atual: **`0,084 g`**.
 
-**U** — desbalanceamento, em g·mm: massa desviada vezes o raio.
+**U** — desbalanceamento estático, em `g·mm` (massa × raio). Referência
+nominal de G6.3 a 1800 RPM: **`8,4 g·mm`** (recalcular com a massa real medida
+do rotor até o teto provisório de `420 g`).
 
-**G6.3** — grau de qualidade de balanceamento (ISO 1940). Define a excentricidade
-admissível em função da rotação.
+**G6.3** — grau de qualidade de balanceamento (ISO 1940).
 
-**A·Cd** — área frontal vezes coeficiente de arrasto. É o produto que importa;
-encolher a área vale tanto quanto alisar a forma.
+**A·Cd** — área frontal vezes coeficiente de arrasto. Critério do boss carenado:
+`≤ 350 mm²`.
 
-**Fluência** *(creep)* — deformação lenta sob carga **constante**. É o risco real
-do painel. Sua evolução depende do ABS, impressão, tensão e temperatura; não há ensaio deste filamento que sustente uma lei quantitativa de 100 h. O plano 04 exige medição sob carga.
+**Fluência** *(creep)* — deformação lenta sob carga constante em plásticos FDM
+(painel sob 158 N centrífugos, hastes e apoios da aranha sob pré-carga/carga).
 
-**Fadiga** — dano por carga **cíclica**. Aqui os ciclos são as partidas e paradas,
-dezenas — não os 30 Hz de rotação. Num rotor de eixo vertical nem a força
-centrífuga nem o peso mudam de direção em relação ao painel.
+**Fadiga** — dano por carga cíclica (partidas, paradas e cruzamento da crítica
+de `~263 RPM` ou vibração de giro).
 
-**Bloqueador** — critério que precisa passar antes de avançar de fase, com valor
-numérico, método de medição e caminho de contingência.
+**Bloqueador** — critério objetivo (`C0` e `A`–`E` do plano 04) com método de
+medição e contingência antes de avançar de fase.
 
 ### Elétrica
 
-**Buck** — conversor abaixador. 6,6 V da bateria LiFePO4 para 5 V da fita.
+**SPI Quad** — topologia adotada para os dados dos painéis: 1 linha `CLK` comum
+(com 3 resistores série de `33 Ω`) + 3 linhas `DATA` independentes, saindo do
+buffer `74AHCT125`. Reduz o chicote de 6 para **4 condutores por painel** (`+5 V`,
+`GND`, `CLK`, `DATA`, sem retorno) e elimina o atraso serial entre painéis.
 
-**LiFePO4** *(LiFe)* — química de lítio-ferro-fosfato. 3,3 V por célula em vez
-dos 3,7 do LiPo, curva de descarga plana, com características distintas da LiPo; não é imune a sobrecarga, curto ou dano térmico.
-**Carrega em modo LiFe, a 3,6 V/célula** — modo LiPo, a 4,2, destrói o pack.
+**Buck** — conversor abaixador (`mini560`, 6,6 V nominal da bateria LiFePO4 para
+5,0 V das fitas e lógica).
 
-**Nyloc** — porca com anel de nylon que trava por atrito. **Não cabe** no bolso
-de 2,8 mm do painel (tem 4,0 mm); ali vai porca plana com trava química.
+**LiFePO4** *(LiFe)* — 2S 800 mAh (`6,6 V` nominal, `7,2 V` cheia, corte `5,8 V`).
+**Carregar sempre em modo LiFe a `3,6 V/célula`** — modo LiPo (4,2 V) destrói o pack.
 
-**Coletor aberto** *(open collector)* — saída que só puxa para o terra e precisa
-de resistor de pull-up. É por isso que o A3144 pode ser alimentado em 5 V e ainda
-entregar um sinal de 3,3 V seguro ao ESP32-C3.
+**Porca autotravante DIN 985 M4 e arruela DIN 9021 M4** — fixação do cubo no
+eixo do `AX-2810Q` (`1,0 N·m`). A arruela larga de aço (`12 × 4,3 × 1,0 mm`)
+distribui a carga no PETG acima do furo `Ø6`. **Nos painéis** (junta `2 × M3 × 40`),
+o bolso de `2,8 mm` continua usando porca plana M3 com trava química (Nyloc não
+cabe ali).
 
-**V_IH** — tensão mínima que uma entrada digital reconhece como nível alto. A
-fita quer 3,5 V e o ESP32-C3 entrega 3,3 — daí o deslocador de nível.
+**Coletor aberto** *(open collector)* — saída do `A3144` que só puxa ao GND,
+permitindo alimentar o sensor em 5 V e entregar sinal seguro de `3,3 V` ao
+ESP32-C3 via pull-up `10 kΩ → 3V3`.
 
-**ESP-NOW** — protocolo da Espressif para dois ESP32 conversarem direto, sem
-roteador nem conexão, em pacotes de até 250 bytes. Leva a imagem da ESP32 da
-base ao rotor (esquema 05 §9).
+**V_IH** — tensão mínima de nível alto (`≥ 3,5 V` na HD107S em 5 V), atendida pelo
+`74AHCT125`.
 
-**Portal cativo** — página que o celular abre sozinho ao entrar numa rede Wi-Fi,
-como em hotel. É como o QR code leva o público à página de desenho.
+**ESP-NOW** — enlace sem fio (pacotes até 250 bytes) entre a ESP32 da base e o
+ESP32-C3 do rotor (somente dados de imagem, nunca comando de motor).
 
-**Tremor** *(jitter)* — variação no instante em que cada coluna acende; aparece
-como borda vertical tremida. O orçamento é 1/4 de coluna, 46 µs a 1800 RPM.
+**Portal cativo** — página servida pela ESP32 da base via Wi-Fi AP para desenho.
+
+**Tremor** *(jitter)* — variação no instante de atualização de coluna (`≤ 46 µs`,
+1/4 de coluna a 1800 RPM).
 
 ---
 
@@ -160,107 +192,80 @@ Nenhum número deste projeto deve ser usado sem saber de qual coluna ele veio.
 
 | Grandeza | Valor | Origem | Estado |
 |---|---|---|---|
-| Motor, kv | A2212, 920 kv | datasheet | ✅ medido |
-| Kt | 10,38 mN·m/A | `9,5493/kv` | ✅ derivado |
-| Resistência efetiva | 0,221 Ω | ponto de catálogo com hélice | ⚠️ **envelope, não Rm** |
-| Furação da base do motor | cruz, diagonais 16 e 19, 4 × M3 | datasheet (leitura corrigida em 14/10/2026) | ✅ |
-| Campânula | vazada, 5 raios, sem furos roscados | datasheet | ✅ |
-| Eixo | colar Ø8 × 5 + rosca M6 × 7, sob cota total de 14 (a soma dá 12) | desenho cotado do datasheet | ⚠️ **medir topo do colar e ponta a partir da face de apoio** |
-| Corpo do motor | 24 mm × Ø27,8 | medido | ✅ |
-| **Chapa → Datum B** | **30 mm** (24 do corpo + 6 do cubo) | derivado | ✅ o cubo assenta nos raios da campânula; o colar entra no furo Ø8 |
-| Arruela e porca do eixo | Ø20 × Ø8,5 × 2 em alumínio + M6 fina DIN 439B com trava química | projeto (o colar Ø8 não passa por arruela M6) | ⚠️ conferir espessura e altura reais |
-| Fita HD107S | 12,0 × 2,0 mm, 144 LED/m | **medido** | ✅ |
-| ESP32-C3 Super Mini | ~22 × 18 × 5 mm | em mãos | ✅ |
-| ESC LittleBee Spring | **20 A contínuo, 25 A pico**, 25 × 13 mm, BLHeli_S em EFM8BB21 | datasheet | ✅ |
-| ESC: governor | **não existe** em BLHeli_S | manual Rev16.x | ✅ |
-| ESC: corte por baixa tensão | **não existe** em BLHeli_S — o LVC definido acima não se aplica a este ESC | manual Rev16.x | ✅ |
-| ESC: tempo de rampa | **não existe** — só *startup power* (0,031–1,5) | manual Rev16.x | ✅ |
-| ESC: Startup Power gravado | **0,25** desde 19/10/2026 (era 0,125; original 0,50) | releitura no configurador | ✅ |
-| Fonte de bancada | ajustável; **10–12 V**, limite de corrente de **30 A**, conforme premissa registrada em 20/10/2026; não limita a partida no modelo | em mãos | ✅ |
-| Bateria LiFePO4 800 mAh | 58 × 30 × 17 mm, 50 g, **6,6 V nominal**, 2S, 20C | comprada | ✅ |
-| Faixa útil da bateria | 7,2 V cheia · 6,6 no platô · **corte em 5,8** (dropout do buck) | derivado | ⚠️ |
-| **Rth do motor** | **3,5 °C/W** | assumido | ❌ **o termopar decide** |
-| **Cd da lâmina** | **0,35** | tabela de razão de finura | ❌ **o ensaio decide** |
-| **A·Cd do boss** | **≤ 350 mm²** | estimativa por finura | ❌ |
-| Módulo do ABS | 2 GPa | catálogo genérico | ❌ |
-| Massa do painel montado | ~42,1 g | CAD (31,9 nu) + fita + ferragens | ⚠️ pesar |
-| Subtotal do rotor | ver relatório gerado da revisão atual | CAD + componentes declarados + Hall + contrapeso | ⚠️ reconciliar chicotes/ferragens e pesar; não é massa completa certificada |
-| Eletrônica da baia | 5,5 + 3,0 + 2,0 + 2,5 + 2,0 g | catálogo | ❌ **pesar cada peça** |
-| Sensor de índice | **A3144 nu**, TO-92, 0,2 g | dessoldado do módulo | ✅ |
-| Gerador de sinal do ESC | ESP32 DevKit de 30 pinos (XX5R69), no lugar do Arduino | em mãos | ✅ |
+| Motor, kv e massa | `AX-2810Q`, `750 kv`, `72 g` (catálogo) | HobbyKing datasheet | ⚠️ **kv/massa de catálogo; pesagem e tacômetro pendentes** |
+| Kt | `12,73 mN·m/A` | `9,5493 / kv` | ✅ derivado do kv de catálogo |
+| Resistência efetiva por fase | **`0,225 Ω`** (`~0,20–0,25 Ω/fase`) | medida linha-linha em `13/11/2026` (`5,3–5,4 Ω` menos `4,9 Ω` das pontas = `0,4–0,5 Ω`) | ⚠️ **±25 % pela resolução de 0,1 Ω do multímetro** |
+| Furação da base do motor | cruz, diagonais `16` e `19 mm`, `4 × M3` | **medido** por Pedro em `13/11/2026` | ✅ medido |
+| Fios de fase do motor | `3 fios Ø3,0 mm` | **medido** por Pedro em `13/11/2026` | ✅ medido |
+| Campânula | `Ø35 mm` | **medido** por Pedro em `13/11/2026` | ✅ medido |
+| Corpo do motor | `26 mm` (catálogo B) | HobbyKing datasheet | ❌ **medir altura real do corpo (e divisão campânula/serrilhado)** |
+| **Chapa → assento do cubo** | **`29 mm`** (topo da base serrilhada `Ø13`) | **medido** por Pedro em `13/11/2026` | ✅ cota total medida; divisão `26 + 3` assumida |
+| Eixo e adaptador de hélice | base serrilhada `Ø13`, trecho liso `Ø4 × 5` (c/ bucha `Ø6`), rosca `M4 × 10` | **medido** por Pedro em `13/11/2026` | ✅ medido (cubo assenta no `Ø13`) |
+| **Chapa → Datum B** | **`35 mm`** (`29` assento + `6` cubo) | derivado | ✅ `Datum B = 186 mm` (`12 palco + 137 torre + 2 R01 + 35`) |
+| Chapa R01 e arruela do eixo | chapa alumínio `60×60×2 mm` alívio **`Ø11`**, arruela aço `DIN 9021 M4` (`12×4,3×1,0`) + porca `DIN 985 M4` (5 mm) | projeto v4 (`R01P_*_PLA` provisórias até cortar alumínio e comprar DIN 9021/985) | ⚠️ conferir espessura real e folga até M3 em `r = 8` |
+| Fita HD107S | `12,0 × 2,0 mm`, 144 LED/m | **medido** (`02/09/2026`) | ✅ |
+| ESP32-C3 Super Mini | `~22,5 × 18 × 5 mm` | em mãos | ✅ |
+| ESC LittleBee Spring | `20 A` contínuo / `25 A` pico, `BLHeli_S 16.7` | datasheet + leitura `4-way` (`13/11/2026`) | ✅ |
+| ESC: configuração gravada | **Startup Power `0,50`**, **Demag `High`**, **Brake on stop `On`**, Normal, PPM `1148–1832 µs` | gravado e verificado por releitura em `13/11/2026` | ✅ gravado (`SHA-256 4f456a62…a119`) |
+| ESC: governor / LVC / rampa | **não existem** em `BLHeli_S` | manual Rev16.x | ✅ |
+| Fonte de bancada | `10–12 V`, limite `30 A` | em mãos (`20/10/2026`) | ✅ |
+| Bateria LiFePO4 800 mAh | `58 × 30 × 17 mm`, `50 g`, `6,6 V` nominal, 2S, 20C | comprada e medida (`02/09/2026`) | ✅ |
+| **Rth do motor** | **`3,5 °C/W`** | assumido (catálogo) | ❌ **termopar decide (Bloqueador B)** |
+| **Cd da lâmina / A·Cd do boss** | `0,35` / `≤ 350 mm²` | estimativa geométrica/tabela | ❌ **ensaio decide (Bloqueador A)** |
+| Módulo e resistência PETG / ABS FDM | ABS `2,0–2,3 GPa` / PETG `1,9 GPa` (`1,27 g/cm³`) | catálogo genérico | ❌ **cupom, impacto `C0` e ensaio decidem** |
+| Massas CAD (sólido maciço) | aranha `116,53 g`, painel nu `31,94 g`, tampa `12,94 g`, palco+torre `494,4 g`, base fixa `425,75 g`, haste `1,33 g` | `geometry_report.json` | ⚠️ pesar peças impressas reais |
+| Subtotal do rotor vs teto v4 | **`352,14 g`** nominais contra teto provisório **`420 g`** | CAD + `40 g` eletrônica + bateria + Hall + contrapeso | ❌ **reconciliar chicotes 4 fios, placa e pesar** |
+| Suspensão em paralelogramo | translação `4,38 Hz` (`263 RPM`), yaw `12,66 Hz` (`759 RPM`), balanço combinado `89,3 Hz`, `0,952 kg` móveis | `FISICA.json` (`E = 1900 MPa`, sem óleo/cabos) | ❌ **ensaio de impacto `C0` e travamento decidem** |
+| Sensor de índice | `A3144` **nu**, TO-92, `0,2 g` | dessoldado do `HW-477` | ✅ (polaridade/entreferro em bancada pendentes) |
+| Placa de interface SPI Quad | montada em perfboard ponto a ponto (`MONTAGEM-PONTO-A-PONTO.md`); `r0.2` em KiCad não fabricada | `eletronica/interface/` + `firmware/teste-fitas-c3/` | ⚠️ **pesar, medir e validar 3 fitas + Hall + ADC** |
 
-**Os três itens em negrito são o caso térmico inteiro.** Se o Rth real for 6 °C/W
-em vez de 3,5, ou se o Cd vier em 0,50, os 43 °C viram 68 a 99. É por isso que o
-Bloqueador B mede em vez de calcular, e por isso a ventilação é requisito e não
-recomendação.
-
----
-
-## 3. Duas coisas dos componentes que não podem passar batido
-
-### Por que o sensor vai nu, e não na placa
-
-Módulos de hall trazem pull-up próprio e conector. Dois motivos para não subirem
-no rotor:
-
-**Elétrico.** O pull-up do módulo vai para o VCC dele. Alimentado em 5 V, a saída
-vai a 5 V — e o ESP32-C3 **não tolera 5 V** na entrada.
-
-**Balanceamento.** Uma placa de 18 × 15 mm pesa 1,5 a 2,5 g. A r = 29 mm isso
-vale 43 a 72 g·mm, contra os **8,4** admissíveis: **5 a 9 vezes fora**. O A3144 nu,
-em TO-92, pesa 0,2 g e vale 5,8 g·mm.
-
-O bolso do CAD tem 4,8 × 3,6 × 1,7 mm, dimensionado para o TO-92. Dessolde o
-sensor e monte-o nu, com **VCC=5 V** e pull-up de 10 kΩ para **3,3 V** do esquema. BOP máximo: 35 mT a 25 °C e 45 mT na faixa térmica do A3144 original.
-
-### A rampa e o governor não vêm do ESC
-
-O manual do BLHeli_S Rev16.x lista todos os parâmetros programáveis: *startup
-power*, *commutation timing*, *demag compensation*, direção, beeps, *programming
-by TX*, min/max/center throttle, proteção térmica, *low RPM power protect* e
-*brake on stop*.
-
-**Não há governor. Não há corte por baixa tensão. Não há tempo de rampa.**
-
-Três consequências:
-
-1. O corte por baixa tensão que estava como pendência **não existe** — item
-   encerrado.
-2. A **partida vem do gerador de sinal**, não do ESC: subida ao chute de
-   1400 µs, chute curto e descida ao alvo (05 §8.2). A rampa de 12 s não deu
-   partida com o rotor (19/10/2026). Isso torna o gerador ainda mais
-   obrigatório.
-3. Se a imagem "respirar", a correção **não** é modo governor — e provavelmente
-   não será preciso: a inércia mantém a variação entre voltas em 0,03 a 0,11 %,
-   contra 0,14 % de orçamento.
-
-Dois ajustes que valem para o nosso caso, e que o manual descreve:
-
-- **Low RPM power protect = desabilitado.** A 1800 RPM, com a fonte em 10–12 V,
-  estamos a 16–20 % da rotação a vazio, exatamente o regime que essa proteção
-  limita. O manual diz que
-  desabilitá-la "pode ser necessário para atingir potência plena em motores de
-  baixo kv com tensão de alimentação baixa". Em troca, aumenta o risco de perda
-  de sincronismo — por isso é ajuste de bancada, não de projeto.
-- **Brake on stop = desabilitado.** O BLHeli_S usa *damped light* sempre, com
-  frenagem regenerativa. Frear um rotor de 27,6 J contra uma fonte de bancada,
-  que não afunda corrente, empurra a tensão do barramento para cima. Mesmo com
-  ele desabilitado, a parada na hora a partir da rotação plena levou o
-  barramento a quase 20 V em 19/10/2026: grampo ou resistor de descarga no
-  barramento do ESC (05 §8.2).
+**Os itens térmicos e estruturais com ❌ continuam mandando nos bloqueadores.**
+Mesmo com o `AX-2810Q` reduzindo a corrente prevista de regime para `4,04 A`
+(`40,3 °C` a `Rth = 3,5 K/W`), o arrasto adicional da aleta/alma da aranha e o
+`Rth` real só são conhecidos no **Bloqueador B**, e a rigidez real da suspensão
+em PETG só é conhecida no **ensaio `C0`**.
 
 ---
 
-## 4. Verificações físicas ainda pendentes
+## 3. Pontos críticos de componentes e acionamento
+
+### Por que o sensor A3144 vai nu, e não na placa HW-477
+1. **Elétrico:** o pull-up do módulo `HW-477` vai para o próprio `VCC` (5 V), o que
+   destruiria o `GPIO3` (3,3 V) do `ESP32-C3`. O `A3144` nu é alimentado em 5 V
+   com pull-up de `10 kΩ` ligado exclusivamente à linha `3V3`.
+2. **Balanceamento e bolso CAD:** o módulo pesa `1,5–2,5 g` (`43–72 g·mm` em
+   `r = 29`); o `A3144` nu pesa `0,2 g` (`5,8 g·mm`) e encaixa no bolso inferior
+   do cubo (`4,8 × 3,6 × 1,7 mm`). Confirmar polaridade e entreferro (`2,5 mm`)
+   em bancada antes de colar.
+
+### ESC `BLHeli_S`, suspensão em paralelogramo e frenagem regenerativa
+Na v4.0, a gravação de `13/11/2026` no ESC manteve **`LPow Protect = Off`**,
+**`Startup Power = 0,50`**, **`Demag = High`** e ligou **`Brake on stop = On`**:
+- **Por que `Brake on stop = On`:** o rotor precisa atravessar rapidamente a
+  ressonância de translação da suspensão (**`~263 RPM`**) também na **desaceleração**,
+  evitando excitar o curso de `3 mm` até os batentes durante parada longa por inércia.
+- **Consequência obrigatória na fonte:** a frenagem regenerativa (*damped light*
+  + freio ativo na parada) devolve energia para a fonte de bancada (que não
+  afunda corrente) e eleva a tensão do barramento. **Grampo ou resistor de
+  descarga no barramento do ESC é obrigatório** antes de girar o rotor completo.
+- **Solicitações ao firmware da base:** sem *governor* nem tempo de rampa no
+  ESC, a rampa de subida (`≥ 300 RPM/s` na zona crítica), a faixa de operação
+  (`≥ 1200 µs` mínimo e evitar regime contínuo em `760–870 RPM` pelo modo de
+  *yaw* a `12,7 Hz`), e a calibração de `CEILING_US` com tacômetro para o
+  `AX-2810Q` dependem do firmware em [`firmware/`](firmware/README.md).
+
+---
+
+## 4. Verificações físicas pendentes
 
 | Interface | Verificação |
 |---|---|
-| Assento útil da campânula | A geometria usa arruela Ø20 × Ø8,5 e porca fina. Pré-carga por torque e atrito são estimativas; confirmar o assento, aperto e retenção reais antes do giro. |
-| Altura do conjunto motor | Corpo medido em 24 mm; Datum B = chapa + 30. Um erro de ±2 mm desloca o rotor em Z **sem afetar nada estrutural — mas leva junto o entreferro do hall**, que é nominalmente 2,5 mm e não tem margem térmica garantida pelo cálculo nominal: 45 mT de campo contra BOP máximo de 45 mT na faixa térmica. ±2 mm ali põem o entreferro entre 0,5 e 4,5 mm, e a 4,5 o A3144 não comuta. **Meça o entreferro montado antes de colar o ímã** (pendência C8). |
-| Colar e rosca do eixo | O desenho não fecha a soma (5 + 7 ≠ 14). A fixação vale nas duas leituras: porca fina de 3 mm sobre arruela de 2, sobram 3 mm de rosca com a ponta em 14 e 1 mm com 12. Medir antes de comprar a porca. |
-| Polaridade do ímã | O A3144 é unipolar. Validar em bancada com VCC=5 V e pull-up para 3,3 V; só interpretar polaridade depois de confirmar alimentação e componente. |
-| Campo do motor no sensor hall | Estático em relação ao sensor. Verificar com o motor montado, antes de colar. |
-| Frequência natural da parte fixa | Torre construída **maciça em PETG, sem furo Ø22**, confirmada em 30/10/2026. Com rotor de 179,5 g sem circuito: cenários preliminares de **53,7–63,5 Hz**, não limites garantidos; dependem do módulo e CG assumidos. Os 63/46 Hz eram do projeto tubular original. Medir por impacto com a fixação real; ver [registro](revisoes/2026-10-30-TORRE-MACICA-PETG.md). |
+| Altura real do corpo do `AX-2810Q` | O assento serrilhado foi medido em `29 mm` da base do motor, mas a altura do corpo (`26 mm` de catálogo) ainda não foi medida. Se o corpo for mais baixo ou mais alto, a distância relativa da campânula ao suporte `06` muda — **conferir o entreferro do Hall (~2,5 mm) montado antes de colar o ímã**. |
+| Bucha `Ø6` no cubo e assento `Ø13` | Conferir o ajuste da bucha de `6 mm` sobre o trecho liso `Ø4 × 5` no furo `Ø6` do cubo, mais arruela `DIN 9021 M4` (`Ø12`) e porca `DIN 985 M4` a `1,0 N·m`. |
+| Alívio `Ø11` na `R01` de alumínio | Conferir folga dos fios de fase e das cabeças `M3` (`r = 8` e `9,5 mm`) após cortar a `R01` definitiva em alumínio `2 mm`. |
+| Polaridade do ímã e campo do motor | Validar em bancada o `A3144` com `VCC = 5 V`, pull-up `10 kΩ → 3,3 V` e verificar se o campo estático do `AX-2810Q` interfere no sensor antes de colar. |
+| Ensaio de impacto `C0` da suspensão | Medir frequências reais do palco suspenso (translação `< 5 Hz`, *yaw*, balanço combinado `> 66 Hz` — se `< 95 Hz`, limitar 3× abaixo de `1643 RPM`) e repetir com o rotor real (travado e solto). |
+| Reconciliação de massa e balanceamento | Pesar todas as peças impressas (PETG + ABS), chicotes de 4 fios, perfboard e ferragens contra o teto provisório de **`420 g`** e ajustar contrapesos nos dois planos. |
 
 ---
 
@@ -268,13 +273,15 @@ Dois ajustes que valem para o nosso caso, e que o manual descreve:
 
 | Se você precisa de… | Vá para |
 |---|---|
-| Uma cota | [`01-ESPECIFICACAO-CAD-v3.0.md`](01-ESPECIFICACAO-CAD-v3.0.md) |
-| A origem de uma grandeza física | §10 da especificação, e a tabela §2 acima |
-| Um critério de aceite | [`04-PLANO-DE-ENSAIOS-v3.0.md`](04-PLANO-DE-ENSAIOS-v3.0.md) |
-| O que o CAD mede na malha | `Hologram_Orbiter_v3_0/reports/ACEITACAO.md` |
-| O que ainda falta | [`06-PENDENCIAS-ABERTAS-v3.0.md`](06-PENDENCIAS-ABERTAS-v3.0.md) |
-| Por que a v2.1 foi refeita | [`legado/00-AUDITORIA-E-INTEGRACAO-v2.1.md`](legado/00-AUDITORIA-E-INTEGRACAO-v2.1.md), arquivada |
+| Uma cota ou memória de cálculo | [`01-ESPECIFICACAO-CAD-v4.0.md`](01-ESPECIFICACAO-CAD-v4.0.md) |
+| Fases e portões `G0`–`G5` | [`02-PLANO-DE-PROJETO-v4.0.md`](02-PLANO-DE-PROJETO-v4.0.md) |
+| Lista de peças, ferragens e massas | [`03-LISTA-DE-COMPONENTES-v4.0.md`](03-LISTA-DE-COMPONENTES-v4.0.md) |
+| Um critério físico de aceite (`C0`, `A`–`E`) | [`04-PLANO-DE-ENSAIOS-v4.0.md`](04-PLANO-DE-ENSAIOS-v4.0.md) |
+| Eletrônica **SPI Quad**, ESC e firmware | [`05-ESQUEMA-ELETRICO-v4.0.md`](05-ESQUEMA-ELETRICO-v4.0.md) |
+| O que o CAD mede na malha (`69/69`) | [`Hologram_Orbiter_v4/reports/ACEITACAO.md`](Hologram_Orbiter_v4/reports/ACEITACAO.md) |
+| O que ainda falta | [`06-PENDENCIAS-ABERTAS-v4.0.md`](06-PENDENCIAS-ABERTAS-v4.0.md) |
+| Documentação arquivada (`v3.0`, `v2.1`) | [`legado/LEIA-ME.md`](legado/LEIA-ME.md) |
 
-**Regra que vale para tudo:** se um número aparece em dois documentos com valores
-diferentes, o da especificação vence — e o outro é um erro a corrigir, não uma
-alternativa.
+**Regra:** se um número aparecer em dois documentos com valores diferentes, o da
+especificação v4.0 (e de `Hologram_Orbiter_v4/CAD/parameters.json`) prevalece,
+e o outro é um erro a corrigir.

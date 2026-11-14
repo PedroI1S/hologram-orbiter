@@ -1,301 +1,193 @@
 # Firmware
 
-**Teto de teste sem aranha: 1831 µs (30/10/2026).** Por solicitação do operador,
-a faixa de alvos foi elevada para 1150–1831 µs, 1 µs abaixo do máximo do ESC
-configurado em 1832 µs. O chute opcional acompanha esse teto; padrão linear,
-alvo inicial 1200 µs e parada 1000 µs. Este teto não foi validado para o rotor
-completo. A calibração manual do ESC não foi confirmada por releitura.
-Gravação e verificação desta alteração: ver `../esc_blheli_s_2026-10-30/teste-teto-esc.md`.
+Conjunto de firmwares em Rust (`no_std` sobre `esp-hal`) para bancada e
+operação do **Hologram Orbiter v4.0**.
 
-## Registro anterior: teto 1350 µs
+| Pasta | O que é | Estado em 14/11/2026 |
+|---|---|---|
+| `controle-motor/` | Lógica pura do gerador de sinal do ESC (armação, partida linear ou overshoot, teto, parada, botões, teclas). Testada no Mac com `cargo test`. | **Ativo** (exige revisão de parâmetros e calibração de `CEILING_US` para `AX-2810Q` + suspensão `v4.0`) |
+| `esp32-base/` | Programa da ESP32 da base (`no_std`): liga `controle-motor` ao LEDC (50 Hz), botões, serial e watchdogs. | **Ativo** (última gravação de `30/10/2026` foi para ensaio sem aranha no antigo `A2212`) |
+| `teste-fitas-c3/` | Ensaio de bancada das três fitas **HD107S** no **ESP32-C3 Super Mini** pela placa de interface **SPI Quad** ponto a ponto. | **Ativo em bancada** (substituiu `../legado/v3.0/teste-fitas-esp32-base.rs`) |
 
-**Faixa atual de alvos: 1150–1350 µs (30/10/2026).** O chute também está
-limitado a 1350 µs. A armação e a parada continuam em 1000 µs; o alvo ao
-ligar continua em 1200 µs. O PPM mínimo gravado no ESC permanece em
-1148 µs. Os ajustes `+`/`-` e `>`/`<` saturam nos limites de alvo.
-A saída PWM permite 1000–1350 µs para incluir armação, parada e rampas.
+---
 
-Com fonte de 10,4 V e a carga do rotor completo documentada no CAD
-(4,95 A a 1800 RPM, motor de 920 KV, resistência efetiva de 0,221 Ω), o
-modelo médio estima cerca de 28 RPM em 1150 µs, 611 RPM em 1200 µs e
-1809 RPM em 1350 µs. A estimativa de 1150 µs é uma extrapolação próxima
-do acelerador zero: não garante partida nem giro sustentado, pois o modelo
-não representa atrito estático, comutação e potência mínima de partida.
-Confirmar as rotações com tacômetro. Equação usada, igual à de `CAD/physics.py`:
-`duty × V = Kt × ω + R × I_projeto × (ω/ω_projeto)²`, com
-`duty = (pulso_us − 1148)/684` e `Kt = 60/(2π × 920)`.
+## 1. Requisitos vigentes na v4.0 (`AX-2810Q 750KV` + suspensão em paralelogramo)
 
-Esta alteração passou em 39 testes, Clippy e compilação para ESP32.
-**Gravada em 30/10/2026 às 18:54 UTC (15:54 em São Paulo)** na ESP32
-revisão v3.1, 4 MB, pela porta `/dev/cu.usbserial-A5069RR4`, com verificação
-do espflash. Conferidos pela serial: faixa 1150–1350 µs, aceitação dos dois
-extremos e recusa de 1149/1351 µs. Ao terminar: `PARADO`, perfil linear,
-alvo restaurado para 1200 µs e zero partidas. Nenhum comando de partida foi
-enviado. O registro de 1400 µs abaixo corresponde à gravação anterior.
+A promoção para **v4.0** (14/11/2026, ver
+[`../05-ESQUEMA-ELETRICO-v4.0.md`](../05-ESQUEMA-ELETRICO-v4.0.md) e
+[`../Hologram_Orbiter_v4/CAD/parameters.json`](../Hologram_Orbiter_v4/CAD/parameters.json))
+altera o motor para **`AX-2810Q 750KV`** (`Kt = 12,73 mN·m/A`,
+`R_efetiva = 0,225 Ω/fase`) e adota a **base suspensa em paralelogramo**
+(translação crítica em **`~263 RPM`**, modo *yaw* em **`~759 RPM`**).
 
-**Versão 0.3.0, 30/10/2026: partida linear por padrão e partida pelo terminal.**
-O perfil linear sobe de 1148 µs diretamente ao alvo em 3 s, sem chute e sem
-descida automática ao fim da partida. A tecla `o` seleciona o overshoot
-anterior; `l` volta ao linear. A seleção só é aceita sem giro. `g` inicia pelo
-terminal do computador, e o botão D32 inicia no mesmo perfil selecionado.
-Após reiniciar, o perfil volta a linear e o motor espera nova partida.
-Esta versão passou nos 34 testes no Mac, no Clippy e na compilação para
-ESP32. Gravada em 30/10/2026 na ESP32 revisão v3.1 (4 MB), pela porta
-`/dev/cu.usbserial-A5069RR4`, com verificação da gravação pelo espflash.
-Conferidos pela serial: banner 0.3.0, fim da armação, estado `PARADO`,
-perfil `linear`, alvo de 1200 µs e zero partidas. Nenhum comando de partida
-foi enviado; os perfis ainda não foram ensaiados com o motor nesta versão.
+O ESC foi gravado e conferido em [`../esc_blheli_s_2026-11-13/`](../esc_blheli_s_2026-11-13/registro.md)
+com **`Startup Power = 0,50`**, **`Demag = High`**, **`Brake on stop = On`** e
+PPM `1148–1832 µs`.
 
-**Registro da gravação anterior: teto ajustado em 30/10/2026 para 1400 µs**, por solicitação do operador,
-ainda sem calibração com tacômetro. Gravado na ESP32 pela porta
-`/dev/cu.usbserial-A5069RR4` em 30/10/2026, com verificação pelo espflash.
-Conferidos pela serial: teto de 1400 µs e aceitação do alvo de 1400 µs
-com estado `PARADO` e zero partidas. Alvo restaurado para 1200 µs.
+**Alterações pendentes no `controle-motor/src/config.rs` antes de girar o rotor completo v4.0:**
 
-**ESP32 da base: gerador do sinal do ESC** (esquema 05 §8), em Rust `no_std`
-sobre o `esp-hal` 1.2. Escrito e gravado em 19/10/2026 na ESP32 da base
-(revisão v3.1, dois núcleos), com a fonte do ESC desligada: armação, teclas,
-botões (por jumper ao GND) e watchdog conferidos na placa. No mesmo dia,
-com o ESC a 7,0 V e o motor sem rotor, partiu pela rampa e girou no sentido
-anti-horário visto de cima (registro em
-`esc_blheli_s_2026-10-16/registro.md`). **Naquele registro, ainda sem ensaio com o rotor;
-ver o relato posterior de 27/10 abaixo.**
+1. **Cruzamento rápido da crítica de `~263 RPM`:** subir de `1148 µs` ao alvo
+   com taxa `≥ 300 RPM/s` ao cruzar `~200–350 RPM` (não permanecer próximo à
+   ressonância de translação).
+2. **Alvo mínimo sustentado `≥ 1200 µs`:** não sustentar regime abaixo de
+   `~600 RPM`.
+3. **Evitar a banda de *yaw* (`760–870 RPM`):** passar por ela sem permanecer em
+   regime contínuo no modo solto (`12,66 Hz` sem amortecimento estrutural).
+4. **Calibrar `CEILING_US` para o `AX-2810Q 750KV` com tacômetro:** a `750 KV`,
+   `1800 RPM` ocorre em fração de acelerador mais alta que no antigo `920 KV`;
+   conferir também o **sentido anti-horário** visto de cima antes de montar a
+   aranha. Só marcar `CEILING_MEASURED = true` após medir pulso, tensão e RPM
+   com o rotor completo.
+5. **Parada rápida + barramento protegido:** `Brake on stop = On` força o ESC a
+   atravessar `~263 RPM` rapidamente ao parar, mas devolve energia regenerativa à
+   fonte de bancada (`10–12 V / 30 A`). **Grampo ou resistor de descarga no
+   barramento do ESC é obrigatório** antes de testar com rotor.
 
-**Versão 0.2.0, 20/10/2026: partida com chute e fonte do ESC em 10–12 V.** Em
-19/10, com a peça montada, a rampa de 12 s até 1200 µs não deu partida: o
-ESC tentava três vezes e desistia. O rotor só partiu com 1400 µs e a fonte
-em 10,4 V (`esc_blheli_s_2026-10-19/registro.md`). Nessa versão, a partida sobe ao
-chute de 1400 µs em 3 s, segura 2 s e desce ao alvo; o teto de regime caiu
-para 1320 µs, estimado para 10–12 V; e há a parada suave (`d`). **A 0.2.0
-passou nos testes no Mac, mas ainda não foi gravada nem conferida na placa.**
+*(Referência do modelo médio com `AX-2810Q`, `R_ef = 0,225 Ω` e `10–12 V`: o
+perfil de chute legado de `1400 µs` daria `16,37–19,65 A` de fase parado e pico
+de `1680–1959 RPM`, acima dos critérios do Bloqueador D de [`../04-PLANO-DE-ENSAIOS-v4.0.md`](../04-PLANO-DE-ENSAIOS-v4.0.md) — não usar sem revisão.)*
 
-**Premissa elétrica unificada em 27/10/2026:** fonte do ESC em **10–12 V**,
-limite de corrente de **30 A**, conforme `../Hologram_Orbiter_v3_0/CAD/parameters.json`.
-A fonte não limita o chute no modelo: parado, 16,7–20,0 A de fase; com chute de
-2 s e descida até o alvo inicial de 1200 µs, pico de 1692 RPM a 10 V e
-1964 RPM a 12 V. Esse perfil com overshoot excede os critérios do bloqueador D do plano
-04 e precisa ser revisto antes do ensaio com rotor. A unificação documental
-não altera os pulsos nem os tempos do firmware.
+---
 
-**Relato posterior recebido em 27/10/2026:** a partida com rampa funcionou
-facilmente, mas houve oscilação do corpo na frenagem automática dentro da
-sequência, seguida de ruptura de um braço da aranha. No modo overshoot, o fim
-do chute inicia a descida automática até o alvo. Conferir versão, parâmetros e
-log para identificar o trecho executado; ainda não há diagnóstico da causa
-da ruptura. Novos giros suspensos pela R02 do documento 06. Este relato não
-confirma qual versão estava gravada nem substitui o aceite de C/D.
+## 2. Ensaio de bancada das fitas SPI Quad (`teste-fitas-c3/`)
 
-| Pasta | O que é |
-|---|---|
-| `controle-motor/` | Toda a lógica (armação, partida linear ou overshoot, teto, parada, botões, teclas), sem hardware. Testada no Mac com `cargo test`. |
-| `esp32-base/` | O programa da placa: liga a lógica ao LEDC, aos botões, à serial e aos watchdogs. |
+Firmware em `firmware/teste-fitas-c3/` para o **ESP32-C3 Super Mini** acionar as
+três fitas **HD107S** (protocolo APA102) em paralelo pela perfboard ponto a ponto
+([`../eletronica/interface/MONTAGEM-PONTO-A-PONTO.md`](../eletronica/interface/MONTAGEM-PONTO-A-PONTO.md)),
+substituindo o teste antigo de ESP32 da base arquivado em
+[`../legado/v3.0/teste-fitas-esp32-base.rs`](../legado/v3.0/teste-fitas-esp32-base.rs).
+
+| Sinal | ESP32-C3 | `74AHCT125` (U1) | Destino |
+|---|---|---|---|
+| `CLK` (comum) | `GPIO4` | pino `2 → 3` | `R6/R10/R11 (33 Ω)` → Painéis 1, 2 e 3 |
+| `DATA P1` | `GPIO6` | pino `5 → 6` | Painel 1 |
+| `DATA P2` | `GPIO5` | pino `9 → 8` | Painel 2 |
+| `DATA P3` | `GPIO7` | pino `12 → 11` | Painel 3 |
+
+Parâmetros de segurança em bancada: `NUM_LEDS = 29`, brilho global `4/31`
+(`~0,25 A` por fita em branco pleno, `~0,75 A` total), clock `~250 kHz`
+(`HALF_BIT_US = 1`), executando: (0) identificação P1 vermelho / P2 verde / P3
+azul, (1) contagem cumulativa, (2) matiz defasada `120°` e (3) rampa de branco.
+
+Compilar e gravar no ESP32-C3:
+
+```bash
+cd firmware/teste-fitas-c3 && cargo run --release
+```
+
+---
+
+## 3. Gerador de sinal do ESC (`controle-motor/` + `esp32-base/`)
 
 Os valores de bancada ficam em [`controle-motor/src/config.rs`](controle-motor/src/config.rs).
 Para mudar o teto e os pulsos fixos, editar e regravar. Perfil, alvo e tempos
-podem ser ajustados pelo terminal; os ajustes não persistem após reiniciar.
+podem ser ajustados pela serial (não persistem após reiniciar).
 
-## Ligações
-
-Como no 05 §8.1, com os nomes impressos na placa:
+### Ligações (esquema `05 §8.1`)
 
 | Sinal | Pino | Ligação |
 |---|---|---|
-| Sinal do ESC | D25 | pull-down de 10 kΩ ao GND |
-| Partida | D32 | botão ao GND, pull-up interno |
-| Parada | D33 | botão ao GND, pull-up interno |
-| GND | GND | comum com o ESC e a fonte |
-| Serial | micro-USB | 115200 8N1: registro e teclas |
+| Sinal do ESC | `D25` | pull-down de `10 kΩ` ao GND |
+| Partida | `D32` | botão ao GND, pull-up interno |
+| Parada | `D33` | botão ao GND, pull-up interno |
+| GND | `GND` | comum com o ESC e a fonte |
+| Serial | micro-USB | `115200 8N1`: registro e teclas |
 
-## O que o firmware faz (05 §8.2)
+### Requisitos implementados (`05 §8.2`)
 
 | Requisito | Como está feito | Verificado |
 |---|---|---|
-| ARMAÇÃO | 1000 µs desde a configuração do LEDC; nada é aceito por 2 s | testes; emulador; placa (0.1.0) |
-| PARTIDA | botão D32 ou `g` na serial. Linear (padrão): de 1148 µs diretamente ao alvo em ≥ 3 s. Overshoot (`o`): sobe a 1350 µs em ≥ 3 s, segura 2 s (0 a 5 s; `k` encerra antes), desce ao alvo a ~34 µs/s. `l` volta ao linear; perfil só muda sem giro | testes dos dois perfis e dos comandos; a rampa de 12 s da 0.1.0 foi conferida na placa |
-| PARADA | na hora: botão D33, ou espaço/`p`/Esc/Ctrl-C na serial → 1000 µs, a qualquer momento. Suave: `d` desce ao PPM mínimo a ~17 µs/s e então 1000 µs | testes; emulador e placa só a parada na hora (0.1.0) |
-| TETO | alvos de 1150–1350 µs; chute de 1350 µs; `pwm::duty_for` limita a saída a 1000–1350 µs (inclui parada e rampas), arredondando para cima no mínimo e para baixo no máximo | testes de limites, rampas, paradas e saída PWM |
-| WATCHDOG | dois: o do grupo de timers TIMG0 e o do RTC, 500 ms, os dois reiniciando o chip inteiro (o LEDC para e o pulso some) | emulador (TIMG0); placa: `W` reiniciou pelos dois (0.1.0) |
-| REINÍCIO | depois de qualquer reinício: 1000 µs, alvo padrão (1200 µs) e espera; a partida nunca recomeça sozinha | emulador (travamento e pânico); placa (0.1.0) |
-| PÁGINA | não existe ainda; a serial seleciona o perfil, dá partida, ajusta o alvo e para | testes de comandos e das 256 teclas: apenas `g`/`G` geram partida |
+| ARMAÇÃO | `1000 µs` desde a configuração do LEDC; nada é aceito por `2 s` | testes; emulador; placa (`0.1.0`) |
+| PARTIDA | botão `D32` ou `g` na serial. Linear (padrão): de `1148 µs` ao alvo em `≥ 3 s`. Overshoot (`o`): sobe ao chute em `≥ 3 s`, segura `2 s` (`0–5 s`; `k` encerra antes), desce ao alvo a `~34 µs/s`. `l` volta ao linear; perfil só muda sem giro | testes dos dois perfis e comandos |
+| PARADA | na hora: botão `D33`, ou espaço/`p`/Esc/Ctrl-C na serial → `1000 µs`, a qualquer momento. Suave: `d` desce ao PPM mínimo a `~17 µs/s` e então `1000 µs` | testes; parada na hora na placa (`0.1.0`) |
+| TETO | alvos limitados a `TARGET_MIN_US..CEILING_US`; `pwm::duty_for` satura a saída | testes de limites, rampas e saída PWM |
+| WATCHDOG | dois: `TIMG0` e `RTC`, `500 ms`, reiniciando o chip inteiro (o pulso para) | emulador (`TIMG0`); placa (`W` reiniciou pelos dois) |
+| REINÍCIO | após qualquer reinício: `1000 µs`, alvo padrão (`1200 µs`) e espera; nunca recomeça sozinho | emulador e placa (`0.1.0`) |
 
-Além do pedido:
+### Histórico de bancada da fase anterior (`v3.0`, `A2212 920KV`, 19–30/10/2026)
 
-- **Ajustes em giro** (novo alvo, `+`/`-`) e a **parada suave** andam a
-  21 µs/s (do PPM mínimo ao chute, 202 µs, em 12 s), nos dois sentidos.
-  Na subida ao chute e durante o chute, mudar o alvo só muda onde a descida
-  termina. Na partida linear, muda o destino usando a inclinação de ajuste.
-  Descer
-  devagar mantém o motor tracionando por mais tempo e devolve menos energia
-  à fonte (o BLHeli_S freia ativamente quando o acelerador cai rápido), mas
-  não zera a devolução: o barramento precisa do grampo ou resistor de
-  descarga do 05 §8.2.
-- **Pânico** imprime a causa e reinicia; o boot seguinte mostra o motivo
-  (`CoreSw`, `CoreMwdt0`, `SysRtcWdt`...) e avisa.
-- Um botão pressionado na energização precisa ser solto antes de valer.
-  Com a parada pressionada, a partida é ignorada tanto pelo botão quanto
-  pela serial, inclusive durante o filtro de repique.
+> **Atenção:** os registros abaixo são da fase `v3.0` (`A2212 920KV`, `0,221 Ω`
+> e base rígida); servem apenas como histórico do código em `controle-motor/`.
+> A última gravação (`30/10/2026`, `v0.3.0` com `CEILING_US = 1831 µs`) foi
+> feita para ensaio sem aranha no antigo motor e **não está validada para o
+> `AX-2810Q 750KV` nem para o rotor v4.0**.
 
-### Pontos a ratificar
+- `19/10/2026` (`v0.1.0` / `v0.2.0`): rampa de `12 s` até `1200 µs` não partiu
+  o `A2212` com rotor; exigiu chute de `1400 µs` a `10,4 V`. Em `27/10/2026`
+  houve ruptura de braço da aranha `v3.0` durante frenagem automática da
+  sequência (`../revisoes/2026-10-27-RELATO-FALHA-ARANHA-FRENAGEM.md`).
+- `30/10/2026` (`v0.3.0`): adicionou partida linear por padrão e comando `g` pela
+  serial (`cargo test` OK; gravada na ESP32 rev. `v3.1` em `/dev/cu.usbserial-A5069RR4`,
+  primeiro com teto `1350 µs` e depois elevado a `1831 µs` para teste sem aranha).
 
-1. **A subida parte de 1148 µs, não de 1000 µs.** Abaixo do PPM Min Throttle
-   gravado (1148 µs) o ESC vê acelerador zero; partindo de 1000 µs, a
-   primeira parte da subida seria morta.
-2. **A serial também dá partida desde a 0.3.0.** Por solicitação do operador,
-   `g` inicia pelo notebook; `l`/`o` selecionam o perfil. A página do celular
-   continua sem controle do motor. A serial também ajusta o alvo, encerra o
-   chute e para.
-3. **Teto de regime de 1350 µs, sem calibração.** Ver `config.rs`.
-   O valor final é medido (abaixo), na tensão em uso.
-4. **Dois watchdogs** em vez de um.
+---
 
 ## Instalação (uma vez por máquina)
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-```bash
 cargo install espup espflash --locked
-```
-
-```bash
 espup install --targets esp32
 ```
 
-O `espup` grava `~/export-esp.sh`, que põe o ligador do Xtensa no `PATH`. Em
-bash/zsh, `. ~/export-esp.sh` em cada terminal. Em fish, abrir um fish com
-o ambiente:
-
-```bash
-bash -c '. ~/export-esp.sh; exec fish'
-```
+O `espup` grava `~/export-esp.sh` com o ligador Xtensa no `PATH`. Em bash/zsh,
+executar `. ~/export-esp.sh` antes de compilar para ESP32. (O `teste-fitas-c3`
+usa alvo RISC-V do ESP32-C3.)
 
 ## Testar, compilar, gravar
 
-A lógica, no Mac (não precisa do ambiente do ESP):
+Lógica pura no Mac (não precisa do ambiente Xtensa):
 
 ```bash
 cd firmware/controle-motor && cargo test
 ```
 
-O programa da placa:
+Programa da placa base (`esp32`):
 
 ```bash
 cd firmware/esp32-base && cargo build --release
-```
-
-**Antes da primeira gravação**, com a fonte do ESC desligada, ler o chip. O
-`esp-hal` não aceita ESP32 abaixo da revisão v3.0; com um chip mais antigo o
-gerenciador de boot recusa o programa (nenhum pulso sai, mas nada funciona).
-A mesma leitura confirma os dois núcleos que o 05 §8.1 pede:
-
-```bash
 espflash board-info --chip esp32
-```
-
-Gravar e abrir o monitor. Abrir o monitor reinicia a placa, e um motor
-girando para; fechar também pode reiniciar:
-
-```bash
 cd firmware/esp32-base && cargo run --release
 ```
 
-Só o monitor, gravando a sessão inteira num arquivo (o `script` do macOS
-mantém o teclado funcionando):
+Monitor com registro em log:
 
 ```bash
-script -q ensaio.log espflash monitor --chip esp32
+script -q ensaio.log espflash monitor --chip esp32 --monitor-baud 115200
 ```
 
-O `espflash monitor` passa pelo carregador da ROM ao conectar. Em 19/10 ele
-às vezes deixou a placa parada ali, sem o banner depois de "Commands" e sem
-pulso no D25: nesse caso, Ctrl+R reinicia a placa no programa. No monitor,
-Ctrl+C fecha o monitor em vez de parar o motor; para parar, espaço ou `p`
-(na hora) ou `d` (suave).
-Evitar o `screen`: rolar a tela nele manda setas (Esc `[` `A`) à placa.
+Se o `espflash monitor` parar no carregador da ROM, `Ctrl+R` reinicia no
+programa; `Ctrl+C` fecha o monitor (não para o motor — para parar use espaço,
+`p` ou `d`). Evitar `screen`. Linhas `D;` registram `t_ms;estado;pulso_us;acel_%;alvo_us;giro_s`.
 
-As linhas que começam com `D;` são o registro, separado por `;` com vírgula
-decimal: `t_ms;estado;pulso_us;acel_%;alvo_us;giro_s`. Mudanças de estado
-saem na hora; em giro, uma linha a cada 200 ms. Estados: `ARMANDO`, `PARADO`,
-`RAMPA` (subida ao chute ou ao alvo), `CHUTE`, `REGIME` e `PARANDO` (parada
-suave). `giro_s` é o tempo desde a partida, não uma medida de rotação.
-
-## Teclas
+## Teclas (`esp32-base`)
 
 | Tecla | Efeito |
 |---|---|
 | `g` | **dar partida** no perfil selecionado; aguarda armação e exige botão de parada solto |
-| `l` | selecionar **linear** (padrão): sobe diretamente ao alvo, sem overshoot; só sem giro |
-| `o` | selecionar **overshoot**: sobe ao chute e depois desce ao alvo; só sem giro |
-| espaço, `p`, Esc, Ctrl-C | **parar na hora**, a qualquer momento, inclusive no meio de um número |
-| `d` | **parada suave**: desce ao acelerador zero a ~17 µs/s e para |
-| `k` | encerra o chute agora (ou a subida até ele) e desce ao alvo; para quando o rotor já gira |
-| `1250` Enter | alvo em µs (1150–1350; recusado fora da faixa) |
-| `+` `-` | alvo ±5 µs |
-| `>` `<` | alvo ±1 µs |
-| `r3` Enter | subida até o alvo (linear) ou até o chute (overshoot), em s (3 a 30; só parado) |
-| `c2` Enter | duração do chute no modo overshoot, em s (0 a 5; só parado); ignorada no linear |
-| `s` | estado, inclusive a leitura dos dois botões |
-| `h` `?` | ajuda |
-| `W` | trava o laço de propósito, para o ensaio do watchdog |
-
-### Partida pelo terminal do computador
-
-Após gravar a 0.3.0, conectar a ESP32 por USB e abrir o monitor:
-
-```bash
-espflash monitor --chip esp32 --monitor-baud 115200
-```
-
-Esperar a mensagem `armado`. Digitar `l`, depois `1200` Enter e `r3` Enter;
-conferir o perfil e o alvo com `s`. Digitar `g` para partir. A rampa vai de
-1148 µs até 1200 µs em aproximadamente 3 s e permanece nesse alvo.
-
-Para usar overshoot, com o motor parado, digitar `o`, `c2` Enter e depois
-`g`: sobe a 1350 µs, mantém o chute por 2 s e desce ao alvo. `c0` elimina
-apenas a espera em 1350 µs; ainda existe o pico. Para eliminar o pico, usar
-`l`. As teclas `l`, `o`, `g`, `s`, `p` e `d` não precisam de Enter; enviar
-somente a tecla, sem escrever palavras como `linear` ou `start`.
-
-`p` ou espaço param na hora; `d` faz a parada suave. No `espflash monitor`,
-Ctrl+C fecha o monitor. O banner e `s` mostram o perfil selecionado.
+| `l` | selecionar **linear** (padrão); só sem giro |
+| `o` | selecionar **overshoot** (sobe ao chute e desce ao alvo); só sem giro |
+| espaço, `p`, Esc, Ctrl-C | **parar na hora**, a qualquer momento |
+| `d` | **parada suave**: desce ao acelerador zero e para |
+| `k` | encerra o chute agora e desce ao alvo |
+| `<numero>` Enter | alvo em `µs` (`TARGET_MIN_US..CEILING_US`) |
+| `+` `-` / `>` `<` | alvo `±5 µs` / `±1 µs` |
+| `r<N>` Enter | tempo de subida em `s` (`3` a `30`; só parado) |
+| `c<N>` Enter | duração do chute no overshoot em `s` (`0` a `5`; só parado) |
+| `s` / `h` `?` | estado (inclui botões) / ajuda |
+| `W` | trava o laço de propósito (ensaio do watchdog) |
 
 ## Bancada, em etapas
 
-As regras de segurança do 04 valem desde a primeira etapa com o motor
-ligado.
+Obedecer integralmente às regras de segurança de [`../04-PLANO-DE-ENSAIOS-v4.0.md`](../04-PLANO-DE-ENSAIOS-v4.0.md):
 
-1. **Sem ESC.** Gravar e conferir no banner a revisão, o teto e "armado".
-   Com `s`, ver os botões "solto"; segurar cada um e repetir `s`.
-   Partida: as linhas `D;` sobem de 1148 µs. Parada pelo botão e pela
-   serial. Se houver osciloscópio, medir no D25: 1000 µs parado e o
-   período de 20 ms.
-2. **ESC alimentado** (fonte a 10–12 V com limite de corrente de 30 A, GND
-   comum, grampo ou resistor de descarga no barramento do ESC). Energizar o
-   ESC com a placa já em 1000 µs: ele deve bipar e armar.
-3. **Motor sem rotor, preso, sem hélice.** Selecionar `l`, alvo baixo
-   (1200 µs), e `g` para partida linear. Conferir o sentido anti-horário visto de cima (confirmado em
-   19/10 com Normal; conferir de novo se os fios do motor forem trocados). Conferir a PARADA pelo botão e pela serial, e o WATCHDOG: em
-   giro, `W` → o motor para em menos de 1 s e o banner volta com
-   `CoreMwdt0` ou `SysRtcWdt`.
-4. **Após revisar o perfil de partida conforme o bloqueador D do 04,
-   calibrar o teto, com o rotor e a contenção do 04.** Partida no perfil
-   validado para a montagem. Se for overshoot, selecionar `o` e, ao ver o
-   rotor girar, `k`. Subir em patamares com o tacômetro, na
-   tensão de fonte que vai ser usada. Ao chegar ao teto sem 1800 RPM, subir
-   `CEILING_US` no `config.rs` no máximo 25 µs (sem ultrapassar o chute),
-   regravar e repetir. No pulso que der 1800 RPM, fixar o teto, marcar
-   `CEILING_MEASURED = true` e anotar pulso, tensão e RPM no registro de
-   ensaio.
-5. Daí em diante, os bloqueadores A e D do 04 usam este teto: patamares
-   pelo alvo (`+`/`-` ou o número) e partidas no perfil validado. Terminar
-   cada ensaio pela parada suave (`d`).
+1. **Sem ESC:** gravar, conferir banner, `s` (botões), rampa e parada na serial e osciloscópio no `D25` (`1000 µs` parado, `20 ms` de período).
+2. **ESC alimentado (`10–12 V`, `30 A`, grampo/resistor de descarga no barramento):** energizar ESC com `1000 µs` no `D25`.
+3. **Motor `AX-2810Q` sem aranha, preso:** conferir partida, sentido **anti-horário visto de cima**, parada pelo botão/serial e watchdog (`W`).
+4. **Com base suspensa (`C0` aprovado), rotor completo e contenção:** calibrar `CEILING_US` com tacômetro para `1800 RPM` na tensão real, verificando corrente/temperatura nos bloqueadores `A`/`B`/`D`, e só então fixar `CEILING_MEASURED = true`.
 
 ## Emulador
 
-O programa roda no QEMU da Espressif (`qemu-system-xtensa -machine esp32`)
-com um eFuse que declare a revisão v3.0. Ali se verificaram o boot, a
-armação, as teclas e o reinício pelo watchdog TIMG0. O QEMU não emula o
-watchdog do RTC e lê os botões como pressionados (sem pull-up). A rampa foi
-verificada numa cópia em que uma tecla substitui o botão, fora do
-repositório. Tudo isso foi com a 0.1.0; a 0.2.0 e a 0.3.0 não rodaram no emulador.
+O programa `esp32-base` foi testado em QEMU (`qemu-system-xtensa -machine esp32`)
+na versão `0.1.0` (boot, armação, teclas e `TIMG0`). As revisões `0.2.0` e
+`0.3.0` não rodaram no emulador.

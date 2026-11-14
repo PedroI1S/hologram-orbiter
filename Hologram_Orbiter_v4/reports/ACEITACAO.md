@@ -1,0 +1,81 @@
+# Critérios de aceitação — Hologram Orbiter v4.0
+
+Verificação automática a partir do modelo (spec §9). Gerado por `CAD/generate.py`.
+Valores marcados como medidos vêm de traçado de raios na malha final (`CAD/probe.py`),
+não dos parâmetros de entrada.
+**CAD provisório: aprovação geométrica não libera giro nem fabricação definitiva dos painéis.**
+Consulte `FISICA.json` e os bloqueadores de resistência, fluência, massa e instrumentação.
+
+| Critério | Valor no modelo | Requisito | Resultado | Nota |
+|---|---:|---|:---:|---|
+| Raio do plano médio do painel | 100.0 | 100 ±0,1 mm | ✅ | medido: ombro da longarina na malha da aranha ([74.0, 74.0, 74.0]) + 26 da face de contato |
+| Datum D | 104.0 | 104 ±0,2 mm | ✅ | da malha do painel |
+| Δh entre painéis | 0.0 | ≤ ±0,5 mm | ✅ | os três painéis são o mesmo STL |
+| Ponta da espiga | 96.0 – 96.0 – 96.0 | 96 ±0,1 mm | ✅ | medido na malha |
+| Profundidade do socket | 22.5 | 22.5 ±0,1 mm | ✅ | medido: primeiro material no eixo do socket |
+| Parede entre o fundo do socket e a cavidade | 1.5 | ≥ 1,2 mm | ✅ | medido |
+| Piso sob o canal do LED | 0.8 | ≥ 0,6 mm (nominal 0.80) | ✅ | medido a meia altura no centro; na borda do canal: 0.8; na junta: 0.8. Ponte de 12.4 mm |
+| Terra entre o piso e a parede de 2,0 | 2.8 | ≥ 2,0 mm (parede local 2,8 em 1 mm de cada lado do canal) | ✅ | medido |
+| Furos M3 livres em toda a torre | True – True | livres (sem pino de casca invertida) | ✅ | raio ao longo do eixo de cada parafuso: enrolamento 0 em toda a extensão (06-PENDENCIAS A1) |
+| Bolso da porca M3 e torre | 2.8 – 2.8 | bolso 2.8 ±0,1 mm; torre sólida de −15,2 a +18, só o socket (z ±3.1) a interrompe | ✅ | medido ao longo do eixo de cada parafuso; vãos: [[[-3.1, 3.1]], [[-3.1, 3.1]]] |
+| Parede ao redor do bolso de porca | 1.65 | ≥ 1,5 mm | ✅ | geometria: torre Ø10, hexágono de circunraio 3,35 |
+| Casca da carenagem | 0.8 | 0.8 ±0,05 mm | ✅ | medido no flanco plano |
+| Parede estrutural nas seções amostradas | 0.8 | ≥ 0.80 mm | ✅ | Amostras: piso do canal, flanco da carenagem, borda do disco, pele da tampa e nervuras; não certifica a espessura mínima global da malha |
+| Enrolamento por raios — painel | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 18719 raios, passo 1.0 mm |
+| Enrolamento por raios — aranha | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 19240 raios, passo 1.5 mm |
+| Enrolamento por raios — tampa | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 8245 raios, passo 1.0 mm |
+| Enrolamento por raios — base | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 13148 raios, passo 3.0 mm |
+| Enrolamento por raios — suporte do ímã | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 13095 raios, passo 0.5 mm |
+| Furo do cubo livre | True | livre | ✅ | Ø6.0 para bucha/eixo nominal de Ø6.0 |
+| Rebaixo da arruela | 0.0 | 0.0 ±0,1 mm (zero: arruela no topo do cubo) | ✅ | medido; 6.0 mm de cubo sob a arruela |
+| Pele sobre os alívios do cubo | 2.0 | ≥ 2,0 mm | ✅ | medido |
+| Arruela passa pelo colar Ø4.0 do eixo | 0.3 | furo − colar ≥ 0,3 mm | ✅ | arruela Ø12 × Ø4.3 × 1.0 (aco DIN 9021 M4 (12 x 4,3 x 1,0)). Uma arruela menor (furo ≤ Ø4.0) assentaria no eixo e a porca não apertaria o cubo |
+| Porca não toca o colar do eixo | 2.0 | topo da arruela ≥ topo do colar + 0,5 mm | ✅ | colar/trecho liso até -1.0 mm relativo ao topo do cubo (ressalto 3 + liso 5 sobre campânula); topo da arruela em +1.0 mm |
+| Rosca sobrando acima da porca | 3.0 | ≥ 1 mm | ✅ | eixo de 18 mm acima da campânula (medido pelo Pedro em 13/11/2026: liso 5, rosca 10, topo do serrilhado a 29 da base do motor (serrilhado modelado com 3)). porca_autotravante_M4 de 5 mm sobre arruela de 1.0 mm, sem rebaixo |
+| Trilhos do berço acima da porca | 10.0 | ≥ 6.0 mm (topo da porca) | ✅ |  |
+| Fundo da bateria acima da ponta do eixo | 1.0 – 1.0 | ≥ 1,0 mm | ✅ | piso medido na malha em Z = 10.0; ponta do eixo em +9.0 mm (+9.0 na leitura alternativa) |
+| Assento da arruela livre acima do cubo | 10.5 | menor raio sólido ≥ 6.3 mm (raio da arruela + 0,3) | ✅ | varredura de 360 raios na espessura da arruela; os trilhos do berço são o material mais interno |
+| Bateria cabe na baia sobre a porca | 27.0 | ≤ 47 mm | ✅ | pack de 17 mm sobre trilhos em Z=10 |
+| Berço da bateria dentro da baia (meia-diagonal) | 32.26 | ≤ 40 mm | ✅ | abas de topo inclusas |
+| Raízes sem saliência dentro da baia | 0 – 0 – 0 | zero raios obstruídos nos três braços | ✅ | Sondagem da faixa central de cada raiz (y ±2 mm), junto à face interna da parede e acima do piso; guias laterais fora da amostra |
+| Entradas de fios atravessam a parede da baia | 0 – 0 – 0 | zero raios obstruídos nas três janelas e na transição ao bolso | ✅ | Sondagem da abertura completa e da ligação ao bolso externo, na malha final |
+| Layout da baia: envelopes e faixas dos feixes | ok | envelopes dentro da baia, Z ≤ 46.0; piso livre para feixes | ✅ | 5 componentes; pilares em [[21.5, -3.0], [32.5, -3.0], [32.5, 13.0], [21.5, 13.0], [-34.0, -9.25], [-20.0, -9.25], [-20.0, 9.25], [-34.0, 9.25]] |
+| Eletrônica sem interseção com a malha final da aranha | 0.0 – 0.0 – 0.0 – 0.0 – 0.0 | ≤ 0.001 mm³ por envelope (tolerância numérica) | ✅ | Inclui raízes dos braços e suportes; módulos reais ainda precisam de medição |
+| Seção de flexão confere com cortes da malha | 589.8846 – 589.8846 – 589.8846 | integrais da seção iguais nos parâmetros e em três cortes | ✅ | Verifica o cálculo geométrico; não certifica resistência, fluência ou ABS FDM |
+| Eletrônica embarcada (estimada) dentro da folga | 29.0 | ≤ 40 g | ✅ | massas de catálogo, não pesadas; o XL4015 sozinho (~18 g) estouraria |
+| Contrapeso planejado do layout | 2.06 – 0.99 | cabe nos alívios (≤ 13.9 g cada) e deixa resíduo ≤ 8.4 g·mm | ✅ | desbalanceamento nominal 58.9 g·mm a 28.6° (admissível 8.4); correção a 208.6° repartida em 2.06 g no alívio de 180°, 0.99 g no alívio de 300°; resíduo 0.14 g·mm. Fontes: eletrônica da baia 72.8 g·mm a 14°; aranha (malha) 15.8 g·mm a 144°; tampa (malha) 11.7 g·mm a 180°; sensor hall nu 5.8 g·mm a 20° |
+| Área livre de ventilação do cubo | 343.6 | ≥ 300 mm², sem abrir a baia | ✅ | 3 rasgos de 60° fora da baia (r 42.5–45.0) |
+| A × Cd do boss carenado | 237.6 – 316.8 | ≤ 350.0 mm² | ✅ | estimativa por razão de finura, não CFD |
+| Subtotal nominal por painel | 42.14 | ≤ 45.00 g | ✅ | Chicote de 4 condutores (SPI Quad) e ferragens reais ainda não reconciliados; não é aceite de massa final |
+| Subtotal nominal do rotor | 352.14 | ≤ 420.00 g | ✅ | Inclui Hall e contrapeso; completar orçamento dos chicotes antes do aceite de massa |
+| Massa da aranha | 116.53 | ≤ 135 g (alvo) | ✅ | alvo para cubo Ø92 e baia de 47 mm |
+| Massa da tampa | 12.94 | ≤ 14 g (alvo) | ✅ | alvo revisto para Ø84 mm |
+| Perpendicularidade torre/base | 0.0 | ≤ 1° | ✅ | no CAD é zero; verificar na peça impressa |
+| Contato da base | 0.0 | sem balanço; ≤ 0,2 mm em 3 pontos a 120° | ✅ | no CAD é plano; verificar na peça impressa |
+| Malhas (arestas não-manifold no gerador) | 0 | 0 | ✅ | validação independente em reports/stl_validation.json |
+| Base + brim cabe na mesa | 241.4 – 241.4 | ≤ [300.0, 300.0] mm (X e Y) | ✅ | envelope medido em cada eixo, com o brim configurado |
+| Rebaixo da flange livra as cabeças dos M3 do motor | 3.5 – 16.0 | profundidade ≥ 3.3 mm e raio livre ≥ 12.6 mm | ✅ | medido na malha; cabeça Ø5.5 × 3.0 em r = 9.50 (cruz de diagonais 16 e 19). Os M4 em PCD 40 ficam fora do rebaixo e continuam definindo o assento da chapa |
+| Fita de 201,4 mm cabe no canal | 102.9 | ≤ 104 mm (topo do painel) | ✅ | batente em Z=-98.5 por causa do bolso de fios |
+| Suporte do ímã com dois pontos de fixação | 2 | ≥ 2 parafusos | ✅ | 06-PENDENCIAS B4; arco a 2.1 mm da campânula |
+| Furos do suporte do ímã coincidem com os M4 da flange | 0.0 – 90.0 | cada furo do suporte sobre um M4 | ✅ | M4 da flange a 0, 90, 180, 270° |
+| Folga do suporte do ímã à campânula | 2.1 | ≥ 2 mm | ✅ | campânula medida em Ø35 |
+| Enrolamento por raios — base fixa | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 13912 raios, passo 3.0 mm |
+| Enrolamento por raios — haste macia_1p5 | 0 – 0 | 0 trechos com enrolamento ∉ {0,1} · 0 lâminas < 0,02 mm | ✅ | 5732 raios, passo 0.5 mm |
+| Curso radial do palco até o batente impresso | 3.0 | 3.0 ±0,1 mm | ✅ | medido nas malhas: orelha do palco em r = 120.0, batente em r = 123.0 |
+| Calço de EVA entra antes do batente rígido | 1.5 | folga de 1.5 ±0,1 mm até o calço de 6 mm | ✅ | fundo do bolso medido em r = 127.5; sem EVA vale só o batente impresso |
+| Limitador de inclinação sobre as orelhas | 0.5 | 0.5 ±0,1 mm acima da orelha | ✅ | medido na malha; se uma haste flambar ou romper a inclinação para em 0.338°; sobreposição orelha/batente com o palco todo deslocado: 2.0 mm |
+| Batente de giro (yaw) do palco | 3.0 | 3.0 ±0,1 mm de cada lado da orelha | ✅ | medido; limita a torção das hastes na partida |
+| Guias dos assentos: canal do bloco em cima e em baixo | 12.4 – 12.4 | 12.4 ±0,15 mm nos dois | ✅ | medido nas malhas da base fixa e do palco; bloco de 12 mm |
+| Furos M3 dos assentos livres (base fixa e palco) | 8 – 8 | 8 em cima e 8 em baixo | ✅ | raio ao longo do eixo de cada parafuso |
+| Folga vertical painéis → topo da base fixa | 6.0 | ≥ 5 mm | ✅ | ponta inferior dos painéis em Z = 85.0; topo da base fixa medido em Z = 79.0 |
+| Base fixa + brim cabe na mesa | 296.0 – 296.0 | ≤ [300.0, 300.0] mm (X e Y) | ✅ | imprime invertida, teto na mesa |
+| Abas de grampo com furo livre | True | livre | ✅ | na base fixa |
+| Translação do palco abaixo da faixa de giro (estimativa) | 4.38 | ≤ 5.0 Hz (metade de 600 RPM) | ✅ | haste de 1.5 mm, massa móvel 0.95 kg, 0.72 N/mm; crítica em 263 RPM. Não medido |
+| Modo combinado balanço + torre acima de 2× (estimativa) | 89.3 | ≥ 66 Hz (2 × 1800 RPM, com 10% de margem) | ✅ | balanço e flexão da torre em série; 3× cruza este modo perto de 1786 RPM: se o ensaio de impacto der menos de 95 Hz, limitar a 1643 RPM |
+| Balanço (rocking) do palco acima de 1× (estimativa) | 105.2 | ≥ 39 Hz (1,3 × 1800 RPM) | ✅ | hastes em série com as aletas; 0.044° de inclinação por 10 N no rotor. Torre acima das aletas: 169 Hz. Não medido |
+| Flambagem das hastes do lado comprimido (estimativa) | 36.3 | ≥ 25 N de força lateral no rotor (5 g a 100 mm e 1800 RPM dão 17,8 N) | ✅ | carga crítica 11.3 N por haste (biengastada, sem deslocamento lateral relativo); acima disso vale o limitador de inclinação |
+| Modo de giro (yaw) do palco — informativo | 12.7 | registrado; não é excitado pelo desbalanceamento (força passa pelo eixo) | ✅ | 759 RPM em 1×, DENTRO da faixa 600–1800 RPM e sem amortecimento: observar no ensaio; travar o palco elimina o modo |
+| Tensão de flexão da haste no batente (estimativa) | 9.1 | ≤ 12 MPa | ✅ | E = 1900 MPa assumido; tração pelo peso 0.52 MPa |
+| Braço da aranha: flexão vertical com o eixo inclinado (estimativa) | 2.7 – 3.1 – 3.5 – 9.7 | ≤ 12 MPa a 10° em todas as seções (r = 47.5, 60, 73.5, 77 mm), 1800 RPM, painel de 45 g | ✅ | seções medidas na malha; a pior é r = 77.0 (módulo resistente 66 mm³): a espiga 11 × 6 dentro do painel é o limite. Sem concentração de tensão nem propriedades FDM |
+
+**Resultado:** 69 de 69 critérios atendidos.

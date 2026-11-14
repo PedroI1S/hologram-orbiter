@@ -68,28 +68,29 @@ Chave, fusível, conector de balanceamento, buck e capacitor de 1000 µF continu
 
 ## Encaixe
 
-Centro no rotor (27;5) mm, com cantos (19,5;-5) a (34,5;15). O canto mais externo fica em r=37,62 mm dentro da baia de r=39 mm: folga nominal de 1,38 mm.
+Centro no rotor `(27; 5) mm`, com cantos `(19,5; -5)` a `(34,5; 15)`. Na **v4.0**, a baia foi ampliada para **`Ø80` interno (`r = 40 mm`) / `Ø84` externo × `47 mm`**, deixando folga radial nominal de **`2,38 mm`** até o canto mais externo (`r = 37,62 mm`). *(Nos relatórios preservados da revisão `r0.2` / `v3.0`, como `reports/geometry.json`, a referência anterior era `r = 39 mm` / `1,38 mm`; o diagrama `reports/encaixe-baia.svg` já foi atualizado para `Ø80 mm`. Acima do berço da bateria, a prateleira em `Z = 28 mm` reserva espaço para uma eventual placa própria futura.)*
 
-Furos de 2,2 mm em (2;2), (13;2), (13;18), (2;18) relativos ao canto da PCB. São os centros dos quatro pilares existentes no CAD. Cabeças até Ø3,5 mm, sem arruelas maiores; confirmar rosca e retenção nos pilares reais. A área das cabeças foi reservada também contra cobre/trilhas.
+Furos de `2,2 mm` em `(2; 2)`, `(13; 2)`, `(13; 18)`, `(2; 18)` relativos ao canto da PCB. São os centros dos quatro pilares existentes no CAD. Cabeças até `Ø3,5 mm`, sem arruelas maiores; confirmar rosca e retenção nos pilares reais. A área das cabeças foi reservada também contra cobre/trilhas.
 
-Face inferior da PCB a Z=6 mm. Com FR4 de 1,6 mm e SOIC de até aproximadamente 1,75 mm, a pilha eletrônica fica abaixo do envelope anterior de 8 mm. Fios e soldas não estão incluídos nessa comprovação nominal. Manter as pontas inferiores curtas para não obstruir chicotes sob a placa. O molde `reports/molde-1-para-1.svg` deve ser impresso a 100%; conferir a barra de 50 mm antes de testar.
+Face inferior da PCB a `Z = 6 mm`. Com FR4 de `1,6 mm` e SOIC de até aproximadamente `1,75 mm`, a pilha eletrônica fica abaixo do envelope anterior de `8 mm`. Fios e soldas não estão incluídos nessa comprovação nominal. Manter as pontas inferiores curtas para não obstruir chicotes sob a placa. O molde `reports/molde-1-para-1.svg` deve ser impresso a 100%; conferir a barra de `50 mm` antes de testar.
 
 ## Verificação e limites
 
-Os resultados da revisão ficam em [`reports/VALIDACAO.md`](reports/VALIDACAO.md): zero violações ERC/DRC, zero conexões abertas e zero divergências de paridade no KiCad 10.0.7. Há conferência independente de geometria, continuidade entre camadas, folgas de cobre e equivalência de pinos entre tabela elétrica, esquemático e PCB. O DRC/ERC do KiCad e os arquivos exportados são verificados antes do empacotamento.
+Os resultados da revisão `r0.2` ficam em [`reports/VALIDACAO.md`](reports/VALIDACAO.md): zero violações ERC/DRC, zero conexões abertas e zero divergências de paridade no KiCad 10.0.7. Há conferência independente de geometria, continuidade entre camadas, folgas de cobre e equivalência de pinos entre tabela elétrica, esquemático e PCB. O DRC/ERC do KiCad e os arquivos exportados são verificados antes do empacotamento.
 
-Isso não demonstra integridade dos sinais nos fios reais. Com rotor parado, verificar três padrões independentes, ordem de bits do SPI quad, clock na entrada das três fitas, funcionamento do Hall e leitura da bateria. Começar com alimentação limitada e obedecer ao teto provisório de corrente/brilho do esquema 05. Se um driver de clock para três ramos não bastar, será necessário rever hardware/clock; esta placa não reserva um segundo CI.
+Isso não demonstra integridade dos sinais nos fios reais. Com rotor parado, verificar três padrões independentes, ordem de bits do SPI quad, clock na entrada das três fitas, funcionamento do Hall e leitura da bateria (ver [`firmware/teste-fitas-c3/`](../../firmware/teste-fitas-c3/)). Começar com alimentação limitada e obedecer ao teto provisório de corrente/brilho do esquema 05. Se um driver de clock para três ramos não bastar, será necessário rever hardware/clock; esta placa não reserva um segundo CI.
 
-Ao programar o C3, confirmar o circuito da Super Mini real antes de alimentar simultaneamente por USB e buck; evitar realimentar fontes. Mudanças de massa/fiação exigem nova pesagem e balanceamento. Nenhuma pendência mecânica do rotor é encerrada pela PCB.
+Ao programar o C3, confirmar o circuito da Super Mini real antes de alimentar simultaneamente por USB e buck; evitar realimentar fontes. Mudanças de massa/fiação exigem nova pesagem e balanceamento. Nenhuma pendência mecânica do rotor é encerrada pela interface.
 
 ## Reprodução
 
-Os scripts em `scripts/` geram e verificam o projeto; as ferramentas são KiCad CLI, Python com sexpdata/shapely e Freerouting 2.1.0 em Java 21. O gerador de posicionamento não preserva edições manuais: usar o CAD final como fonte ao alterar a placa e regenerar as saídas da revisão modificada.
+Os scripts em `scripts/` geram e verificam o projeto KiCad; as ferramentas são KiCad CLI, Python com `sexpdata`/`shapely` e Freerouting 2.1.0 em Java 21. O gerador de posicionamento não preserva edições manuais: usar o CAD final (`Hologram_Orbiter_v4/CAD/parameters.json`) como fonte ao alterar a placa e regenerar as saídas da revisão modificada.
 
 ## Referências
 
-- [Proposta SPI quad](../../revisoes/2026-09-21-PROPOSTA-SPI-QUAD.md): arquitetura utilizada; ensaios ainda não aprovados.
-- [Esquema anterior](../../05-ESQUEMA-ELETRICO-v3.0.md): alimentação e requisitos; ainda descreve cadeia nos sinais e não foi reescrito nesta etapa.
+- [Esquema vigente (v4.0)](../../05-ESQUEMA-ELETRICO-v4.0.md): topologia SPI Quad vigente (4 fios por painel), alimentação, pinagem e requisitos de ensaio.
+- [Montagem ponto a ponto (perfboard ativa)](MONTAGEM-PONTO-A-PONTO.md): roteiro prático em execução para o protótipo sem PCB fabricada.
+- [Proposta SPI quad](../../revisoes/2026-09-21-PROPOSTA-SPI-QUAD.md): proposta original adotada na revisão e promovida na v4.0.
 - [TI — SN74AHCT125](https://www.ti.com/lit/ds/symlink/sn74ahct125.pdf): pinagem, níveis e encapsulamento.
 - [Espressif — checklist C3](https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c3/schematic-checklist.html): recomendação de filtro no ADC.
 

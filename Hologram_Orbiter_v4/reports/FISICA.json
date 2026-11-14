@@ -1,0 +1,552 @@
+{
+  "status": "ESTIMATE_NOT_STRUCTURAL_OR_OPERATIONAL_APPROVAL",
+  "operation_released": false,
+  "section": {
+    "area_mm2": 106.49984933333334,
+    "centroid_x_mm": -0.5309497478364019,
+    "centroid_y_mm": 0.6380808781342415,
+    "Iyy_mm4": 589.884623205896,
+    "Ixx_mm4": 8659.781926738706,
+    "Ixy_mm4": 40.34430022641643,
+    "I_effective_radial_mm4": 589.6966666759823,
+    "method": "outer minus cavity plus local wall minus LED channel",
+    "scope": "continuous blade only; no structural credit for LED strip",
+    "extreme_outer_x_mm": 4.0,
+    "extreme_inner_x_mm": -4.0
+  },
+  "flexure": {
+    "design_panel_mass_g": 44.5,
+    "design_centrifugal_force_n": 158.11106250545146,
+    "envelope_cases": [
+      {
+        "unsupported_length_mm": 86.0,
+        "modulus_mpa": 2300.0,
+        "distributed_load_n_per_mm": 0.7601493389685167,
+        "tip_deflection_mm": 3.8321829230904267,
+        "max_bending_stress_mpa": 21.723851137986866,
+        "nominal_strength_ratio_at_30_mpa": 1.3809706119529264,
+        "strength_certified": false
+      },
+      {
+        "unsupported_length_mm": 86.0,
+        "modulus_mpa": 2000.0,
+        "distributed_load_n_per_mm": 0.7601493389685167,
+        "tip_deflection_mm": 4.407010361553991,
+        "max_bending_stress_mpa": 21.723851137986866,
+        "nominal_strength_ratio_at_30_mpa": 1.3809706119529264,
+        "strength_certified": false
+      },
+      {
+        "unsupported_length_mm": 99.0,
+        "modulus_mpa": 2000.0,
+        "distributed_load_n_per_mm": 0.7601493389685167,
+        "tip_deflection_mm": 7.739110453740618,
+        "max_bending_stress_mpa": 28.787921174068323,
+        "nominal_strength_ratio_at_30_mpa": 1.0421037288035753,
+        "strength_certified": false
+      }
+    ],
+    "acceptance_mass_limit_g": 45.0,
+    "acceptance_limit_cases": [
+      {
+        "unsupported_length_mm": 86.0,
+        "modulus_mpa": 2300.0,
+        "distributed_load_n_per_mm": 0.7686903427771516,
+        "tip_deflection_mm": 3.87524115818133,
+        "max_bending_stress_mpa": 21.967939353020427,
+        "nominal_strength_ratio_at_30_mpa": 1.3656264940423384,
+        "strength_certified": false
+      },
+      {
+        "unsupported_length_mm": 86.0,
+        "modulus_mpa": 2000.0,
+        "distributed_load_n_per_mm": 0.7686903427771516,
+        "tip_deflection_mm": 4.4565273319085295,
+        "max_bending_stress_mpa": 21.967939353020427,
+        "nominal_strength_ratio_at_30_mpa": 1.3656264940423384,
+        "strength_certified": false
+      },
+      {
+        "unsupported_length_mm": 99.0,
+        "modulus_mpa": 2000.0,
+        "distributed_load_n_per_mm": 0.7686903427771516,
+        "tip_deflection_mm": 7.826066750973658,
+        "max_bending_stress_mpa": 29.11138096254099,
+        "nominal_strength_ratio_at_30_mpa": 1.030524798483536,
+        "strength_certified": false
+      }
+    ],
+    "envelope_assumption": "whole panel mass uniformly distributed over height; ideal clamp",
+    "distributed_load_estimate": {
+      "shell_mass_g_per_mm": 0.11075984330666669,
+      "led_mass_g_per_mm": 0.030784508440913606,
+      "load_n_per_mm": 0.5041071275030122,
+      "cases": [
+        {
+          "unsupported_length_mm": 86.0,
+          "modulus_mpa": 2000.0,
+          "distributed_load_n_per_mm": 0.5041071275030122,
+          "tip_deflection_mm": 2.922590628380467,
+          "max_bending_stress_mpa": 14.406574647994491,
+          "nominal_strength_ratio_at_30_mpa": 2.08238257413786,
+          "strength_certified": false
+        },
+        {
+          "unsupported_length_mm": 99.0,
+          "modulus_mpa": 2000.0,
+          "distributed_load_n_per_mm": 0.5041071275030122,
+          "tip_deflection_mm": 5.132334582514581,
+          "max_bending_stress_mpa": 19.091243662113847,
+          "nominal_strength_ratio_at_30_mpa": 1.5714010323766565,
+          "strength_certified": false
+        }
+      ],
+      "limitations": "continuous solid ABS shell and uniform LED mass only; excludes ribs, end caps, wiring and boss compliance; not an acceptance bound"
+    },
+    "required_before_final_panel_print": [
+      "blade/boss load transfer",
+      "actual FDM section and modulus",
+      "loaded creep test"
+    ]
+  },
+  "drive": {
+    "inputs_unvalidated": {
+      "motor_kv": 750.0,
+      "effective_resistance_ohm": 0.225,
+      "extra_loss_w": 0.7,
+      "esc_efficiency": 0.95,
+      "ambient_c": 25.0,
+      "thermal_resistance_k_w": 3.5,
+      "source_voltages_v": [
+        10.0,
+        12.0
+      ],
+      "source_current_limit_a": 30.0,
+      "phase_current_ceiling_a": 8.0,
+      "shaft_friction_mu": 0.3,
+      "shaft_friction_radius_mm": 7.0,
+      "nut_factor": 0.2,
+      "abs_strength_mpa": 30.0,
+      "motor_note": "AX-2810Q 750KV: Kv de catalogo; R_efetiva = 0,225 ohm e o ponto medio da medicao entre pares de fase em 13/11/2026 (5,3-5,4 ohm menos 4,9 ohm das pontas = 0,4-0,5 ohm linha-linha -> ~0,20-0,25 ohm/fase, +/-25% pela resolucao de 0,1 ohm do multimetro)."
+    },
+    "omega_rad_s": 188.49555921538757,
+    "torque_constant_nm_per_a": 0.012732395447351627,
+    "design_drag_torque_nm": 0.05143887760730057,
+    "inertia_g_m2": 1.55,
+    "inertia_status": "conservative unmeasured design premise",
+    "rotor_energy_j": 27.536196279039302,
+    "steady": {
+      "phase_current_a": 4.04,
+      "input_power_w": 14.8088,
+      "source_currents": [
+        {
+          "voltage_v": 10.0,
+          "current_a": 1.48088
+        },
+        {
+          "voltage_v": 12.0,
+          "current_a": 1.2340666666666666
+        }
+      ],
+      "copper_loss_w": 3.6723600000000003,
+      "steady_motor_temperature_c": 40.30326
+    },
+    "startup_kick": {
+      "schedule": {
+        "note": "Partida do firmware 0.2.0 (firmware/controle-motor/src/config.rs; 05 secao 8.2): sobe do PPM minimo ao chute em rise_s, segura o chute kick_hold_s e desce ao alvo a fall_us_per_s. target_us e o alvo ao ligar (INITIAL_TARGET_US); o bloqueador D usa o teto de regime. Duty linear no pulso entre ppm_min_us e ppm_max_us (gravados no ESC em 16/10/2026).",
+        "ppm_min_us": 1148,
+        "ppm_max_us": 1832,
+        "rise_s": 3.0,
+        "kick_us": 1400,
+        "kick_hold_s": 2.0,
+        "fall_us_per_s": 42.0,
+        "target_us": 1200
+      },
+      "source_current_limit_a": 30.0,
+      "stall_at_kick": [
+        {
+          "source_voltage_v": 10.0,
+          "duty": 0.3684210526315789,
+          "phase_current_a": 16.374269005847953,
+          "bus_voltage_v": 10.0,
+          "source_current_a": 6.350132024428569,
+          "input_power_w": 63.5013202442857,
+          "torque_nm": 0.2084836681437693,
+          "supply_limiting": false
+        },
+        {
+          "source_voltage_v": 12.0,
+          "duty": 0.3684210526315789,
+          "phase_current_a": 19.64912280701754,
+          "bus_voltage_v": 12.0,
+          "source_current_a": 7.620158429314282,
+          "input_power_w": 91.44190115177138,
+          "torque_nm": 0.25018040177252315,
+          "supply_limiting": false
+        }
+      ],
+      "trajectories": [
+        {
+          "source_voltage_v": 10.0,
+          "peak_rpm": 1680.0078008659161,
+          "peak_rpm_time_s": 6.063000000000001,
+          "peak_rpm_pulse_us": 1355.354,
+          "peak_phase_current_a": 16.374269005847953,
+          "peak_input_power_w": 63.501320244285694,
+          "min_bus_voltage_v": 10.0,
+          "fall_end_s": 9.761904761904763,
+          "target_rpm": 514.4802634172527,
+          "time_step_s": 0.001,
+          "exceeds_phase_ceiling": true,
+          "exceeds_start_power_ceiling": true,
+          "exceeds_operating_rpm": false
+        },
+        {
+          "source_voltage_v": 12.0,
+          "peak_rpm": 1959.2274312673098,
+          "peak_rpm_time_s": 5.994,
+          "peak_rpm_pulse_us": 1358.252,
+          "peak_phase_current_a": 19.64912280701754,
+          "peak_input_power_w": 91.44190115177138,
+          "min_bus_voltage_v": 12.0,
+          "fall_end_s": 9.761904761904763,
+          "target_rpm": 606.7472630574575,
+          "time_step_s": 0.001,
+          "exceeds_phase_ceiling": true,
+          "exceeds_start_power_ceiling": true,
+          "exceeds_operating_rpm": true
+        }
+      ],
+      "phase_ceiling": {
+        "phase_current_a": 8.0,
+        "input_power_w": 36.10526315789473,
+        "source_currents": [
+          {
+            "voltage_v": 10.0,
+            "current_a": 3.6105263157894734
+          },
+          {
+            "voltage_v": 12.0,
+            "current_a": 3.008771929824561
+          }
+        ],
+        "copper_loss_w": 14.4,
+        "torque_nm": 0.10185916357881301
+      },
+      "model": "averaged DC model: duty linear in pulse, a supply at its current limit lets the bus sag, rotor still until the kick, drag ~ omega², fixed losses ignored in the transient; ignores the ESC Startup Power limit and the supply/lead resistance; not a measurement"
+    },
+    "shaft_clamp": {
+      "preload_estimate_n": 1250.0,
+      "preload_basis": "nut torque/(nut_factor*thread diameter); not measured",
+      "steady": {
+        "torque_nm": 0.05143887760730057,
+        "required_clamp_force_n": 24.494703622524078,
+        "preload_margin": 51.031440072235206
+      },
+      "kick_stall": [
+        {
+          "torque_nm": 0.2084836681437693,
+          "required_clamp_force_n": 99.2779372113187,
+          "preload_margin": 12.590914306965347,
+          "source_voltage_v": 10.0
+        },
+        {
+          "torque_nm": 0.25018040177252315,
+          "required_clamp_force_n": 119.13352465358244,
+          "preload_margin": 10.49242858913779,
+          "source_voltage_v": 12.0
+        }
+      ],
+      "phase_ceiling": {
+        "torque_nm": 0.10185916357881301,
+        "required_clamp_force_n": 48.50436360895857,
+        "preload_margin": 25.77087723647878
+      },
+      "kick_trajectory_peaks": [
+        {
+          "torque_nm": 0.2084836681437693,
+          "required_clamp_force_n": 99.2779372113187,
+          "preload_margin": 12.590914306965347,
+          "source_voltage_v": 10.0
+        },
+        {
+          "torque_nm": 0.25018040177252315,
+          "required_clamp_force_n": 119.13352465358244,
+          "preload_margin": 10.49242858913779,
+          "source_voltage_v": 12.0
+        }
+      ]
+    },
+    "stretch": {
+      "phase_current_a": 4.987654320987655,
+      "input_power_w": 20.62912425095661,
+      "source_currents": [
+        {
+          "voltage_v": 10.0,
+          "current_a": 2.062912425095661
+        },
+        {
+          "voltage_v": 12.0,
+          "current_a": 1.7190936875797176
+        }
+      ],
+      "copper_loss_w": 5.597256515775036,
+      "steady_motor_temperature_c": 47.04039780521263,
+      "rpm": 2000.0,
+      "released_for_operation": false
+    }
+  },
+  "stl_section_checks": [
+    {
+      "z_mm": 20.23,
+      "measured": {
+        "area_mm2": 106.49985306668927,
+        "centroid_x_mm": -0.5309496995671938,
+        "centroid_y_mm": 0.6380810455759593,
+        "Iyy_mm4": 589.8846462195523,
+        "Ixx_mm4": 8659.782294297409,
+        "Ixy_mm4": 40.34430658678935,
+        "I_effective_radial_mm4": 589.6966896383527
+      },
+      "matches_parameters": true
+    },
+    {
+      "z_mm": 50.23,
+      "measured": {
+        "area_mm2": 106.49985295277702,
+        "centroid_x_mm": -0.5309496988429356,
+        "centroid_y_mm": 0.63808105521378,
+        "Iyy_mm4": 589.8846461437822,
+        "Ixx_mm4": 8659.782284410967,
+        "Ixy_mm4": 40.344305923226855,
+        "I_effective_radial_mm4": 589.6966895685508
+      },
+      "matches_parameters": true
+    },
+    {
+      "z_mm": 90.23,
+      "measured": {
+        "area_mm2": 106.49985288542919,
+        "centroid_x_mm": -0.5309496978870115,
+        "centroid_y_mm": 0.6380810629052044,
+        "Iyy_mm4": 589.8846459666922,
+        "Ixx_mm4": 8659.782274190278,
+        "Ixy_mm4": 40.34430476230666,
+        "I_effective_radial_mm4": 589.6966894020561
+      },
+      "matches_parameters": true
+    }
+  ],
+  "arm_root": {
+    "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
+    "cut_radius_mm": 47.5,
+    "area_mm2": 202.5099548219142,
+    "I_vertical_bending_mm4": 10342.53710489592,
+    "I_chordwise_bending_mm4": 1904.0241956428529,
+    "Ixy_mm4": 1714.1500537898569,
+    "section_modulus_vertical_mm3": 535.6805497443878,
+    "z_extent_mm": [
+      -5.741379263768325,
+      20.153846275273395
+    ],
+    "panel_mass_g": 45.0,
+    "rpm": 1800.0,
+    "centrifugal_force_n": 159.88759129764756,
+    "tilt_cases": [
+      {
+        "tilt_deg": 4.0,
+        "cross_force_n": 11.153194564365789,
+        "moment_n_mm": 585.5427146292039,
+        "max_bending_stress_mpa": 1.0930819028404315
+      },
+      {
+        "tilt_deg": 10.0,
+        "cross_force_n": 27.764188860391446,
+        "moment_n_mm": 1457.619915170551,
+        "max_bending_stress_mpa": 2.721061863952476
+      }
+    ]
+  },
+  "arm_sections": [
+    {
+      "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
+      "cut_radius_mm": 47.5,
+      "area_mm2": 202.5099548219142,
+      "I_vertical_bending_mm4": 10342.53710489592,
+      "I_chordwise_bending_mm4": 1904.0241956428529,
+      "Ixy_mm4": 1714.1500537898569,
+      "section_modulus_vertical_mm3": 535.6805497443878,
+      "z_extent_mm": [
+        -5.741379263768325,
+        20.153846275273395
+      ],
+      "panel_mass_g": 45.0,
+      "rpm": 1800.0,
+      "centrifugal_force_n": 159.88759129764756,
+      "tilt_cases": [
+        {
+          "tilt_deg": 4.0,
+          "cross_force_n": 11.153194564365789,
+          "moment_n_mm": 585.5427146292039,
+          "max_bending_stress_mpa": 1.0930819028404315
+        },
+        {
+          "tilt_deg": 10.0,
+          "cross_force_n": 27.764188860391446,
+          "moment_n_mm": 1457.619915170551,
+          "max_bending_stress_mpa": 2.721061863952476
+        }
+      ]
+    },
+    {
+      "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
+      "cut_radius_mm": 60.0,
+      "area_mm2": 161.8867697077427,
+      "I_vertical_bending_mm4": 5058.97336902805,
+      "I_chordwise_bending_mm4": 1541.8042415809555,
+      "Ixy_mm4": 885.7998777482942,
+      "section_modulus_vertical_mm3": 359.1229754791418,
+      "z_extent_mm": [
+        -4.4482758374625115,
+        16.30769237184255
+      ],
+      "panel_mass_g": 45.0,
+      "rpm": 1800.0,
+      "centrifugal_force_n": 159.88759129764756,
+      "tilt_cases": [
+        {
+          "tilt_deg": 4.0,
+          "cross_force_n": 11.153194564365789,
+          "moment_n_mm": 446.12778257463157,
+          "max_bending_stress_mpa": 1.2422702334190898
+        },
+        {
+          "tilt_deg": 10.0,
+          "cross_force_n": 27.764188860391446,
+          "moment_n_mm": 1110.567554415658,
+          "max_bending_stress_mpa": 3.092443620277814
+        }
+      ]
+    },
+    {
+      "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
+      "cut_radius_mm": 73.5,
+      "area_mm2": 136.74183546392896,
+      "I_vertical_bending_mm4": 2022.2626577379094,
+      "I_chordwise_bending_mm4": 1532.5303719838653,
+      "Ixy_mm4": 494.77431196742396,
+      "section_modulus_vertical_mm3": 210.0693722501945,
+      "z_extent_mm": [
+        -3.0517241370522323,
+        12.153846156137234
+      ],
+      "panel_mass_g": 45.0,
+      "rpm": 1800.0,
+      "centrifugal_force_n": 159.88759129764756,
+      "tilt_cases": [
+        {
+          "tilt_deg": 4.0,
+          "cross_force_n": 11.153194564365789,
+          "moment_n_mm": 295.5596559556934,
+          "max_bending_stress_mpa": 1.406962151549057
+        },
+        {
+          "tilt_deg": 10.0,
+          "cross_force_n": 27.764188860391446,
+          "moment_n_mm": 735.7510048003733,
+          "max_bending_stress_mpa": 3.5024192099935787
+        }
+      ]
+    },
+    {
+      "status": "ESTIMATE_NOT_STRUCTURAL_APPROVAL",
+      "cut_radius_mm": 77.0,
+      "area_mm2": 66.00000000000001,
+      "I_vertical_bending_mm4": 198.0000000000009,
+      "I_chordwise_bending_mm4": 665.4999999999999,
+      "Ixy_mm4": 4.712896739533783e-14,
+      "section_modulus_vertical_mm3": 66.00000000000024,
+      "z_extent_mm": [
+        0.0,
+        6.0
+      ],
+      "panel_mass_g": 45.0,
+      "rpm": 1800.0,
+      "centrifugal_force_n": 159.88759129764756,
+      "tilt_cases": [
+        {
+          "tilt_deg": 4.0,
+          "cross_force_n": 11.153194564365789,
+          "moment_n_mm": 256.52347498041314,
+          "max_bending_stress_mpa": 3.886719317885033
+        },
+        {
+          "tilt_deg": 10.0,
+          "cross_force_n": 27.764188860391446,
+          "moment_n_mm": 638.5763437890032,
+          "max_bending_stress_mpa": 9.675399148318194
+        }
+      ]
+    }
+  ],
+  "suspension": {
+    "status": "ESTIMATE_NOT_MEASURED",
+    "oil_damper": {
+      "status": "ORDER_OF_MAGNITUDE_ONLY (factor ~3 either way); zero without oil",
+      "oil_viscosity_pa_s": 9.7,
+      "immersed_depth_mm": 4.5,
+      "min_radial_gap_mm": 5.5,
+      "oil_volume_ml_per_cup": 4.14,
+      "lateral_damping_n_s_per_m": 6.290483916083915,
+      "translation_damping_ratio": 0.12012525430492507,
+      "yaw_damping_nm_s_per_rad": 0.010892461292307691,
+      "yaw_damping_ratio": 0.048611833811399476
+    },
+    "moving_mass_kg": 0.9515399999999999,
+    "moving_cg_z_mm": 116.45065640960969,
+    "moving_mass_breakdown_g": {
+      "rotor": 352.14,
+      "stage_and_tower": 494.4,
+      "motor_plate_fasteners": 105.0
+    },
+    "transverse_inertia_kg_m2": 0.006526523258870406,
+    "fin_tip_stiffness_n_per_mm": 202.02678696996009,
+    "tower_free_length_mm": 69.0,
+    "tower_tube_inertia_mm4": 125663.70614359173,
+    "tower_bending_frequency_hz": 168.9526595767463,
+    "operating_rpm_range": [
+      600.0,
+      1800.0
+    ],
+    "selected_variant_side_mm": 1.5,
+    "variants": [
+      {
+        "name": "macia_1p5",
+        "rod_side_mm": 1.5,
+        "lateral_stiffness_n_per_mm": 0.7204642431655941,
+        "lateral_elastic_n_per_mm": 0.516869630634685,
+        "lateral_gravity_n_per_mm": 0.20359461253090907,
+        "translation_frequency_hz": 4.379381935931262,
+        "translation_critical_rpm": 262.7629161558757,
+        "lowest_operating_to_critical_ratio": 2.2834272384314276,
+        "orbit_amplification_at_lowest_rpm": 1.2373019741395959,
+        "rod_axial_stiffness_n_per_mm": 80.66037735849056,
+        "rod_plus_fin_axial_stiffness_n_per_mm": 57.64519557239876,
+        "rocking_stiffness_nm_per_rad": 2851.23282855505,
+        "rocking_frequency_hz": 105.19510416435158,
+        "rocking_to_top_1x_ratio": 3.5065034721450528,
+        "tilt_deg_per_10n_at_rotor": 0.04380863334404429,
+        "stage_tilt_deg_per_10n_at_rotor": 0.03064501182870115,
+        "coupled_rocking_tower_frequency_hz": 89.30023389886604,
+        "rod_buckling_load_n": 11.265368142040852,
+        "rotor_side_force_at_first_buckling_n": 36.26008319461883,
+        "yaw_frequency_hz": 12.655756565833364,
+        "rod_bending_stress_at_stop_mpa": 9.131363474546102,
+        "rod_tension_stress_mpa": 0.5184122078333333,
+        "yaw_stiffness_nm_per_rad": 8.908857371009564,
+        "yaw_deg_per_0p1_nm": 0.6431327512272148
+      }
+    ],
+    "limits": "rigid body, linear rods, no damping, no gyroscopic coupling; printed-PETG modulus assumed; motor cables and EVA pads add stiffness when they touch"
+  }
+}

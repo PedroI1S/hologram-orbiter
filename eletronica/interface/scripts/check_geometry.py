@@ -29,7 +29,7 @@ for r,p in polys.items():
  if not bounds.covers(p):issues.append(f'{r} courtyard outside board')
 # The board corner maps to CAD (19.5, -5); board local axes match rotor +x,+y.
 # Verify actual enclosure wall, battery cradle and post centers independently.
-par=json.loads((ROOT.parents[1]/'Hologram_Orbiter_v3_0/CAD/parameters.json').read_text())
+par=json.loads((ROOT.parents[1]/'Hologram_Orbiter_v4/CAD/parameters.json').read_text())
 sp=par['spider'];coords=[(19.5+x,-5+y) for x,y in [(0,0),(15,0),(15,20),(0,20)]]
 maxr=max(math.hypot(x,y) for x,y in coords)
 assert maxr<sp['electronics_bay_id']/2
